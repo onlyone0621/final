@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.17/index.global.min.js'></script>
+    <script src='fullcalendar/dist/index.global.js'></script>
+    <script src='fullcalendar/core/locales/es.global.js'></script>
+    <script>
+
+      document.addEventListener('DOMContentLoaded', function() {
+        var calendarEl = document.getElementById('calendar');
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+          initialView: 'dayGridMonth',
+          selectable: true,
+          height:650,
+          locale: 'ko'
+        });
+        calendar.render();
+      });
+      
+    </script>
+</head>
+<body>
+ <div id='calendar'></div>
+</body>
+</html>
