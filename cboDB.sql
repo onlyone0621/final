@@ -101,7 +101,7 @@ create table message(
     title varchar2(100) not null,
     content varchar2(300),
     receiver_id number(10),
-    sender_id number(10) not null,
+    sender_id number(10),
     write_date date not null,
     is_read varchar2(60) default '안 읽음' not null,
     file_name varchar2(300) not null,
@@ -274,7 +274,7 @@ create table community_post(
     id number(10) primary key,
     community_id number(10) not null,
     title varchar2(100) not null,
-    member_id number(10) not null,
+    member_id number(10),
     content varchar2(300) not null,
     write_date date not null,
     view_num number(10) default 0 not null,
@@ -286,10 +286,10 @@ create table community_post(
 
 create table community_member(
 
-    community_id number(10),
-    member_id number(10),
+    community_id number(10) NOT NULL,
+    member_id number(10) NOT NULL,
     type varchar2(100),
-    join_date date,
+    join_date date NOT NULL,
     foreign key (community_id) references community(id) ON DELETE CASCADE,
     foreign key (member_id) references member(id) ON DELETE CASCADE
 
@@ -303,6 +303,9 @@ create table community_comment(
     content varchar2(300) not null,
     write_date date not null,
     upvote number(10) default 0 not null,
+    ref NUMBER(10) NOT NULL,
+    lev NUMBER(10) NOT NULL DEFAULT 0,
+    sunbun NUMBER(10) NOT NULL DEFAULT 0,
     foreign key (community_post_id) references community_post(id) ON DELETE CASCADE,
     foreign key (member_id) references member(id) ON DELETE SET NULL
 
