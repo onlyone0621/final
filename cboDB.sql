@@ -1,30 +1,35 @@
-drop table message;
+drop table community_comment;
+drop table community_post;
+drop table community_member;
+drop table community;
+drop table draft;
+drop table medical_support;
+drop table leave_application;
+drop table approvalline;
+drop table approval_doc;
 drop table chat_message;
 drop table chatroom_user;
+drop table chatroom;
+drop table drive;
+drop table message;
+drop table calendar;
 drop table groups;
-drop table approval_line;
-drop table approval_doc;
-drop table community_comment;
-drop table community_member;
-drop table community_post;
-drop table community;
 drop table addr_group;
 drop table addr;
-drop table drive;
-drop table chatroom;
-drop table calendar;
 drop table member;
 drop table dept;
 drop table grade;
 
-create sequence sq_person_id;
+
+create sequence sq_member_id;
 create sequence sq_message_id;
-create sequence sq_job_id;
+create sequence sq_grade_id;
 create sequence sq_dept_id;
 create sequence sq_drive_id;
 create sequence sq_chatroom_id;
 create sequence sq_chat_message_id;
 create sequence sq_addr_id;
+create sequence sq_groups_id;
 create sequence sq_calendar_id;
 create sequence sq_approval_doc_id;
 create sequence sq_approval_line_id;
@@ -285,4 +290,173 @@ create table community_comment(
 );
 
 
+-- Triggers
+CREATE OR REPLACE TRIGGER trg_member_id
+BEFORE INSERT ON member
+FOR EACH ROW
+BEGIN
+    IF :NEW.id IS NULL THEN
+        :NEW.id := sq_member_id.NEXTVAL;
+    END IF;
+END;
+/
 
+CREATE OR REPLACE TRIGGER trg_dept_id
+BEFORE INSERT ON dept
+FOR EACH ROW
+BEGIN
+    IF :NEW.id IS NULL THEN
+        :NEW.id := sq_dept_id.NEXTVAL;
+    END IF;
+END;
+/
+
+CREATE OR REPLACE TRIGGER trg_grade_id
+BEFORE INSERT ON grade
+FOR EACH ROW
+BEGIN
+    IF :NEW.id IS NULL THEN
+        :NEW.id := sq_grade_id.NEXTVAL;
+    END IF;
+END;
+/
+
+CREATE OR REPLACE TRIGGER trg_message_id
+BEFORE INSERT ON message
+FOR EACH ROW
+BEGIN
+    IF :NEW.id IS NULL THEN
+        :NEW.id := sq_message_id.NEXTVAL;
+    END IF;
+END;
+/
+
+CREATE OR REPLACE TRIGGER trg_drive_id
+BEFORE INSERT ON drive
+FOR EACH ROW
+BEGIN
+    IF :NEW.id IS NULL THEN
+        :NEW.id := sq_drive_id.NEXTVAL;
+    END IF;
+END;
+/
+
+CREATE OR REPLACE TRIGGER trg_chatroom_id
+BEFORE INSERT ON chatroom
+FOR EACH ROW
+BEGIN
+    IF :NEW.id IS NULL THEN
+        :NEW.id := sq_chatroom_id.NEXTVAL;
+    END IF;
+END;
+/
+
+CREATE OR REPLACE TRIGGER trg_chat_message_id
+BEFORE INSERT ON chat_message
+FOR EACH ROW
+BEGIN
+    IF :NEW.id IS NULL THEN
+        :NEW.id := sq_chat_message_id.NEXTVAL;
+    END IF;
+END;
+/
+
+CREATE OR REPLACE TRIGGER trg_groups_id
+BEFORE INSERT ON groups
+FOR EACH ROW
+BEGIN
+    IF :NEW.id IS NULL THEN
+        :NEW.id := sq_groups_id.NEXTVAL;
+    END IF;
+END;
+/
+
+CREATE OR REPLACE TRIGGER trg_addr_id
+BEFORE INSERT ON addr
+FOR EACH ROW
+BEGIN
+    IF :NEW.id IS NULL THEN
+        :NEW.id := sq_addr_id.NEXTVAL;
+    END IF;
+END;
+/
+
+CREATE OR REPLACE TRIGGER trg_calendar_id
+BEFORE INSERT ON calendar
+FOR EACH ROW
+BEGIN
+    IF :NEW.id IS NULL THEN
+        :NEW.id := sq_calendar_id.NEXTVAL;
+    END IF;
+END;
+/
+
+CREATE OR REPLACE TRIGGER trg_approval_doc_id
+BEFORE INSERT ON approval_doc
+FOR EACH ROW
+BEGIN
+    IF :NEW.id IS NULL THEN
+        :NEW.id := sq_approval_doc_id.NEXTVAL;
+    END IF;
+END;
+/
+
+CREATE OR REPLACE TRIGGER trg_draft_id
+BEFORE INSERT ON draft
+FOR EACH ROW
+BEGIN
+    IF :NEW.id IS NULL THEN
+        :NEW.id := sq_draft_id.NEXTVAL;
+    END IF;
+END;
+/
+
+CREATE OR REPLACE TRIGGER trg_medical_support_id
+BEFORE INSERT ON medical_support
+FOR EACH ROW
+BEGIN
+    IF :NEW.id IS NULL THEN
+        :NEW.id := sq_medical_support_id.NEXTVAL;
+    END IF;
+END;
+/
+
+CREATE OR REPLACE TRIGGER trg_leave_application_id
+BEFORE INSERT ON leave_application
+FOR EACH ROW
+BEGIN
+    IF :NEW.id IS NULL THEN
+        :NEW.id := sq_leave_application_id.NEXTVAL;
+    END IF;
+END;
+/
+
+CREATE OR REPLACE TRIGGER trg_community_id
+BEFORE INSERT ON community
+FOR EACH ROW
+BEGIN
+    IF :NEW.id IS NULL THEN
+        :NEW.id := sq_community_id.NEXTVAL;
+    END IF;
+END;
+/
+
+CREATE OR REPLACE TRIGGER trg_community_post_id
+BEFORE INSERT ON community_post
+FOR EACH ROW
+BEGIN
+    IF :NEW.id IS NULL THEN
+        :NEW.id := sq_community_post_id.NEXTVAL;
+    END IF;
+END;
+/
+
+CREATE OR REPLACE TRIGGER trg_community_comment_id
+BEFORE INSERT ON community_comment
+FOR EACH ROW
+BEGIN
+    IF :NEW.id IS NULL THEN
+        :NEW.id := sq_community_comment_id.NEXTVAL;
+    END IF;
+END;
+/
