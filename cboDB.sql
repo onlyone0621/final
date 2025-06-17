@@ -64,27 +64,27 @@ create table member(
     address varchar2(100) not null,
     tel varchar2(100) not null,
     join_date date not null,
-    dept_id number(10) not null,
-    grade_id number(10) not null,
+    dept_id number(10),
+    grade_id number(10),
     profile_image varchar2(300),
-    foreign key (dept_id) references dept(id),
-    foreign key (grade_id) references grade(id) 
+    foreign key (dept_id) references dept(id) ON DELETE SET NULL,
+    foreign key (grade_id) references grade(id) ON DELETE SET NULL 
 );
     
 create table message(
 
     id number(10) primary key,
     title varchar2(100) not null,
-    content varchar2(300) not null,
-    receiver_id number(10) not null,
+    content varchar2(300),
+    receiver_id number(10),
     sender_id number(10) not null,
     write_date date not null,
     is_read varchar2(60) default '안 읽음' not null,
     file_name varchar2(300) not null,
     ref number(10) not null,
     lev number(10) not null,
-    foreign key (receiver_id) references member(id),
-    foreign key (sender_id) references member(id) 
+    foreign key (receiver_id) references member(id) ON DELETE SET NULL,
+    foreign key (sender_id) references member(id) ON DELETE SET NULL 
     
 );
 
@@ -95,7 +95,7 @@ create table drive(
     uploader varchar2(100) not null,
     upload_date date not null,
     path varchar2(500) not null,
-    foreign key (member_id) references member(id) 
+    foreign key (member_id) references member(id) ON DELETE CASCADE 
 
 );
 
@@ -112,11 +112,11 @@ create table chat_message(
 
     id number(10) primary key,
     chatroom_id number(10) not null,
-    member_id number(10) not null,
+    member_id number(10),
     write_date date not null,
     content varchar2(1000) not null,
-    foreign key (chatroom_id) references chatroom(id),
-    foreign key (member_id) references member(id)  
+    foreign key (chatroom_id) references chatroom(id) ON DELETE CASCADE ,
+    foreign key (member_id) references member(id) ON DELETE SET NULL  
 );
 
 create table chatroom_user(
@@ -124,8 +124,8 @@ create table chatroom_user(
     chatroom_id number(10) not null,
     member_id number(10) not null,
     join_date date not null,
-    foreign key (chatroom_id) references chatroom(id),
-    foreign key (member_id) references member(id)  
+    foreign key (chatroom_id) references chatroom(id) ON DELETE CASCADE,
+    foreign key (member_id) references member(id) ON DELETE CASCADE  
 
 );
 
@@ -134,7 +134,7 @@ create table groups(
     id number(10) primary key,
     member_id number(10) not null,
     name varchar2(100) not null,
-    foreign key (member_id) references member(id) 
+    foreign key (member_id) references member(id) ON DELETE CASCADE
 
 );
 
@@ -155,9 +155,9 @@ create table addr(
 create table addr_group(
 
     addr_id number(10) not null,
-    addr_group_id number(10) not null,
-    foreign key (addr_id) references member(id),
-    foreign key (addr_group_id) references addr(id)
+    groups_id number(10) not null,
+    foreign key (addr_id) references addr(id) ON DELETE CASCADE,
+    foreign key (addr_group_id) references addr(id) ON DELETE CASCADE
 
 );
 
@@ -171,8 +171,8 @@ create table calendar(
     start_time date not null,
     end_time date not null,
     create_date date not null,
-    foreign key (member_id) references member(id),
-    foreign key (dept_id) references dept(id)
+    foreign key (member_id) references member(id) ON DELETE CASCADE,
+    foreign key (dept_id) references dept(id) ON DELETE CASCADE
 
 );
 
@@ -180,23 +180,23 @@ create table approval_doc(
     
     id number(10) primary key,
     title varchar2(100) not null,
-    member_id number(10) not null,
-    dept_id number(10) not null,
+    member_id number(10),
+    dept_id number(10),
     write_date date not null,
     retention NUMBER not null,
-    foreign key (member_id) references member(id),
-    foreign key (dept_id) references dept(id)
+    foreign key (member_id) references member(id) ON DELETE SET NULL,
+    foreign key (dept_id) references dept(id) ON DELETE SET NULL
     
 );
 
 create table approval_line( --n? status?
 
-    approval_doc_id number(10),
+    approval_doc_id number(10) NOT NULL,
     member_id number(10),
     status varchar2(100) default '결재 예정',
     process_date date,     
-    foreign key (approval_doc_id) references approval_doc(id),
-    foreign key (member_id) references member(id)
+    foreign key (approval_doc_id) references approval_doc(id) ON DELETE CASCADE,
+    foreign key (member_id) references member(id) ON DELETE SET NULL
 );
 
 CREATE TABLE draft (
@@ -205,7 +205,7 @@ CREATE TABLE draft (
     execution_date DATE NOT NULL,
     type VARCHAR2(100) NOT NULL,
     content VARCHAR2(300) NOT NULL,
-    foreign key (approval_doc_id) REFERENCES approval_doc(id)
+    foreign key (approval_doc_id) REFERENCES approval_doc(id) ON DELETE CASCADE
 )
 
 CREATE TABLE medical_support (
@@ -216,7 +216,7 @@ CREATE TABLE medical_support (
     diagnosis VARCHAR2(100) NOT NULL,
     requested NUMBER(10) NOT NULL,
     oop NUMBER(10) NOT NULL,
-    foreign key (approval_doc_id) REFERENCES approval_doc(id)
+    foreign key (approval_doc_id) REFERENCES approval_doc(id) ON DELETE CASCADE
 )
 
 CREATE TABLE leave_application (
@@ -230,7 +230,7 @@ CREATE TABLE leave_application (
     end_date DATE NOT NULL,
     remaining NUMBER(5) NOT NULL,
     reason VARCHAR2(300) NOT NULL,
-    foreign key (approval_doc_id) REFERENCES approval_doc(id)
+    foreign key (approval_doc_id) REFERENCES approval_doc(id) ON DELETE CASCADE
 )
 
 
@@ -240,8 +240,8 @@ create table community(
     name varchar2(100) not null,
     description varchar2(100) not null,
     create_date date not null,
-    member_id number(10) not null,
-    foreign key (member_id) references member(id)
+    member_id number(10),
+    foreign key (member_id) references member(id) ON DELETE SET NULL
 
 );
 
@@ -255,8 +255,8 @@ create table community_post(
     write_date date not null,
     view_num number(10) default 0 not null,
     upvote number(10) default 0 not null,
-    foreign key (community_id) references community(id),
-    foreign key (member_id) references member(id)
+    foreign key (community_id) references community(id) ON DELETE CASCADE,
+    foreign key (member_id) references member(id) ON DELETE SET NULL
 
 );
 
@@ -266,8 +266,8 @@ create table community_member(
     member_id number(10),
     type varchar2(100),
     join_date date,
-    foreign key (community_id) references community(id),
-    foreign key (member_id) references member(id)
+    foreign key (community_id) references community(id) ON DELETE CASCADE,
+    foreign key (member_id) references member(id) ON DELETE CASCADE
 
 );
 
@@ -275,12 +275,12 @@ create table community_comment(
 
     id number(10) primary key,
     community_post_id number(10) not null,
-    member_id number(10) not null,
+    member_id number(10),
     content varchar2(300) not null,
     write_date date not null,
     upvote number(10) default 0 not null,
-    foreign key (community_post_id) references community_post(id),
-    foreign key (member_id) references member(id)
+    foreign key (community_post_id) references community_post(id) ON DELETE CASCADE,
+    foreign key (member_id) references member(id) ON DELETE SET NULL
 
 );
 
