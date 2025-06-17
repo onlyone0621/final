@@ -40,24 +40,24 @@ drop sequence sq_community_post_id;
 drop sequence sq_community_comment_id;
 
 
-create sequence sq_member_id;
-create sequence sq_message_id;
-create sequence sq_grade_id;
-create sequence sq_dept_id;
-create sequence sq_drive_id;
-create sequence sq_chatroom_id;
-create sequence sq_chat_message_id;
-create sequence sq_addr_id;
-create sequence sq_groups_id;
-create sequence sq_calendar_id;
-create sequence sq_approval_doc_id;
-create sequence sq_approval_line_id;
-create sequence sq_draft_id;
-create sequence sq_medical_support_id;
-create sequence sq_leave_application_id;
-create sequence sq_community_id;
-create sequence sq_community_post_id;
-create sequence sq_community_comment_id;
+create sequence sq_member_id no cache;
+create sequence sq_message_id no cache;
+create sequence sq_grade_id no cache;
+create sequence sq_dept_id no cache;
+create sequence sq_drive_id no cache;
+create sequence sq_chatroom_id no cache;
+create sequence sq_chat_message_id no cache;
+create sequence sq_addr_id no cache;
+create sequence sq_groups_id no cache;
+create sequence sq_calendar_id no cache;
+create sequence sq_approval_doc_id no cache; 
+create sequence sq_approval_line_id no cache;
+create sequence sq_draft_id no cache;
+create sequence sq_medical_support_id no cache;
+create sequence sq_leave_application_id no cache;
+create sequence sq_community_id no cache;
+create sequence sq_community_post_id no cache;
+create sequence sq_community_comment_id no cache;
 
 
 
