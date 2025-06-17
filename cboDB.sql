@@ -21,6 +21,22 @@ drop table dept;
 drop table grade;
 
 
+drop sequence sq_person_id;
+drop sequence sq_message_id;
+drop sequence sq_job_id;
+drop sequence sq_dept_id;
+drop sequence sq_drive_id;
+drop sequence sq_chatroom_id;
+drop sequence sq_chat_message_id;
+drop sequence sq_addr_id;
+drop sequence sq_calendar_id;
+drop sequence sq_approval_doc_id;
+drop sequence sq_approval_line_id;
+drop sequence sq_community_id;
+drop sequence sq_community_post_id;
+drop sequence sq_community_comment_id;
+
+
 create sequence sq_member_id;
 create sequence sq_message_id;
 create sequence sq_grade_id;
