@@ -21,9 +21,9 @@ drop table dept;
 drop table grade;
 
 
-drop sequence sq_person_id;
+drop sequence sq_member_id;
 drop sequence sq_message_id;
-drop sequence sq_job_id;
+drop sequence sq_grade_id;
 drop sequence sq_dept_id;
 drop sequence sq_drive_id;
 drop sequence sq_chatroom_id;
@@ -32,6 +32,9 @@ drop sequence sq_addr_id;
 drop sequence sq_calendar_id;
 drop sequence sq_approval_doc_id;
 drop sequence sq_approval_line_id;
+drop sequence sq_draft_id;
+drop sequence sq_medical_support_id;
+drop sequence sq_leave_application_id;
 drop sequence sq_community_id;
 drop sequence sq_community_post_id;
 drop sequence sq_community_comment_id;
@@ -307,6 +310,8 @@ create table community_comment(
 
 
 -- Triggers
+
+-- Auto incrementing id 
 CREATE OR REPLACE TRIGGER trg_member_id
 BEFORE INSERT ON member
 FOR EACH ROW
