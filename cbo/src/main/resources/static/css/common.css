@@ -18,11 +18,14 @@ body {
     padding: 0;
 }
 
-.header {
+.header, .footer {
     display: flex;
-    justify-content: space-around;
     align-items: center;
-    background-color: #1f2937;
+    background-color: #ffc0b8;
+}
+
+.header {
+    justify-content: space-around;
     height: 60px;
 }
 
@@ -56,10 +59,7 @@ body {
 }
 
 .footer {
-    background-color: #1f2937;
-    display: flex;
     justify-content: center;
-    align-items: center;
     height: 100px;
     color: #f9faf8;
     font-size: 18px;
