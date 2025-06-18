@@ -3,25 +3,72 @@
 <head>
 <meta charset="UTF-8">
 <title>Insert title here</title>
-    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.17/index.global.min.js'></script>
-    <script src='fullcalendar/dist/index.global.js'></script>
-    <script src='fullcalendar/core/locales/es.global.js'></script>
-    <script>
+<script>
 
-      document.addEventListener('DOMContentLoaded', function() {
-        var calendarEl = document.getElementById('calendar');
-        var calendar = new FullCalendar.Calendar(calendarEl, {
-          initialView: 'dayGridMonth',
-          selectable: true,
-          height:650,
-          locale: 'ko'
-        });
-        calendar.render();
-      });
-      
-    </script>
+</script>
+<script
+	src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.17/index.global.min.js'></script>
+<script src='fullcalendar/dist/index.global.js'></script>
+<script src='fullcalendar/core/locales/es.global.js'></script>
+<script>
+	document.addEventListener('DOMContentLoaded', function() {
+
+		let calendarEl = document.getElementById('calendar');
+		var calendar = new FullCalendar.Calendar(calendarEl, {
+			initialView : 'dayGridMonth', //달력 양식
+			selectable : true, //날짜 칸 선택 가능 여부
+			height : 850, //높이 설정
+			locale : 'ko', //언어 지정
+			editable : true, //이벤트 수정 가능 여부
+			dayMaxEventRows : true, // 이벤트 최대 갯수 설정 및 팝오버 띄우기
+			views : {
+				timeGrid : {
+					dayMaxEventRows : 3 //하루 최대 이벤트 갯수
+				
+				}
+			},
+			// initialView: 'listMonth',// 일정 목록 
+			 dateClick: function(info) {
+    			//alert('Date: ' + info.dateStr);
+    			window.open('calendarWorkReg','popup','width=500 height=500');
+			 },
+			 select: function(info) {
+			      //alert('selected ' + info.startStr + ' to ' + info.endStr);
+			      
+			    },
+
+			events : [ //이벤트 만들기
+			{
+				title : '회의',
+				start : '2025-06-18'
+			}, 
+			{
+				title : '프로젝트 마감',
+				start : '2025-06-20',
+				end : '2025-06-21'
+			}, 
+			{
+				title : '2차 회의',
+				start : '2025-06-20',
+				end : '2025-06-21'
+			}, 
+			{
+				title : '3차회의',
+				start : '2025-06-20',
+				end : '2025-06-21'
+			} 
+			],
+			selectOverlap: function(event) {
+		        return event.display === 'background';
+			}
+			
+
+		});
+		calendar.render();
+	});
+</script>
 </head>
 <body>
- <div id='calendar'></div>
+	<div id='calendar'></div>
 </body>
 </html>
