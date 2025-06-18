@@ -1,11 +1,15 @@
 <!DOCTYPE html>
-<html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+				xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+				layout:decorate="layouts/mainLayout">
 <head>
 <meta charset="UTF-8">
-<title>Insert title here</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Index</title>
 </head>
 <body>
-
-<h1><a href = "/myCalendar">일정관리</a></h1>
+<div layout:fragment="content">
+    <h1>인덱스</h1>
+</div>
 </body>
 </html>
