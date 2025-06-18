@@ -5,11 +5,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Document</title>
-<link href="../../static/css/index.css" type="text/css" rel="stylesheet">
+<link rel="stylesheet" th:href="@{css/common.css}">
 </head>
 <body>
     <div th:replace="fragments/header::defaultHeader"></div>
-    <div layout:fragment="content"></div>
+    <div layout:fragment="content" class="content"></div>
     <div th:replace="fragments/footer::defaultFooter"></div>
 </body>
 </html>
