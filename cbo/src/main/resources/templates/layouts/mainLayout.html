@@ -9,7 +9,9 @@
 </head>
 <body>
     <div th:replace="fragments/header::defaultHeader"></div>
-    <div layout:fragment="content" class="content"></div>
+    <div class="body">
+        <div layout:fragment="content" class="content"></div>
+    </div>
     <div th:replace="fragments/footer::defaultFooter"></div>
 </body>
 </html>
