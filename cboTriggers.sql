@@ -101,12 +101,12 @@ BEGIN
 END;
 /
 
-CREATE OR REPLACE TRIGGER trg_approval_doc_id
-BEFORE INSERT ON approval_doc
+CREATE OR REPLACE TRIGGER trg_doc_id
+BEFORE INSERT ON doc
 FOR EACH ROW
 BEGIN
     IF :NEW.id IS NULL THEN
-        :NEW.id := sq_approval_doc_id.NEXTVAL;
+        :NEW.id := sq_doc_id.NEXTVAL;
     END IF;
 END;
 /

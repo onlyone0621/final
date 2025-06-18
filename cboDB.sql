@@ -6,7 +6,7 @@ drop table draft;
 drop table medical_support;
 drop table leave_application;
 drop table approval_line;
-drop table approval_doc;
+drop table doc;
 drop table chat_message;
 drop table chatroom_user;
 drop table chatroom;
@@ -31,7 +31,7 @@ drop sequence sq_chat_message_id;
 drop sequence sq_addr_id;
 drop sequence sq_groups_id;
 drop sequence sq_calendar_id;
-drop sequence sq_approval_doc_id;
+drop sequence sq_doc_id;
 drop sequence sq_approval_line_id;
 drop sequence sq_draft_id;
 drop sequence sq_medical_support_id;
@@ -51,7 +51,7 @@ create sequence sq_chat_message_id nocache;
 create sequence sq_addr_id nocache;
 create sequence sq_groups_id nocache;
 create sequence sq_calendar_id nocache;
-create sequence sq_approval_doc_id nocache; 
+create sequence sq_doc_id nocache; 
 create sequence sq_approval_line_id nocache;
 create sequence sq_draft_id nocache;
 create sequence sq_medical_support_id nocache;
@@ -201,7 +201,7 @@ create table calendar(
 
 );
 
-create table approval_doc(
+create table doc(
     
     id number(10) primary key,
     title varchar2(100) not null,
@@ -216,37 +216,37 @@ create table approval_doc(
 
 create table approval_line( 
 
-    approval_doc_id number(10) NOT NULL,
+    doc_id number(10) NOT NULL,
     member_id number(10),
     status varchar2(100) default '결재 예정',
     process_date DATE DEFAULT NULL,     
-    foreign key (approval_doc_id) references approval_doc(id) ON DELETE CASCADE,
+    foreign key (doc_id) references doc(id) ON DELETE CASCADE,
     foreign key (member_id) references member(id) ON DELETE SET NULL
 );
 
 CREATE TABLE draft (
     id NUMBER(10) PRIMARY KEY,
-    approval_doc_id NUMBER(10) UNIQUE NOT NULL,
+    doc_id NUMBER(10) UNIQUE NOT NULL,
     execution_date DATE NOT NULL,
     type VARCHAR2(100) NOT NULL,
     content VARCHAR2(300) NOT NULL,
-    foreign key (approval_doc_id) REFERENCES approval_doc(id) ON DELETE CASCADE
+    foreign key (doc_id) REFERENCES doc(id) ON DELETE CASCADE
 );
 
 CREATE TABLE medical_support (
     id NUMBER(10) PRIMARY KEY,
-    approval_doc_id NUMBER(10) UNIQUE NOT NULL,
+    doc_id NUMBER(10) UNIQUE NOT NULL,
     content VARCHAR2(300) NOT NULL,
     institution VARCHAR2(100) NOT NULL,
     diagnosis VARCHAR2(100) NOT NULL,
     requested NUMBER(10) NOT NULL,
     oop NUMBER(10) NOT NULL,
-    foreign key (approval_doc_id) REFERENCES approval_doc(id) ON DELETE CASCADE
+    foreign key (doc_id) REFERENCES doc(id) ON DELETE CASCADE
 );
 
 CREATE TABLE leave_application (
     id NUMBER(10) PRIMARY KEY,
-    approval_doc_id NUMBER(10) UNIQUE NOT NULL,
+    doc_id NUMBER(10) UNIQUE NOT NULL,
     dept VARCHAR2(300) NOT NULL,
     grade VARCHAR2(100) NOT NULL,
     name VARCHAR2(100) NOT NULL,
@@ -255,7 +255,7 @@ CREATE TABLE leave_application (
     end_date DATE NOT NULL,
     remaining NUMBER(5) NOT NULL,
     reason VARCHAR2(300) NOT NULL,
-    foreign key (approval_doc_id) REFERENCES approval_doc(id) ON DELETE CASCADE
+    foreign key (doc_id) REFERENCES doc(id) ON DELETE CASCADE
 );
 
 
