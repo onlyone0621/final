@@ -3,5 +3,11 @@
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.cbo.mapper.MemberMapper">
-	
+	<select id="selectMemberId" resultType="String" parameterType="String">
+		select user_id from member where user_id=#{user_id}
+	</select>
+	<insert id="insertMember" parameterType="com.cbo.member.model.MemberDTO">
+		insert into member(id,user_id,pwd,name,email,address,tel,join_date,dept_id,grade_id,profile_image) 
+		values(sq_member_id.nextval,#{user_id},#{pwd},#{name},#{email},#{address},#{tel},sysdate,#{dept_id},#{grade_id},null)
+	</insert>
 </mapper>

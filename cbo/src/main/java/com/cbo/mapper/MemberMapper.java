@@ -1,5 +1,8 @@
 package com.cbo.mapper;
 
-public interface MemberMapper {
+import com.cbo.member.model.MemberDTO;
 
+public interface MemberMapper {
+	public String selectMemberId(String user_id) throws Exception;
+	public int insertMember(MemberDTO dto) throws Exception;
 }
