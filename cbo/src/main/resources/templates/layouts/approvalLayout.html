@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+				xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Document</title>
+<link rel="stylesheet" th:href="@{css/common.css}">
+<link rel="stylesheet" th:href="@{css/approval-layout.css}">
+</head>
+<body>
+	<div th:replace="~{fragments/header :: defaultHeader}"></div>
+	<div class="body">
+		<div th:replace="~{fragments/sidebar :: approval}"></div>
+		<div class="content" layout:fragment="content"></div>
+	</div>
+	<div th:replace="~{fragments/footer :: defaultFooter}"></div>
+</body>
+</html>
