@@ -27,7 +27,7 @@
 
     input[type="text"],
     input[type="password"] {
-        width: 65%;
+        width: 45%;
         padding: 10px;
         border: 1px solid #ccc;
         border-radius: 6px;
@@ -37,9 +37,9 @@
     input[type="button"],
     input[type="submit"],
     input[type="reset"] {
-    	width: 19%;
+    	width: 23%;
         padding: 10px 15px;
-        background-color: #007bff;
+        background-color: #FFC6C6;
         color: white;
         border: none;
         border-radius: 6px;
@@ -52,29 +52,31 @@
     input[type="button"]:hover,
     input[type="submit"]:hover,
     input[type="reset"]:hover {
-        background-color: #0056b3;
+        background-color: #FFA2A2;
     }
 	#hlabel {
-		width: 50px;
+		color: #909090;
+		display: inline-block;
+		width: 100px;
 		margin-bottom: 5px;
         font-weight: bold;
+        font-size: 16px;
 	}
     #emailCode,
     #adrNum {
-        width: 30%;
+        width: 21%;
         margin-right: 10px;
     }
 
     #codeCheck,
-    input[value="주소찾기"] {
+    #addrFind {
         width: 20%;
     }
 
     #idCheckResult,
     #pwdCheckResult,
     #codeCheckResult {
-        color: #d00;
-        margin-left: 50px;
+        color: #FF5A5A;
         font-size: 13px;
     }
 
@@ -87,18 +89,91 @@
         justify-content: center;
     }
 </style>
+<script>
+var XHR=null;
+function getXHR(){
+	if(window.ActioveXObject){
+		return new ActiveXObject("Msxml2.XMLHTTP");
+	}else if(window.XMLHttpRequest){
+		return new XMLHttpRequest();
+	}else{
+		return null;
+	}
+}
+
+function sendRequest(url,params,callback,method){
+	XHR = getXHR();
+	var newMethod = method ? method : 'GET';//1차 유효성 검사
+	//2차 유효성 검사
+	if(newMethod!='GET' && newMethod!='POST'){
+		newMethod = 'GET';
+	}
+	//3차 유효성 검사
+	var newParams = (params==null||params=='') ? null : params;
+	if(newMethod=='GET' && newParams!=null){
+		url = url + '?' + newParams;
+	}
+	XHR.onreadystatechange=callback;
+	XHR.open(newMethod, url, true);
+	XHR.setRequestHeader('Context-Type','application/x-www-form-urlencoded');
+	XHR.send(newParams);
+}
+
+function checkId() {
+    var userId = document.getElementById("userId").value;
+    params = 'user_id='+userId;
+    sendRequest('memberIdCheck',params,idCheckResult,'GET');
+}
+function idCheckResult(){
+	if(XHR.readyState==4){
+		if(XHR.status==200){
+			var userId = document.getElementById("userId").value;
+			var resultIdCheck = document.getElementById("idCheckResult");
+			var data = XHR.responseText;
+			
+			if(userId == "") {
+		        resultIdCheck.innerHTML = "아이디를 입력해주세요.";
+		       return;
+		    }
+
+		    if(data == userId) {
+		        resultIdCheck.innerHTML = "이미 사용 중인 아이디입니다.";
+		    }else {
+		        resultIdCheck.innerHTML = "사용 가능한 아이디입니다.";
+		    }
+			
+		}
+	}
+}
+
+function checkPwd() {
+	var firstPwd = document.getElementById("pwd1").value;
+    var secondPwd = document.getElementById("pwd2").value;
+    var resultPwdCheck = document.getElementById("pwdCheckResult");
+    if(firstPwd == "" || secondPwd == ""){
+    	resultPwdCheck.innerHTML = "";
+    	return;
+    }
+    
+    if(firstPwd == secondPwd){
+    	resultPwdCheck.innerHTML = "비밀번호가 일치합니다.";
+    }else{
+    	resultPwdCheck.innerHTML = "비밀번호가 일치하지 않습니다.";
+    }
+}
+</script>
 </head>
 <body>
-<form>
+<form name="memberJoin" action="memberJoin" method="post" >
 <div>
     <div>
-        <label id="hlabel">아이디</label>
-        <input type="text" name="user_id" placeholder="아이디">
-        <input type="button" value="중복검사">
+		<label id="hlabel">아이디</label>
+        <input type="text" id="userId" name="user_id" placeholder="아이디">
+        <input type="button" value="중복검사" onclick="checkId()">
     </div>
     <div>
     	<label id="hlabel"></label>
-        <label id="idCheckResult">중복된 아이디입니다.</label>
+        <label id="idCheckResult"></label>
     </div>
     <div>
         <label id="hlabel">이름</label>
@@ -107,23 +182,25 @@
     <div>
         <label id="hlabel">이메일</label>
         <input type="text" name="email" placeholder="이메일">
-        <input type="button" value="이메일인증">
+        <input type="button" value="이메일 인증">
     </div>
     <div>
+    	<label id="hlabel"></label>
         <input type="text" id="emailCode" placeholder="인증코드">
         <input type="button" id="codeCheck" value="인증하기">
         <label id="codeCheckResult">인증 완료</label>
     </div>
     <div>
         <label id="hlabel">비밀번호</label>
-        <input type="password" name="pwd" placeholder="비밀번호">
+        <input type="password" id="pwd1" name="pwd" placeholder="비밀번호" onblur="checkPwd()">
     </div>
     <div>
         <label id="hlabel">비밀번호 확인</label>
-        <input type="password" name="pwdCheck" placeholder="비밀번호 확인">
+        <input type="password" id="pwd2" placeholder="비밀번호 확인" onblur="checkPwd()">
     </div>
     <div>
-        <label id="pwdCheckResult">비밀번호가 일치하지 않습니다.</label>
+    	<label id="hlabel"></label>
+        <label id="pwdCheckResult"></label>
     </div>
     <div>
         <label id="hlabel">부서</label>
@@ -140,9 +217,10 @@
     <div>
         <label id="hlabel">주소</label>
         <input type="text" id="adrNum" placeholder="우편번호">
-        <input type="button" value="주소찾기">
+        <input type="button" id="addrFind" value="주소찾기">
     </div>
     <div>
+    	<label id="hlabel"></label>
         <input type="text" name="address" placeholder="상세주소">
     </div>
     <div class="button-group">
