@@ -32,18 +32,23 @@ body {
     font-weight: bolder;
 }
 
-ul {
+.header-links {
     display: flex;
     list-style-type: none;
     margin: 0;
     padding: 0;
-    gap: 16px;
+    gap: 48px;
     font-size: 18px;
 }
 
-a {
+.header-links > li > a {
     text-decoration: none;
     color: #e5e7eb;
+}
+
+.header-buttons {
+    display: flex;
+    gap: 24px;
 }
 
 .content {
