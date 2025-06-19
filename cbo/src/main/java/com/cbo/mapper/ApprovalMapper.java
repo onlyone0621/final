@@ -1,5 +1,9 @@
 package com.cbo.mapper;
 
-public interface ApprovalMapper {
+import java.util.List;
 
+import com.cbo.member.model.OrganDTO;
+
+public interface ApprovalMapper {
+	List<OrganDTO> selectMembers() throws Exception;
 }
