@@ -570,4 +570,42 @@ VALUES (sq_leave_application_id.NEXTVAL, 19, '영업부', '과장', '조재현',
 INSERT INTO leave_application (id, doc_id, dept, grade, name, type, start_date, end_date, remaining, reason)
 VALUES (sq_leave_application_id.NEXTVAL, 20, '인사부', '대리', '정해린', '병가', TO_DATE('2025-07-22','YYYY-MM-DD'), TO_DATE('2025-07-23','YYYY-MM-DD'), 6, '치료');
 
-COMMIT
+-- approval line sample
+-- 1) 기안자 결재 완료
+INSERT INTO approval_line (doc_id, member_id, status, process_date)
+SELECT d.id, d.member_id, '결재 완료', d.write_date
+FROM doc d
+WHERE d.member_id IS NOT NULL AND d.id BETWEEN 1 AND 20;
+
+-- 2) 참조자 랜덤 (기안자 제외, 이미 삽입된 멤버 제외)
+INSERT INTO approval_line (doc_id, member_id, status, process_date)
+SELECT
+  d.id,
+  (
+    SELECT id FROM (
+      SELECT id, DBMS_RANDOM.VALUE() AS rnd
+      FROM member
+      WHERE id != d.member_id
+        AND id NOT IN (
+          SELECT member_id FROM approval_line al WHERE al.doc_id = d.id
+        )
+      ORDER BY rnd
+    ) WHERE ROWNUM = 1
+  ),
+  '참조',
+  d.write_date
+FROM doc d
+WHERE d.id BETWEEN 1 AND 20;
+
+-- 3) 나머지 멤버 결재 예정
+INSERT INTO approval_line (doc_id, member_id, status, process_date)
+SELECT d.id, m.id, '결재 예정', NULL
+FROM doc d
+CROSS JOIN member m
+WHERE d.id BETWEEN 1 AND 20
+  AND m.id NOT IN (
+    SELECT member_id FROM approval_line al WHERE al.doc_id = d.id
+  );
+
+
+COMMIT;
