@@ -311,3 +311,136 @@ create table community_comment(
     foreign key (member_id) references member(id) ON DELETE SET NULL
 
 );
+
+
+-- Sample
+INSERT INTO dept (name) VALUES ('기획부');
+INSERT INTO dept (name) VALUES ('개발부');
+INSERT INTO dept (name) VALUES ('인사부');
+
+INSERT INTO grade (name, seq) VALUES ('이사', 1);
+INSERT INTO grade (name, seq) VALUES ('부장', 2);
+INSERT INTO grade (name, seq) VALUES ('차장', 3);
+INSERT INTO grade (name, seq) VALUES ('과장', 4);
+INSERT INTO grade (name, seq) VALUES ('대리', 5);
+INSERT INTO grade (name, seq) VALUES ('사원', 6);
+
+INSERT INTO member (
+    user_id, pwd, name, email, address, tel, dept_id, grade_id, profile_image
+) VALUES (
+    'user01', '1234', '홍길동', 'user01@example.com', '서울시 강남구', '010-1111-1111', 1, 2, NULL
+);
+
+INSERT INTO member (
+    user_id, pwd, name, email, address, tel, dept_id, grade_id, profile_image
+) VALUES (
+    'user02', '1234', '김철수', 'user02@example.com', '서울시 서초구', '010-2222-2222', 2, 4, NULL
+);
+
+INSERT INTO member (
+    user_id, pwd, name, email, address, tel, dept_id, grade_id, profile_image
+) VALUES (
+    'user03', '1234', '이영희', 'user03@example.com', '서울시 송파구', '010-3333-3333', 3, 6, NULL
+);
+
+INSERT INTO member (
+    user_id, pwd, name, email, address, tel, dept_id, grade_id, profile_image
+) VALUES (
+    'user04', '1234', '박민수', 'user04@example.com', '경기도 수원시', '010-4444-4444', 1, 3, NULL
+);
+
+INSERT INTO member (
+    user_id, pwd, name, email, address, tel, dept_id, grade_id, profile_image
+) VALUES (
+    'user05', '1234', '최수정', 'user05@example.com', '인천시 연수구', '010-5555-5555', 2, 5, NULL
+);
+
+INSERT INTO member (
+    user_id, pwd, name, email, address, tel, dept_id, grade_id, profile_image
+) VALUES (
+    'user06', '1234', '조현우', 'user06@example.com', '서울시 동작구', '010-6666-6666', 3, 1, NULL
+);
+
+INSERT INTO member (
+    user_id, pwd, name, email, address, tel, dept_id, grade_id, profile_image
+) VALUES (
+    'user07', '1234', '한예진', 'user07@example.com', '서울시 은평구', '010-7777-7777', 1, 6, NULL
+);
+
+INSERT INTO member (
+    user_id, pwd, name, email, address, tel, dept_id, grade_id, profile_image
+) VALUES (
+    'user08', '1234', '정재훈', 'user08@example.com', '경기도 용인시', '010-8888-8888', 2, 3, NULL
+);
+
+INSERT INTO member (
+    user_id, pwd, name, email, address, tel, dept_id, grade_id, profile_image
+) VALUES (
+    'user09', '1234', '서지수', 'user09@example.com', '서울시 마포구', '010-9999-9999', 3, 2, NULL
+);
+
+INSERT INTO member (
+    user_id, pwd, name, email, address, tel, dept_id, grade_id, profile_image
+) VALUES (
+    'user10', '1234', '장도연', 'user10@example.com', '서울시 종로구', '010-1010-1010', 1, 4, NULL
+);
+
+INSERT INTO member (
+    user_id, pwd, name, email, address, tel, dept_id, grade_id, profile_image
+) VALUES (
+    'user11', '1234', '백민정', 'user11@example.com', '서울시 중랑구', '010-1112-1112', 2, 3, NULL
+);
+
+INSERT INTO member (
+    user_id, pwd, name, email, address, tel, dept_id, grade_id, profile_image
+) VALUES (
+    'user12', '1234', '윤정우', 'user12@example.com', '서울시 양천구', '010-1212-1212', 3, 4, NULL
+);
+
+INSERT INTO member (
+    user_id, pwd, name, email, address, tel, dept_id, grade_id, profile_image
+) VALUES (
+    'user13', '1234', '강서연', 'user13@example.com', '경기도 부천시', '010-1313-1313', 1, 6, NULL
+);
+
+INSERT INTO member (
+    user_id, pwd, name, email, address, tel, dept_id, grade_id, profile_image
+) VALUES (
+    'user14', '1234', '문상혁', 'user14@example.com', '서울시 구로구', '010-1414-1414', 2, 2, NULL
+);
+
+INSERT INTO member (
+    user_id, pwd, name, email, address, tel, dept_id, grade_id, profile_image
+) VALUES (
+    'user15', '1234', '오하늘', 'user15@example.com', '경기도 고양시', '010-1515-1515', 3, 5, NULL
+);
+
+INSERT INTO member (
+    user_id, pwd, name, email, address, tel, dept_id, grade_id, profile_image
+) VALUES (
+    'user16', '1234', '신도현', 'user16@example.com', '서울시 노원구', '010-1616-1616', 1, 1, NULL
+);
+
+INSERT INTO member (
+    user_id, pwd, name, email, address, tel, dept_id, grade_id, profile_image
+) VALUES (
+    'user17', '1234', '김다은', 'user17@example.com', '경기도 남양주시', '010-1717-1717', 2, 6, NULL
+);
+
+INSERT INTO member (
+    user_id, pwd, name, email, address, tel, dept_id, grade_id, profile_image
+) VALUES (
+    'user18', '1234', '조민기', 'user18@example.com', '서울시 강서구', '010-1818-1818', 3, 3, NULL
+);
+
+INSERT INTO member (
+    user_id, pwd, name, email, address, tel, dept_id, grade_id, profile_image
+) VALUES (
+    'user19', '1234', '서유리', 'user19@example.com', '서울시 은평구', '010-1919-1919', 1, 2, NULL
+);
+
+INSERT INTO member (
+    user_id, pwd, name, email, address, tel, dept_id, grade_id, profile_image
+) VALUES (
+    'user20', '1234', '임재훈', 'user20@example.com', '서울시 관악구', '010-2020-2020', 2, 4, NULL
+);
