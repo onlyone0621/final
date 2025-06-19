@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>커뮤니티 보기</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Arial', sans-serif;
+      color: #333;
+    }
+
+    .layout {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    .sidebar {
+      width: 200px;
+      background-color: #fbf9fd; 
+      padding: 20px;
+      box-sizing: border-box;
+      border-right: 1px solid #ddd; /* 오른쪽 경계선 */
+    }
+
+    .sidebar h4 {
+      margin-bottom: 15px;
+      font-size: 18px;
+    }
+
+    .sidebar button {
+      width: 100%;
+      padding: 8px;
+      margin-bottom: 15px;
+      background-color: #eee;
+      border: 1px solid #ccc;
+      cursor: pointer;
+    }
+
+    .sidebar ul {
+      list-style: none;
+      padding-left: 0;
+      font-size: 14px;
+    }
+
+    .sidebar ul li {
+      margin-bottom: 8px;
+    }
+
+
+    .main-content { /** 중간정렬해줌*/
+      flex: 1;
+      padding: 20px;
+    }
+
+    .main-tabs {
+      display: flex;/**가운데 정랼*/
+      gap: 1rem;
+      margin-bottom: 20px;
+      border-bottom: 1px solid #ddd;
+    }
+
+    .tab {
+      padding: 8px 12px;
+      font-weight: bold;
+      color: #666;
+      cursor: pointer;
+    }
+
+    .tab.active {
+      color: #000;
+      border-bottom: 2px solid #f381a3;
+    }
+    /** 목록 꾸밈*/
+    .post-list {
+      list-style: none;
+      padding-left: 0;
+    }
+
+    .post-list li {
+      padding: 8px 0;
+      border-bottom: 1px solid #eee;
+    }
+  </style>
+</head>
+<body>
+
+<div class="layout">
+  <!-- 왼쪽 사이드바 -->
+  <div class="sidebar">
+    <h4>커뮤니티</h4>
+    <button>커뮤니티 생성</button>
+    <ul>
+      <li>가입 커뮤니티 1</li>
+      <li>가입 커뮤니티 2</li>
+      <li>가입 커뮤니티 3</li>
+    </ul>
+  </div>
+
+  <!-- 메인 콘텐츠 -->
+  <div class="main-content">
+    <div class="main-tabs">
+      <div class="tab active"><a href="communityMainNewest">최근글</a></div>
+      <div class="tab"><a href="communityMainJoin">가입 커뮤니티</a></div>
+      <div class="tab "><a href="communityMainAll">전체 커뮤니티</a></div>
+    </div>
+
+    <ul class="post-list">
+      <li>최신글 1</li>
+      <li>최신글 2</li>
+      <li>최신글 3</li>
+      <li>최신글 4</li>
+      <li>최신글 5</li>
+    </ul>
+  </div>
+</div>
+
+</body>
+</html>
