@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width= , initial-scale=1.0">
+  <title>커뮤니티 보기</title>
+  <style>
+    .tab-wrapper {
+      display: flex;
+      gap: 1.5rem;
+      margin-bottom: 20px;
+      border-bottom: 1px solid #ccc;
+    }
+
+    .tab {
+      padding: 10px;
+      font-weight: bold;
+      color: #666;
+      cursor: pointer;
+    }
+
+    .tab.active {
+      color: #000;
+      border-bottom: 3px solid #f381a3;
+    }
+
+    .step-container {
+      display: flex;
+      gap: 2rem;
+    }
+  </style>
+</head>
+<body>
+
+<div style="display: flex;">
+  
+  <!-- 사이드바 -->
+  <div style="width: 200px; background-color: #f4eefc; padding: 20px;">
+    <h4>커뮤니티</h4>
+    <button>커뮤니티 생성</button>
+    <ul>
+      <li>가입 커뮤니티 1</li>
+      <li>가입 커뮤니티 2</li>
+      <li>가입 커뮤니티 3</li>
+    </ul>
+  </div>
+
+  <!-- 메인 영역 -->
+  <div style="flex-grow: 1; padding: 20px;">
+
+    <!-- 탭 메뉴 -->
+    <div class="tab-wrapper">
+      <div class="tab"><a href="communityMainNewest">최근글</a></div>
+      <div class="tab"><a href="communityMainJoin">가입 커뮤니티</a></div>
+      <div class="tab active"><a href="communityMainAll">전체 커뮤니티</a></div>
+    </div>
+
+    <!-- 테이블 -->
+    <table border="1" cellspacing="0" width="100%">
+      <thead>
+        <tr>
+          <th>커뮤니티</th>
+          <th>회원수</th>
+          <th>전체글</th>
+          <th>마스터</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>아이디어 공유</td>
+          <td>2</td>
+          <td>3</td>
+          <td>박주연</td>
+        </tr>
+         <tr>
+          <td>아이디어 공유</td>
+          <td>5</td>
+          <td>5</td>
+          <td>박주연</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+</body>
+</html>
