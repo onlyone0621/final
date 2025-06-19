@@ -96,11 +96,6 @@ create table member(
     foreign key (grade_id) references grade(id) ON DELETE SET NULL 
 );
 
-create table mail(
-    email varchar2(30) primary key,
-    code varchar2(30)
-);
-    
 create table message(
 
     id number(10) primary key,
