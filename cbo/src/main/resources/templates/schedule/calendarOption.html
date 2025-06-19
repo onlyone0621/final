@@ -1,26 +1,25 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
 <html>
 <head>
 <meta charset="UTF-8">
-<title>업무 등록</title>
+<title>삭제 및 수정</title>
 </head>
-<script>
-
-
-</script>
 <body>
-<form action="/workReg">
-<label>기간을 선택 해주세요</label><br>
+
 <label>시작일</label>
 <input type = "date" name = "start_time" id = "startDate" max = "2060-01-01" min = "2025-06-18" th:value = "${start_date}"><br>
 <label>종료일</label>
 <input type = "date" name = "end_time" id = "endDate" max = "2060-01-01" min = "2025-06-18" th:value = "${end_date}"><br>
 <label>제목</label>
-<input type = "text" name = "title" value = ""><br>
-<label>내용</label>
-<input type = "text" name = "content"><br>
-<input type = "submit" value = "등록">
+<input type = "text" name = "title" th:value = "${title}"><br>
+
+
+<form action="deleteWork">
+<input type = "submit" value = "삭제하기">
+</form>
+
+<form action="updateWork">
+<input type = "submit" value = "수정하기">
 </form>
 </body>
 </html>
