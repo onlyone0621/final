@@ -2,10 +2,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Insert title here</title>
-<script>
-
-</script>
+<title>캘린더</title>
 <script
 	src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.17/index.global.min.js'></script>
 <script src='fullcalendar/dist/index.global.js'></script>
@@ -14,7 +11,12 @@
 	document.addEventListener('DOMContentLoaded', function() {
 
 		let calendarEl = document.getElementById('calendar');
+		
+		 fetch('/api/calendar/events')
+	        .then(response => response.json())
+	        .then(eventsData => {
 		var calendar = new FullCalendar.Calendar(calendarEl, {
+
 			initialView : 'dayGridMonth', //달력 양식
 			selectable : true, //날짜 칸 선택 가능 여부
 			height : 850, //높이 설정
@@ -27,44 +29,48 @@
 				
 				}
 			},
+			
 			// initialView: 'listMonth',// 일정 목록 
 			 dateClick: function(info) {
-    			//alert('Date: ' + info.dateStr);
-    			window.open('calendarWorkReg','popup','width=500 height=500');
+    			//window.open('calendarWorkReg?start_date=' + info.dateStr,'popup','width=500 height=500');
 			 },
 			 select: function(info) {
-			      //alert('selected ' + info.startStr + ' to ' + info.endStr);
-			      
-			    },
+				    var endStr = info.endStr;
+				    
+				    let date = new Date(endStr);
+				    date.setDate(date.getDate() - 1);
+				   
+				    let yyyy = date.getFullYear();
+				    let mm = String(date.getMonth() + 1).padStart(2, '0');
+				    let dd = String(date.getDate()).padStart(2, '0');
+				    
+				    endStr = `${yyyy}-${mm}-${dd}`;
+				   
+				  //  alert('selected ' + info.startStr + ' to ' + endStr);
 
-			events : [ //이벤트 만들기
-			{
-				title : '회의',
-				start : '2025-06-18'
-			}, 
-			{
-				title : '프로젝트 마감',
-				start : '2025-06-20',
-				end : '2025-06-21'
-			}, 
-			{
-				title : '2차 회의',
-				start : '2025-06-20',
-				end : '2025-06-21'
-			}, 
-			{
-				title : '3차회의',
-				start : '2025-06-20',
-				end : '2025-06-21'
-			} 
-			],
-			selectOverlap: function(event) {
-		        return event.display === 'background';
-			}
+				    
+				    window.open('calendarWorkReg?start_date=' + info.startStr + '&end_date=' + endStr, 'createPopup', 'width=500,height=500');
+				    },
+			    eventClick: function(info) { //이벤트 클릭시
+			    	 var endStr = info.event.endStr;
+					    let date = new Date(endStr);
+					    date.setDate(date.getDate() - 1);
+					    let yyyy = date.getFullYear();
+					    let mm = String(date.getMonth() + 1).padStart(2, '0');
+					    let dd = String(date.getDate()).padStart(2, '0');
+					    endStr = `${yyyy}-${mm}-${dd}`;
+					    
+			        //alert('start: ' + info.event.startStr + 'end : '+ endStr );
+			    	window.open('calendarOption?start_date='+info.event.startStr+'&end_date='+endStr+'&title='+info.event.title, 'optionPopup','width=500,height=500');
+			    },	
+		            events: eventsData,
+		            
+			
 			
 
 		});
 		calendar.render();
+	});
 	});
 </script>
 </head>
