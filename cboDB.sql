@@ -1,4 +1,4 @@
-drop table community_comment;
+`drop table community_comment;
 drop table community_post;
 drop table community_member;
 drop table community;
@@ -95,7 +95,7 @@ create table member(
     foreign key (dept_id) references dept(id) ON DELETE SET NULL,
     foreign key (grade_id) references grade(id) ON DELETE SET NULL 
 );
-    
+
 create table message(
 
     id number(10) primary key,
@@ -149,6 +149,7 @@ create table chatroom_user(
     chatroom_id number(10) not null,
     member_id number(10) not null,
     join_date date DEFAULT SYSDATE NOT NULL,
+    CONSTRAINT pk_chatroom PRIMARY KEY (chatroom_id, member_id),
     foreign key (chatroom_id) references chatroom(id) ON DELETE CASCADE,
     foreign key (member_id) references member(id) ON DELETE CASCADE  
 
@@ -181,6 +182,7 @@ create table addr_group(
 
     addr_id number(10) not null,
     groups_id number(10) not null,
+    CONSTRAINT pk_addr_group PRIMARY KEY (addr_id, groups_id),
     foreign key (addr_id) references addr(id) ON DELETE CASCADE,
     foreign key (groups_id) references groups(id) ON DELETE CASCADE
 
@@ -208,27 +210,27 @@ create table doc(
     member_id number(10),
     dept_id number(10),
     write_date date DEFAULT SYSDATE NOT NULL,
-    retention NUMBER(5) not null,
+    retention NUMBER(5) DEFAULT 5 not null,
     foreign key (member_id) references member(id) ON DELETE SET NULL,
     foreign key (dept_id) references dept(id) ON DELETE SET NULL
     
 );
 
-create table approval_line( 
-
-    doc_id number(10) NOT NULL,
-    member_id number(10),
-    status varchar2(100) default '결재 예정',
-    process_date DATE DEFAULT NULL,     
-    foreign key (doc_id) references doc(id) ON DELETE CASCADE,
-    foreign key (member_id) references member(id) ON DELETE SET NULL
+CREATE TABLE approval_line (
+    doc_id NUMBER(10) NOT NULL,
+    member_id NUMBER(10),
+    status VARCHAR2(100) DEFAULT '결재 예정' CHECK (status IN ('결재 예정', '결재 완료', '참조', '반려')),
+    process_date DATE DEFAULT NULL,
+    CONSTRAINT pk_approval_line PRIMARY KEY (doc_id, member_id),
+    CONSTRAINT fk_approval_line_doc FOREIGN KEY (doc_id) REFERENCES doc(id) ON DELETE CASCADE,
+    CONSTRAINT fk_approval_line_member FOREIGN KEY (member_id) REFERENCES member(id) ON DELETE SET NULL
 );
 
 CREATE TABLE draft (
     id NUMBER(10) PRIMARY KEY,
     doc_id NUMBER(10) UNIQUE NOT NULL,
     execution_date DATE NOT NULL,
-    type VARCHAR2(100) NOT NULL,
+    type VARCHAR2(100) NOT NULL CHECK (type IN ('인가', '조건부', '보류', '부결')),
     content VARCHAR2(300) NOT NULL,
     foreign key (doc_id) REFERENCES doc(id) ON DELETE CASCADE
 );
@@ -250,7 +252,7 @@ CREATE TABLE leave_application (
     dept VARCHAR2(300) NOT NULL,
     grade VARCHAR2(100) NOT NULL,
     name VARCHAR2(100) NOT NULL,
-    type NUMBER(10) NOT NULL,
+    type VARCHAR2(100) NOT NULL,
     start_date DATE NOT NULL,
     end_date DATE NOT NULL,
     remaining NUMBER(5) NOT NULL,
@@ -291,6 +293,7 @@ create table community_member(
     member_id number(10) NOT NULL,
     type varchar2(100),
     join_date date DEFAULT SYSDATE NOT NULL,
+    CONSTRAINT pk_community_member PRIMARY KEY (community_id, member_id),
     foreign key (community_id) references community(id) ON DELETE CASCADE,
     foreign key (member_id) references member(id) ON DELETE CASCADE
 
@@ -314,10 +317,12 @@ create table community_comment(
 
 
 -- Sample
+-- dept sample
 INSERT INTO dept (id, name) VALUES (sq_dept_id.NEXTVAL, '기획부');
 INSERT INTO dept (id, name) VALUES (sq_dept_id.NEXTVAL, '개발부');
 INSERT INTO dept (id, name) VALUES (sq_dept_id.NEXTVAL, '인사부');
 
+-- grade sample
 INSERT INTO grade (id, name, seq) VALUES (sq_grade_id.NEXTVAL, '이사', 1);
 INSERT INTO grade (id, name, seq) VALUES (sq_grade_id.NEXTVAL, '부장', 2);
 INSERT INTO grade (id, name, seq) VALUES (sq_grade_id.NEXTVAL, '차장', 3);
@@ -325,6 +330,7 @@ INSERT INTO grade (id, name, seq) VALUES (sq_grade_id.NEXTVAL, '과장', 4);
 INSERT INTO grade (id, name, seq) VALUES (sq_grade_id.NEXTVAL, '대리', 5);
 INSERT INTO grade (id, name, seq) VALUES (sq_grade_id.NEXTVAL, '사원', 6);
 
+-- member sample
 INSERT INTO member (
     id, user_id, pwd, name, email, address, tel, join_date, dept_id, grade_id, profile_image
 ) VALUES (
@@ -444,3 +450,165 @@ INSERT INTO member (
 ) VALUES (
     sq_member_id.NEXTVAL, 'user020', '1234', '유인나', 'user020@example.com', '서울시 성북구', '010-1020-1020', DEFAULT, 2, 4, NULL
 );
+
+-- Docs sample
+INSERT INTO doc (id, title, member_id, dept_id)
+VALUES (sq_doc_id.NEXTVAL, '2025 상반기 예산 집행 보고서', 1, 1);
+
+INSERT INTO doc (id, title, member_id, dept_id)
+VALUES (sq_doc_id.NEXTVAL, '재택근무 제도 개선안', 2, 2);
+
+INSERT INTO doc (id, title, member_id, dept_id)
+VALUES (sq_doc_id.NEXTVAL, '고객 응대 매뉴얼 개정안', 3, 3);
+
+INSERT INTO doc (id, title, member_id, dept_id)
+VALUES (sq_doc_id.NEXTVAL, '신규 시스템 도입 검토서', 4, 1);
+
+INSERT INTO doc (id, title, member_id, dept_id)
+VALUES (sq_doc_id.NEXTVAL, '프로젝트 Alpha 종료 보고', 5, 2);
+
+INSERT INTO doc (id, title, member_id, dept_id)
+VALUES (sq_doc_id.NEXTVAL, '직원 만족도 조사 결과 분석', 6, 3);
+
+INSERT INTO doc (id, title, member_id, dept_id)
+VALUES (sq_doc_id.NEXTVAL, '사내 교육 프로그램 개선안', 7, 1);
+
+INSERT INTO doc (id, title, member_id, dept_id)
+VALUES (sq_doc_id.NEXTVAL, '외부 감사 대응 계획', 8, 2);
+
+INSERT INTO doc (id, title, member_id, dept_id)
+VALUES (sq_doc_id.NEXTVAL, '근무환경 개선 요청서', 9, 3);
+
+INSERT INTO doc (id, title, member_id, dept_id)
+VALUES (sq_doc_id.NEXTVAL, '분기별 실적 분석 보고서', 10, 1);
+
+INSERT INTO doc (id, title, member_id, dept_id)
+VALUES (sq_doc_id.NEXTVAL, '부서 통합에 따른 운영 방안', 11, 2);
+
+INSERT INTO doc (id, title, member_id, dept_id)
+VALUES (sq_doc_id.NEXTVAL, '프로젝트 Beta 인력 요청', 12, 3);
+
+INSERT INTO doc (id, title, member_id, dept_id)
+VALUES (sq_doc_id.NEXTVAL, '회계 처리 규정 변경 제안', 13, 1);
+
+INSERT INTO doc (id, title, member_id, dept_id)
+VALUES (sq_doc_id.NEXTVAL, '신입사원 교육 일정안', 14, 2);
+
+INSERT INTO doc (id, title, member_id, dept_id)
+VALUES (sq_doc_id.NEXTVAL, '내부 보안정책 개편안', 15, 3);
+
+INSERT INTO doc (id, title, member_id, dept_id)
+VALUES (sq_doc_id.NEXTVAL, '시스템 점검 결과 보고서', 16, 1);
+
+INSERT INTO doc (id, title, member_id, dept_id)
+VALUES (sq_doc_id.NEXTVAL, '기술 세미나 개최 계획서', 17, 2);
+
+INSERT INTO doc (id, title, member_id, dept_id)
+VALUES (sq_doc_id.NEXTVAL, '인사평가 기준 개편 제안', 18, 3);
+
+INSERT INTO doc (id, title, member_id, dept_id)
+VALUES (sq_doc_id.NEXTVAL, '공간 재배치 요청서', 19, 1);
+
+INSERT INTO doc (id, title, member_id, dept_id)
+VALUES (sq_doc_id.NEXTVAL, '외부 교육 참가 보고', 20, 2);
+
+
+INSERT INTO draft (id, doc_id, execution_date, type, content)
+VALUES (sq_draft_id.NEXTVAL, 1, TO_DATE('2025-06-01', 'YYYY-MM-DD'), '인가', '상반기 예산 승인 요청');
+
+INSERT INTO draft (id, doc_id, execution_date, type, content)
+VALUES (sq_draft_id.NEXTVAL, 2, TO_DATE('2025-06-02', 'YYYY-MM-DD'), '조건부', '제도 개선에 대한 조건부 승인');
+
+INSERT INTO draft (id, doc_id, execution_date, type, content)
+VALUES (sq_draft_id.NEXTVAL, 3, TO_DATE('2025-06-03', 'YYYY-MM-DD'), '보류', '매뉴얼 개정안 검토 필요');
+
+INSERT INTO draft (id, doc_id, execution_date, type, content)
+VALUES (sq_draft_id.NEXTVAL, 4, TO_DATE('2025-06-04', 'YYYY-MM-DD'), '부결', '시스템 도입 불가');
+
+INSERT INTO draft (id, doc_id, execution_date, type, content)
+VALUES (sq_draft_id.NEXTVAL, 5, TO_DATE('2025-06-05', 'YYYY-MM-DD'), '인가', '프로젝트 종료 승인');
+
+INSERT INTO draft (id, doc_id, execution_date, type, content)
+VALUES (sq_draft_id.NEXTVAL, 6, TO_DATE('2025-06-06', 'YYYY-MM-DD'), '조건부', '만족도 조사 보고');
+
+INSERT INTO draft (id, doc_id, execution_date, type, content)
+VALUES (sq_draft_id.NEXTVAL, 7, TO_DATE('2025-06-07', 'YYYY-MM-DD'), '인가', '교육 개선안 승인 요청');
+
+INSERT INTO medical_support (id, doc_id, content, institution, diagnosis, requested, oop)
+VALUES (sq_medical_support_id.NEXTVAL, 8, '외부 감사로 인한 스트레스 치료 지원 요청', '서울정신건강센터', '스트레스', 200000, 40000);
+
+INSERT INTO medical_support (id, doc_id, content, institution, diagnosis, requested, oop)
+VALUES (sq_medical_support_id.NEXTVAL, 9, '업무 과중으로 인한 허리 통증 치료', '서울의료원', '요통', 250000, 50000);
+
+INSERT INTO medical_support (id, doc_id, content, institution, diagnosis, requested, oop)
+VALUES (sq_medical_support_id.NEXTVAL, 10, '잦은 출장으로 인한 무릎 통증 치료', '강남한방병원', '관절염', 300000, 60000);
+
+INSERT INTO medical_support (id, doc_id, content, institution, diagnosis, requested, oop)
+VALUES (sq_medical_support_id.NEXTVAL, 11, '장시간 근무로 인한 안구 건조증', '서울안과의원', '안구건조증', 120000, 20000);
+
+INSERT INTO medical_support (id, doc_id, content, institution, diagnosis, requested, oop)
+VALUES (sq_medical_support_id.NEXTVAL, 12, '허리디스크 재활 치료 지원 요청', '바른척추병원', '디스크', 400000, 80000);
+
+INSERT INTO medical_support (id, doc_id, content, institution, diagnosis, requested, oop)
+VALUES (sq_medical_support_id.NEXTVAL, 13, '장기 근무자 건강검진 비용 지원 요청', '한국의료원', '종합검진', 500000, 100000);
+
+INSERT INTO medical_support (id, doc_id, content, institution, diagnosis, requested, oop)
+VALUES (sq_medical_support_id.NEXTVAL, 14, '복부통증 응급 치료 요청', '서울응급병원', '복통', 180000, 30000);
+
+INSERT INTO leave_application (id, doc_id, dept, grade, name, type, start_date, end_date, remaining, reason)
+VALUES (sq_leave_application_id.NEXTVAL, 15, '기획부', '과장', '홍길동', '연차', TO_DATE('2025-07-01','YYYY-MM-DD'), TO_DATE('2025-07-03','YYYY-MM-DD'), 5, '개인 사유');
+
+INSERT INTO leave_application (id, doc_id, dept, grade, name, type, start_date, end_date, remaining, reason)
+VALUES (sq_leave_application_id.NEXTVAL, 16, '개발부', '대리', '김영희', '병가', TO_DATE('2025-07-05','YYYY-MM-DD'), TO_DATE('2025-07-07','YYYY-MM-DD'), 3, '감기');
+
+INSERT INTO leave_application (id, doc_id, dept, grade, name, type, start_date, end_date, remaining, reason)
+VALUES (sq_leave_application_id.NEXTVAL, 17, '총무부', '사원', '박민수', '연차', TO_DATE('2025-07-10','YYYY-MM-DD'), TO_DATE('2025-07-11','YYYY-MM-DD'), 7, '여행');
+
+INSERT INTO leave_application (id, doc_id, dept, grade, name, type, start_date, end_date, remaining, reason)
+VALUES (sq_leave_application_id.NEXTVAL, 18, '기획부', '차장', '이은지', '가족돌봄', TO_DATE('2025-07-15','YYYY-MM-DD'), TO_DATE('2025-07-16','YYYY-MM-DD'), 2, '자녀 병원 진료');
+
+INSERT INTO leave_application (id, doc_id, dept, grade, name, type, start_date, end_date, remaining, reason)
+VALUES (sq_leave_application_id.NEXTVAL, 19, '영업부', '과장', '조재현', '연차', TO_DATE('2025-07-18','YYYY-MM-DD'), TO_DATE('2025-07-20','YYYY-MM-DD'), 4, '휴식');
+
+INSERT INTO leave_application (id, doc_id, dept, grade, name, type, start_date, end_date, remaining, reason)
+VALUES (sq_leave_application_id.NEXTVAL, 20, '인사부', '대리', '정해린', '병가', TO_DATE('2025-07-22','YYYY-MM-DD'), TO_DATE('2025-07-23','YYYY-MM-DD'), 6, '치료');
+
+-- approval line sample
+-- 1) 기안자 결재 완료
+INSERT INTO approval_line (doc_id, member_id, status, process_date)
+SELECT d.id, d.member_id, '결재 완료', d.write_date
+FROM doc d
+WHERE d.member_id IS NOT NULL AND d.id BETWEEN 1 AND 20;
+
+-- 2) 참조자 랜덤 (기안자 제외, 이미 삽입된 멤버 제외)
+INSERT INTO approval_line (doc_id, member_id, status, process_date)
+SELECT
+  d.id,
+  (
+    SELECT id FROM (
+      SELECT id, DBMS_RANDOM.VALUE() AS rnd
+      FROM member
+      WHERE id != d.member_id
+        AND id NOT IN (
+          SELECT member_id FROM approval_line al WHERE al.doc_id = d.id
+        )
+      ORDER BY rnd
+    ) WHERE ROWNUM = 1
+  ),
+  '참조',
+  d.write_date
+FROM doc d
+WHERE d.id BETWEEN 1 AND 20;
+
+-- 3) 나머지 멤버 결재 예정
+INSERT INTO approval_line (doc_id, member_id, status, process_date)
+SELECT d.id, m.id, '결재 예정', NULL
+FROM doc d
+CROSS JOIN member m
+WHERE d.id BETWEEN 1 AND 20
+  AND m.id NOT IN (
+    SELECT member_id FROM approval_line al WHERE al.doc_id = d.id
+  );
+
+
+COMMIT;
