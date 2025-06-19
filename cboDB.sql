@@ -16,9 +16,9 @@ drop table calendar;
 drop table addr_group;
 drop table groups;
 drop table addr;
-drop table member;
-drop table dept;
-drop table grade;
+drop table member CASCADE CONSTRAINTS;
+drop table dept CASCADE CONSTRAINTS;
+drop table grade CASCADE CONSTRAINTS;
 
 
 drop sequence sq_member_id;
