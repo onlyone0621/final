@@ -214,14 +214,14 @@ create table doc(
     
 );
 
-create table approval_line( 
-
-    doc_id number(10) NOT NULL,
-    member_id number(10),
-    status varchar2(100) default '결재 예정' CHECK (type in ('결재 예정', '결재 완료', '참조', '반려')),
-    process_date DATE DEFAULT NULL,     
-    foreign key (doc_id) references doc(id) ON DELETE CASCADE,
-    foreign key (member_id) references member(id) ON DELETE SET NULL
+CREATE TABLE approval_line (
+    doc_id NUMBER(10) NOT NULL,
+    member_id NUMBER(10),
+    status VARCHAR2(100) DEFAULT '결재 예정' CHECK (status IN ('결재 예정', '결재 완료', '참조', '반려')),
+    process_date DATE DEFAULT NULL,
+    CONSTRAINT pk_approval_line PRIMARY KEY (doc_id, member_id),
+    CONSTRAINT fk_approval_line_doc FOREIGN KEY (doc_id) REFERENCES doc(id) ON DELETE CASCADE,
+    CONSTRAINT fk_approval_line_member FOREIGN KEY (member_id) REFERENCES member(id) ON DELETE SET NULL
 );
 
 CREATE TABLE draft (
