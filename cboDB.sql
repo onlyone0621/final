@@ -154,6 +154,7 @@ create table chatroom_user(
     chatroom_id number(10) not null,
     member_id number(10) not null,
     join_date date DEFAULT SYSDATE NOT NULL,
+    CONSTRAINT pk_chatroom PRIMARY KEY (chatroom_id, member_id),
     foreign key (chatroom_id) references chatroom(id) ON DELETE CASCADE,
     foreign key (member_id) references member(id) ON DELETE CASCADE  
 
@@ -186,6 +187,7 @@ create table addr_group(
 
     addr_id number(10) not null,
     groups_id number(10) not null,
+    CONSTRAINT pk_addr_group PRIMARY KEY (addr_id, groups_id),
     foreign key (addr_id) references addr(id) ON DELETE CASCADE,
     foreign key (groups_id) references groups(id) ON DELETE CASCADE
 
@@ -296,6 +298,7 @@ create table community_member(
     member_id number(10) NOT NULL,
     type varchar2(100),
     join_date date DEFAULT SYSDATE NOT NULL,
+    CONSTRAINT pk_community_member PRIMARY KEY (community_id, member_id),
     foreign key (community_id) references community(id) ON DELETE CASCADE,
     foreign key (member_id) references member(id) ON DELETE CASCADE
 
