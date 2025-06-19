@@ -11,10 +11,15 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class DraftDTO {
+public class LeaveApplicationDTO {
 	private int id;
-	private int docId;
-	private Date executionDate;
+	private int doc_id;
+	private String dept;
+	private String grade;
+	private String name;
 	private String type;
-	private String content;
+	private Date startDate;
+	private Date endDate;
+	private int remaining;
+	private String reason;
 }

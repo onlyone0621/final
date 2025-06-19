@@ -105,7 +105,7 @@ create table message(
     sender_id number(10),
     write_date date DEFAULT SYSDATE NOT NULL,
     is_read varchar2(60) default '안 읽음' not null,
-    file_name varchar2(300) not null,
+    file_name varchar2(300),
     ref number(10) not null,
     lev number(10) not null,
     foreign key (receiver_id) references member(id) ON DELETE SET NULL,
@@ -310,4 +310,137 @@ create table community_comment(
     foreign key (community_post_id) references community_post(id) ON DELETE CASCADE,
     foreign key (member_id) references member(id) ON DELETE SET NULL
 
+);
+
+
+-- Sample
+INSERT INTO dept (id, name) VALUES (sq_dept_id.NEXTVAL, '기획부');
+INSERT INTO dept (id, name) VALUES (sq_dept_id.NEXTVAL, '개발부');
+INSERT INTO dept (id, name) VALUES (sq_dept_id.NEXTVAL, '인사부');
+
+INSERT INTO grade (id, name, seq) VALUES (sq_grade_id.NEXTVAL, '이사', 1);
+INSERT INTO grade (id, name, seq) VALUES (sq_grade_id.NEXTVAL, '부장', 2);
+INSERT INTO grade (id, name, seq) VALUES (sq_grade_id.NEXTVAL, '차장', 3);
+INSERT INTO grade (id, name, seq) VALUES (sq_grade_id.NEXTVAL, '과장', 4);
+INSERT INTO grade (id, name, seq) VALUES (sq_grade_id.NEXTVAL, '대리', 5);
+INSERT INTO grade (id, name, seq) VALUES (sq_grade_id.NEXTVAL, '사원', 6);
+
+INSERT INTO member (
+    id, user_id, pwd, name, email, address, tel, join_date, dept_id, grade_id, profile_image
+) VALUES (
+    sq_member_id.NEXTVAL, 'user001', '1234', '홍길동', 'user001@example.com', '서울시 강남구', '010-1001-1001', DEFAULT, 1, 2, NULL
+);
+
+INSERT INTO member (
+    id, user_id, pwd, name, email, address, tel, join_date, dept_id, grade_id, profile_image
+) VALUES (
+    sq_member_id.NEXTVAL, 'user002', '1234', '김철수', 'user002@example.com', '서울시 서초구', '010-1002-1002', DEFAULT, 2, 4, NULL
+);
+
+INSERT INTO member (
+    id, user_id, pwd, name, email, address, tel, join_date, dept_id, grade_id, profile_image
+) VALUES (
+    sq_member_id.NEXTVAL, 'user003', '1234', '이영희', 'user003@example.com', '서울시 송파구', '010-1003-1003', DEFAULT, 3, 6, NULL
+);
+
+INSERT INTO member (
+    id, user_id, pwd, name, email, address, tel, join_date, dept_id, grade_id, profile_image
+) VALUES (
+    sq_member_id.NEXTVAL, 'user004', '1234', '박민수', 'user004@example.com', '서울시 강북구', '010-1004-1004', DEFAULT, 1, 3, NULL
+);
+
+INSERT INTO member (
+    id, user_id, pwd, name, email, address, tel, join_date, dept_id, grade_id, profile_image
+) VALUES (
+    sq_member_id.NEXTVAL, 'user005', '1234', '최수정', 'user005@example.com', '경기도 성남시', '010-1005-1005', DEFAULT, 2, 5, NULL
+);
+
+INSERT INTO member (
+    id, user_id, pwd, name, email, address, tel, join_date, dept_id, grade_id, profile_image
+) VALUES (
+    sq_member_id.NEXTVAL, 'user006', '1234', '조현우', 'user006@example.com', '서울시 종로구', '010-1006-1006', DEFAULT, 3, 1, NULL
+);
+
+INSERT INTO member (
+    id, user_id, pwd, name, email, address, tel, join_date, dept_id, grade_id, profile_image
+) VALUES (
+    sq_member_id.NEXTVAL, 'user007', '1234', '한예진', 'user007@example.com', '서울시 은평구', '010-1007-1007', DEFAULT, 1, 6, NULL
+);
+
+INSERT INTO member (
+    id, user_id, pwd, name, email, address, tel, join_date, dept_id, grade_id, profile_image
+) VALUES (
+    sq_member_id.NEXTVAL, 'user008', '1234', '정재훈', 'user008@example.com', '경기도 안양시', '010-1008-1008', DEFAULT, 2, 3, NULL
+);
+
+INSERT INTO member (
+    id, user_id, pwd, name, email, address, tel, join_date, dept_id, grade_id, profile_image
+) VALUES (
+    sq_member_id.NEXTVAL, 'user009', '1234', '서지수', 'user009@example.com', '서울시 마포구', '010-1009-1009', DEFAULT, 3, 2, NULL
+);
+
+INSERT INTO member (
+    id, user_id, pwd, name, email, address, tel, join_date, dept_id, grade_id, profile_image
+) VALUES (
+    sq_member_id.NEXTVAL, 'user010', '1234', '장도연', 'user010@example.com', '서울시 관악구', '010-1010-1010', DEFAULT, 1, 4, NULL
+);
+
+INSERT INTO member (
+    id, user_id, pwd, name, email, address, tel, join_date, dept_id, grade_id, profile_image
+) VALUES (
+    sq_member_id.NEXTVAL, 'user011', '1234', '이수정', 'user011@example.com', '서울시 강남구', '010-1011-1011', DEFAULT, 2, 1, NULL
+);
+
+INSERT INTO member (
+    id, user_id, pwd, name, email, address, tel, join_date, dept_id, grade_id, profile_image
+) VALUES (
+    sq_member_id.NEXTVAL, 'user012', '1234', '김지훈', 'user012@example.com', '서울시 서대문구', '010-1012-1012', DEFAULT, 3, 5, NULL
+);
+
+INSERT INTO member (
+    id, user_id, pwd, name, email, address, tel, join_date, dept_id, grade_id, profile_image
+) VALUES (
+    sq_member_id.NEXTVAL, 'user013', '1234', '박시은', 'user013@example.com', '경기도 성남시', '010-1013-1013', DEFAULT, 1, 6, NULL
+);
+
+INSERT INTO member (
+    id, user_id, pwd, name, email, address, tel, join_date, dept_id, grade_id, profile_image
+) VALUES (
+    sq_member_id.NEXTVAL, 'user014', '1234', '최민준', 'user014@example.com', '서울시 노원구', '010-1014-1014', DEFAULT, 2, 3, NULL
+);
+
+INSERT INTO member (
+    id, user_id, pwd, name, email, address, tel, join_date, dept_id, grade_id, profile_image
+) VALUES (
+    sq_member_id.NEXTVAL, 'user015', '1234', '한지민', 'user015@example.com', '서울시 동작구', '010-1015-1015', DEFAULT, 3, 2, NULL
+);
+
+INSERT INTO member (
+    id, user_id, pwd, name, email, address, tel, join_date, dept_id, grade_id, profile_image
+) VALUES (
+    sq_member_id.NEXTVAL, 'user016', '1234', '오세훈', 'user016@example.com', '서울시 광진구', '010-1016-1016', DEFAULT, 1, 4, NULL
+);
+
+INSERT INTO member (
+    id, user_id, pwd, name, email, address, tel, join_date, dept_id, grade_id, profile_image
+) VALUES (
+    sq_member_id.NEXTVAL, 'user017', '1234', '신예은', 'user017@example.com', '경기도 부천시', '010-1017-1017', DEFAULT, 2, 6, NULL
+);
+
+INSERT INTO member (
+    id, user_id, pwd, name, email, address, tel, join_date, dept_id, grade_id, profile_image
+) VALUES (
+    sq_member_id.NEXTVAL, 'user018', '1234', '정동현', 'user018@example.com', '서울시 중구', '010-1018-1018', DEFAULT, 3, 1, NULL
+);
+
+INSERT INTO member (
+    id, user_id, pwd, name, email, address, tel, join_date, dept_id, grade_id, profile_image
+) VALUES (
+    sq_member_id.NEXTVAL, 'user019', '1234', '강하늘', 'user019@example.com', '서울시 마포구', '010-1019-1019', DEFAULT, 1, 5, NULL
+);
+
+INSERT INTO member (
+    id, user_id, pwd, name, email, address, tel, join_date, dept_id, grade_id, profile_image
+) VALUES (
+    sq_member_id.NEXTVAL, 'user020', '1234', '유인나', 'user020@example.com', '서울시 성북구', '010-1020-1020', DEFAULT, 2, 4, NULL
 );
