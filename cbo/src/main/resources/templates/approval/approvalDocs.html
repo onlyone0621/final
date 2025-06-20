@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+				xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+				layout:decorate="layouts/approvalLayout">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Document</title>
+</head>
+<body>
+<div layout:fragment="content">
+	<div
+		class="table-responsive"
+	>
+		<table
+			class="table table-primary"
+		>
+			<thead>
+				<tr>
+					<th scope="col">문서 번호</th>
+					<th scope="col">기안 일자</th>
+					<th scope="col">완료 일자</th>
+					<th scope="col">결재 양식</th>
+					<th scope="col">제목</th>
+					<th scope="col">기안자</th>
+					<th scope="col">상태</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr class="" th:each="approvalDoc : ${approvalDocs}">
+					<td scope="row" th:text="${approvalDoc.id}"></td>
+					<td scope="row" th:text="${approvalDoc.writeDate}"></td>
+					<td scope="row" th:text="${approvalDoc.completion}"></td>
+					<td scope="row" th:text="${approvalDoc.format}"></td>
+					<td scope="row" th:text="${approvalDoc.title}"></td>
+					<td scope="row" th:text="${approvalDoc.writer}"></td>
+					<td scope="row" th:text="${approvalDoc.status}"></td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	
+</div>
+</body>
+</html>

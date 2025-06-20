@@ -12,4 +12,7 @@ public interface ApprovalMapper {
 	List<DocViewDTO> selectApprovalDocs(int id) throws Exception;
 	List<DocViewDTO> selectReferenceDocs(int id) throws Exception;
 	List<DocViewDTO> selectDraftDocs(int id) throws Exception;
+	List<DocViewDTO> selectPendingApprovalDocs(int id) throws Exception;
+	List<DocViewDTO> selectPendingReferenceDocs(int id) throws Exception;
+	List<DocViewDTO> selectScheduledApprovalDocs(int id) throws Exception;
 }
