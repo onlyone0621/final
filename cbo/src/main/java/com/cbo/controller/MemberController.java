@@ -1,5 +1,7 @@
 package com.cbo.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -8,6 +10,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.cbo.dept.model.DeptDTO;
+import com.cbo.grade.model.GradeDTO;
 import com.cbo.member.model.MemberDTO;
 import com.cbo.member.service.MemberService;
 
@@ -20,13 +24,26 @@ public class MemberController {
 		// TODO Auto-generated constructor stub
 	}
 	
-	@GetMapping("memberJoin")
-	public String memberJoinForm() {
-		return "member/memberJoin";
+	@GetMapping("/memberJoin")
+	public ModelAndView memberJoinForm() {
+		List<GradeDTO> gradeList = null;
+		List<DeptDTO> deptList = null;
+		try {
+			deptList = service.getDept();
+			gradeList = service.getGrade();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		ModelAndView mav = new ModelAndView();
+		mav.addObject("deptList", deptList);
+		mav.addObject("gradeList", gradeList);
+		mav.setViewName("member/memberJoin");
+		return mav;
 	}
 	
 	@ResponseBody
-	@GetMapping("memberIdCheck")
+	@GetMapping("/memberIdCheck")
 	public String checkMemberId(@RequestParam("user_id") String user_id) {
 		String userId = null;
 		try {
@@ -38,7 +55,7 @@ public class MemberController {
 		return userId;
 	}
 	
-	@PostMapping("memberJoin")
+	@PostMapping("/memberJoin")
 	public ModelAndView memberJoin(MemberDTO dto) {
 		int result = 0;
 		try {

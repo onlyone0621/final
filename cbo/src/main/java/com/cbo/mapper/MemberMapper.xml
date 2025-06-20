@@ -10,4 +10,11 @@
 		insert into member(id,user_id,pwd,name,email,address,tel,join_date,dept_id,grade_id,profile_image) 
 		values(sq_member_id.nextval,#{user_id},#{pwd},#{name},#{email},#{address},#{tel},sysdate,#{dept_id},#{grade_id},null)
 	</insert>
+	<select id="selectDept" resultType="com.cbo.dept.model.DeptDTO">
+		select * from dept
+	</select>
+	<select id="selectGrade" resultType="com.cbo.grade.model.GradeDTO">
+		select * from grade
+	</select>
+	
 </mapper>
