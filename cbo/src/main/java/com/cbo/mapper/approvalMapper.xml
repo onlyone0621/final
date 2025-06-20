@@ -24,7 +24,7 @@
 		                WHERE approval_line.member_id != doc_view.member_id
 		                AND approval_line.doc_id = doc_view.id
 		                AND approval_line.member_id = #{id} 
-		                AND approval_line.status IN ('결재 완료', '반려'));
+		                AND approval_line.status IN ('결재 완료', '반려'))
   	</select>
   	
   	<select id="selectReferenceDocs" parameterType="int" resultType="com.cbo.approval.model.DocViewDTO">
@@ -34,13 +34,13 @@
 		                FROM approval_line 
 		                WHERE approval_line.doc_id = doc_view.id 
 		                AND approval_line.member_id = ? 
-		                AND status = '참조');
+		                AND status = '참조')
   	</select>
   	
   	<select id="selectDraftDocs" parameterType="int" resultType="com.cbo.approval.model.DocViewDTO">
   		SELECT * 
 		FROM doc_view
-		WHERE member_id = #{id};
+		WHERE member_id = #{id}
   	</select>
   	
   	<select id="selectPendingApprovalDocs" parameterType="int" resultType="com.cbo.approval.model.DocViewDTO">
@@ -55,7 +55,7 @@
 		                WHERE approval_line.doc_id = doc_view.id
 		                AND approval_line.member_id = #{id}
 		                AND approval_line.status = '참조')
-		AND doc_view.status = '진행 중';
+		AND doc_view.status = '진행 중'
   	</select>
   	
   	<select id="selectScheduledApprovalDocs" parameterType="int" resultType="com.cbo.approval.model.DocViewDTO">
