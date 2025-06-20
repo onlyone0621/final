@@ -615,6 +615,8 @@ VALUES (sq_leave_application_id.NEXTVAL, 20, '인사부', '대리', '정해린',
 
 
 -- approval line sample
+
+
 -- 기안일: 2025-06-10
 -- 결재: 6/11(사원) → 6/12(대리) → 6/13(과장)
 
