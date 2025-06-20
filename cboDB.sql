@@ -209,7 +209,7 @@ create table calendar(
 CREATE TABLE format (
     id NUMBER(10) PRIMARY KEY,
     name VARCHAR2(100) UNIQUE NOT NULL
-)
+);
 
 create table doc(
     
@@ -332,19 +332,16 @@ SELECT doc.id, TO_CHAR(write_date, 'YYYY-MM-DD') AS write_date,
         WHEN '결재 완료' = ALL(SELECT status FROM approval_line WHERE approval_line.doc_id = doc.id AND status != '참조') THEN TO_CHAR((SELECT MAX(process_date) FROM approval_line WHERE approval_line.doc_id = doc.id AND status = '결재 완료'), 'YYYY-MM-DD')
         ELSE '-'
     END AS completion,
-    CASE 
-        WHEN EXISTS (SELECT 1 FROM draft WHERE doc_id = doc.id) THEN '기안문'
-        WHEN EXISTS (SELECT 1 FROM medical_support WHERE doc_id = doc.id) THEN '진료비 지원 신청서'
-        WHEN EXISTS (SELECT 1 FROM leave_application WHERE doc_id = doc.id) THEN '휴가 신청서'
-    END AS format,
-title, doc.member_id, member.name AS writer, 
+format_id, format.name AS format_name, title, doc.member_id, member.name AS writer, 
     CASE
         WHEN EXISTS (SELECT 1 FROM approval_line WHERE approval_line.doc_id = doc.id AND status = '반려') THEN '반려'
         WHEN '결재 완료' = ALL(SELECT status FROM approval_line WHERE approval_line.doc_id = doc.id AND status != '참조') THEN '완료'
         ELSE '진행 중'
     END AS status
 FROM doc
-JOIN member ON doc.member_id = member.id;
+    JOIN format ON doc.format_id = format.id
+    JOIN member ON doc.member_id = member.id;
+
 
 -- Sample
 -- dept sample
@@ -493,65 +490,66 @@ INSERT INTO format (id, name)
 VALUES (sq_format_id.NEXTVAL, '휴가 신청서');
 
 -- Docs sample
-INSERT INTO doc (id, title, member_id, dept_id)
-VALUES (sq_doc_id.NEXTVAL, '2025 상반기 예산 집행 보고서', 1, 1);
+INSERT INTO doc (id, title, member_id, dept_id, format_id)
+VALUES (sq_doc_id.NEXTVAL, '2025 상반기 예산 집행 보고서', 1, 1, 1);
 
-INSERT INTO doc (id, title, member_id, dept_id)
-VALUES (sq_doc_id.NEXTVAL, '재택근무 제도 개선안', 2, 2);
+INSERT INTO doc (id, title, member_id, dept_id, format_id)
+VALUES (sq_doc_id.NEXTVAL, '재택근무 제도 개선안', 2, 2, 1);
 
-INSERT INTO doc (id, title, member_id, dept_id)
-VALUES (sq_doc_id.NEXTVAL, '고객 응대 매뉴얼 개정안', 3, 3);
+INSERT INTO doc (id, title, member_id, dept_id, format_id)
+VALUES (sq_doc_id.NEXTVAL, '고객 응대 매뉴얼 개정안', 3, 3, 1);
 
-INSERT INTO doc (id, title, member_id, dept_id)
-VALUES (sq_doc_id.NEXTVAL, '신규 시스템 도입 검토서', 4, 1);
+INSERT INTO doc (id, title, member_id, dept_id, format_id)
+VALUES (sq_doc_id.NEXTVAL, '신규 시스템 도입 검토서', 4, 1, 1);
 
-INSERT INTO doc (id, title, member_id, dept_id)
-VALUES (sq_doc_id.NEXTVAL, '프로젝트 Alpha 종료 보고', 5, 2);
+INSERT INTO doc (id, title, member_id, dept_id, format_id)
+VALUES (sq_doc_id.NEXTVAL, '프로젝트 Alpha 종료 보고', 5, 2, 1);
 
-INSERT INTO doc (id, title, member_id, dept_id)
-VALUES (sq_doc_id.NEXTVAL, '직원 만족도 조사 결과 분석', 6, 3);
+INSERT INTO doc (id, title, member_id, dept_id, format_id)
+VALUES (sq_doc_id.NEXTVAL, '직원 만족도 조사 결과 분석', 6, 3, 1);
 
-INSERT INTO doc (id, title, member_id, dept_id)
-VALUES (sq_doc_id.NEXTVAL, '사내 교육 프로그램 개선안', 7, 1);
+INSERT INTO doc (id, title, member_id, dept_id, format_id)
+VALUES (sq_doc_id.NEXTVAL, '사내 교육 프로그램 개선안', 7, 1, 1);
 
-INSERT INTO doc (id, title, member_id, dept_id)
-VALUES (sq_doc_id.NEXTVAL, '외부 감사 대응 계획', 8, 2);
+INSERT INTO doc (id, title, member_id, dept_id, format_id)
+VALUES (sq_doc_id.NEXTVAL, '외부 감사 대응 계획', 8, 2, 2);
 
-INSERT INTO doc (id, title, member_id, dept_id)
-VALUES (sq_doc_id.NEXTVAL, '근무환경 개선 요청서', 9, 3);
+INSERT INTO doc (id, title, member_id, dept_id, format_id)
+VALUES (sq_doc_id.NEXTVAL, '근무환경 개선 요청서', 9, 3, 2);
 
-INSERT INTO doc (id, title, member_id, dept_id)
-VALUES (sq_doc_id.NEXTVAL, '분기별 실적 분석 보고서', 10, 1);
+INSERT INTO doc (id, title, member_id, dept_id, format_id)
+VALUES (sq_doc_id.NEXTVAL, '분기별 실적 분석 보고서', 10, 1, 2);
 
-INSERT INTO doc (id, title, member_id, dept_id)
-VALUES (sq_doc_id.NEXTVAL, '부서 통합에 따른 운영 방안', 11, 2);
+INSERT INTO doc (id, title, member_id, dept_id, format_id)
+VALUES (sq_doc_id.NEXTVAL, '부서 통합에 따른 운영 방안', 11, 2, 2);
 
-INSERT INTO doc (id, title, member_id, dept_id)
-VALUES (sq_doc_id.NEXTVAL, '프로젝트 Beta 인력 요청', 12, 3);
+INSERT INTO doc (id, title, member_id, dept_id, format_id)
+VALUES (sq_doc_id.NEXTVAL, '프로젝트 Beta 인력 요청', 12, 3, 2);
 
-INSERT INTO doc (id, title, member_id, dept_id)
-VALUES (sq_doc_id.NEXTVAL, '회계 처리 규정 변경 제안', 13, 1);
+INSERT INTO doc (id, title, member_id, dept_id, format_id)
+VALUES (sq_doc_id.NEXTVAL, '회계 처리 규정 변경 제안', 13, 1, 2);
 
-INSERT INTO doc (id, title, member_id, dept_id)
-VALUES (sq_doc_id.NEXTVAL, '신입사원 교육 일정안', 14, 2);
+INSERT INTO doc (id, title, member_id, dept_id, format_id)
+VALUES (sq_doc_id.NEXTVAL, '신입사원 교육 일정안', 14, 2, 2);
 
-INSERT INTO doc (id, title, member_id, dept_id)
-VALUES (sq_doc_id.NEXTVAL, '내부 보안정책 개편안', 15, 3);
+INSERT INTO doc (id, title, member_id, dept_id, format_id)
+VALUES (sq_doc_id.NEXTVAL, '내부 보안정책 개편안', 15, 3, 3);
 
-INSERT INTO doc (id, title, member_id, dept_id)
-VALUES (sq_doc_id.NEXTVAL, '시스템 점검 결과 보고서', 16, 1);
+INSERT INTO doc (id, title, member_id, dept_id, format_id)
+VALUES (sq_doc_id.NEXTVAL, '시스템 점검 결과 보고서', 16, 1, 3);
 
-INSERT INTO doc (id, title, member_id, dept_id)
-VALUES (sq_doc_id.NEXTVAL, '기술 세미나 개최 계획서', 17, 2);
+INSERT INTO doc (id, title, member_id, dept_id, format_id)
+VALUES (sq_doc_id.NEXTVAL, '기술 세미나 개최 계획서', 17, 2, 3);
 
-INSERT INTO doc (id, title, member_id, dept_id)
-VALUES (sq_doc_id.NEXTVAL, '인사평가 기준 개편 제안', 18, 3);
+INSERT INTO doc (id, title, member_id, dept_id, format_id)
+VALUES (sq_doc_id.NEXTVAL, '인사평가 기준 개편 제안', 18, 3, 3);
 
-INSERT INTO doc (id, title, member_id, dept_id)
-VALUES (sq_doc_id.NEXTVAL, '공간 재배치 요청서', 19, 1);
+INSERT INTO doc (id, title, member_id, dept_id, format_id)
+VALUES (sq_doc_id.NEXTVAL, '공간 재배치 요청서', 19, 1, 3);
 
-INSERT INTO doc (id, title, member_id, dept_id)
-VALUES (sq_doc_id.NEXTVAL, '외부 교육 참가 보고', 20, 2);
+INSERT INTO doc (id, title, member_id, dept_id, format_id)
+VALUES (sq_doc_id.NEXTVAL, '외부 교육 참가 보고', 20, 2, 3);
+
 
 
 INSERT INTO draft (id, doc_id, execution_date, type, content)
