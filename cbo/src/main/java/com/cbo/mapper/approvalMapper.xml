@@ -15,4 +15,5 @@
 			JOIN grade ON grade.id = member.grade_id
 		ORDER BY dept.id, grade.seq
   	</select>
+  	<select id="selectApprovalDocs"></select>
   </mapper>

@@ -11,7 +11,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ApprovalDocDTO {
+public class DocDTO {
 	private int id;
 	private String title;
 	private int memberId;
