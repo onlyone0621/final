@@ -203,6 +203,11 @@ create table calendar(
 
 );
 
+CREATE TABLE format (
+    id NUMBER(10) PRIMARY KEY,
+    name VARCHAR2(100) UNIQUE NOT NULL
+)
+
 create table doc(
     
     id number(10) primary key,
