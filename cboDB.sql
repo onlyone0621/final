@@ -1,4 +1,4 @@
-`drop table community_comment;
+drop table community_comment;
 drop table community_post;
 drop table community_member;
 drop table community;
@@ -218,10 +218,11 @@ create table doc(
     member_id number(10),
     dept_id number(10),
     write_date date DEFAULT SYSDATE NOT NULL,
+    format_id NUMBER(10) NOT NULL,
     retention NUMBER(5) DEFAULT 5 not null CHECK (retention >= 0),
     foreign key (member_id) references member(id) ON DELETE SET NULL,
-    foreign key (dept_id) references dept(id) ON DELETE SET NULL
-    
+    foreign key (dept_id) references dept(id) ON DELETE SET NULL,
+    FOREIGN KEY (format_id) REFERENCES format(id)
 );
 
 CREATE TABLE approval_line (
