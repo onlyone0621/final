@@ -613,42 +613,183 @@ VALUES (sq_leave_application_id.NEXTVAL, 19, '영업부', '과장', '조재현',
 INSERT INTO leave_application (id, doc_id, dept, grade, name, type, start_date, end_date, remaining, reason)
 VALUES (sq_leave_application_id.NEXTVAL, 20, '인사부', '대리', '정해린', '병가', TO_DATE('2025-07-22','YYYY-MM-DD'), TO_DATE('2025-07-23','YYYY-MM-DD'), 6, '치료');
 
+
 -- approval line sample
--- 1) 기안자 결재 완료
+-- 기안일: 2025-06-10
+-- 결재: 6/11(사원) → 6/12(대리) → 6/13(과장)
+
+-- 기안자
 INSERT INTO approval_line (doc_id, member_id, status, process_date)
-SELECT d.id, d.member_id, '결재 완료', d.write_date
-FROM doc d
-WHERE d.member_id IS NOT NULL AND d.id BETWEEN 1 AND 20;
+VALUES (1, 1, '결재 완료', TO_DATE('2025-06-10', 'YYYY-MM-DD'));
 
--- 2) 참조자 랜덤 (기안자 제외, 이미 삽입된 멤버 제외)
+-- 결재자들
 INSERT INTO approval_line (doc_id, member_id, status, process_date)
-SELECT
-  d.id,
-  (
-    SELECT id FROM (
-      SELECT id, DBMS_RANDOM.VALUE() AS rnd
-      FROM member
-      WHERE id != d.member_id
-        AND id NOT IN (
-          SELECT member_id FROM approval_line al WHERE al.doc_id = d.id
-        )
-      ORDER BY rnd
-    ) WHERE ROWNUM = 1
-  ),
-  '참조',
-  d.write_date
-FROM doc d
-WHERE d.id BETWEEN 1 AND 20;
-
--- 3) 나머지 멤버 결재 예정
+VALUES (1, 7, '결재 완료', TO_DATE('2025-06-11', 'YYYY-MM-DD'));  -- 사원
 INSERT INTO approval_line (doc_id, member_id, status, process_date)
-SELECT d.id, m.id, '결재 예정', NULL
-FROM doc d
-CROSS JOIN member m
-WHERE d.id BETWEEN 1 AND 20
-  AND m.id NOT IN (
-    SELECT member_id FROM approval_line al WHERE al.doc_id = d.id
-  );
+VALUES (1, 5, '결재 완료', TO_DATE('2025-06-12', 'YYYY-MM-DD'));  -- 대리
+INSERT INTO approval_line (doc_id, member_id, status, process_date)
+VALUES (1, 10, '결재 완료', TO_DATE('2025-06-13', 'YYYY-MM-DD')); -- 과장
+
+-- 참조자
+INSERT INTO approval_line (doc_id, member_id, status, process_date)
+VALUES (1, 6, '참조', TO_DATE('2025-06-10', 'YYYY-MM-DD'));
+
+-- 결재 흐름: 사원 → 과장 → 차장 → 부장(반려)
+-- 처리일: 6/11 ~ 6/14
+
+-- 기안자
+INSERT INTO approval_line (doc_id, member_id, status, process_date)
+VALUES (2, 2, '결재 완료', TO_DATE('2025-06-10', 'YYYY-MM-DD'));
+
+-- 결재 완료자
+INSERT INTO approval_line (doc_id, member_id, status, process_date)
+VALUES (2, 17, '결재 완료', TO_DATE('2025-06-11', 'YYYY-MM-DD')); -- 사원
+INSERT INTO approval_line (doc_id, member_id, status, process_date)
+VALUES (2, 20, '결재 완료', TO_DATE('2025-06-12', 'YYYY-MM-DD')); -- 과장
+INSERT INTO approval_line (doc_id, member_id, status, process_date)
+VALUES (2, 14, '결재 완료', TO_DATE('2025-06-13', 'YYYY-MM-DD')); -- 차장
+
+-- 반려자
+INSERT INTO approval_line (doc_id, member_id, status, process_date)
+VALUES (2, 9, '반려', TO_DATE('2025-06-14', 'YYYY-MM-DD'));       -- 부장
+
+-- 참조자
+INSERT INTO approval_line (doc_id, member_id, status, process_date)
+VALUES (2, 11, '참조', TO_DATE('2025-06-10', 'YYYY-MM-DD'));
+
+-- 처리일: 6/11
+
+-- 기안자
+INSERT INTO approval_line (doc_id, member_id, status, process_date)
+VALUES (3, 3, '결재 완료', TO_DATE('2025-06-10', 'YYYY-MM-DD'));
+
+-- 결재 완료
+INSERT INTO approval_line (doc_id, member_id, status, process_date)
+VALUES (3, 12, '결재 완료', TO_DATE('2025-06-11', 'YYYY-MM-DD'));  -- 대리
+
+-- 결재 예정
+INSERT INTO approval_line (doc_id, member_id, status) VALUES (3, 8, '결재 예정');
+INSERT INTO approval_line (doc_id, member_id, status) VALUES (3, 4, '결재 예정');
+
+-- 참조자
+INSERT INTO approval_line (doc_id, member_id, status, process_date)
+VALUES (3, 13, '참조', TO_DATE('2025-06-10', 'YYYY-MM-DD'));
 
 
-COMMIT;
+INSERT INTO approval_line VALUES (4, 4, '결재 완료', TO_DATE('2025-06-10','YYYY-MM-DD'));
+INSERT INTO approval_line VALUES (4, 16,'결재 완료', TO_DATE('2025-06-11','YYYY-MM-DD'));
+INSERT INTO approval_line VALUES (4, 14,'결재 완료', TO_DATE('2025-06-12','YYYY-MM-DD'));
+INSERT INTO approval_line VALUES (4, 12,'결재 완료', TO_DATE('2025-06-13','YYYY-MM-DD'));
+INSERT INTO approval_line VALUES (4, 18,'참조',        TO_DATE('2025-06-10','YYYY-MM-DD'));
+
+
+INSERT INTO approval_line VALUES (5, 5, '결재 완료', TO_DATE('2025-06-10','YYYY-MM-DD'));
+INSERT INTO approval_line VALUES (5,19, '결재 완료', TO_DATE('2025-06-11','YYYY-MM-DD'));
+INSERT INTO approval_line VALUES (5, 8, '결재 완료', TO_DATE('2025-06-12','YYYY-MM-DD'));
+INSERT INTO approval_line VALUES (5,17, '반려',       TO_DATE('2025-06-13','YYYY-MM-DD'));
+INSERT INTO approval_line VALUES (5,15, '참조',       TO_DATE('2025-06-10','YYYY-MM-DD'));
+
+
+INSERT INTO approval_line VALUES (6, 6, '결재 완료', TO_DATE('2025-06-10','YYYY-MM-DD'));
+INSERT INTO approval_line VALUES (6, 2, '결재 완료', TO_DATE('2025-06-11','YYYY-MM-DD'));
+INSERT INTO approval_line VALUES (6,13, '결재 예정', NULL);
+INSERT INTO approval_line VALUES (6,18, '결재 예정', NULL);
+INSERT INTO approval_line VALUES (6,11, '참조',       TO_DATE('2025-06-10','YYYY-MM-DD'));
+
+
+INSERT INTO approval_line VALUES (7, 7, '결재 완료', TO_DATE('2025-06-10','YYYY-MM-DD'));
+INSERT INTO approval_line VALUES (7, 3, '결재 완료', TO_DATE('2025-06-11','YYYY-MM-DD'));
+INSERT INTO approval_line VALUES (7,10, '결재 완료', TO_DATE('2025-06-12','YYYY-MM-DD'));
+INSERT INTO approval_line VALUES (7, 1, '결재 완료', TO_DATE('2025-06-13','YYYY-MM-DD'));
+INSERT INTO approval_line VALUES (7, 5, '참조',       TO_DATE('2025-06-10','YYYY-MM-DD'));
+
+
+INSERT INTO approval_line VALUES (8, 8, '결재 완료', TO_DATE('2025-06-10','YYYY-MM-DD'));
+INSERT INTO approval_line VALUES (8, 4, '결재 완료', TO_DATE('2025-06-11','YYYY-MM-DD'));
+INSERT INTO approval_line VALUES (8,15, '결재 완료', TO_DATE('2025-06-12','YYYY-MM-DD'));
+INSERT INTO approval_line VALUES (8,12, '반려',       TO_DATE('2025-06-13','YYYY-MM-DD'));
+INSERT INTO approval_line VALUES (8, 2, '참조',       TO_DATE('2025-06-10','YYYY-MM-DD'));
+
+
+INSERT INTO approval_line VALUES (9, 9, '결재 완료', TO_DATE('2025-06-10','YYYY-MM-DD'));
+INSERT INTO approval_line VALUES (9,17, '결재 완료', TO_DATE('2025-06-11','YYYY-MM-DD'));
+INSERT INTO approval_line VALUES (9, 1, '결재 예정', NULL);
+INSERT INTO approval_line VALUES (9,10, '참조',       TO_DATE('2025-06-10','YYYY-MM-DD'));
+
+
+-- 문서 10: 완료
+INSERT INTO approval_line VALUES (10, 10, '결재 완료', TO_DATE('2025-06-10', 'YYYY-MM-DD')); -- 기안자
+INSERT INTO approval_line VALUES (10, 19, '결재 완료', TO_DATE('2025-06-11', 'YYYY-MM-DD')); -- 사원
+INSERT INTO approval_line VALUES (10, 17, '결재 완료', TO_DATE('2025-06-12', 'YYYY-MM-DD'));
+INSERT INTO approval_line VALUES (10, 14, '결재 완료', TO_DATE('2025-06-13', 'YYYY-MM-DD'));
+INSERT INTO approval_line VALUES (10, 6, '참조', TO_DATE('2025-06-10', 'YYYY-MM-DD'));
+
+-- 문서 11: 완료
+INSERT INTO approval_line VALUES (11, 11, '결재 완료', TO_DATE('2025-06-10', 'YYYY-MM-DD'));
+INSERT INTO approval_line VALUES (11, 5, '결재 완료', TO_DATE('2025-06-11', 'YYYY-MM-DD'));
+INSERT INTO approval_line VALUES (11, 8, '결재 완료', TO_DATE('2025-06-12', 'YYYY-MM-DD'));
+INSERT INTO approval_line VALUES (11, 20, '결재 완료', TO_DATE('2025-06-13', 'YYYY-MM-DD'));
+INSERT INTO approval_line VALUES (11, 3, '참조', TO_DATE('2025-06-10', 'YYYY-MM-DD'));
+
+-- 문서 12: 반려
+INSERT INTO approval_line VALUES (12, 12, '결재 완료', TO_DATE('2025-06-10', 'YYYY-MM-DD'));
+INSERT INTO approval_line VALUES (12, 7, '결재 완료', TO_DATE('2025-06-11', 'YYYY-MM-DD'));
+INSERT INTO approval_line VALUES (12, 4, '결재 완료', TO_DATE('2025-06-12', 'YYYY-MM-DD'));
+INSERT INTO approval_line VALUES (12, 13, '반려', TO_DATE('2025-06-13', 'YYYY-MM-DD'));
+INSERT INTO approval_line VALUES (12, 1, '참조', TO_DATE('2025-06-10', 'YYYY-MM-DD'));
+
+-- 문서 13: 반려
+INSERT INTO approval_line VALUES (13, 13, '결재 완료', TO_DATE('2025-06-10', 'YYYY-MM-DD'));
+INSERT INTO approval_line VALUES (13, 10, '결재 완료', TO_DATE('2025-06-11', 'YYYY-MM-DD'));
+INSERT INTO approval_line VALUES (13, 2, '결재 완료', TO_DATE('2025-06-12', 'YYYY-MM-DD'));
+INSERT INTO approval_line VALUES (13, 16, '반려', TO_DATE('2025-06-13', 'YYYY-MM-DD'));
+INSERT INTO approval_line VALUES (13, 11, '참조', TO_DATE('2025-06-10', 'YYYY-MM-DD'));
+
+-- 문서 14: 진행중
+INSERT INTO approval_line VALUES (14, 14, '결재 완료', TO_DATE('2025-06-10', 'YYYY-MM-DD'));
+INSERT INTO approval_line VALUES (14, 3, '결재 완료', TO_DATE('2025-06-11', 'YYYY-MM-DD'));
+INSERT INTO approval_line VALUES (14, 12, '결재 예정', NULL);
+INSERT INTO approval_line VALUES (14, 15, '결재 예정', NULL);
+INSERT INTO approval_line VALUES (14, 9, '참조', TO_DATE('2025-06-10', 'YYYY-MM-DD'));
+
+-- 문서 15: 진행중
+INSERT INTO approval_line VALUES (15, 15, '결재 완료', TO_DATE('2025-06-10', 'YYYY-MM-DD'));
+INSERT INTO approval_line VALUES (15, 7, '결재 완료', TO_DATE('2025-06-11', 'YYYY-MM-DD'));
+INSERT INTO approval_line VALUES (15, 6, '결재 예정', NULL);
+INSERT INTO approval_line VALUES (15, 18, '결재 예정', NULL);
+INSERT INTO approval_line VALUES (15, 4, '참조', TO_DATE('2025-06-10', 'YYYY-MM-DD'));
+
+-- 문서 16: 진행중
+INSERT INTO approval_line VALUES (16, 16, '결재 완료', TO_DATE('2025-06-10', 'YYYY-MM-DD'));
+INSERT INTO approval_line VALUES (16, 5, '결재 완료', TO_DATE('2025-06-11', 'YYYY-MM-DD'));
+INSERT INTO approval_line VALUES (16, 8, '결재 예정', NULL);
+INSERT INTO approval_line VALUES (16, 17, '결재 예정', NULL);
+INSERT INTO approval_line VALUES (16, 2, '참조', TO_DATE('2025-06-10', 'YYYY-MM-DD'));
+
+-- 문서 17: 진행중
+INSERT INTO approval_line VALUES (17, 17, '결재 완료', TO_DATE('2025-06-10', 'YYYY-MM-DD'));
+INSERT INTO approval_line VALUES (17, 1, '결재 완료', TO_DATE('2025-06-11', 'YYYY-MM-DD'));
+INSERT INTO approval_line VALUES (17, 9, '결재 예정', NULL);
+INSERT INTO approval_line VALUES (17, 13, '결재 예정', NULL);
+INSERT INTO approval_line VALUES (17, 20, '참조', TO_DATE('2025-06-10', 'YYYY-MM-DD'));
+
+-- 문서 18: 진행중
+INSERT INTO approval_line VALUES (18, 18, '결재 완료', TO_DATE('2025-06-10', 'YYYY-MM-DD'));
+INSERT INTO approval_line VALUES (18, 14, '결재 완료', TO_DATE('2025-06-11', 'YYYY-MM-DD'));
+INSERT INTO approval_line VALUES (18, 12, '결재 예정', NULL);
+INSERT INTO approval_line VALUES (18, 15, '결재 예정', NULL);
+INSERT INTO approval_line VALUES (18, 7, '참조', TO_DATE('2025-06-10', 'YYYY-MM-DD'));
+
+-- 문서 19: 진행중
+INSERT INTO approval_line VALUES (19, 19, '결재 완료', TO_DATE('2025-06-10', 'YYYY-MM-DD'));
+INSERT INTO approval_line VALUES (19, 3, '결재 완료', TO_DATE('2025-06-11', 'YYYY-MM-DD'));
+INSERT INTO approval_line VALUES (19, 10, '결재 예정', NULL);
+INSERT INTO approval_line VALUES (19, 16, '결재 예정', NULL);
+INSERT INTO approval_line VALUES (19, 5, '참조', TO_DATE('2025-06-10', 'YYYY-MM-DD'));
+
+-- 문서 20: 진행중
+INSERT INTO approval_line VALUES (20, 20, '결재 완료', TO_DATE('2025-06-10', 'YYYY-MM-DD'));
+INSERT INTO approval_line VALUES (20, 6, '결재 완료', TO_DATE('2025-06-11', 'YYYY-MM-DD'));
+INSERT INTO approval_line VALUES (20, 11, '결재 예정', NULL);
+INSERT INTO approval_line VALUES (20, 18, '결재 예정', NULL);
+INSERT INTO approval_line VALUES (20, 1, '참조', TO_DATE('2025-06-10', 'YYYY-MM-DD'));
