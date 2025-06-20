@@ -106,8 +106,8 @@ create table message(
     write_date date DEFAULT SYSDATE NOT NULL,
     is_read varchar2(60) default '안 읽음' not null,
     file_name varchar2(300),
-    ref number(10) not null,
-    lev number(10) not null,
+    ref number(10) not null CHECK (ref >= 1),
+    lev number(10) not null CHECK (lev >= 0),
     foreign key (receiver_id) references member(id) ON DELETE SET NULL,
     foreign key (sender_id) references member(id) ON DELETE SET NULL 
     
@@ -215,7 +215,7 @@ create table doc(
     member_id number(10),
     dept_id number(10),
     write_date date DEFAULT SYSDATE NOT NULL,
-    retention NUMBER(5) DEFAULT 5 not null,
+    retention NUMBER(5) DEFAULT 5 not null CHECK (retention >= 0),
     foreign key (member_id) references member(id) ON DELETE SET NULL,
     foreign key (dept_id) references dept(id) ON DELETE SET NULL
     
@@ -246,8 +246,8 @@ CREATE TABLE medical_support (
     content VARCHAR2(300) NOT NULL,
     institution VARCHAR2(100) NOT NULL,
     diagnosis VARCHAR2(100) NOT NULL,
-    requested NUMBER(10) NOT NULL,
-    oop NUMBER(10) NOT NULL,
+    requested NUMBER(10) NOT NULL CHECK (requested >= 0),
+    oop NUMBER(10) NOT NULL CHECK (oop >= 0),
     foreign key (doc_id) REFERENCES doc(id) ON DELETE CASCADE
 );
 
@@ -260,7 +260,7 @@ CREATE TABLE leave_application (
     type VARCHAR2(100) NOT NULL,
     start_date DATE NOT NULL,
     end_date DATE NOT NULL,
-    remaining NUMBER(5) NOT NULL,
+    remaining NUMBER(5) NOT NULL CHECK (remaining >= 0),
     reason VARCHAR2(300) NOT NULL,
     foreign key (doc_id) REFERENCES doc(id) ON DELETE CASCADE
 );
