@@ -316,6 +316,28 @@ create table community_comment(
 );
 
 
+-- Views
+CREATE OR REPLACE VIEW doc_view AS
+SELECT doc.id, TO_CHAR(write_date, 'YYYY-MM-DD') AS write_date, 
+    CASE
+        WHEN '결재 완료' = ALL(SELECT status FROM approval_line WHERE approval_line.doc_id = doc.id AND status != '참조') THEN TO_CHAR((SELECT MAX(process_date) FROM approval_line WHERE approval_line.doc_id = doc.id AND status = '결재 완료'), 'YYYY-MM-DD')
+        WHEN EXISTS (SELECT 1 FROM approval_line WHERE approval_line.doc_id = doc.id AND status = '반려') THEN TO_CHAR((SELECT process_date FROM approval_line WHERE approval_line.doc_id = doc.id AND status = '반려'), 'YYYY-MM-DD')
+        ELSE '-'
+    END AS completion,
+    CASE 
+        WHEN EXISTS (SELECT 1 FROM draft WHERE doc_id = doc.id) THEN '기안문'
+        WHEN EXISTS (SELECT 1 FROM medical_support WHERE doc_id = doc.id) THEN '진료비 지원 신청서'
+        WHEN EXISTS (SELECT 1 FROM leave_application WHERE doc_id = doc.id) THEN '휴가 신청서'
+    END AS format,
+title, doc.member_id, member.name AS writer, 
+    CASE
+        WHEN EXISTS (SELECT 1 FROM approval_line WHERE approval_line.doc_id = doc.id AND status = '반려') THEN '반려'
+        WHEN '결재 완료' = ALL(SELECT status FROM approval_line WHERE approval_line.doc_id = doc.id AND status != '참조') THEN '완료'
+        ELSE '진행 중'
+    END AS status
+FROM doc
+JOIN member ON doc.member_id = member.id;
+
 -- Sample
 -- dept sample
 INSERT INTO dept (id, name) VALUES (sq_dept_id.NEXTVAL, '기획부');
