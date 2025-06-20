@@ -2,10 +2,13 @@ package com.cbo.approval.service;
 
 import java.util.List;
 
+import org.springframework.stereotype.Service;
+
 import com.cbo.approval.model.FormatDTO;
 import com.cbo.mapper.ApprovalMapper;
 import com.cbo.member.model.OrganDTO;
 
+@Service
 public class ApprovalServiceImple implements ApprovalService {
 	
 	private final ApprovalMapper mapper;

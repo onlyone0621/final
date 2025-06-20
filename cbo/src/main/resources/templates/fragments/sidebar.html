@@ -8,7 +8,14 @@
 <body>
 	<aside th:fragment="approval">
         <div class="sidebar">
-            <button>새 결재 진행</button>
+            <button
+                type="button"
+                class="btn btn-primary btn-lg"
+                data-bs-toggle="modal"
+                data-bs-target="#formatModal"
+            >
+                새 결재 진행
+            </button>            
             <div class="sidebar-menu">
                 <div>결재하기</div>
                 <ul>
