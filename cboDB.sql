@@ -326,7 +326,6 @@ CREATE OR REPLACE VIEW doc_view AS
 SELECT doc.id, TO_CHAR(write_date, 'YYYY-MM-DD') AS write_date, 
     CASE
         WHEN '결재 완료' = ALL(SELECT status FROM approval_line WHERE approval_line.doc_id = doc.id AND status != '참조') THEN TO_CHAR((SELECT MAX(process_date) FROM approval_line WHERE approval_line.doc_id = doc.id AND status = '결재 완료'), 'YYYY-MM-DD')
-        WHEN EXISTS (SELECT 1 FROM approval_line WHERE approval_line.doc_id = doc.id AND status = '반려') THEN TO_CHAR((SELECT process_date FROM approval_line WHERE approval_line.doc_id = doc.id AND status = '반려'), 'YYYY-MM-DD')
         ELSE '-'
     END AS completion,
     CASE 
