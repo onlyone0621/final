@@ -3,11 +3,16 @@
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
   <mapper namespace="com.cbo.mapper.ApprovalMapper">
+  	<select id="selectFormats" resultType="com.cbo.approval.model.FormatDTO">
+  		SELECT * 
+  		FROM format
+  	</select>
+  	
   	<select id="selectMembers" resultType="com.cbo.member.model.OrganDTO">
   		SELECT member.id, member.name, dept.name AS dept, grade.name AS grade, profile_image
 		FROM MEMBER
 			JOIN dept ON dept.id = member.dept_id
 			JOIN grade ON grade.id = member.grade_id
-		ORDER BY dept.id, grade.seq;
+		ORDER BY dept.id, grade.seq
   	</select>
   </mapper>
