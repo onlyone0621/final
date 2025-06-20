@@ -2,26 +2,79 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Insert title here</title>
-    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.17/index.global.min.js'></script>
-    <script src='fullcalendar/dist/index.global.js'></script>
-    <script src='fullcalendar/core/locales/es.global.js'></script>
-    <script>
+<title>캘린더</title>
+<script
+	src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.17/index.global.min.js'></script>
+<script src='fullcalendar/dist/index.global.js'></script>
+<script src='fullcalendar/core/locales/es.global.js'></script>
+<script>
+	document.addEventListener('DOMContentLoaded', function() {
 
-      document.addEventListener('DOMContentLoaded', function() {
-        var calendarEl = document.getElementById('calendar');
-        var calendar = new FullCalendar.Calendar(calendarEl, {
-          initialView: 'dayGridMonth',
-          selectable: true,
-          height:650,
-          locale: 'ko'
-        });
-        calendar.render();
-      });
-      
-    </script>
+		let calendarEl = document.getElementById('calendar');
+		
+		 fetch('/api/calendar/events')
+	        .then(response => response.json())
+	        .then(eventsData => {
+		var calendar = new FullCalendar.Calendar(calendarEl, {
+
+			initialView : 'dayGridMonth', //달력 양식
+			selectable : true, //날짜 칸 선택 가능 여부
+			height : 850, //높이 설정
+			locale : 'ko', //언어 지정
+			editable : true, //이벤트 수정 가능 여부
+			dayMaxEventRows : true, // 이벤트 최대 갯수 설정 및 팝오버 띄우기
+			views : {
+				timeGrid : {
+					dayMaxEventRows : 3 //하루 최대 이벤트 갯수
+				
+				}
+			},
+			
+			// initialView: 'listMonth',// 일정 목록 
+			 dateClick: function(info) {
+    			//window.open('calendarWorkReg?start_date=' + info.dateStr,'popup','width=500 height=500');
+			 },
+			 select: function(info) {
+				    var endStr = info.endStr;
+				    
+				    let date = new Date(endStr);
+				    date.setDate(date.getDate() - 1);
+				   
+				    let yyyy = date.getFullYear();
+				    let mm = String(date.getMonth() + 1).padStart(2, '0');
+				    let dd = String(date.getDate()).padStart(2, '0');
+				    
+				    endStr = `${yyyy}-${mm}-${dd}`;
+				   
+				  //  alert('selected ' + info.startStr + ' to ' + endStr);
+
+				    
+				    window.open('calendarWorkReg?start_date=' + info.startStr + '&end_date=' + endStr, 'createPopup', 'width=500,height=500');
+				    },
+			    eventClick: function(info) { //이벤트 클릭시
+			    	 var endStr = info.event.endStr;
+					    let date = new Date(endStr);
+					    date.setDate(date.getDate() - 1);
+					    let yyyy = date.getFullYear();
+					    let mm = String(date.getMonth() + 1).padStart(2, '0');
+					    let dd = String(date.getDate()).padStart(2, '0');
+					    endStr = `${yyyy}-${mm}-${dd}`;
+					    
+			        //alert('start: ' + info.event.startStr + 'end : '+ endStr );
+			    	window.open('calendarOption?start_date='+info.event.startStr+'&end_date='+endStr+'&title='+info.event.title, 'optionPopup','width=500,height=500');
+			    },	
+		            events: eventsData,
+		            
+			
+			
+
+		});
+		calendar.render();
+	});
+	});
+</script>
 </head>
 <body>
- <div id='calendar'></div>
+	<div id='calendar'></div>
 </body>
 </html>

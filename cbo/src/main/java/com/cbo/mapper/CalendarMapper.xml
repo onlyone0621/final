@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+  <mapper namespace="com.cbo.mapper.CalendarMapper">
+  
+  
+  <insert id="insertWork" parameterType="com.cbo.calendar.model.CalendarDTO">
+  insert into calendar values(sq_calendar_id.nextval,0,0,#{title},#{content},#{start_time},#{end_time}+1,sysdate)
+  </insert>
+  
+  <select id="selectList" resultType="com.cbo.calendar.model.CalendarDTO">
+  select * from calendar 
+  </select>
+  
+<!--   <delete id="deleteWork" parameterType="">
+  
+  </delete>
+  
+  <update id="updateWork" parameterType="">
+  update calendar set start_time = '#{start_time}', end_time = '#{end_time}', title = '#{title}', content = '#{content}' where
+  </update> -->
+  </mapper>
+
+
+
+
