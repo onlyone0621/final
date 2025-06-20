@@ -61,4 +61,6 @@
   	<select id="selectScheduledApprovalDocs" parameterType="int" resultType="com.cbo.approval.model.DocViewDTO">
   	
   	</select>
+  	
+  	
   </mapper>

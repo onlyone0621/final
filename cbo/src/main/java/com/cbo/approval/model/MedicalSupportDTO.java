@@ -12,7 +12,6 @@ import lombok.Setter;
 public class MedicalSupportDTO {
 	private int id;
 	private int docId;
-	private String content;
 	private String institution;
 	private String diagnosis;
 	private int requested;

@@ -14,7 +14,5 @@ import lombok.Setter;
 public class DraftDTO {
 	private int id;
 	private int docId;
-	private Date executionDate;
 	private String type;
-	private String content;
 }

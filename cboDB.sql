@@ -216,12 +216,11 @@ create table doc(
     id number(10) primary key,
     title varchar2(100) not null,
     member_id number(10),
-    dept_id number(10),
     write_date date DEFAULT SYSDATE NOT NULL,
     format_id NUMBER(10) NOT NULL,
+    content VARCHAR2(300) NOT NULL,
     retention NUMBER(5) DEFAULT 5 not null CHECK (retention >= 0),
     foreign key (member_id) references member(id) ON DELETE SET NULL,
-    foreign key (dept_id) references dept(id) ON DELETE SET NULL,
     FOREIGN KEY (format_id) REFERENCES format(id)
 );
 
@@ -238,16 +237,13 @@ CREATE TABLE approval_line (
 CREATE TABLE draft (
     id NUMBER(10) PRIMARY KEY,
     doc_id NUMBER(10) UNIQUE NOT NULL,
-    execution_date DATE NOT NULL,
     type VARCHAR2(100) NOT NULL CHECK (type IN ('인가', '조건부', '보류', '부결')),
-    content VARCHAR2(300) NOT NULL,
     foreign key (doc_id) REFERENCES doc(id) ON DELETE CASCADE
 );
 
 CREATE TABLE medical_support (
     id NUMBER(10) PRIMARY KEY,
     doc_id NUMBER(10) UNIQUE NOT NULL,
-    content VARCHAR2(300) NOT NULL,
     institution VARCHAR2(100) NOT NULL,
     diagnosis VARCHAR2(100) NOT NULL,
     requested NUMBER(10) NOT NULL CHECK (requested >= 0),
@@ -265,7 +261,6 @@ CREATE TABLE leave_application (
     start_date DATE NOT NULL,
     end_date DATE NOT NULL,
     remaining NUMBER(5) NOT NULL CHECK (remaining >= 0),
-    reason VARCHAR2(300) NOT NULL,
     foreign key (doc_id) REFERENCES doc(id) ON DELETE CASCADE
 );
 

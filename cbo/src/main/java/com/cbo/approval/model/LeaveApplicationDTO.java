@@ -21,5 +21,4 @@ public class LeaveApplicationDTO {
 	private Date startDate;
 	private Date endDate;
 	private int remaining;
-	private String reason;
 }

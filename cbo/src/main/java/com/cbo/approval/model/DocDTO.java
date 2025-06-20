@@ -15,9 +15,9 @@ public class DocDTO {
 	private int id;
 	private String title;
 	private int memberId;
-	private int deptId;
 	private Date writeDate;
 	private int formatId;
+	private String content;
 	private int retention;
 	private String fileName;
 }
