@@ -33,7 +33,7 @@
 			<div class="modal-content">
 				<div class="modal-header">
 					<h5 class="modal-title" id="modalTitleId">
-						Modal title
+						결재 양식 선택
 					</h5>
 					<button
 						type="button"
@@ -42,16 +42,23 @@
 						aria-label="Close"
 					></button>
 				</div>
-				<div class="modal-body">Body</div>
+				<div class="modal-body">
+					<ul class="list-group">
+						<li class="list-group-item" th:each="format : ${formats}">
+							<input class="form-check-input me-1" type="radio" name="format" th:id="${format.name}" th:value="${format.name}"/>
+							<label class="form-check-label" th:for="${format.name}" th:text="${format.name}"></label>
+						</li>
+					</ul>
+				</div>
 				<div class="modal-footer">
 					<button
 						type="button"
 						class="btn btn-secondary"
 						data-bs-dismiss="modal"
 					>
-						Close
+						닫기
 					</button>
-					<button type="button" class="btn btn-primary">Save</button>
+					<button type="button" class="btn btn-primary">확인</button>
 				</div>
 			</div>
 		</div>
