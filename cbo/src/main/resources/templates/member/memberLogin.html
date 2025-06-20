@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<html>
+<head>
+<meta charset="UTF-8">
+<title>로그인</title>
+<style>
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #FFD8D8;
+        margin: 0;
+        padding: 0;
+    }
+
+    form {
+        width: 400px;
+        height: 380px;
+        margin: 12% auto;
+        padding: 20px;
+        background-color: white;
+        border-radius: 10px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    form div {
+        margin-bottom: 10px;
+    }
+
+
+    input[type="text"],
+    input[type="password"]{
+        width: 76%;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        font-size: 18px;
+    }
+    
+
+    input[type="button"],
+    input[type="submit"] {
+    	width: 80%;
+        padding: 10px 15px;
+        background-color: #FFC6C6;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 18px;
+        margin-top: 5px;
+        margin-left: 5px;
+    }
+
+    input[type="button"]:hover,
+    input[type="submit"]:hover {
+        background-color: #FFA2A2;
+    }
+    
+    .form-div {
+    	text-align: center;
+    }
+    
+    .saveId-div{
+    	text-align: right;
+    }
+    .logo-label{
+    	text-align: center;
+    	width: 100px;
+    	height: 50px;
+    	font-size: 70px;
+    }
+    .find-div{
+    	text-align: left;
+    	text-decoration: none;
+    	color: black;
+    }
+	.fs-div{
+		display: flex;
+		justify-content: space-around;
+	}
+	a{
+		text-decoration: none;
+		color: black;
+	}
+</style>
+<script>
+function goMemberJoin(){
+	location.href="memberJoin";
+}
+</script>
+</head>
+<body>
+<form name="memberLogin" action="memberLogin" method="post">
+	<div class="form-div">
+		<div>
+			<label class="logo-label">LOGO</label>
+		</div>
+	    <div>
+	        <input type="text" id="userId" name="user_id" placeholder="ID">
+	    </div>
+	
+	    <div>
+	        <input type="password" id='pwd' name="pwd" placeholder="Password">
+	    </div>
+	    <div class="fs-div">
+	    	<div class="find-div"><label><a href="findMemberId" class="idFind">ID 찾기</a>  |  <a href="findMemberPwd">비밀번호 찾기</a></label></div>
+	    	<div class="saveId-div"><input type="checkbox" id="saveId">아이디 저장</div>
+	    </div>
+	    <div>
+	        <input type="submit" value="로그인">
+	    </div>
+	    <div>
+	        <input type="button" value="회원가입" onclick="goMemberJoin()">
+	    </div>
+	</div>
+</form>
+</body>
+</html>

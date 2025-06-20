@@ -11,4 +11,6 @@ public interface MemberMapper {
 	public int insertMember(MemberDTO dto) throws Exception;
 	public List<DeptDTO> selectDept() throws Exception;
 	public List<GradeDTO> selectGrade() throws Exception;
+	public String selectMemberId2(String email) throws Exception;
+	public int updateMemberPwd(String user_id) throws Exception;
 }

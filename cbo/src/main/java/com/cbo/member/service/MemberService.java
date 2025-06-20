@@ -13,5 +13,6 @@ public interface MemberService {
 	public int memberJoin(MemberDTO dto) throws Exception;
 	public List<DeptDTO> getDept() throws Exception;
 	public List<GradeDTO> getGrade() throws Exception;
-	
+	public String getMemberId2(String email) throws Exception;
+	public int setNewPwd(String user_id) throws Exception;
 }

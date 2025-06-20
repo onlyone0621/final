@@ -24,6 +24,11 @@ public class MemberController {
 		// TODO Auto-generated constructor stub
 	}
 	
+	@GetMapping("/memberLogin")
+	public String memberLoginForm() {
+		return "member/memberLogin";
+	}
+	
 	@GetMapping("/memberJoin")
 	public ModelAndView memberJoinForm() {
 		List<GradeDTO> gradeList = null;
@@ -60,12 +65,13 @@ public class MemberController {
 		int result = 0;
 		try {
 			result = service.memberJoin(dto);
+			
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		ModelAndView mav = new ModelAndView();
-		String msg = result > 0 ? "회원가입 성공" : "회원가입 실패";
+		String msg = result > 0 ? "회원가입 요청이 완료되었습니다." : "회원가입 요청에 실패하였습니다.";
 		mav.addObject("msg", msg);
 		mav.setViewName("member/memberMsg");
 		return mav;

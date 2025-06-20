@@ -16,5 +16,10 @@
 	<select id="selectGrade" resultType="com.cbo.grade.model.GradeDTO">
 		select * from grade
 	</select>
-	
+	<select id="selectMemberId2" resultType="String" parameterType="String">
+		select user_id from member where email=#{email}
+	</select>
+	<update id="updateMemberPwd" parameterType="String">
+		update member set pwd=#{pwd} where user_id=#{user_id}
+	</update>
 </mapper>

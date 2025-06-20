@@ -38,4 +38,17 @@ public class MemberServiceImple implements MemberService {
 		List<GradeDTO> lists = mapper.selectGrade();
 		return lists;
 	}
+	
+	@Override
+	public String getMemberId2(String email) throws Exception {
+		String user_id = mapper.selectMemberId2(email);
+		return user_id;
+	}
+	
+	@Override
+	public int setNewPwd(String user_id) throws Exception {
+		int result = mapper.updateMemberPwd(user_id);
+		return result;
+	}
+	
 }

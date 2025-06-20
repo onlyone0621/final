@@ -6,7 +6,7 @@
 <style>
     body {
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        background-color: #f4f4f4;
+        background-color: #FFD8D8;
         margin: 0;
         padding: 0;
     }
@@ -82,9 +82,12 @@
     }
 
     #idCheckResult,
-    #pwdCheckResult,
+    #pwdCheckResult {
+        font-size: 13px;
+    }
+    
     #codeCheckResult {
-        color: #FF5A5A;
+    	margin-left: 5px;
         font-size: 13px;
     }
 
@@ -111,6 +114,12 @@ function findAddr(){
 </script>
 <script>
 var XHR=null;
+var emailCode=null;
+var idValidate=false;
+var emailValidate=false;
+var pwdValidate=false;
+var nullData=false;
+
 function getXHR(){
 	if(window.ActioveXObject){
 		return new ActiveXObject("Msxml2.XMLHTTP");
@@ -152,14 +161,20 @@ function idCheckResult(){
 			var data = XHR.responseText;
 			
 			if(userId == "") {
+				resultIdCheck.style.color = 'red';
 		        resultIdCheck.innerHTML = "아이디를 입력해주세요.";
+		        idValidate = false;
 		       return;
 		    }
 
 		    if(data == userId) {
+		    	resultIdCheck.style.color = 'red';
 		        resultIdCheck.innerHTML = "이미 사용 중인 아이디입니다.";
+		        idValidate = false;
 		    }else {
+		    	resultIdCheck.style.color = 'green';
 		        resultIdCheck.innerHTML = "사용 가능한 아이디입니다.";
+		        idValidate = true;
 		    }
 			
 		}
@@ -176,18 +191,22 @@ function checkPwd() {
     }
     
     if(firstPwd == secondPwd){
+    	resultPwdCheck.style.color = 'green';
     	resultPwdCheck.innerHTML = "비밀번호가 일치합니다.";
+    	pwdValidate = true;
     }else{
+    	resultPwdCheck.style.color = 'red';
     	resultPwdCheck.innerHTML = "비밀번호가 일치하지 않습니다.";
+    	pwdValidate = false;
     }
 }
-</script>
-<script>
 function emailSend() {
     var userEmail = document.getElementById("email").value;
+    var resultCodeCheck = document.getElementById("codeCheckResult");
     if(userEmail==null || userEmail==""){
-    	alert('이메일이 입력되지 않았습니다.');
-    	return;
+    	resultCodeCheck.style.color = 'red';
+    	resultCodeCheck.innerHTML = '이메일을 입력하세요.';
+    	return false;
     }else{
     	params = 'email='+userEmail;
         sendRequest('sendEmailCode',params,emailCheck,'GET');
@@ -196,16 +215,79 @@ function emailSend() {
 function emailCheck(){
 	if(XHR.readyState==4){
 		if(XHR.status==200){
-			var data = XHR.responseText;
-			window.alert('이메일 발송 완료! 인증번호를 확인해주세요.');
+			emailCode = XHR.responseText;
+			window.alert('인증번호 메일이 발송되었습니다. 인증번호를 확인해주세요.');
 			document.memberJoin.emailCode.removeAttribute('disabled');
+			document.memberJoin.codeCheck.removeAttribute('disabled');
 		}
 	}
+}
+function emailCodeCheck(){
+	var inputCode = document.getElementById("emailCode").value;
+	var resultCodeCheck = document.getElementById("codeCheckResult");
+	if(inputCode=="" || inputCode==null){
+		resultCodeCheck.style.color = 'red';
+		resultCodeCheck.innerHTML = "인증번호를 입력해주세요.";
+		return false;
+	}else{
+		var resultCodeCheck = document.getElementById("codeCheckResult");
+		if(inputCode == emailCode){
+			resultCodeCheck.style.color = 'green';
+			resultCodeCheck.innerHTML = "인증에 성공하였습니다.";
+			emailValidate = true;
+		}else{
+			resultCodeCheck.style.color = 'red';
+			resultCodeCheck.innerHTML = "인증에 실패하였습니다.";
+			emailValidate = false;
+		}	
+	}
+}
+
+function validate(event){
+	var nameData = document.getElementById("name").value;
+	var deptData = document.getElementById("dept_id").value;
+	var gradeData = document.getElementById("grade_id").value;
+	var telData = document.getElementById("tel").value;
+	var addrData = document.getElementById("address").value;
+	if((nameData != null || nameData != '')&&
+		(deptData != '선택하기')&&
+		(gradeData != '선택하기')&&
+		(telData != null || telData != '')&&
+		(addrData != null || addrData != '')){
+		nullData = true;
+	}
+	if((idValidate == true)&&
+		(emailValidate == true)&&
+		(pwdValidate == true)&&
+		(nullData == true)){
+		return;
+	}else{
+		event.preventDefault();
+		alert('입력 정보를 확인해주세요.');
+	}
+}
+
+function clearForm(){
+	var resultIdCheck=document.getElementById("idCheckResult");
+	var resultPwdCheck=document.getElementById("pwdCheckResult");
+	var resultCodeCheck=document.getElementById("codeCheckResult");
+	resultIdCheck.innerHTML = "";
+	resultPwdCheck.innerHTML = "";
+	resultCodeCheck.innerHTML = "";
+	resultIdCheck.style.color = 'red';
+	resultPwdCheck.style.color = 'red';
+	resultCodeCheck.style.color = 'red';
+	document.memberJoin.emailCode.disabled('disabled');
+	document.memberJoin.codeCheck.disabled('disabled');
+}
+
+function goMemberLogin(){
+	location.href="memberLogin";
 }
 </script>
 </head>
 <body>
-<form name="memberJoin" action="memberJoin" method="post" >
+<form name="memberJoin" action="memberJoin" method="post" onsubmit="validate(event)">
 <div>
     <div>
 		<label id="hlabel">아이디</label>
@@ -218,7 +300,7 @@ function emailCheck(){
     </div>
     <div>
         <label id="hlabel">이름</label>
-        <input type="text" name="name" placeholder="이름">
+        <input type="text" id='name' name="name" placeholder="이름">
     </div>
     <div>
         <label id="hlabel">이메일</label>
@@ -228,8 +310,8 @@ function emailCheck(){
     <div>
     	<label id="hlabel"></label>
         <input type="text" id="emailCode" placeholder="인증코드" disabled="disabled">
-        <input type="button" id="codeCheck" value="인증하기">
-        <label id="codeCheckResult">인증 완료</label>
+        <input type="button" id="codeCheck" value="인증하기" disabled="disabled" onclick="emailCodeCheck()">
+        <label id="codeCheckResult"></label>
     </div>
     <div>
         <label id="hlabel">비밀번호</label>
@@ -245,25 +327,25 @@ function emailCheck(){
     </div>
     <div>
         <label id="hlabel">부서</label>
-        <select th:name="dept_id">
+        <select id='dept_id' th:name="dept_id">
         	<option selected="selected">선택하기</option>
-        	<option th:each="dlist:${deptList}" th:value="${dlist.name}" th:utext="${dlist.name}"></option>
+        	<option th:each="dlist:${deptList}" th:value="${dlist.id}" th:utext="${dlist.name}"></option>
       	</select>
     </div>
     <div>
         <label id="hlabel">직급</label>
-        <select th:name="grade_id">
+        <select id='grade_id' th:name="grade_id">
         	<option selected="selected">선택하기</option>
-        	<option th:each="glist:${gradeList}" th:value="${glist.name}" th:utext="${glist.name}"></option>
+        	<option th:each="glist:${gradeList}" th:value="${glist.id}" th:utext="${glist.name}"></option>
       	</select>
     </div>
     <div>
         <label id="hlabel">연락처</label>
-        <input type="text" name="tel" placeholder="연락처">
+        <input type="text" id="tel" name="tel" placeholder="연락처">
     </div>
     <div>
         <label id="hlabel">주소</label>
-        <input type="text" id="adrNum" name="adrNum" placeholder="우편번호">
+        <input type="text" id="adrNum" name="adrNum" placeholder="우편번호" disabled="disabled">
         <input type="button" id="addrFind" value="주소찾기" onclick='findAddr()'>
     </div>
     <div>
@@ -272,7 +354,8 @@ function emailCheck(){
     </div>
     <div class="button-group">
         <input type="submit" value="회원가입 요청">
-        <input type="reset" value="다시작성">
+        <input type="reset" value="다시작성" onclick="clearForm()">
+        <input type="button" value="돌아가기" onclick="goMemberLogin()">
     </div>
 </div>
 </form>
