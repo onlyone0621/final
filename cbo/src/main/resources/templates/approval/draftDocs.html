@@ -8,6 +8,41 @@
 <title>Document</title>
 </head>
 <body>
-
+	<div layout:fragment="content">
+		<h1>기안 문서함</h1>
+		<div
+		class="table-responsive"
+	>
+		<table
+			class="table table-primary"
+		>
+			<thead>
+				<tr>
+					<th scope="col">문서 번호</th>
+					<th scope="col">기안 일자</th>
+					<th scope="col">완료 일자</th>
+					<th scope="col">결재 양식</th>
+					<th scope="col">제목</th>
+					<th scope="col">기안자</th>
+					<th scope="col">상태</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr th:if="${#lists.isEmpty(draftDocs)}">
+					<td colspan="7">문서가 없습니다</td>
+				</tr>
+				<tr class="" th:unless="${#lists.isEmpty(draftDocs)}" th:each="draftDoc : ${draftDocs}">
+					<td scope="row" th:text="${draftDoc.id}"></td>
+					<td scope="row" th:text="${draftDoc.writeDate}"></td>
+					<td scope="row" th:text="${draftDoc.completion}"></td>
+					<td scope="row" th:text="${draftDoc.formatName}"></td>
+					<td scope="row" th:text="${draftDoc.title}"></td>
+					<td scope="row" th:text="${draftDoc.writer}"></td>
+					<td scope="row" th:text="${draftDoc.status}"></td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	</div>
 </body>
 </html>

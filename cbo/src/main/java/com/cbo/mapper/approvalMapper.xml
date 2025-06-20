@@ -33,7 +33,7 @@
 		WHERE EXISTS (SELECT 1 
 		                FROM approval_line 
 		                WHERE approval_line.doc_id = doc_view.id 
-		                AND approval_line.member_id = ? 
+		                AND approval_line.member_id = #{id} 
 		                AND status = '참조')
   	</select>
   	
