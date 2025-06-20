@@ -170,3 +170,13 @@ BEGIN
     END IF;
 END;
 /
+
+CREATE OR REPLACE TRIGGER trg_format_id
+BEFORE INSERT ON format
+FOR EACH ROW
+BEGIN
+    IF :NEW.id IS NULL THEN
+        :NEW.id := sq_format_id.NEXTVAL;
+    END IF;
+END;
+/

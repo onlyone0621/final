@@ -7,6 +7,7 @@ drop table medical_support;
 drop table leave_application;
 drop table approval_line;
 drop table doc;
+drop table format;
 drop table chat_message;
 drop table chatroom_user;
 drop table chatroom;
@@ -32,6 +33,7 @@ drop sequence sq_addr_id;
 drop sequence sq_groups_id;
 drop sequence sq_calendar_id;
 drop sequence sq_doc_id;
+drop sequence sq_format_id;
 drop sequence sq_approval_line_id;
 drop sequence sq_draft_id;
 drop sequence sq_medical_support_id;
@@ -52,6 +54,7 @@ create sequence sq_addr_id nocache;
 create sequence sq_groups_id nocache;
 create sequence sq_calendar_id nocache;
 create sequence sq_doc_id nocache; 
+create sequence sq_format_id nocache;
 create sequence sq_approval_line_id nocache;
 create sequence sq_draft_id nocache;
 create sequence sq_medical_support_id nocache;
@@ -476,6 +479,17 @@ INSERT INTO member (
 ) VALUES (
     sq_member_id.NEXTVAL, 'user020', '1234', '유인나', 'user020@example.com', '서울시 성북구', '010-1020-1020', DEFAULT, 2, 4, NULL
 );
+
+
+-- format table sample
+INSERT INTO format (id, name)
+VALUES (sq_format_id.NEXTVAL, '기안문'); 
+
+INSERT INTO format (id, name)
+VALUES (sq_format_id.NEXTVAL, '진료비 지원 신청서');
+
+INSERT INTO format (id, name)
+VALUES (sq_format_id.NEXTVAL, '휴가 신청서');
 
 -- Docs sample
 INSERT INTO doc (id, title, member_id, dept_id)
