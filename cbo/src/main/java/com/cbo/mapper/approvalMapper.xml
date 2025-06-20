@@ -8,12 +8,35 @@
   		FROM format
   	</select>
   	
-  	<select id="selectMembers" resultType="com.cbo.member.model.OrganDTO">
+  	<select id="selectMembers" parameterType="int" resultType="com.cbo.member.model.OrganDTO">
   		SELECT member.id, member.name, dept.name AS dept, grade.name AS grade, profile_image
 		FROM MEMBER
 			JOIN dept ON dept.id = member.dept_id
 			JOIN grade ON grade.id = member.grade_id
 		ORDER BY dept.id, grade.seq
   	</select>
-  	<select id="selectApprovalDocs"></select>
+  	<select id="selectApprovalDocs" resultType="com.cbo.approval.model.DocViewDTO">
+  		SELECT * 
+		FROM doc_view
+		WHERE EXISTS (SELECT 1 
+                		FROM approval_line 
+                		WHERE approval_line.doc_id = doc_view.id 
+                		AND approval_line.member_id = #{id} 
+                		AND status = '참조');
+  	</select>
+  	<select id="selectReferenceDocs" parameterType="int" resultType="com.cbo.approval.model.DocViewDTO">
+  		SELECT * 
+		FROM doc_view
+		WHERE EXISTS (SELECT 1
+                		FROM APPROVAL_LINE
+                		WHERE approval_line.member_id != doc_view.member_id 
+                		AND approval_line.member_id = #{id} 
+                		AND approval_line.status IN ('결재 완료', '반려'));
+  	</select>
+  	<select id="selectDraftDocs" parameterType="int" resultType="com.cbo.approval.model.DocViewDTO">
+  		SELECT * 
+		FROM doc_view
+		WHERE member_id = #{id};
+  		
+  	</select>
   </mapper>
