@@ -87,7 +87,7 @@
 		    SELECT grade.seq
 		        FROM member
 		            JOIN grade ON member.grade_id = grade.id
-		        WHERE member.id = :member_id
+		        WHERE member.id = #{id}
 		)
 		SELECT * 
 		FROM doc_view
@@ -95,7 +95,7 @@
 		    SELECT 1
 		    FROM APPROVAL_LINE 
 		    WHERE approval_line.doc_id = doc_view.id
-		    AND approval_line.member_id = :member_id
+		    AND approval_line.member_id = #{id}
 		    AND approval_line.status = '결재 예정'
 		)
 		AND EXISTS (
