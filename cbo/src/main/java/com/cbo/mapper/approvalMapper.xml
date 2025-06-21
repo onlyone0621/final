@@ -68,7 +68,7 @@
 		    WHERE approval_line.doc_id = doc_view.id 
 		    AND approval_line.status = '결재 예정'
 		    AND grade.seq > target_seq.seq 
-		);
+		)
   	</select>
   	
   	<select id="selectPendingReferenceDocs" parameterType="int" resultType="com.cbo.approval.model.DocViewDTO">
@@ -83,7 +83,31 @@
   	</select>
   	
   	<select id="selectScheduledApprovalDocs" parameterType="int" resultType="com.cbo.approval.model.DocViewDTO">
-  	
+  		WITH target_seq AS (
+		    SELECT grade.seq
+		        FROM member
+		            JOIN grade ON member.grade_id = grade.id
+		        WHERE member.id = :member_id
+		)
+		SELECT * 
+		FROM doc_view
+		WHERE EXISTS (
+		    SELECT 1
+		    FROM APPROVAL_LINE 
+		    WHERE approval_line.doc_id = doc_view.id
+		    AND approval_line.member_id = :member_id
+		    AND approval_line.status = '결재 예정'
+		)
+		AND EXISTS (
+		    SELECT 1 
+		    FROM approval_line 
+		        JOIN member ON approval_line.member_id = member.id 
+		        JOIN grade ON member.grade_id = grade.id
+		        JOIN target_seq ON 1=1
+		    WHERE approval_line.doc_id = doc_view.id 
+		    AND approval_line.status = '결재 예정'
+		    AND grade.seq > target_seq.seq 
+		)
   	</select>
 
   </mapper>
