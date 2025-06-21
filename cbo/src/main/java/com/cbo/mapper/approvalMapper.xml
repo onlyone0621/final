@@ -8,11 +8,11 @@
   		FROM format
   	</select>
   	
-  	<select id="selectMembers" parameterType="int" resultType="com.cbo.member.model.OrganDTO">
-  		SELECT member.id, member.name, dept.name AS dept, grade.name AS grade, profile_image
-		FROM MEMBER
-			JOIN dept ON dept.id = member.dept_id
-			JOIN grade ON grade.id = member.grade_id
+  	<select id="selectMembers" resultType="map">
+  		SELECT member.id AS member_id, member.name AS member_name, dept.name AS dept_name, grade.name AS grade_name
+		FROM member
+		    JOIN dept ON member.dept_id = dept.id
+		    JOIN grade ON member.grade_id = grade.id 
 		ORDER BY dept.id, grade.seq
   	</select>
   	
