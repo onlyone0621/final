@@ -117,4 +117,9 @@ public class ApprovalController {
 	public ModelAndView reject() {
 		return null;
 	}
+	
+	@GetMapping("/ckeditor")
+	public String editorTest() {
+		return "approval/CKEditorTest";
+	}
 }

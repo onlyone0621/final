@@ -2,9 +2,6 @@ drop table community_comment;
 drop table community_post;
 drop table community_member;
 drop table community;
-drop table draft;
-drop table medical_support;
-drop table leave_application;
 drop table approval_line;
 drop table doc;
 drop table format;
@@ -35,9 +32,6 @@ drop sequence sq_calendar_id;
 drop sequence sq_doc_id;
 drop sequence sq_format_id;
 drop sequence sq_approval_line_id;
-drop sequence sq_draft_id;
-drop sequence sq_medical_support_id;
-drop sequence sq_leave_application_id;
 drop sequence sq_community_id;
 drop sequence sq_community_post_id;
 drop sequence sq_community_comment_id;
@@ -56,9 +50,6 @@ create sequence sq_calendar_id nocache;
 create sequence sq_doc_id nocache; 
 create sequence sq_format_id nocache;
 create sequence sq_approval_line_id nocache;
-create sequence sq_draft_id nocache;
-create sequence sq_medical_support_id nocache;
-create sequence sq_leave_application_id nocache;
 create sequence sq_community_id nocache;
 create sequence sq_community_post_id nocache;
 create sequence sq_community_comment_id nocache;
@@ -218,7 +209,7 @@ create table doc(
     member_id number(10),
     write_date date DEFAULT SYSDATE NOT NULL,
     format_id NUMBER(10) NOT NULL,
-    content VARCHAR2(300) NOT NULL,
+    content CLOB NOT NULL,
     retention NUMBER(5) DEFAULT 5 not null CHECK (retention >= 0),
     foreign key (member_id) references member(id) ON DELETE SET NULL,
     FOREIGN KEY (format_id) REFERENCES format(id)
@@ -233,7 +224,7 @@ CREATE TABLE approval_line (
     CONSTRAINT fk_approval_line_doc FOREIGN KEY (doc_id) REFERENCES doc(id) ON DELETE CASCADE,
     CONSTRAINT fk_approval_line_member FOREIGN KEY (member_id) REFERENCES member(id) ON DELETE SET NULL
 );
-
+/*
 CREATE TABLE draft (
     id NUMBER(10) PRIMARY KEY,
     doc_id NUMBER(10) UNIQUE NOT NULL,
@@ -263,7 +254,7 @@ CREATE TABLE leave_application (
     remaining NUMBER(5) NOT NULL CHECK (remaining >= 0),
     foreign key (doc_id) REFERENCES doc(id) ON DELETE CASCADE
 );
-
+*/
 
 create table community(
 
