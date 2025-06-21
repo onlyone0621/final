@@ -109,5 +109,6 @@
 		    AND grade.seq > target_seq.seq 
 		)
   	</select>
+	
 
   </mapper>
