@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>비밀번호 재설정</title>
+<style>
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #FFD8D8;
+        margin: 0;
+        padding: 0;
+    }
+
+    form {
+        max-width: 500px;
+        margin: 50px auto;
+        padding: 30px;
+        background-color: white;
+        border-radius: 10px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    form div {
+        margin-bottom: 15px;
+    }
+
+    input[type="password"]{
+        width: 45%;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        font-size: 14px;
+    }
+   
+    input[type="button"],
+    input[type="submit"]{
+    	width: 23%;
+        padding: 10px 15px;
+        background-color: #FFC6C6;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 14px;
+        margin-top: 5px;
+        margin-left: 5px;
+    }
+
+    input[type="button"]:hover,
+    input[type="submit"]:hover {
+        background-color: #FFA2A2;
+    }
+	#hlabel {
+		color: #909090;
+		display: inline-block;
+		width: 120px;
+		margin-bottom: 5px;
+        font-weight: bold;
+        font-size: 16px;
+        text-align: left;
+	}
+
+    #pwdCheckResult {
+        color: #909090;
+		display: inline-block;
+		width: 200px;
+		margin-bottom: 5px;
+        font-size: 13px;
+        text-align: left;
+    }
+
+    input::placeholder {
+        color: #999;
+    }
+
+    .button-group {
+        display: flex;
+        justify-content: center;
+    }
+    .main-div{
+    	text-align: center;
+    }
+</style>
+<script>
+var pwdValidate=false;
+
+function checkPwd() {
+	var firstPwd = document.getElementById("pwd1").value;
+    var secondPwd = document.getElementById("pwd2").value;
+    var resultPwdCheck = document.getElementById("pwdCheckResult");
+    if(firstPwd == "" || secondPwd == ""){
+    	resultPwdCheck.innerHTML = "";
+    	return;
+    }
+    
+    if(firstPwd == secondPwd){
+    	resultPwdCheck.style.color = 'green';
+    	resultPwdCheck.innerHTML = "비밀번호가 일치합니다.";
+    	pwdValidate = true;
+    }else{
+    	resultPwdCheck.style.color = 'red';
+    	resultPwdCheck.innerHTML = "비밀번호가 일치하지 않습니다.";
+    	pwdValidate = false;
+    }
+}
+
+function validate(event){
+	var pwdData = document.getElementById("pwd1").value;
+	var pwd2Data = document.getElementById("pwd2").value;
+	if((pwdData != null || pwdData != '')&&
+		(pwd2Data != null || pwd2Data != '')&&
+		(pwdValidate == true)){
+		return;
+	}else{
+		event.preventDefault();
+		alert('입력 정보를 확인해주세요.');
+	}
+}
+
+function goMemberLogin(){
+	location.href="memberLogin";
+}
+</script>
+</head>
+<body>
+<form name="memberPwdUpdate" action="memberPwdUpdate" method="post" onsubmit="validate(event)">
+<div class="main-div">
+     <div>
+        <label id="hlabel">새로운 비밀번호</label>
+        <input type="password" id="pwd1" name="pwd" placeholder="비밀번호" onblur="checkPwd()">
+        <input type="hidden" name="user_id" th:value="${user_id}">
+    </div>
+    <div>
+        <label id="hlabel">비밀번호 확인</label>
+        <input type="password" id="pwd2" placeholder="비밀번호 확인" onblur="checkPwd()">
+    </div>
+    <div>
+        <label id="pwdCheckResult"></label>
+    </div>
+    <div class="button-group">
+        <input type="submit" value="비밀번호 변경">
+        <input type="button" value="돌아가기" onclick="goMemberLogin()">
+    </div>
+</div>
+</form>
+</body>
+</html>

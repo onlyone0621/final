@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -15,6 +16,11 @@ import com.cbo.grade.model.GradeDTO;
 import com.cbo.member.model.MemberDTO;
 import com.cbo.member.service.MemberService;
 
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+
 @Controller
 public class MemberController {
 	@Autowired
@@ -24,12 +30,62 @@ public class MemberController {
 		// TODO Auto-generated constructor stub
 	}
 	
-	@GetMapping("/memberLogin")
-	public String memberLoginForm() {
+	@GetMapping("memberLogin")
+	public String memberLoginForm(HttpServletRequest req, Model m) {
+		String saveid = "";
+
+        Cookie[] cookies = req.getCookies();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if ("saveid".equals(cookie.getName())) {
+                    saveid = cookie.getValue();
+                    break;
+                }
+            }
+        }
+        m.addAttribute("saveid", saveid);
 		return "member/memberLogin";
 	}
 	
-	@GetMapping("/memberJoin")
+	@ResponseBody
+	@GetMapping("login")
+	public String memberLogin(@RequestParam("user_id")String user_id, @RequestParam("pwd") String pwd,@RequestParam(value="saveid", required = false) boolean saveid, HttpServletRequest req, HttpServletResponse res) {
+		String getId = "";
+		String getPwd = "";
+		String result = "";
+		HttpSession session = req.getSession();
+		MemberDTO dto = null;
+		try {
+			getId = service.getMemberId(user_id);
+			getPwd = service.getMemberPwd(user_id);
+			dto = service.getMember(user_id);
+			if(getId == "" || getId==null) {
+				result = getId;
+			}else {
+				if(getPwd.equals(pwd)) {
+			        session.setAttribute("udto", dto);
+			        if(saveid==false) {
+			        	Cookie ck = new Cookie("saveid", getId);
+						ck.setMaxAge(0);
+						res.addCookie(ck);
+					}else {
+						Cookie ck = new Cookie("saveid", getId);
+						ck.setMaxAge(60*60*24*30);
+						res.addCookie(ck);
+					}
+			        result = "success";
+				}else {
+					result = getPwd;
+				}
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return result;
+	}
+	
+	@GetMapping("memberJoin")
 	public ModelAndView memberJoinForm() {
 		List<GradeDTO> gradeList = null;
 		List<DeptDTO> deptList = null;
@@ -48,7 +104,7 @@ public class MemberController {
 	}
 	
 	@ResponseBody
-	@GetMapping("/memberIdCheck")
+	@GetMapping("memberIdCheck")
 	public String checkMemberId(@RequestParam("user_id") String user_id) {
 		String userId = null;
 		try {
@@ -60,7 +116,7 @@ public class MemberController {
 		return userId;
 	}
 	
-	@PostMapping("/memberJoin")
+	@PostMapping("memberJoin")
 	public ModelAndView memberJoin(MemberDTO dto) {
 		int result = 0;
 		try {
@@ -73,7 +129,121 @@ public class MemberController {
 		ModelAndView mav = new ModelAndView();
 		String msg = result > 0 ? "회원가입 요청이 완료되었습니다." : "회원가입 요청에 실패하였습니다.";
 		mav.addObject("msg", msg);
+		if(result == 0) {
+			mav.addObject("gourl", "memberJoin");
+			mav.setViewName("member/memberMsg");
+		}else {
+			mav.addObject("gourl", "memberLogin");
+			mav.setViewName("member/memberMsg");
+		}
+		return mav;
+	}
+	
+	@GetMapping("memberLogout")
+	public String memberLogout(HttpServletRequest req, Model m) {
+		HttpSession session = req.getSession();
+		session.removeAttribute("udto");
+		String saveid = "";
+
+        Cookie[] cookies = req.getCookies();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if ("saveid".equals(cookie.getName())) {
+                    saveid = cookie.getValue();
+                    break;
+                }
+            }
+        }
+        m.addAttribute("saveid", saveid);
+		return "member/memberLogin";
+	}
+	
+	@PostMapping("memberIdFind")
+	public ModelAndView memberIdFind(@RequestParam("name")String name, @RequestParam("email")String email) {
+		String user_id = "";
+		String msg = "";
+		String gourl = "";
+		try {
+			user_id = service.getMemberId2(email, name);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		ModelAndView mav = new ModelAndView();
+		if(user_id=="" || user_id==null) {
+			msg = "이름 또는 이메일을 잘못 입력하였습니다.";
+			gourl = "memberIdFind";
+			mav.addObject("msg", msg);
+			mav.addObject("gourl", gourl);
+			mav.setViewName("member/memberMsg");
+		}else {
+			msg = "회원님의 아이디는 "+user_id+"입니다.";
+			mav.addObject("msg", msg);
+			mav.setViewName("member/memberIdFind_ok");
+		}
+		return mav;
+	}
+	
+	@PostMapping("memberPwdFind")
+	public ModelAndView memberPwdFind(@RequestParam("user_id")String user_id, @RequestParam("email")String email) {
+		String pwd = "";
+		String msg = "";
+		String gourl = "";
+		try {
+			pwd = service.getMemberPwd2(email, user_id);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		ModelAndView mav = new ModelAndView();
+		if(pwd=="" || pwd==null) {
+			msg = "아이디 또는 이메일을 잘못 입력하였습니다.";
+			gourl = "memberPwdFind";
+			mav.addObject("msg", msg);
+			mav.addObject("gourl", gourl);
+			mav.setViewName("member/memberMsg");
+		}else {
+			mav.addObject("user_id", user_id);
+			mav.setViewName("member/memberPwdUpdate");
+		}
+		return mav;
+	}
+	
+	@PostMapping("memberPwdUpdate")
+	public ModelAndView memberPwdUpdate(@RequestParam("pwd")String pwd, @RequestParam("user_id")String user_id) {
+		int result = 0;
+		String msg = "";
+		try {
+			result = service.setNewPwd(user_id, pwd);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		msg = result > 0 ? "비밀번호가 변경되었습니다. 변경된 비밀번호로 로그인해주세요." : "비밀번호 변경에 실패하였습니다.";
+		ModelAndView mav = new ModelAndView();
+		mav.addObject("msg", msg);
+		mav.addObject("gourl", "memberLogin");
 		mav.setViewName("member/memberMsg");
 		return mav;
+	}
+	
+	@GetMapping("memberIdFind")
+	public String memberIdFindForm() {
+		return "member/memberIdFind";
+	}
+	
+	@GetMapping("memberIdFind_ok")
+	public String memberIdFind_okForm() {
+		return "member/memberIdFind_ok";
+	}
+	
+	@GetMapping("memberPwdFind")
+	public String memberPwdFindForm() {
+		return "member/memberPwdFind";
+	}
+	
+	@GetMapping("memberPwdUpdate")
+	public String memberPwdUpdateForm() {
+		return "member/memberPwdUpdate";
 	}
 }
