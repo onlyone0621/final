@@ -13,7 +13,8 @@ public class DocViewDTO {
 	private int id;
 	private String writeDate;
 	private String completion;
-	private String format;
+	private int formatId;
+	private String formatName;
 	private String title;
 	private int memberId;
 	private String writer;

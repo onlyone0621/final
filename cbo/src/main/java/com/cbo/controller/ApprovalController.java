@@ -38,17 +38,44 @@ public class ApprovalController {
 	
 	@GetMapping("/pendingApprovalDocs")
 	public ModelAndView pendingApprovalDocs() {
-		return null;
+		List<DocViewDTO> res = null;
+		try {
+			res = approvalService.getPendingApprovalDocs(1);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		ModelAndView mav = new ModelAndView("approval/pendingApprovalDocs");
+		mav.addObject("pendingApprovalDocs", res);
+		return mav;
 	}
 	
 	@GetMapping("/pendingReferenceDocs")
 	public ModelAndView pendingReferenceDocs() {
-		return null;
+		List<DocViewDTO> res = null;
+		try {
+			res = approvalService.getPendingReferenceDocs(1);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		ModelAndView mav = new ModelAndView("approval/pendingReferenceDocs");
+		mav.addObject("pendingReferenceDocs", res);
+		return mav;
 	}
 	
 	@GetMapping("/scheduledApprovalDocs")
 	public ModelAndView scheduledApprovalDocs() {
-		return null;
+		List<DocViewDTO> res = null;
+		try {
+			res = approvalService.getScheduledApprovalDocs(1);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		ModelAndView mav = new ModelAndView("approval/scheduledApprovalDocs");
+		mav.addObject("scheduledApprovalDocs", res);
+		return mav;
 	}
 	
 	@GetMapping("/approvalDocs")
@@ -116,5 +143,10 @@ public class ApprovalController {
 	@PostMapping("/reject")
 	public ModelAndView reject() {
 		return null;
+	}
+	
+	@GetMapping("/ckeditor")
+	public String editorTest() {
+		return "approval/CKEditorTest";
 	}
 }

@@ -8,11 +8,11 @@
   		FROM format
   	</select>
   	
-  	<select id="selectMembers" parameterType="int" resultType="com.cbo.member.model.OrganDTO">
-  		SELECT member.id, member.name, dept.name AS dept, grade.name AS grade, profile_image
-		FROM MEMBER
-			JOIN dept ON dept.id = member.dept_id
-			JOIN grade ON grade.id = member.grade_id
+  	<select id="selectMembers" resultType="map">
+  		SELECT member.id AS member_id, member.name AS member_name, dept.name AS dept_name, grade.name AS grade_name
+		FROM member
+		    JOIN dept ON member.dept_id = dept.id
+		    JOIN grade ON member.grade_id = grade.id 
 		ORDER BY dept.id, grade.seq
   	</select>
   	
@@ -24,7 +24,7 @@
 		                WHERE approval_line.member_id != doc_view.member_id
 		                AND approval_line.doc_id = doc_view.id
 		                AND approval_line.member_id = #{id} 
-		                AND approval_line.status IN ('결재 완료', '반려'));
+		                AND approval_line.status IN ('결재 완료', '반려'))
   	</select>
   	
   	<select id="selectReferenceDocs" parameterType="int" resultType="com.cbo.approval.model.DocViewDTO">
@@ -33,18 +33,42 @@
 		WHERE EXISTS (SELECT 1 
 		                FROM approval_line 
 		                WHERE approval_line.doc_id = doc_view.id 
-		                AND approval_line.member_id = ? 
-		                AND status = '참조');
+		                AND approval_line.member_id = #{id} 
+		                AND status = '참조')
   	</select>
   	
   	<select id="selectDraftDocs" parameterType="int" resultType="com.cbo.approval.model.DocViewDTO">
   		SELECT * 
 		FROM doc_view
-		WHERE member_id = #{id};
+		WHERE member_id = #{id}
   	</select>
   	
   	<select id="selectPendingApprovalDocs" parameterType="int" resultType="com.cbo.approval.model.DocViewDTO">
-  	
+  		WITH target_seq AS (
+	    	SELECT grade.seq
+	        FROM member
+	            JOIN grade ON member.grade_id = grade.id
+	        WHERE member.id = #{id}
+		)
+		SELECT * 
+		FROM doc_view
+		WHERE EXISTS (
+		    SELECT 1
+		    FROM APPROVAL_LINE 
+		    WHERE approval_line.doc_id = doc_view.id
+		    AND approval_line.member_id = #{id}
+		    AND approval_line.status = '결재 예정'
+		)
+		AND NOT EXISTS (
+		    SELECT 1 
+		    FROM approval_line 
+		        JOIN member ON approval_line.member_id = member.id 
+		        JOIN grade ON member.grade_id = grade.id
+		        JOIN target_seq ON 1=1
+		    WHERE approval_line.doc_id = doc_view.id 
+		    AND approval_line.status = '결재 예정'
+		    AND grade.seq > target_seq.seq 
+		)
   	</select>
   	
   	<select id="selectPendingReferenceDocs" parameterType="int" resultType="com.cbo.approval.model.DocViewDTO">
@@ -55,10 +79,36 @@
 		                WHERE approval_line.doc_id = doc_view.id
 		                AND approval_line.member_id = #{id}
 		                AND approval_line.status = '참조')
-		AND doc_view.status = '진행 중';
+		AND doc_view.status = '진행 중'
   	</select>
   	
   	<select id="selectScheduledApprovalDocs" parameterType="int" resultType="com.cbo.approval.model.DocViewDTO">
-  	
+  		WITH target_seq AS (
+		    SELECT grade.seq
+		        FROM member
+		            JOIN grade ON member.grade_id = grade.id
+		        WHERE member.id = #{id}
+		)
+		SELECT * 
+		FROM doc_view
+		WHERE EXISTS (
+		    SELECT 1
+		    FROM APPROVAL_LINE 
+		    WHERE approval_line.doc_id = doc_view.id
+		    AND approval_line.member_id = #{id}
+		    AND approval_line.status = '결재 예정'
+		)
+		AND EXISTS (
+		    SELECT 1 
+		    FROM approval_line 
+		        JOIN member ON approval_line.member_id = member.id 
+		        JOIN grade ON member.grade_id = grade.id
+		        JOIN target_seq ON 1=1
+		    WHERE approval_line.doc_id = doc_view.id 
+		    AND approval_line.status = '결재 예정'
+		    AND grade.seq > target_seq.seq 
+		)
   	</select>
+	
+
   </mapper>

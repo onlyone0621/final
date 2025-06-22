@@ -9,6 +9,7 @@
 </head>
 <body>
 <div layout:fragment="content">
+	<h1>결재 문서함</h1>
 	<div
 		class="table-responsive"
 	>
@@ -27,14 +28,17 @@
 				</tr>
 			</thead>
 			<tbody>
-				<tr class="" th:each="approvalDoc : ${approvalDocs}">
-					<td scope="row" th:text="${approvalDoc.id}"></td>
-					<td scope="row" th:text="${approvalDoc.writeDate}"></td>
-					<td scope="row" th:text="${approvalDoc.completion}"></td>
-					<td scope="row" th:text="${approvalDoc.format}"></td>
-					<td scope="row" th:text="${approvalDoc.title}"></td>
-					<td scope="row" th:text="${approvalDoc.writer}"></td>
-					<td scope="row" th:text="${approvalDoc.status}"></td>
+				<tr th:if="${#lists.isEmpty(approvalDocs)}">
+					<td colspan="7">문서가 없습니다</td>
+				</tr>
+				<tr class="" th:unless="${#lists.isEmpty(approvalDocs)}" th:each="approvalDoc : ${approvalDocs}" th:object="${approvalDoc}">
+					<td scope="row" th:text="*{id}"></td>
+					<td scope="row" th:text="*{writeDate}"></td>
+					<td scope="row" th:text="*{completion}"></td>
+					<td scope="row" th:text="*{formatName}"></td>
+					<td scope="row" th:text="*{title}"></td>
+					<td scope="row" th:text="*{writer}"></td>
+					<td scope="row" th:text="*{status}"></td>
 				</tr>
 			</tbody>
 		</table>
