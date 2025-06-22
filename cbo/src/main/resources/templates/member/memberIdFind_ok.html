@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>ID찾기</title>
+<style>
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #FFD8D8;
+        margin: 0;
+        padding: 0;
+    }
+
+    form {
+        max-width: 500px;
+        margin: 50px auto;
+        padding: 30px;
+        background-color: white;
+        border-radius: 10px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    form div {
+        margin-bottom: 15px;
+    }
+
+
+    input[type="text"],
+    input[type="password"]{
+        width: 45%;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        font-size: 14px;
+    }
+    
+    select {
+    	width: 30%;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        font-size: 14px;
+    }
+
+    input[type="button"],
+    input[type="submit"],
+    input[type="reset"] {
+    	width: 23%;
+        padding: 10px 15px;
+        background-color: #FFC6C6;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 14px;
+        margin-top: 5px;
+        margin-left: 5px;
+    }
+
+    input[type="button"]:hover,
+    input[type="submit"]:hover,
+    input[type="reset"]:hover {
+        background-color: #FFA2A2;
+    }
+
+    input::placeholder {
+        color: #999;
+    }
+
+    .button-group {
+        display: flex;
+        justify-content: center;
+    }
+    .div1 {
+    	text-align: center;
+    }
+    .userid-label{
+    	width: 100px;
+    	height: 40px;
+    	font-size: 25px;
+    	color: #909090;
+    }
+</style>
+<script>
+function goMemberLogin(){
+	location.href="memberLogin";
+}
+function goMemberPwdFind(){
+	location.href="memberPwdFind";
+}
+</script>
+</head>
+<body>
+<form>
+<div>
+    <div class="div1">
+		<label class="userid-label" th:text="${msg}"></label>
+	</div>
+    <div class="button-group">
+        <input type="button" value="비밀번호찾기" onclick="goMemberPwdFind">
+        <input type="button" value="로그인으로" onclick="goMemberLogin()">
+    </div>
+</div>
+</form>
+</body>
+</html>

@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>비밀번호 찾기</title>
+<style>
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #FFD8D8;
+        margin: 0;
+        padding: 0;
+    }
+
+    form {
+        max-width: 500px;
+        margin: 50px auto;
+        padding: 30px;
+        background-color: white;
+        border-radius: 10px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    form div {
+        margin-bottom: 15px;
+    }
+
+
+    input[type="text"],
+    input[type="password"]{
+        width: 45%;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        font-size: 14px;
+    }
+    
+    select {
+    	width: 30%;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        font-size: 14px;
+    }
+
+    input[type="button"],
+    input[type="submit"],
+    input[type="reset"] {
+    	width: 23%;
+        padding: 10px 15px;
+        background-color: #FFC6C6;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 14px;
+        margin-top: 5px;
+        margin-left: 5px;
+    }
+
+    input[type="button"]:hover,
+    input[type="submit"]:hover,
+    input[type="reset"]:hover {
+        background-color: #FFA2A2;
+    }
+	#hlabel {
+		color: #909090;
+		display: inline-block;
+		width: 70px;
+		margin-bottom: 5px;
+        font-weight: bold;
+        font-size: 16px;
+        margin-left: 30px;
+	}
+    #emailCode {
+        width: 21%;
+        margin-right: 10px;
+    }
+
+    #codeCheck {
+        width: 20%;
+    }
+    
+    #codeCheckResult {
+    	margin-left: 5px;
+        font-size: 13px;
+    }
+
+    input::placeholder {
+        color: #999;
+    }
+
+    .button-group {
+        display: flex;
+        justify-content: center;
+    }
+</style>
+<script>
+var emailValidate=false;
+var XHR = null;
+function getXHR(){
+	if(window.ActioveXObject){
+		return new ActiveXObject("Msxml2.XMLHTTP");
+	}else if(window.XMLHttpRequest){
+		return new XMLHttpRequest();
+	}else{
+		return null;
+	}
+}
+
+function sendRequest(url,params,callback,method){
+	XHR = getXHR();
+	var newMethod = method ? method : 'GET';//1차 유효성 검사
+	//2차 유효성 검사
+	if(newMethod!='GET' && newMethod!='POST'){
+		newMethod = 'GET';
+	}
+	//3차 유효성 검사
+	var newParams = (params==null||params=='') ? null : params;
+	if(newMethod=='GET' && newParams!=null){
+		url = url + '?' + newParams;
+	}
+	XHR.onreadystatechange=callback;
+	XHR.open(newMethod, url, true);
+	XHR.setRequestHeader('Context-Type','application/x-www-form-urlencoded');
+	XHR.send(newParams);
+}
+function emailSend() {
+    var userEmail = document.getElementById("email").value;
+    var resultCodeCheck = document.getElementById("codeCheckResult");
+    if(userEmail==null || userEmail==""){
+    	resultCodeCheck.style.color = 'red';
+    	resultCodeCheck.innerHTML = '이메일을 입력하세요.';
+    	return false;
+    }else{
+    	params = 'email='+userEmail;
+        sendRequest('sendEmailCode',params,emailCheck,'GET');
+    }
+}
+function emailCheck(){
+	if(XHR.readyState==4){
+		if(XHR.status==200){
+			emailCode = XHR.responseText;
+			window.alert('인증번호 메일이 발송되었습니다. 인증번호를 확인해주세요.');
+			document.memberPwdFind.emailCode.removeAttribute('disabled');
+			document.memberPwdFind.codeCheck.removeAttribute('disabled');
+		}
+	}
+}
+function emailCodeCheck(){
+	var inputCode = document.getElementById("emailCode").value;
+	var resultCodeCheck = document.getElementById("codeCheckResult");
+	if(inputCode=="" || inputCode==null){
+		resultCodeCheck.style.color = 'red';
+		resultCodeCheck.innerHTML = "인증번호를 입력해주세요.";
+		return false;
+	}else{
+		var resultCodeCheck = document.getElementById("codeCheckResult");
+		if(inputCode == emailCode){
+			resultCodeCheck.style.color = 'green';
+			resultCodeCheck.innerHTML = "인증에 성공하였습니다.";
+			emailValidate = true;
+		}else{
+			resultCodeCheck.style.color = 'red';
+			resultCodeCheck.innerHTML = "인증에 실패하였습니다.";
+			emailValidate = false;
+		}	
+	}
+}
+function clearForm(){
+	var resultCodeCheck=document.getElementById("codeCheckResult");
+	resultCodeCheck.innerHTML = "";
+	resultCodeCheck.style.color = 'red';
+	document.memberPwdFind.emailCode.disabled('disabled');
+	document.memberPwdFind.codeCheck.disabled('disabled');
+}
+function validate(event){
+	var idData = document.getElementById("user_id").value;
+	if((idData != null || idData != '')&&
+		(emailValidate == true)){
+		return;
+	}else{
+		event.preventDefault();
+		alert('입력 정보를 확인해주세요.');
+	}
+}
+function goMemberLogin(){
+	location.href="memberLogin";
+}
+</script>
+</head>
+<body>
+<form name="memberPwdFind" action="memberPwdFind" method="post" onsubmit="validate(event)">
+<div>
+    <div>
+        <label id="hlabel">아이디</label>
+        <input type="text" id='user_id' name="user_id" placeholder="아이디">
+    </div>
+    <div>
+        <label id="hlabel">이메일</label>
+        <input type="text" id="email" name="email" placeholder="이메일">
+        <input type="button" value="이메일 인증" onclick="emailSend()">
+    </div>
+    <div>
+    	<label id="hlabel"></label>
+        <input type="text" id="emailCode" placeholder="인증코드" disabled="disabled">
+        <input type="button" id="codeCheck" value="인증하기" disabled="disabled" onclick="emailCodeCheck()">
+        <label id="codeCheckResult"></label>
+    </div>
+    <div class="button-group">
+        <input type="submit" value="비밀번호 찾기">
+        <input type="reset" value="다시작성" onclick="clearForm()">
+        <input type="button" value="돌아가기" onclick="goMemberLogin()">
+    </div>
+</div>
+</form>
+</body>
+</html>

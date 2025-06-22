@@ -16,9 +16,21 @@ public class MemberServiceImple implements MemberService {
 	private MemberMapper mapper;
 	
 	@Override
+	public MemberDTO getMember(String user_id) throws Exception {
+		MemberDTO dto = mapper.selectMember(user_id);
+		return dto;
+	}
+	
+	@Override
 	public String getMemberId(String user_id) throws Exception {
 		String userId = mapper.selectMemberId(user_id);
 		return userId;
+	}
+	
+	@Override
+	public String getMemberPwd(String user_id) throws Exception {
+		String userPwd = mapper.selectMemberPwd(user_id);
+		return userPwd;
 	}
 	
 	@Override
@@ -40,15 +52,21 @@ public class MemberServiceImple implements MemberService {
 	}
 	
 	@Override
-	public String getMemberId2(String email) throws Exception {
-		String user_id = mapper.selectMemberId2(email);
+	public String getMemberId2(String email, String name) throws Exception {
+		String user_id = mapper.selectMemberId2(email, name);
 		return user_id;
 	}
 	
 	@Override
-	public int setNewPwd(String user_id) throws Exception {
-		int result = mapper.updateMemberPwd(user_id);
+	public int setNewPwd(String user_id, String pwd) throws Exception {
+		int result = mapper.updateMemberPwd(user_id, pwd);
 		return result;
+	}
+	
+	@Override
+	public String getMemberPwd2(String email, String user_id) throws Exception {
+		String pwd = mapper.selectMemberPwd2(email, user_id);
+		return pwd;
 	}
 	
 }
