@@ -15,8 +15,10 @@ public class DocDTO {
 	private int id;
 	private String title;
 	private int memberId;
+	private String memberName;
 	private Date writeDate;
 	private int formatId;
+	private String formatName;
 	private String content;
 	private int retention;
 	private String fileName;

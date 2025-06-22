@@ -211,6 +211,7 @@ create table doc(
     format_id NUMBER(10) NOT NULL,
     content CLOB NOT NULL,
     retention NUMBER(5) DEFAULT 5 not null CHECK (retention >= 0),
+    file_name VARCHAR2(100),
     foreign key (member_id) references member(id) ON DELETE SET NULL,
     FOREIGN KEY (format_id) REFERENCES format(id)
 );
