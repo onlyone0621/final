@@ -9,9 +9,9 @@ import com.cbo.approval.model.DocViewDTO;
 import com.cbo.approval.model.FormatDTO;
 
 public interface ApprovalService {
-	List<FormatDTO> getFormats() throws Exception;
+	List<FormatDTO> getFormatNames() throws Exception;
 	
-	List<Map<String, Object>> selectMembers() throws Exception;
+	
 	
 	List<DocViewDTO> getApprovalDocs(int id) throws Exception;
 	List<DocViewDTO> getReferenceDocs(int id) throws Exception;
@@ -25,5 +25,6 @@ public interface ApprovalService {
 	List<ApprovalLineDTO> getApprovers(int id) throws Exception;
 	List<ApprovalLineDTO> getReviewers(int id) throws Exception;
 	
-
+	FormatDTO getFormat(int id) throws Exception;
+	List<Map<String, Object>> selectMembers() throws Exception;
 }

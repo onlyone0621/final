@@ -22,17 +22,10 @@ public class ApprovalServiceImple implements ApprovalService {
 
 	
 	@Override
-	public List<FormatDTO> getFormats() throws Exception {
+	public List<FormatDTO> getFormatNames() throws Exception {
 		// TODO Auto-generated method stub
-		return mapper.selectFormats();
+		return mapper.selectFormatNames();
 	}
-
-	@Override
-	public List<Map<String, Object>> selectMembers() throws Exception {
-		// TODO Auto-generated method stub
-		return mapper.selectMembers();
-	}
-
 
 	@Override
 	public List<DocViewDTO> getApprovalDocs(int id) throws Exception {
@@ -97,5 +90,17 @@ public class ApprovalServiceImple implements ApprovalService {
 	}
 	
 	
+	@Override
+	public FormatDTO getFormat(int id) throws Exception {
+		// TODO Auto-generated method stub
+		return mapper.selectFormat(id);
+	}
+
+
+	@Override
+	public List<Map<String, Object>> selectMembers() throws Exception {
+		// TODO Auto-generated method stub
+		return mapper.selectMembers();
+	}
 
 }

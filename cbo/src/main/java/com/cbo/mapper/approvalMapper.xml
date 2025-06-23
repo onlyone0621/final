@@ -3,17 +3,9 @@
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
   <mapper namespace="com.cbo.mapper.ApprovalMapper">
-  	<select id="selectFormats" resultType="com.cbo.approval.model.FormatDTO">
+  	<select id="selectFormatNames" resultType="com.cbo.approval.model.FormatDTO">
   		SELECT * 
   		FROM format
-  	</select>
-  	
-  	<select id="selectMembers" resultType="map">
-  		SELECT member.id AS member_id, member.name AS member_name, dept.name AS dept_name, grade.name AS grade_name
-		FROM member
-		    JOIN dept ON member.dept_id = dept.id
-		    JOIN grade ON member.grade_id = grade.id 
-		ORDER BY dept.id, grade.seq
   	</select>
   	
   	<!-- Get doc list -->
@@ -148,6 +140,20 @@
 	</select>
 	
 	<!-- Submit a draft and its approval lines -->
+	<select id="selectFormat">
+		SELECT * 
+		FROM format
+		WHERE id = #{id};
+	</select>
+	
+	<select id="selectMembers" resultType="map">
+  		SELECT member.id AS member_id, member.name AS member_name, dept.name AS dept_name, grade.name AS grade_name
+		FROM member
+		    JOIN dept ON member.dept_id = dept.id
+		    JOIN grade ON member.grade_id = grade.id 
+		ORDER BY dept.id, grade.seq
+  	</select>
+	
 	<select id="selectDocId" resultType="int">
 		SELECT sq_doc_id.NEXTVAL 
 		FROM dual
@@ -174,4 +180,6 @@
 	</update>
 	
 	<update id="updateStatusToRejected"></update>
+	
+	
   </mapper>

@@ -23,9 +23,9 @@ public class ApprovalController {
 	}
 	
 	@ModelAttribute("formats")
-	List<FormatDTO> formats(){
+	List<FormatDTO> formatNames(){
 		try {
-			return approvalService.getFormats();
+			return approvalService.getFormatNames();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
