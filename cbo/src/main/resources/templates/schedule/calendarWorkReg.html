@@ -6,11 +6,33 @@
 <title>업무 등록</title>
 </head>
 <script>
+	function submitWork() {
+    const form = document.getElementById('workReg');
+    const formData = new FormData(form); // 폼의 모든 input 값을 자동으로 묶음
 
+    fetch('/api/calendar/add', {
+        method: 'POST',
+        body: formData
+    })
+    .then(res => res.json())
+    .then(result => {
+        if(result.success) {
+           // alert('등록 성공!');
+            window.close();
+            // 부모창(캘린더) 새로고침
+            if (window.opener && !window.opener.closed) {
+   			 		window.opener.refreshCalendar();
+					}
+            
+        } else {
+           // alert('등록 실패');
+        }
+    });
+}
 
 </script>
 <body>
-<form action="/workReg">
+<form id="workReg">
 <label>기간을 선택 해주세요</label><br>
 <label>시작일</label>
 <input type = "date" name = "start_time" id = "startDate" max = "2060-01-01" min = "2025-06-18" th:value = "${start_date}"><br>
@@ -20,7 +42,7 @@
 <input type = "text" name = "title" value = ""><br>
 <label>내용</label>
 <input type = "text" name = "content"><br>
-<input type = "submit" value = "등록">
+<input type = "button" onclick="submitWork()" value= "등록">
 </form>
 </body>
 </html>

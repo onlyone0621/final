@@ -32,4 +32,18 @@ public class CalendarServiceImple implements CalendarService {
 		
 	}
 	
+	@Override
+	public int deleteWork(CalendarDTO dto) throws Exception {
+		
+		int count = mapper.deleteWork(dto);
+		
+		return count;
+	}
+	
+	@Override
+	public int updateWork(CalendarDTO dto) throws Exception {
+		int count = mapper.updateWork(dto);
+		return count;
+	}
+	
 }
