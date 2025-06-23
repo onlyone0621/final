@@ -15,7 +15,7 @@ public class DocDTO {
 	private int id;
 	private String title;
 	private int memberId;
-	private String memberName;
+	private String writer;
 	private Date writeDate;
 	private int formatId;
 	private String formatName;

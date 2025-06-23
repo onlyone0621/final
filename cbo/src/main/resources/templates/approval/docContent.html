@@ -8,6 +8,21 @@
 <title>Document</title>
 </head>
 <body>
-<div layout:fragment="content"></div>
+<div layout:fragment="content">
+	<h1 th:text="${docContent.title}"></h1>
+	<span th:text="${docContent.formatName}"></span>
+	<div th:text="${docContent.content}"></div>
+	<ul class="list-group list-group-flush">
+		<li class="list-group-item" th:each="approver : ${approvers}" th:object="${approver}" th:text="|*{deptName} *{memberName} *{gradeName} *{status} *{processDate}|"></li>
+	</ul>
+	<ul class="list-group list-group-flush">
+		<li class="list-group-item" th:each="reviewer : ${reviewers}" th:object="${reviewer}" th:text="|*{deptName} *{memberName} *{gradeName} *{status} *{processDate}|"></li>
+	</ul>
+	<ul class="list-group list-group-flush" th:object="${docContent}">
+		<li class="list-group-item" th:text="*{writer}"></li>
+		<li class="list-group-item" th:text="*{writeDate}"></li>
+		<li class="list-group-item" th:text="*{retention}"></li>
+	</ul>
+</div>
 </body>
 </html>

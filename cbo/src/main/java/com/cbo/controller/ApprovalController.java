@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.cbo.approval.model.ApprovalLineDTO;
+import com.cbo.approval.model.DocDTO;
 import com.cbo.approval.model.DocViewDTO;
 import com.cbo.approval.model.FormatDTO;
 import com.cbo.approval.service.ApprovalService;
@@ -21,9 +23,9 @@ public class ApprovalController {
 	}
 	
 	@ModelAttribute("formats")
-	List<FormatDTO> formats(){
+	List<FormatDTO> formatNames(){
 		try {
-			return approvalService.getFormats();
+			return approvalService.getFormatNames();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -121,8 +123,18 @@ public class ApprovalController {
 	}
 	
 	@GetMapping("submitDraft")
-	public ModelAndView submitDraftForm() {
-		return null;
+	public ModelAndView submitDraftForm(int id) {
+		FormatDTO format = null;
+		try {
+			format = approvalService.getFormat(0);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		ModelAndView mav = new ModelAndView("approval/submitDraft");
+		mav.addObject("format", format);
+		return mav;
 	}
 	
 	@PostMapping("submitDraft")
@@ -131,8 +143,25 @@ public class ApprovalController {
 	}
 	
 	@GetMapping("/docContent")
-	public ModelAndView docContent() {
-		return null;
+	public ModelAndView docContent(int id) {
+		DocDTO docContent = null;
+		List<ApprovalLineDTO> approvers = null;
+		List<ApprovalLineDTO> reviewers = null;
+		
+		try {
+			docContent = approvalService.getDocContent(id);
+			approvers = approvalService.getApprovers(id);
+			reviewers = approvalService.getReviewers(id);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		ModelAndView mav = new ModelAndView("approval/docContent");
+		mav.addObject("docContent", docContent);
+		mav.addObject("approvers", approvers);
+		mav.addObject("reviewers", reviewers);
+		return mav;
 	}
 	
 	@PostMapping("/approve")
