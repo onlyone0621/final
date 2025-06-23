@@ -20,4 +20,8 @@ public interface ApprovalMapper {
 	DocDTO selectDoc(int id) throws Exception;
 	List<ApprovalLineDTO> selectApprovers(int id) throws Exception;
 	List<ApprovalLineDTO> selectReviewers(int id) throws Exception;
+	int selectDocId() throws Exception;
+	int insertDoc(DocDTO dto) throws Exception;
+	int insertDrafterOrReviewers(ApprovalLineDTO dto) throws Exception;
+	int insertApprovers(ApprovalLineDTO dto) throws Exception;
 }

@@ -118,7 +118,7 @@
 		FROM doc 
 		    JOIN member ON doc.member_id = member.id
 		    JOIN format ON doc.format_id = format.id
-		WHERE doc.id = #{id};
+		WHERE doc.id = #{id}
 	</select>
 	
 	<select id="selectApprovers">
@@ -134,7 +134,7 @@
 		        WHEN approval_line.status = '기안 상신' THEN 0
 		        ELSE 1
 		    END,
-		grade.seq DESC;
+		grade.seq DESC
 	</select>
 	
 	<select id="selectReviewers">
@@ -144,13 +144,13 @@
 		    JOIN dept ON member.dept_id = dept.id 
 		    JOIN grade ON member.grade_id = grade.id 
 		WHERE approval_line.doc_id = #{id}
-		AND approval_line.status = '참조';
+		AND approval_line.status = '참조'
 	</select>
 	
 	<!-- Submit a draft and its approval lines -->
-	<select id="selectDocId">
+	<select id="selectDocId" resultType="int">
 		SELECT sq_doc_id.NEXTVAL 
-		FROM dual;
+		FROM dual
 	</select>
 	
 	<insert id="insertDoc" parameterType="com.cbo.approval.model.DocDTO">
@@ -163,8 +163,15 @@
 		VALUES (#{docId}, #{memberId}, #{status}, SYSDATE)
 	</insert>
 	
-	<insert id="insertApprovers">
+	<insert id="insertApprovers" parameterType="com.cbo.approval.model.ApprovalLineDTO">
 		INSERT INTO approval_line (doc_id, member_id, status)
 		VALUES (#{docId}, #{memberId}, #{status})
 	</insert>
+	
+	<!-- Approve or Reject -->
+	<update id="updateStatusToApproved">
+	
+	</update>
+	
+	<update id="updateStatusToRejected"></update>
   </mapper>
