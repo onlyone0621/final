@@ -14,13 +14,14 @@
   select * from calendar 
   </select>
   
-<!--   <delete id="deleteWork" parameterType="">
-  
+  <delete id="deleteWork" parameterType="com.cbo.calendar.model.CalendarDTO">
+  delete from calendar where id = #{id}
   </delete>
   
-  <update id="updateWork" parameterType="">
-  update calendar set start_time = '#{start_time}', end_time = '#{end_time}', title = '#{title}', content = '#{content}' where
-  </update> -->
+<update id="updateWork" parameterType="com.cbo.calendar.model.CalendarDTO">
+  update calendar set start_time = #{start_time}, end_time = #{end_time}+1, title = #{title}, content = #{content} where id = #{id}
+  </update>
+  
   </mapper>
 
 
