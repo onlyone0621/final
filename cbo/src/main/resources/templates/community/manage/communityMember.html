@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>커뮤니티 마스터 정보 관리</title>
+  <style>
+    .sidebar {
+      width: 200px;
+      background-color: #fbf9fd;
+      padding: 20px;
+      box-sizing: border-box;
+      border-right: 1px solid #ddd;
+    }
+
+    .sidebar h4 {
+      margin-bottom: 15px;
+      font-size: 18px;
+    }
+
+    .sidebar button {
+      width: 100%;
+      padding: 8px;
+      margin-bottom: 15px;
+    }
+
+    .sidebar ul {
+      list-style: none;
+      padding-left: 0;
+      font-size: 14px;
+    }
+
+    .sidebar ul li {
+      margin-bottom: 8px;
+    }
+
+    .container {
+      display: flex;
+    }
+
+    .main {
+      padding: 10px;
+      flex-grow: 1;
+    }
+        .tab-wrapper {
+      display: flex;
+      gap: 1.5rem;
+      margin-bottom: 20px;
+      border-bottom: 1px solid #ccc;
+    }
+
+    .tab {
+      padding: 10px;
+      font-weight: bold;
+      color: #666;
+      cursor: pointer;
+    }
+
+    .tab.active {
+      color: #000;
+      border-bottom: 3px solid #f381a3;
+    }
+
+    .step-container {
+      display: flex;
+      gap: 2rem;
+    }
+    
+
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <div class="sidebar">
+
+   <input type="button" value="글쓰기">
+    <ul>
+      <li>가입 멤버 1</li>
+      <li>가입 멤버 2</li>
+      <li>가입 멤버 3</li>
+      <li>가입 멤버 4</li>
+      <li>가입 멤버 5</li>
+    </ul>
+  </div>
+
+<div style="flex-grow: 1; padding: 20px;">
+
+    <div class="tab-wrapper">
+      <div class="tab">정보</div>
+      <div class="tab active">멤버</div>
+      <div class="tab">폐쇄</div>
+    </div>
+
+
+<form>
+    <ul>
+        <li>이름 <input type="text"></li>
+        <li>소개 <input type="text"></li>
+        <li>마스터 (+ 변경)</li>
+        <li>부마스터 +(추가)</li>
+        <li>공개여부<input type="checkbox">공개
+            <input type="checkbox">비공개
+        </li> 
+    </ul>
+    <div>
+        <input type="submit" value="저장">
+        <input type="reset" value="취소">
+    </div>
+   </form>
+</div>
+</div>
+
+</body>
+</html>
