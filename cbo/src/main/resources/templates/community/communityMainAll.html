@@ -1,5 +1,7 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width= , initial-scale=1.0">
@@ -64,20 +66,14 @@
           <th>마스터</th>
         </tr>
       </thead>
-      <tbody>
-        <tr>
-          <td>아이디어 공유</td>
-          <td>2</td>
-          <td>3</td>
-          <td>박주연</td>
-        </tr>
-         <tr>
-          <td>아이디어 공유</td>
-          <td>5</td>
-          <td>5</td>
-          <td>박주연</td>
-        </tr>
-      </tbody>
+      		<tbody>
+			<tr th:if="${#lists.isEmpty(lists)}">
+				<td colspan='4' align="center">
+				등록된 게시글이 없습니다.
+				</td>
+			</tr>
+
+		</tbody>
     </table>
   </div>
 </div>

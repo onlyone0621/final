@@ -1,9 +1,17 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>커뮤니티 보기</title>
+<script>
+	function listSetting(){
+
+		var id = document.getElementById('id').value;
+		location.href="communityUpdate?id="+id+"&board=";
+	}
+</script>
   <style>
     body {
       margin: 0;
@@ -23,6 +31,16 @@
       box-sizing: border-box;
       border-right: 1px solid #ddd; /* 오른쪽 경계선 */
     }
+    
+    .post-list li input[type="button"] {
+      margin-left: 10px;
+    }
+    
+    .sidebar ul li {
+  	  display: flex;
+  	  justify-content: space-between;
+ 	  align-items: center;
+	}
 
     .sidebar h4 {
       margin-bottom: 15px;
@@ -87,18 +105,31 @@
 <body>
 
 <div class="layout">
-  <!-- 왼쪽 사이드바 -->
   <div class="sidebar">
     <h4>커뮤니티</h4>
     <button>커뮤니티 생성</button>
-    <ul>
-      <li>가입 커뮤니티 1</li>
-      <li>가입 커뮤니티 2</li>
-      <li>가입 커뮤니티 3</li>
-    </ul>
-  </div>
 
-  <!-- 메인 콘텐츠 -->
+ <!-- --------------------------------- -->
+ 
+ 
+<ul th:if="${#lists.isEmpty(lists)}">
+	<li>
+	생성된 커뮤니티가 없습니다.
+	</li>
+</ul>
+<ul th:each="dto:${lists}">
+	<li>
+		<span th:text="${dto.name}"></span>
+		<input type = "hidden" id = "id" th:value = "${dto.id}">
+    	<input type="button" value = "설정" onclick="listSetting()">
+    
+	</li>
+	
+</ul>
+ </div>
+
+
+
   <div class="main-content">
     <div class="main-tabs">
       <div class="tab active"><a href="communityMainNewest">최근글</a></div>
