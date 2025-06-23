@@ -147,20 +147,24 @@
 		AND approval_line.status = '참조';
 	</select>
 	
+	<!-- Submit a draft and its approval lines -->
+	<select id="selectDocId">
+		SELECT sq_doc_id.NEXTVAL 
+		FROM dual;
+	</select>
 	
-	<insert id="insertDoc">
-	
+	<insert id="insertDoc" parameterType="com.cbo.approval.model.DocDTO">
+		INSERT INTO doc (id, title, member_id, format_id, content, file_name)
+		VALUES (#{id}, #{title}, #{memberId}, {formatId}, #{content}, #{fileName})
 	</insert>
 	
-	<insert id="insertDrafter">
-	
-	</insert>
-	
-	<insert id="insertReviewers">
-	
+	<insert id="insertDrafterOrReviewers" parameterType="com.cbo.approval.model.ApprovalLineDTO">
+		INSERT INTO approval_line 
+		VALUES (#{docId}, #{memberId}, #{status}, SYSDATE)
 	</insert>
 	
 	<insert id="insertApprovers">
-	
+		INSERT INTO approval_line (doc_id, member_id, status)
+		VALUES (#{docId}, #{memberId}, #{status})
 	</insert>
   </mapper>
