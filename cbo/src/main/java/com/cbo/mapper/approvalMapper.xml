@@ -16,6 +16,7 @@
 		ORDER BY dept.id, grade.seq
   	</select>
   	
+  	<!-- Get doc list -->
   	<select id="selectApprovalDocs" resultType="com.cbo.approval.model.DocViewDTO">
 		SELECT * 
 		FROM doc_view
@@ -43,6 +44,7 @@
 		WHERE member_id = #{id}
   	</select>
   	
+  	<!-- Get todo doc list -->
   	<select id="selectPendingApprovalDocs" parameterType="int" resultType="com.cbo.approval.model.DocViewDTO">
   		WITH target_seq AS (
 	    	SELECT grade.seq
@@ -110,6 +112,7 @@
 		)
   	</select>
 	
+	<!-- Get content of doc and its approval lines -->
 	<select id="selectDoc" resultType="com.cbo.approval.model.DocDTO">
 		SELECT doc.id, doc.title, member.name AS writer, doc.write_date, format.name AS format_name, doc.content, doc.retention, doc.file_name
 		FROM doc 
@@ -143,4 +146,21 @@
 		WHERE approval_line.doc_id = #{id}
 		AND approval_line.status = '참조';
 	</select>
+	
+	
+	<insert id="insertDoc">
+	
+	</insert>
+	
+	<insert id="insertDrafter">
+	
+	</insert>
+	
+	<insert id="insertReviewers">
+	
+	</insert>
+	
+	<insert id="insertApprovers">
+	
+	</insert>
   </mapper>
