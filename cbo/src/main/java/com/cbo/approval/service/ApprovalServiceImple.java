@@ -5,6 +5,8 @@ import java.util.Map;
 
 import org.springframework.stereotype.Service;
 
+import com.cbo.approval.model.ApprovalLineDTO;
+import com.cbo.approval.model.DocDTO;
 import com.cbo.approval.model.DocViewDTO;
 import com.cbo.approval.model.FormatDTO;
 import com.cbo.mapper.ApprovalMapper;
@@ -71,6 +73,27 @@ public class ApprovalServiceImple implements ApprovalService {
 	public List<DocViewDTO> getScheduledApprovalDocs(int id) throws Exception {
 		// TODO Auto-generated method stub
 		return mapper.selectScheduledApprovalDocs(id);
+	}
+
+
+	@Override
+	public DocDTO getDocContent(int id) throws Exception {
+		// TODO Auto-generated method stub
+		return mapper.selectDoc(id);
+	}
+
+
+	@Override
+	public List<ApprovalLineDTO> getApprovers(int id) throws Exception {
+		// TODO Auto-generated method stub
+		return mapper.selectApprovers(id);
+	}
+
+
+	@Override
+	public List<ApprovalLineDTO> getReviewers(int id) throws Exception {
+		// TODO Auto-generated method stub
+		return mapper.selectReviewers(id);
 	}
 	
 	

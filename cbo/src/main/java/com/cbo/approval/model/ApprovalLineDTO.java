@@ -12,7 +12,7 @@ import lombok.Setter;
 public class ApprovalLineDTO {
 	private int docId;
 	private int memberId;
-	private String approver;
+	private String memberName;
 	private String deptName;
 	private String gradeName;
 	private String status;

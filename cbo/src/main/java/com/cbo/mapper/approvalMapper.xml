@@ -119,7 +119,7 @@
 	</select>
 	
 	<select id="selectApprovers">
-		SELECT member.name AS approver, dept.name AS dept_name, grade.name AS grade_name, approval_line.status, approval_line.process_date
+		SELECT member.name AS member_name, dept.name AS dept_name, grade.name AS grade_name, approval_line.status, approval_line.process_date
 		FROM approval_line 
 		    JOIN member ON approval_line.member_id = member.id 
 		    JOIN dept ON member.dept_id = dept.id 
@@ -135,7 +135,7 @@
 	</select>
 	
 	<select id="selectReviewers">
-		SELECT member.name AS approver, dept.name AS dept_name, grade.name AS grade_name, approval_line.status, approval_line.process_date
+		SELECT member.name AS member_name, dept.name AS dept_name, grade.name AS grade_name, approval_line.status, approval_line.process_date
 		FROM approval_line 
 		    JOIN member ON approval_line.member_id = member.id 
 		    JOIN dept ON member.dept_id = dept.id 
