@@ -3,19 +3,12 @@
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
   <mapper namespace="com.cbo.mapper.ApprovalMapper">
-  	<select id="selectFormats" resultType="com.cbo.approval.model.FormatDTO">
+  	<select id="selectFormatNames" resultType="com.cbo.approval.model.FormatDTO">
   		SELECT * 
   		FROM format
   	</select>
   	
-  	<select id="selectMembers" resultType="map">
-  		SELECT member.id AS member_id, member.name AS member_name, dept.name AS dept_name, grade.name AS grade_name
-		FROM member
-		    JOIN dept ON member.dept_id = dept.id
-		    JOIN grade ON member.grade_id = grade.id 
-		ORDER BY dept.id, grade.seq
-  	</select>
-  	
+  	<!-- Get doc list -->
   	<select id="selectApprovalDocs" resultType="com.cbo.approval.model.DocViewDTO">
 		SELECT * 
 		FROM doc_view
@@ -43,6 +36,7 @@
 		WHERE member_id = #{id}
   	</select>
   	
+  	<!-- Get todo doc list -->
   	<select id="selectPendingApprovalDocs" parameterType="int" resultType="com.cbo.approval.model.DocViewDTO">
   		WITH target_seq AS (
 	    	SELECT grade.seq
@@ -110,5 +104,82 @@
 		)
   	</select>
 	
-
+	<!-- Get content of doc and its approval lines -->
+	<select id="selectDoc" resultType="com.cbo.approval.model.DocDTO">
+		SELECT doc.id, doc.title, member.name AS writer, doc.write_date, format.name AS format_name, doc.content, doc.retention, doc.file_name
+		FROM doc 
+		    JOIN member ON doc.member_id = member.id
+		    JOIN format ON doc.format_id = format.id
+		WHERE doc.id = #{id}
+	</select>
+	
+	<select id="selectApprovers">
+		SELECT member.name AS member_name, dept.name AS dept_name, grade.name AS grade_name, approval_line.status, approval_line.process_date
+		FROM approval_line 
+		    JOIN member ON approval_line.member_id = member.id 
+		    JOIN dept ON member.dept_id = dept.id 
+		    JOIN grade ON member.grade_id = grade.id 
+		WHERE approval_line.doc_id = #{id}
+		AND approval_line.status != '참조'
+		ORDER BY 
+		    CASE 
+		        WHEN approval_line.status = '기안 상신' THEN 0
+		        ELSE 1
+		    END,
+		grade.seq DESC
+	</select>
+	
+	<select id="selectReviewers">
+		SELECT member.name AS member_name, dept.name AS dept_name, grade.name AS grade_name, approval_line.status, approval_line.process_date
+		FROM approval_line 
+		    JOIN member ON approval_line.member_id = member.id 
+		    JOIN dept ON member.dept_id = dept.id 
+		    JOIN grade ON member.grade_id = grade.id 
+		WHERE approval_line.doc_id = #{id}
+		AND approval_line.status = '참조'
+	</select>
+	
+	<!-- Submit a draft and its approval lines -->
+	<select id="selectFormat">
+		SELECT * 
+		FROM format
+		WHERE id = #{id};
+	</select>
+	
+	<select id="selectMembers" resultType="map">
+  		SELECT member.id AS member_id, member.name AS member_name, dept.name AS dept_name, grade.name AS grade_name
+		FROM member
+		    JOIN dept ON member.dept_id = dept.id
+		    JOIN grade ON member.grade_id = grade.id 
+		ORDER BY dept.id, grade.seq
+  	</select>
+	
+	<select id="selectDocId" resultType="int">
+		SELECT sq_doc_id.NEXTVAL 
+		FROM dual
+	</select>
+	
+	<insert id="insertDoc" parameterType="com.cbo.approval.model.DocDTO">
+		INSERT INTO doc (id, title, member_id, format_id, content, file_name)
+		VALUES (#{id}, #{title}, #{memberId}, {formatId}, #{content}, #{fileName})
+	</insert>
+	
+	<insert id="insertDrafterOrReviewers" parameterType="com.cbo.approval.model.ApprovalLineDTO">
+		INSERT INTO approval_line 
+		VALUES (#{docId}, #{memberId}, #{status}, SYSDATE)
+	</insert>
+	
+	<insert id="insertApprovers" parameterType="com.cbo.approval.model.ApprovalLineDTO">
+		INSERT INTO approval_line (doc_id, member_id, status)
+		VALUES (#{docId}, #{memberId}, #{status})
+	</insert>
+	
+	<!-- Approve or Reject -->
+	<update id="updateStatusToApproved">
+	
+	</update>
+	
+	<update id="updateStatusToRejected"></update>
+	
+	
   </mapper>

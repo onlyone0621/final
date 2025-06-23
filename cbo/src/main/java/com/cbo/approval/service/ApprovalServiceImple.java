@@ -5,6 +5,8 @@ import java.util.Map;
 
 import org.springframework.stereotype.Service;
 
+import com.cbo.approval.model.ApprovalLineDTO;
+import com.cbo.approval.model.DocDTO;
 import com.cbo.approval.model.DocViewDTO;
 import com.cbo.approval.model.FormatDTO;
 import com.cbo.mapper.ApprovalMapper;
@@ -20,17 +22,10 @@ public class ApprovalServiceImple implements ApprovalService {
 
 	
 	@Override
-	public List<FormatDTO> getFormats() throws Exception {
+	public List<FormatDTO> getFormatNames() throws Exception {
 		// TODO Auto-generated method stub
-		return mapper.selectFormats();
+		return mapper.selectFormatNames();
 	}
-
-	@Override
-	public List<Map<String, Object>> selectMembers() throws Exception {
-		// TODO Auto-generated method stub
-		return mapper.selectMembers();
-	}
-
 
 	@Override
 	public List<DocViewDTO> getApprovalDocs(int id) throws Exception {
@@ -72,7 +67,40 @@ public class ApprovalServiceImple implements ApprovalService {
 		// TODO Auto-generated method stub
 		return mapper.selectScheduledApprovalDocs(id);
 	}
+
+
+	@Override
+	public DocDTO getDocContent(int id) throws Exception {
+		// TODO Auto-generated method stub
+		return mapper.selectDoc(id);
+	}
+
+
+	@Override
+	public List<ApprovalLineDTO> getApprovers(int id) throws Exception {
+		// TODO Auto-generated method stub
+		return mapper.selectApprovers(id);
+	}
+
+
+	@Override
+	public List<ApprovalLineDTO> getReviewers(int id) throws Exception {
+		// TODO Auto-generated method stub
+		return mapper.selectReviewers(id);
+	}
 	
 	
+	@Override
+	public FormatDTO getFormat(int id) throws Exception {
+		// TODO Auto-generated method stub
+		return mapper.selectFormat(id);
+	}
+
+
+	@Override
+	public List<Map<String, Object>> selectMembers() throws Exception {
+		// TODO Auto-generated method stub
+		return mapper.selectMembers();
+	}
 
 }
