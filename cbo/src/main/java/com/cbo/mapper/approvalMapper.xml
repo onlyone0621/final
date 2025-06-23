@@ -110,5 +110,37 @@
 		)
   	</select>
 	
-
+	<select id="selectDoc" resultType="com.cbo.approval.model.DocDTO">
+		SELECT doc.id, doc.title, member.name AS writer, doc.write_date, format.name AS format_name, doc.content, doc.retention, doc.file_name
+		FROM doc 
+		    JOIN member ON doc.member_id = member.id
+		    JOIN format ON doc.format_id = format.id
+		WHERE doc.id = #{id};
+	</select>
+	
+	<select id="selectApprovers">
+		SELECT member.name AS approver, dept.name AS dept_name, grade.name AS grade_name, approval_line.status, approval_line.process_date
+		FROM approval_line 
+		    JOIN member ON approval_line.member_id = member.id 
+		    JOIN dept ON member.dept_id = dept.id 
+		    JOIN grade ON member.grade_id = grade.id 
+		WHERE approval_line.doc_id = #{id}
+		AND approval_line.status != '참조'
+		ORDER BY 
+		    CASE 
+		        WHEN approval_line.status = '기안 상신' THEN 0
+		        ELSE 1
+		    END,
+		grade.seq DESC;
+	</select>
+	
+	<select id="selectReviewers">
+		SELECT member.name AS approver, dept.name AS dept_name, grade.name AS grade_name, approval_line.status, approval_line.process_date
+		FROM approval_line 
+		    JOIN member ON approval_line.member_id = member.id 
+		    JOIN dept ON member.dept_id = dept.id 
+		    JOIN grade ON member.grade_id = grade.id 
+		WHERE approval_line.doc_id = #{id}
+		AND approval_line.status = '참조';
+	</select>
   </mapper>
