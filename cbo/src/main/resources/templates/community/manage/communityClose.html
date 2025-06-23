@@ -92,13 +92,15 @@
     </div>
 
 
-<form>
+<form name="communityClose" action="communityClose" method="post">
+
 
     <div>
         *커뮤니티를 폐쇄하시면, 현재 커뮤니티 내에 있는 자료들이 삭제됩니다.<br>
         <label style="color: crimson;">자료가 삭제된 이후에는 복구가 불가능 합니다.</label> <br>
         <br>
-        <input type="submit" value="폐쇄하기">
+        <input type="hidden" name="id">
+        <input type="submit" value="폐쇄하기" >
     </div>
    </form>
 </div>
