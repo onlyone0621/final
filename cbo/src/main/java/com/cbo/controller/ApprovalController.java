@@ -123,8 +123,18 @@ public class ApprovalController {
 	}
 	
 	@GetMapping("submitDraft")
-	public ModelAndView submitDraftForm() {
-		return null;
+	public ModelAndView submitDraftForm(int id) {
+		FormatDTO format = null;
+		try {
+			format = approvalService.getFormat(0);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		ModelAndView mav = new ModelAndView("approval/submitDraft");
+		mav.addObject("format", format);
+		return mav;
 	}
 	
 	@PostMapping("submitDraft")

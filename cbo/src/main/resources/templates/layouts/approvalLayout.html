@@ -44,8 +44,9 @@
 				</div>
 				<div class="modal-body">
 					<ul class="list-group">
-						<li class="list-group-item" th:each="format : ${formats}">
-							<input class="form-check-input me-1" type="radio" name="format" th:id="${format.name}" th:value="${format.name}"/>
+						<li class="list-group-item" th:each="format : ${formats}" th:object="${format}">
+							<input type="hidden" name="id" th:value="${format}">
+							<input class="form-check-input me-1" type="radio" name="id" id="#ids.seq('format')" th:value="${format.id}"/>
 							<label class="form-check-label" th:for="${format.name}" th:text="${format.name}"></label>
 						</li>
 					</ul>
