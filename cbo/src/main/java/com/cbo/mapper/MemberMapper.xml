@@ -31,4 +31,7 @@
 	<update id="updateMemberPwd" parameterType="String">
 		update member set pwd=#{pwd} where user_id=#{user_id}
 	</update>
+	<update id="updateMemberInfo">
+		update member set name=#{name},dept_id=#{dept_id},grade_id=#{grade_id},tel=#{tel},address=#{address},profile_image=#{profile_image} where id=#{id}
+	</update>
 </mapper>
