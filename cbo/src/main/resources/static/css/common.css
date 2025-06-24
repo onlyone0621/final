@@ -21,22 +21,18 @@ body {
 .header, .footer {
     display: flex;
     align-items: center;
-    background-color: #ffc0b8;
+    background-color: #FFC6C6;
 }
 
 .header {
     justify-content: space-around;
-    height: 60px;
+    height: 80px;
 }
 
 .logo {
     font-size: 24px;
-    font-weight: bolder;
-}
-
-.logo a {
-    text-decoration: none;
     color: #f9faf8;
+    font-weight: bolder;
 }
 
 .header-links {
@@ -44,18 +40,25 @@ body {
     list-style-type: none;
     margin: 0;
     padding: 0;
-    gap: 48px;
-    font-size: 18px;
+    gap: 80px;
+    font-size: 20px;
 }
 
 .header-links > li > a {
     text-decoration: none;
-    color: #e5e7eb;
+    color: white;
 }
 
-.header-buttons {
+.header-a {
     display: flex;
     gap: 24px;
+    font-size: 15px;
+    color: white;
+	font-weight: bolder;
+}
+.header-a a{ 
+	text-decoration: none;
+	color: white;
 }
 
 .body {
