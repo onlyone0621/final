@@ -1,9 +1,10 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+				xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+				layout:decorate="layouts/mainLayout">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+ <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>커뮤니티 보기</title>
 <script>
 	function listSetting(){
@@ -103,7 +104,7 @@
   </style>
 </head>
 <body>
-
+<div layout:fragment="content">
 <div class="layout">
   <div class="sidebar">
     <h4>커뮤니티</h4>
@@ -148,6 +149,6 @@
     </ul>
   </div>
 </div>
-
+</div>
 </body>
 </html>
