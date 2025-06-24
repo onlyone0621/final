@@ -16,4 +16,5 @@ public interface MemberMapper {
 	public String selectMemberId2(String email, String name) throws Exception;
 	public String selectMemberPwd2(String email, String user_id) throws Exception;
 	public int updateMemberPwd(String user_id, String pwd) throws Exception;
+	public int updateMemberInfo(MemberDTO dto)throws Exception;
 }

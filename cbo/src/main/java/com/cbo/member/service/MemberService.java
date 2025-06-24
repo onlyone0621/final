@@ -18,4 +18,5 @@ public interface MemberService {
 	public String getMemberId2(String email, String name) throws Exception;
 	public String getMemberPwd2(String email, String user_id) throws Exception;
 	public int setNewPwd(String user_id, String pwd) throws Exception;
+	public int setMemberInfo(MemberDTO dto) throws Exception;
 }

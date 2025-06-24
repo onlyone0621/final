@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+				xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+				layout:decorate="layouts/mainLayout">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>내 정보 수정하기</title>
+<style>
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background-color: white;
+        margin: 0;
+        padding: 0;
+    }
+
+    form {
+        max-width: 600px;
+        margin: 50px auto;
+        padding: 30px;
+        background-color: white;
+    }
+
+    form div {
+        margin-bottom: 15px;
+    }
+
+    input[type="text"]{
+        width: 45%;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        font-size: 14px;
+    }
+    
+    select {
+    	width: 30%;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        font-size: 14px;
+    }
+
+    input[type="button"],
+    input[type="submit"],
+    input[type="reset"] {
+    	width: 23%;
+        padding: 10px 15px;
+        background-color: #FFC6C6;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 14px;
+        margin-top: 5px;
+        margin-left: 5px;
+    }
+
+    input[type="button"]:hover,
+    input[type="submit"]:hover,
+    input[type="reset"]:hover {
+        background-color: #FFA2A2;
+    }
+	label {
+		color: #909090;
+		display: inline-block;
+		width: 100px;
+		margin-bottom: 5px;
+        font-weight: bold;
+        font-size: 16px;
+	}
+	#profileImage-label {
+        margin-top: 50px;
+	}
+
+    #adrNum {
+        width: 21%;
+        margin-right: 10px;
+    }
+
+    #addrFind {
+        width: 20%;
+    }
+    #profilePreview{
+    	margin-left: 40px;
+    	width: 120px;
+		height: 120px;
+		border-radius: 50%;
+    }
+
+    input::placeholder {
+        color: #999;
+    }
+
+	.button-group {
+		display: flex;
+		margin-left: 100px;
+	}
+    
+	.sidebar {
+	    display: flex;
+	    flex-direction: column;
+	    align-items: center;
+	    height: 740px;
+	    gap: 64px;
+	    margin: 24px;
+	    padding-top: 50px;
+	    padding-bottom: 50px;
+	    border: 1px black solid;
+	    border-radius: 30px;
+	   	width: 200px;
+	}
+	
+	.sidebar > button {
+	    width: 160px;
+	    height: 40px;
+	}
+	
+	.sidebar-menu {
+	    display: flex;
+	    flex-direction: column;
+	    align-items: center;
+	    gap: 24px;
+	}
+	
+	.sidebar-menu ul {
+	    display: flex;
+	    flex-direction: column;
+	    align-items: center;
+	    gap: 24px;
+	    list-style-type: none;
+	    margin: 0;
+	    padding: 0;
+	    height: 180px;
+	}
+	
+	.sidebar-menu a {
+	    text-decoration: none;
+	    color: black;
+	}
+	
+	.content {
+	    flex: 5;
+	}
+	.menu-title{
+		text-align: center;
+		font-size: 20px;
+	}
+	.sidebar-menu hr{
+		border: solid 1.5px;
+		width: 140px;
+	}
+	.main-div{
+		display: flex;
+	}
+	.title{
+		margin-top: 50px;
+		font-size: 30px;
+		margin-left: 30px;
+	}
+	.title hr{
+		border: solid 1.5px;
+		width: 1580px;
+	}
+	.profileImage-div{
+		display: flex;
+	}
+	.profileImage-input{
+		text-align: center;
+	}
+</style>
+<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+<script>
+function findAddr(){
+	var fm = document.memberInfoUpdate;
+	new daum.Postcode({
+        oncomplete: function(data) {
+			fm.adrNum.value = data.zonecode;
+			fm.address.value = data.address;
+		}
+	}).open();
+}
+</script>
+<script>
+function previewProfileImage(event) {
+	const file = event.target.files[0];
+	if (file) {
+		const reader = new FileReader();
+		reader.onload = function(e) {
+			document.getElementById('profilePreview').src = e.target.result;
+		}
+		reader.readAsDataURL(file);
+	}
+}
+
+window.addEventListener("DOMContentLoaded", function() {
+  const fullAddr = document.getElementById("fullAddress").value;
+  const addrNum = fullAddr.match(/\((\d{5})\)/)?.[1];
+  const address = fullAddr.replace(/\(\d{5}\)/, '').trim();
+
+  document.getElementById("adrNum").value = addrNum || '';
+  document.getElementById("address").value = address;
+});
+
+</script>
+</head>
+<body>
+<div layout:fragment="content">
+	<div class="main-div">
+        <div class="sidebar">          
+            <div class="sidebar-menu">
+                <div class="menu-title">나의 정보
+                	<hr>
+                </div>
+                
+                <ul>
+                    <li><a href="memberInfoUpdate">개인정보 수정</a></li>
+                    <li><a href="">비밀번호 변경</a></li>
+                </ul>
+            </div>
+        </div>
+        <div>
+        	<div class="title">
+        		<lable>개인정보 수정</lable>
+        		<hr>
+        	</div>
+			<form name="memberInfoUpdate" action="memberInfoUpdate" method="post" onsubmit="validate(event)" enctype="multipart/form-data">
+				<input type="hidden" id="fullAddress" th:value="${session.udto.address}">
+				<input type="hidden" name="id" th:value="${session.udto.id}">
+				<input type="hidden" name="profile_image" th:value="${session.udto.profile_image}">
+				<div>
+					<div>
+						<div class="profileImage-div">
+							<label id="profileImage-label">프로필 사진</label><br>
+							<img id="profilePreview" th:src="@{${session.udto.profile_image} != null ? ${session.udto.profile_image} : '/profileImage/defaultProfileImage.jpg'}">
+						</div>
+						<div class="profileImage-input">
+							<input type="file" id="profileImage" name="profileImage" onchange="previewProfileImage(event)">
+						</div>
+					</div>
+				    <div>
+				        <label id="hlabel">이름</label>
+				        <input type="text" id='name' name="name" th:value="${session.udto.name}">
+				    </div>
+				    <div>
+				        <label id="hlabel">부서</label>
+				        <select id='dept_id' th:name="dept_id">
+				        	<option th:each="dlist:${deptList}" th:value="${dlist.id}" th:utext="${dlist.name}" th:selected="${dlist.id} == ${session.udto.dept_id}"></option>
+				      	</select>
+				    </div>
+				    <div>
+				        <label id="hlabel">직급</label>
+				        <select id='grade_id' th:name="grade_id">
+				        	<option th:each="glist:${gradeList}" th:value="${glist.id}" th:utext="${glist.name}" th:selected="${glist.id} == ${session.udto.grade_id}"></option>
+				      	</select>
+				    </div>
+				    <div>
+				        <label id="hlabel">연락처</label>
+				        <input type="text" id="tel" name="tel" th:value="${session.udto.tel}">
+				    </div>
+				    <div>
+				        <label id="hlabel">주소</label>
+				        <input type="text" id="adrNum" name="adrNum" placeholder="우편번호" readonly="readonly">
+				        <input type="button" id="addrFind" value="주소찾기" onclick='findAddr()'>
+				    </div>
+				    <div>
+				    	<label id="hlabel"></label>
+				        <input type="text" id="address" name="address">
+				    </div>
+				    <div class="button-group">
+				        <input type="submit" value="정보수정">
+				        <input type="reset" value="다시작성" onclick="clearForm()">
+				    </div>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+</body>
+</html>

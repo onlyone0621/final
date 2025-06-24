@@ -69,4 +69,10 @@ public class MemberServiceImple implements MemberService {
 		return pwd;
 	}
 	
+	@Override
+	public int setMemberInfo(MemberDTO dto) throws Exception {
+		int result = mapper.updateMemberInfo(dto);
+		return result;
+	}
+	
 }
