@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
@@ -37,6 +38,7 @@ public ModelAndView CommunityMainNewest() {
 		ModelAndView mav = new ModelAndView();
 		mav.addObject("lists", lists);
 		mav.setViewName("community/CommunityMainNewest");
+		
 		return mav;
 	}
 	
@@ -47,7 +49,7 @@ public ModelAndView CommunityMainNewest() {
 		return "community/communityMainJoin";
 	}
 
-//전체 목록 조회'-
+//전체 목록 조회'
 	@GetMapping("communityMainAll")
 	public ModelAndView CommunityList() {
 		
@@ -90,27 +92,37 @@ public ModelAndView CommunityMainNewest() {
 	    return mav;
 	}
 	
-	
 	// 커뮤니티 정보 수정
-	@GetMapping("communityUpdate")
-	public String communityUpdate(Model model,@RequestParam("id")String id) {
-		model.addAttribute("id",id);
-		
-		return "community/manage/communityUpdate";
+	@GetMapping("community/{id}Update")
+	public ModelAndView communityUpdate(@PathVariable("id")String id) {
+		//model.addAttribute("id", id);
+		ModelAndView mav=new ModelAndView();
+		mav.addObject("id", id);
+		mav.setViewName("community/manage/communityUpdate");
+		return mav;
 	}
+	
+	
 	//커뮤니티 멤버 관리
 	@GetMapping("communityMember")
 	public String communityMember() {
 		return "community/manage/communityMember";
 	}
-	//커뮤니티 페쇄
-	@GetMapping("communityClose")
-	public String communityClose() {
-		return "community/manage/communityClose";
-	}
 	
-	@PostMapping("communityClose")
-	public ModelAndView deleteCommunity(int id) {
+	
+	//커뮤니티 페쇄 URL 이동
+	@GetMapping("/community/{id}/close")
+	public ModelAndView closePage(@PathVariable("id") String id) {
+	    ModelAndView mav = new ModelAndView();
+	    mav.addObject("id", id);
+	    mav.setViewName("community/manage/communityClose");
+	    return mav;
+	}
+	//커뮤니티 폐쇄 기능
+	
+	@PostMapping("/community/{id}/close")
+	public ModelAndView deleteCommunity(@PathVariable("id") int id) {	
+		
 		int result = 0;
 	    String msg = null;
 	    try {
@@ -125,6 +137,9 @@ public ModelAndView CommunityMainNewest() {
 		mav.setViewName("community/communityMsg");
 		return mav;
 	}
+	
+	
+	
 	
 	
 	
