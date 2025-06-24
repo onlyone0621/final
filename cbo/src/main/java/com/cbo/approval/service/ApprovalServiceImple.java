@@ -98,9 +98,16 @@ public class ApprovalServiceImple implements ApprovalService {
 
 
 	@Override
-	public List<Map<String, Object>> selectMembers() throws Exception {
+	public List<Map<String, Object>> getMembers() throws Exception {
 		// TODO Auto-generated method stub
 		return mapper.selectMembers();
+	}
+
+
+	@Override
+	public int insertTemplate(FormatDTO dto) throws Exception {
+		// TODO Auto-generated method stub
+		return mapper.insertTemplate(dto);
 	}
 
 }

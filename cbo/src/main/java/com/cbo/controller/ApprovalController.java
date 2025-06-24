@@ -3,6 +3,7 @@ package com.cbo.controller;
 import java.util.List;
 
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -126,7 +127,7 @@ public class ApprovalController {
 	public ModelAndView submitDraftForm(int id) {
 		FormatDTO format = null;
 		try {
-			format = approvalService.getFormat(0);
+			format = approvalService.getFormat(id);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -175,7 +176,26 @@ public class ApprovalController {
 	}
 	
 	@GetMapping("/ckeditor")
-	public String editorTest() {
+	public String editorTest(Model model) {
+		model.addAttribute("dto", new FormatDTO());
 		return "approval/CKEditorTest";
+	}
+	
+	@PostMapping("/ckeditor")
+	public String insertTemplate(@ModelAttribute FormatDTO dto, Model model) {
+		System.out.println("insert Template initiated");
+		int res = 0;
+		try {
+			res = approvalService.insertTemplate(dto);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		String msg = res > 0 ? "양식 등록 성공" : "양식 등록 실패";
+		String dest = "/";
+		model.addAttribute("msg", msg);
+		model.addAttribute("dest", dest);
+		return "approval/approvalMsg";
 	}
 }
