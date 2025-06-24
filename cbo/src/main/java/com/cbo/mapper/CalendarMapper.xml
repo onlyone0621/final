@@ -10,7 +10,16 @@
   insert into calendar values(sq_calendar_id.nextval,0,0,#{title},#{content},#{start_time},#{end_time}+1,sysdate)
   </insert>
   
-  <select id="selectList" resultType="com.cbo.calendar.model.CalendarDTO">
+  
+  <resultMap id="calendarMap" type="com.cbo.calendar.model.CalendarDTO">
+    <result property="id" column="id"/>
+    <result property="title" column="title"/>
+    <result property="content" column="content"/>
+    <result property="start_time" column="start_time"/>
+    <result property="end_time" column="end_time"/>
+</resultMap>
+
+  <select id="selectList" resultMap="calendarMap">
   select * from calendar 
   </select>
   

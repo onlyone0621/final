@@ -31,6 +31,7 @@ public int insertCommunity(CommunityDTO dto) throws Exception {
 @Override
 	public List<CommunityDTO> communityList() throws Exception {
 		List<CommunityDTO> lists=mapper.communityList();
+		
 		return lists;
 	}
 
