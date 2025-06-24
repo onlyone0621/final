@@ -43,13 +43,12 @@ public ModelAndView CommunityMainNewest() {
 	}
 	
 	
-	
 	@GetMapping("communityMainJoin")
 	public String mainJoinList() {
 		return "community/communityMainJoin";
 	}
 
-//전체 목록 조회'
+	//전체 목록 조회'
 	@GetMapping("communityMainAll")
 	public ModelAndView CommunityList() {
 		
@@ -70,6 +69,7 @@ public ModelAndView CommunityMainNewest() {
 	@GetMapping("communityCreate")
 	public String communityCreate() {
 		return "community/manage/communityCreate";
+	
 	}
 	//커뮤니티 생성 post방식
 	@PostMapping("communityCreate")
@@ -118,8 +118,8 @@ public ModelAndView CommunityMainNewest() {
 	    mav.setViewName("community/manage/communityClose");
 	    return mav;
 	}
-	//커뮤니티 폐쇄 기능
 	
+	//커뮤니티 폐쇄 기능
 	@PostMapping("/community/{id}/close")
 	public ModelAndView deleteCommunity(@PathVariable("id") int id) {	
 		
@@ -138,6 +138,13 @@ public ModelAndView CommunityMainNewest() {
 		return mav;
 	}
 	
+	//각 커뮤니티 view home
+	@GetMapping("/viewCommunity")
+	public ModelAndView viewCommunity() {
+		ModelAndView mav=new ModelAndView();
+		mav.setViewName("community/manage/viewCommunity");
+		return mav;
+	}
 	
 	
 	
