@@ -26,7 +26,6 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import lombok.Value;
 
 @Controller
 public class MemberController {
@@ -60,6 +59,7 @@ public class MemberController {
 		String getId = "";
 		String getPwd = "";
 		String result = "";
+		String path = "";
 		HttpSession session = req.getSession();
 		MemberDTO dto = null;
 		try {
@@ -212,12 +212,12 @@ public class MemberController {
 			mav.setViewName("member/memberMsg");
 		}else {
 			mav.addObject("user_id", user_id);
-			mav.setViewName("member/memberPwdUpdate");
+			mav.setViewName("member/memberSetNewPwd");
 		}
 		return mav;
 	}
 	
-	@PostMapping("memberPwdUpdate")
+	@PostMapping("memberSetNewPwd")
 	public ModelAndView memberPwdUpdate(@RequestParam("pwd")String pwd, @RequestParam("user_id")String user_id) {
 		int result = 0;
 		String msg = "";
@@ -250,6 +250,11 @@ public class MemberController {
 		return "member/memberPwdFind";
 	}
 	
+	@GetMapping("memberSetNewPwd")
+	public String memberSetNewPwdForm() {
+		return "member/memberSetNewPwd";
+	}
+	
 	@GetMapping("memberPwdUpdate")
 	public String memberPwdUpdateForm() {
 		return "member/memberPwdUpdate";
@@ -277,7 +282,7 @@ public class MemberController {
 	public void profileImageUpload(MultipartFile profileImage) {
 		try {
 			byte bytes[] = profileImage.getBytes();
-			File image = new File("C:/Users/KSW/git/cbo/cbo/src/main/resources/static/profileImage/"+profileImage.getOriginalFilename());
+			File image = new File("C:/Users/KSW/git/cbo/cbo/target/classes/static/profileImage/"+profileImage.getOriginalFilename());
 			FileCopyUtils.copy(bytes, image);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -287,13 +292,13 @@ public class MemberController {
 	}
 	
 	@PostMapping("memberInfoUpdate")
-	public ModelAndView memberInfoUpdate(MemberDTO dto, @RequestParam("adrNum")String adrNum, MultipartFile profileImage, HttpServletRequest req, @RequestParam("profile_image")String profile_image) {
+	public ModelAndView memberInfoUpdate(MemberDTO dto, @RequestParam("adrNum")String adrNum, MultipartFile profileImage, HttpServletRequest req) {
 		int result = 0;
 		String msg = "";
 		HttpSession session = req.getSession();
 		dto.setAddress(dto.getAddress()+"("+adrNum+")");
 		if(profileImage.getOriginalFilename()=="") {
-			dto.setProfile_image(profile_image);
+			dto.setProfile_image(profileImage.getOriginalFilename());
 		}else {
 			dto.setProfile_image("/profileImage/"+profileImage.getOriginalFilename());
 			profileImageUpload(profileImage);

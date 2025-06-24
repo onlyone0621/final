@@ -29,10 +29,11 @@ body {
     height: 80px;
 }
 
-.logo {
-    font-size: 24px;
+.logo a{
+    font-size: 30px;
     color: #f9faf8;
     font-weight: bolder;
+    text-decoration: none;
 }
 
 .header-links {
@@ -53,13 +54,13 @@ body {
 .header-a {
     display: flex;
     gap: 24px;
-    font-size: 15px;
-    color: white;
+    font-size: 18px;
+    color: #f9faf8;
 	font-weight: bolder;
 }
 .header-a a{ 
 	text-decoration: none;
-	color: white;
+	color: #f9faf8;
 }
 
 .body {

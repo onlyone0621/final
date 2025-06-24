@@ -14,7 +14,6 @@ import com.cbo.member.model.MemberDTO;
 public class MemberServiceImple implements MemberService {
 	@Autowired
 	private MemberMapper mapper;
-	
 	@Override
 	public MemberDTO getMember(String user_id) throws Exception {
 		MemberDTO dto = mapper.selectMember(user_id);
