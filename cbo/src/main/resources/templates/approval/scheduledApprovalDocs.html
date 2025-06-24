@@ -5,12 +5,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Document</title>
+<title>결재 예정 문서</title>
 </head>
 <body>
-	<div layout:fragment="content">
-		<h1>기안 문서함</h1>
-		<div
+<div layout:fragment="content">
+	<h1>결재 예정 문서</h1>
+	<div
 		class="table-responsive"
 	>
 		<table
@@ -28,17 +28,17 @@
 				</tr>
 			</thead>
 			<tbody>
-				<tr th:if="${#lists.isEmpty(draftDocs)}">
+				<tr th:if="${#lists.isEmpty(scheduledApprovalDocs)}">
 					<td colspan="7">문서가 없습니다</td>
 				</tr>
-				<tr class="" th:unless="${#lists.isEmpty(draftDocs)}" th:each="draftDoc : ${draftDocs}">
-					<td scope="row" th:text="${draftDoc.id}"></td>
-					<td scope="row" th:text="${draftDoc.writeDate}"></td>
-					<td scope="row" th:text="${draftDoc.completion}"></td>
-					<td scope="row" th:text="${draftDoc.formatName}"></td>
-					<td scope="row" th:text="${draftDoc.title}"></td>
-					<td scope="row" th:text="${draftDoc.writer}"></td>
-					<td scope="row" th:text="${draftDoc.status}"></td>
+				<tr class="" th:unless="${#lists.isEmpty(scheduledApprovalDocs)}" th:each="scheduledApprovalDoc : ${scheduledApprovalDocs}">
+					<td scope="row" th:text="${scheduledApprovalDoc.id}"></td>
+					<td scope="row" th:text="${scheduledApprovalDoc.writeDate}"></td>
+					<td scope="row" th:text="${scheduledApprovalDoc.completion}"></td>
+					<td scope="row" th:text="${scheduledApprovalDoc.formatName}"></td>
+					<td scope="row" th:text="${scheduledApprovalDoc.title}"></td>
+					<td scope="row" th:text="${scheduledApprovalDoc.writer}"></td>
+					<td scope="row" th:text="${scheduledApprovalDoc.status}"></td>
 				</tr>
 			</tbody>
 		</table>

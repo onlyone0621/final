@@ -1,5 +1,7 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width= , initial-scale=1.0">
@@ -45,17 +47,16 @@
     </ul>
   </div>
 
-  <!-- 메인 영역 -->
   <div style="flex-grow: 1; padding: 20px;">
 
-    <!-- 탭 메뉴 -->
+
     <div class="tab-wrapper">
       <div class="tab"><a href="communityMainNewest">최근글</a></div>
       <div class="tab"><a href="communityMainJoin">가입 커뮤니티</a></div>
       <div class="tab active"><a href="communityMainAll">전체 커뮤니티</a></div>
     </div>
 
-    <!-- 테이블 -->
+
     <table border="1" cellspacing="0" width="100%">
       <thead>
         <tr>
@@ -65,20 +66,14 @@
           <th>마스터</th>
         </tr>
       </thead>
-      <tbody>
-        <tr>
-          <td>아이디어 공유</td>
-          <td>2</td>
-          <td>3</td>
-          <td>박주연</td>
-        </tr>
-         <tr>
-          <td>아이디어 공유</td>
-          <td>5</td>
-          <td>5</td>
-          <td>박주연</td>
-        </tr>
-      </tbody>
+      		<tbody>
+			<tr th:if="${#lists.isEmpty(lists)}">
+				<td colspan='4' align="center">
+				등록된 게시글이 없습니다.
+				</td>
+			</tr>
+
+		</tbody>
     </table>
   </div>
 </div>

@@ -1,7 +1,5 @@
 package com.cbo.approval.model;
 
-import java.sql.Date;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,10 +9,12 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class DraftDTO {
-	private int id;
+public class ApprovalLineDTO {
 	private int docId;
-	private Date executionDate;
-	private String type;
-	private String content;
+	private int memberId;
+	private String memberName;
+	private String deptName;
+	private String gradeName;
+	private String status;
+	private String processDate;
 }

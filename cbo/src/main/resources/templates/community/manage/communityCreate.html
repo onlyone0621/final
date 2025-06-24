@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+				xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 <head>
   <meta charset="UTF-8">
   <title>커뮤니티 개설</title>
@@ -46,7 +47,6 @@
 <body>
 
 <div class="container">
-  <!-- 사이드바 -->
   <div class="sidebar">
     <h4>커뮤니티</h4>
     <button>커뮤니티 생성</button>
@@ -57,19 +57,23 @@
     </ul>
   </div>
 
-  <!-- 커뮤니티 개설 영역 -->
+
   <div class="main">
     <h2>커뮤니티 개설</h2>
-    <form name="communityCreate">
-      <ul>
-        <li>커뮤니티 명 : <input type="text" placeholder="2자 이상 60자 이하를 입력"></li>
-        <li>소개 : <input type="text"></li>
-      </ul>
-      <div>
-        <input type="submit" value="확인">
-        <input type="reset" value="취소">
-      </div>
-    </form>
+<form name="communityCreate" action="communityCreate" method="post">
+  <ul>
+    <li>커뮤니티 명 : 
+      <input type="text" name="name" placeholder="2자 이상 60자 이하를 입력">
+    </li>
+    <li>소개 : 
+      <input type="text" name="description">
+    </li>
+  </ul>
+  <div>
+    <input type="submit" value="확인">
+    <input type="reset" value="취소">
+  </div>
+</form>
   </div>
 </div>
 
