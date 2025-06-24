@@ -199,7 +199,8 @@ create table calendar(
 
 CREATE TABLE format (
     id NUMBER(10) PRIMARY KEY,
-    name VARCHAR2(100) UNIQUE NOT NULL
+    name VARCHAR2(100) UNIQUE NOT NULL,
+    template CLOB NOT NULL
 );
 
 create table doc(
@@ -435,15 +436,6 @@ INSERT INTO member (
 );
 
 
--- format table sample
-INSERT INTO format (id, name)
-VALUES (sq_format_id.NEXTVAL, '기안문'); 
-
-INSERT INTO format (id, name)
-VALUES (sq_format_id.NEXTVAL, '진료비 지원 신청서');
-
-INSERT INTO format (id, name)
-VALUES (sq_format_id.NEXTVAL, '휴가 신청서');
 
 -- Docs sample
 INSERT INTO doc (id, title, member_id, format_id, content)

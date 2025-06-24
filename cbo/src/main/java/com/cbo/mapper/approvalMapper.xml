@@ -143,7 +143,7 @@
 	<select id="selectFormat">
 		SELECT * 
 		FROM format
-		WHERE id = #{id};
+		WHERE id = #{id}
 	</select>
 	
 	<select id="selectMembers" resultType="map">
@@ -181,5 +181,8 @@
 	
 	<update id="updateStatusToRejected"></update>
 	
-	
+	<insert id="insertTemplate" parameterType="com.cbo.approval.model.FormatDTO">
+		INSERT INTO format (id, name, template)
+  		VALUES (#{id}, #{name}, #{template, jdbcType=CLOB})
+	</insert>
   </mapper>

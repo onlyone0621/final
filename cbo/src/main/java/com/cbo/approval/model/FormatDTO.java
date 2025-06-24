@@ -12,4 +12,5 @@ import lombok.Setter;
 public class FormatDTO {
 	private int id;
 	private String name;
+	private String template;
 }

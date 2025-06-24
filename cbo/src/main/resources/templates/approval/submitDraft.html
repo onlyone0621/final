@@ -8,6 +8,37 @@
 <title>결재 문서 작성</title>
 </head>
 <body>
-<h1 th:text="${format.name}"></h1>
+<div layout:fragment="content">
+	<textarea id="editor" rows="10" cols="80">
+
+	</textarea>
+
+        <script src="https://cdn.ckeditor.com/ckeditor5/45.2.0/ckeditor5.umd.js"></script>
+
+        <script>
+            const {
+                ClassicEditor,
+                Essentials,
+                Bold,
+                Italic,
+                Font,
+                Paragraph
+            } = CKEDITOR;
+
+            ClassicEditor
+                .create( document.querySelector( '#editor' ), {
+                    licenseKey: 'eyJhbGciOiJFUzI1NiJ9.eyJleHAiOjE3ODIwODYzOTksImp0aSI6ImYyODg4YzBhLTRlNmMtNGFhYi1hN2U4LWE3N2VmZmJlNDcxMiIsInVzYWdlRW5kcG9pbnQiOiJodHRwczovL3Byb3h5LWV2ZW50LmNrZWRpdG9yLmNvbSIsImRpc3RyaWJ1dGlvbkNoYW5uZWwiOlsiY2xvdWQiLCJkcnVwYWwiXSwiZmVhdHVyZXMiOlsiRFJVUCIsIkUyUCIsIkUyVyJdLCJ2YyI6IjgxMzNiOTNiIn0.bUQPptIVZbeQ69H9bZv0p842xKZXvgofFke2FmRvDSkmQ92mNHooY9HV6em5ivXasxQP8a9P2LUOTkpE-oZSxQ',
+                    plugins: [ Essentials, Bold, Italic, Font, Paragraph ],
+                    toolbar: [
+                        'undo', 'redo', '|', 'bold', 'italic', '|',
+                        'fontSize', 'fontFamily', 'fontColor', 'fontBackgroundColor'
+                    ]
+                } )
+                .then(  )
+                .catch( error => {
+					console.error(error);
+				} );
+        </script>
+</div>
 </body>
 </html>
