@@ -1,5 +1,7 @@
 <!DOCTYPE html>
-<html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+
 <head>
   <meta charset="UTF-8">
   <title>커뮤니티 폐쇄</title>
@@ -86,20 +88,20 @@
 <div style="flex-grow: 1; padding: 20px;">
 
     <div class="tab-wrapper">
-      <div class="tab">정보</div>
-      <div class="tab">멤버</div>
-      <div class="tab active">폐쇄</div>
+      <div class="tab"><a href="communityUpdate">정보</a></div>
+      <div class="tab"><a href="communityMember">멤버</a></div>
+      <div class="tab active"><a href="communityClose">폐쇄</a></div>
     </div>
 
 
-<form name="communityClose" action="communityClose" method="post">
+<form th:action="@{/community/{id}/close(id=${id})}" method="post">
 
 
     <div>
         *커뮤니티를 폐쇄하시면, 현재 커뮤니티 내에 있는 자료들이 삭제됩니다.<br>
         <label style="color: crimson;">자료가 삭제된 이후에는 복구가 불가능 합니다.</label> <br>
         <br>
-        <input type="hidden" name="id">
+        <input type="hidden" name="id" th:value="${id}">
         <input type="submit" value="폐쇄하기" >
     </div>
    </form>
