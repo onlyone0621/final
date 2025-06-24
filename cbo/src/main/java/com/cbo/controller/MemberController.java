@@ -1,14 +1,20 @@
 package com.cbo.controller;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.cbo.dept.model.DeptDTO;
@@ -53,6 +59,7 @@ public class MemberController {
 		String getId = "";
 		String getPwd = "";
 		String result = "";
+		String path = "";
 		HttpSession session = req.getSession();
 		MemberDTO dto = null;
 		try {
@@ -63,7 +70,7 @@ public class MemberController {
 				result = getId;
 			}else {
 				if(getPwd.equals(pwd)) {
-			        session.setAttribute("udto", dto);
+			        session.setAttribute(com.cbo.constant.MemberConst.USER_KEY, dto);
 			        if(saveid==false) {
 			        	Cookie ck = new Cookie("saveid", getId);
 						ck.setMaxAge(0);
@@ -117,8 +124,9 @@ public class MemberController {
 	}
 	
 	@PostMapping("memberJoin")
-	public ModelAndView memberJoin(MemberDTO dto) {
+	public ModelAndView memberJoin(MemberDTO dto, @RequestParam("adrNum") String adrNum) {
 		int result = 0;
+		dto.setAddress(dto.getAddress()+"("+adrNum+")");
 		try {
 			result = service.memberJoin(dto);
 			
@@ -204,12 +212,12 @@ public class MemberController {
 			mav.setViewName("member/memberMsg");
 		}else {
 			mav.addObject("user_id", user_id);
-			mav.setViewName("member/memberPwdUpdate");
+			mav.setViewName("member/memberSetNewPwd");
 		}
 		return mav;
 	}
 	
-	@PostMapping("memberPwdUpdate")
+	@PostMapping("memberSetNewPwd")
 	public ModelAndView memberPwdUpdate(@RequestParam("pwd")String pwd, @RequestParam("user_id")String user_id) {
 		int result = 0;
 		String msg = "";
@@ -242,8 +250,72 @@ public class MemberController {
 		return "member/memberPwdFind";
 	}
 	
+	@GetMapping("memberSetNewPwd")
+	public String memberSetNewPwdForm() {
+		return "member/memberSetNewPwd";
+	}
+	
 	@GetMapping("memberPwdUpdate")
 	public String memberPwdUpdateForm() {
 		return "member/memberPwdUpdate";
+	}
+	
+	@GetMapping("memberInfoUpdate")
+	public ModelAndView memberInfoUpdateForm() {
+		List<GradeDTO> gradeList = null;
+		List<DeptDTO> deptList = null;
+		try {
+			
+			deptList = service.getDept();
+			gradeList = service.getGrade();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		ModelAndView mav = new ModelAndView();
+		mav.addObject("deptList", deptList);
+		mav.addObject("gradeList", gradeList);
+		mav.setViewName("member/memberInfoUpdate");
+		return mav;
+	}
+	
+	public void profileImageUpload(MultipartFile profileImage) {
+		try {
+			byte bytes[] = profileImage.getBytes();
+			File image = new File("C:/Users/KSW/git/cbo/cbo/target/classes/static/profileImage/"+profileImage.getOriginalFilename());
+			FileCopyUtils.copy(bytes, image);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
+	
+	@PostMapping("memberInfoUpdate")
+	public ModelAndView memberInfoUpdate(MemberDTO dto, @RequestParam("adrNum")String adrNum, MultipartFile profileImage, HttpServletRequest req) {
+		int result = 0;
+		String msg = "";
+		HttpSession session = req.getSession();
+		dto.setAddress(dto.getAddress()+"("+adrNum+")");
+		if(profileImage.getOriginalFilename()=="") {
+			dto.setProfile_image(profileImage.getOriginalFilename());
+		}else {
+			dto.setProfile_image("/profileImage/"+profileImage.getOriginalFilename());
+			profileImageUpload(profileImage);
+		}
+		try {
+			result = service.setMemberInfo(dto);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		msg = result > 0 ? "정보가 수정되었습니다." : "정보 수정에 실패하였습니다.";
+		profileImageUpload(profileImage);
+		session.setAttribute(com.cbo.constant.MemberConst.USER_KEY, dto);
+		ModelAndView mav = new ModelAndView();
+		mav.addObject("msg", msg);
+		mav.addObject("gourl", "memberInfoUpdate");
+		mav.setViewName("member/memberMsg");
+		return mav;
 	}
 }

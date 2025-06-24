@@ -1,9 +1,10 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+				xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+				layout:decorate="layouts/mainLayout">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+ <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>커뮤니티 보기</title>
 <script>
 	function listSetting(){
@@ -103,7 +104,7 @@
   </style>
 </head>
 <body>
-
+<div layout:fragment="content">
 <div class="layout">
   <div class="sidebar">
     <h4>커뮤니티</h4>
@@ -119,11 +120,12 @@
 </ul>
 <ul th:each="dto:${lists}">
 	<li>
-		<span th:text="${dto.name}"></span>
-		<input type = "hidden" id = "id" th:value = "${dto.id}">
-    	<input type="button" value = "설정" onclick="listSetting()">
-    
-	</li>
+		
+		<!--input type = "hidden" id = "id" th:value = "${dto.id}"-->
+    	<!--input type="button" value = "설정" onclick="listSetting()"-->
+    	<a th:href="@{/community/{id}/close(id=${dto.id})}">[[${dto.name}]]</a>
+    	<a th:href="@{/community/{id}/close(id=${dto.id})}"><input type="button" value ="설정"></a>
+    </li>
 	
 </ul>
  </div>
@@ -137,6 +139,7 @@
       <div class="tab "><a href="communityMainAll">전체 커뮤니티</a></div>
     </div>
 
+
     <ul class="post-list">
       <li>최신글 1</li>
       <li>최신글 2</li>
@@ -146,6 +149,6 @@
     </ul>
   </div>
 </div>
-
+</div>
 </body>
 </html>

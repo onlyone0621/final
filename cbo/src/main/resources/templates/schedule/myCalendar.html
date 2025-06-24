@@ -4,7 +4,7 @@
 				layout:decorate="layouts/mainLayout">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>캘린더</title>
 <style>
 .fc-col-header-cell-cushion, .fc-daygrid-day-number {
@@ -53,11 +53,67 @@ function deleteWork(){
 			.then (result =>{
 			
 				if(result>0){
+					  var eventModalEl = document.getElementById('eventModal');
+			            var modalInstance = bootstrap.Modal.getInstance(eventModalEl);
+			            if (!modalInstance) {
+			                modalInstance = new bootstrap.Modal(eventModalEl);
+			            }
+			            modalInstance.hide();
+			            
 						window.refreshCalendar();
 						
 					}
 			});
 	}
+	
+function updateWork(){
+	const form = document.getElementById('editEventForm');
+	const formData = new FormData(form);
+
+	fetch('/api/calendar/updateWork',
+			{
+				method:'POST',
+				body:formData
+			})
+			.then (res => res.json())
+			.then (result =>{
+			
+				if(result>0){
+					  var eventModalEl = document.getElementById('eventModal');
+			            var modalInstance = bootstrap.Modal.getInstance(eventModalEl);
+			            if (!modalInstance) {
+			                modalInstance = new bootstrap.Modal(eventModalEl);
+			            }
+			            modalInstance.hide();
+			            
+						window.refreshCalendar();
+						
+					}
+			});
+	}
+	
+function insertWork() {
+    const form = document.getElementById('editEventForm');
+    const formData = new FormData(form); // 폼의 모든 input 값을 자동으로 묶음
+
+    fetch('/api/calendar/add', {
+        method: 'POST',
+        body: formData
+    })
+    .then(res => res.json())
+    .then(result => {
+        if(result.success) {
+        	var eventModalEl = document.getElementById('eventModal');
+            var modalInstance = bootstrap.Modal.getInstance(eventModalEl);
+            if (!modalInstance) {
+                modalInstance = new bootstrap.Modal(eventModalEl);
+            }
+            modalInstance.hide();
+   			 		window.refreshCalendar();
+        }			
+    });
+}
+
 </script>
 <script>
 let calendar;
@@ -83,6 +139,7 @@ function refreshCalendar() {
 			locale : 'ko', //언어 지정
 			editable : true, //이벤트 수정 가능 여부
 			dayMaxEventRows : true, // 이벤트 최대 갯수 설정 및 팝오버 띄우기
+			aspectRatio:2.5,
 			views : {
 				timeGrid : {
 					dayMaxEventRows : 3 //하루 최대 이벤트 갯수
@@ -117,6 +174,19 @@ function refreshCalendar() {
     			//window.open('calendarWorkReg?start_date=' + info.dateStr,'popup','width=500 height=500');
 			 },
 			 select: function(info) {
+
+					var label1 = document.getElementById("eventModalLabel1");
+					var label2 = document.getElementById("eventModalLabel2");
+					var btn1 = document.getElementById("edit_btn1");
+			        var btn2 = document.getElementById("edit_btn2");
+			        var btn3 = document.getElementById("edit_btn3");
+			        
+			        btn1.style.display = "none";
+			        btn2.style.display = "none";
+			        btn3.style.display = "none";
+			        label1.style.display = "none";
+			        label2.style.display = "none";
+			        
 				    var endStr = info.endStr;
 				    
 				    let date = new Date(endStr);
@@ -130,11 +200,32 @@ function refreshCalendar() {
 				   
 				  //  alert('selected ' + info.startStr + ' to ' + endStr);
 
-				    
-				    window.open('calendarWorkReg?start_date=' + info.startStr + '&end_date=' + endStr, 'createPopup', 'width=500,height=500');
+				    	var myModal = new bootstrap.Modal(document.getElementById('eventModal'));
+				        myModal.show();
+					    
+				        document.getElementById("title").value = '';
+				        document.getElementById("content").value = '';
+				        document.getElementById("start_time").value = info.startStr;
+				        document.getElementById("end_time").value = endStr;
+				        
+				        btn3.style.display = "block";
+				        label2.style.display = "block";
+				   // window.open('calendarWorkReg?start_time=' + info.startStr + '&end_time=' + endStr, 'createPopup', 'width=500,height=500');
 				    },
 			    eventClick: function(info) { //이벤트 클릭시
 
+			    	var label1 = document.getElementById("eventModalLabel1");
+					var label2 = document.getElementById("eventModalLabel2");
+					var btn1 = document.getElementById("edit_btn1");
+			        var btn2 = document.getElementById("edit_btn2");
+			        var btn3 = document.getElementById("edit_btn3");
+			        
+			        btn1.style.display = "none";
+			        btn2.style.display = "none";
+			        btn3.style.display = "none";
+			        label1.style.display = "none";
+			        label2.style.display = "none";
+			        
 			    	const event = info.event;
 
 			    	 var endStr = event.endStr;
@@ -151,11 +242,13 @@ function refreshCalendar() {
 				        document.getElementById("id").value = event.id;
 				        document.getElementById("title").value = event.title;
 				        document.getElementById("content").value = event.extendedProps.content;
-				        document.getElementById("start_date").value = event.startStr;
-				        document.getElementById("end_date").value = endStr;
+				        document.getElementById("start_time").value = event.startStr;
+				        document.getElementById("end_time").value = endStr;
 				        
+				        btn1.style.display = "block";
+				        btn2.style.display = "block";
+				        label1.style.display = "block";
 				        
-				        console.log(event.title);
 			        //alert('start: ' + info.event.startStr + 'end : '+ endStr );
 			    	//window.open('calendarOptionView?start_date='+info.event.startStr+'&end_date='+endStr+'&title='+info.event.title+'&content='+info.event.extendedProps.content+'&id='+info.event.id, 'optionPopup','width=500,height=500');
 			    },	
@@ -177,14 +270,15 @@ function refreshCalendar() {
    <div class="modal-dialog">
       <div class="modal-content">
          <div class="modal-header">
-            <h5 class="modal-title" id="eventModalLabel">일정 수정</h5>
+            <h5 class="modal-title" id="eventModalLabel1" style="display: none">일정 수정</h5>
+            <h5 class="modal-title" id="eventModalLabel2" style="display: none">일정 등록</h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
          </div>
          <div class="modal-body">
             <form id="editEventForm">
                <input type="hidden" id="planNo" name="planNo">
                <div class="form-group">
-                  <input type="hidden" class="form-control" name="id" id="id">
+                  <input type="hidden" class="form-control" name="id" id="id" >
                </div>
                <div class="form-group">
                   <label for="firstPlan">일정 제목</label>
@@ -195,23 +289,44 @@ function refreshCalendar() {
                   <input type="text" class="form-control"  name="content" id="content">
                </div>
                <div class="form-group">
-                 <label for="start_date" class="form-label">시작일</label>
-                 <input type="date" name="start_date"  id="start_date" class="form-control" th:value = "${start_date}">
+                 <label for="start_time" class="form-label">시작일</label>
+                 <input type="date" name="start_time"  id="start_time" class="form-control" th:value = "${start_time}">
                </div>
                <div>
-                  <label for="end_date" class="form-label">종료일</label>
-                  <input type="date" name="end_date"  id="end_date" class="form-control">
+                  <label for="end_time" class="form-label">종료일</label>
+                  <input type="date" name="end_time"  id="end_time" class="form-control" th:value = "${end_time}">
                </div>
-               <div class="modal-footer">
-                  <button type="button" class="btn btn-primary" id="edit_btn">수정</button>
-                  <button type="button" class="btn btn-primary" id="edit_btn" onclick = "deleteWork()">삭제</button>
+               <div class="modal-footer">               
+                  종일<input type="checkbox" class="btn btn-primary" id="checkbox">
+                  <button type="button" class="btn btn-primary" id="edit_btn1" onclick = "updateWork()" style="display: none">수정</button>
+                  <button type="button" class="btn btn-primary" id="edit_btn2" onclick = "deleteWork()" style="display: none">삭제</button>
+                  <button type="button" class="btn btn-primary" id="edit_btn3" onclick = "insertWork()" style="display: none">등록</button>
                </div>
             </form>
          </div>
       </div>
    </div>
 </div>
-	<div id='calendar'></div>
+<div class="container-fluid">
+  <div class="row">
+<div class="col-md-3">
+<!-- 사이드 바 메뉴-->
+  <!-- 패널 타이틀1 -->
+<div class="panel panel-info">
+    <div class="panel-heading">
+      <h3 class="panel-title">일정 관리</h3>
+    </div>
+    <!-- 사이드바 메뉴목록1 -->
+    <ul class="list-group">
+      <li class="list-group-item" style="width:15;"><a href="#">개인 캘린더</a></li>
+      <li class="list-group-item"><a href="#">부서 캘린더</a></li>
+    </ul>
+</div>
+</div>
+<div class = "col-md-9" id = 'calendar'>
+</div>
+</div>
+</div>
 	</div>
 </body>
 </html>

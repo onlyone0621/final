@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 <head>
   <meta charset="UTF-8">
   <title>커뮤니티 수정 </title>
@@ -85,28 +86,27 @@
 
 <div style="flex-grow: 1; padding: 20px;">
 
-    <div class="tab-wrapper">
-      <div class="tab active">정보</div>
-      <div class="tab" >멤버</div>
-      <div class="tab">폐쇄</div>
-    </div>
 
+    <div class="tab-wrapper">
+      <div class="tab"><a th:href="@{/communityUpdate}">정보</a></div>
+      <div class="tab"><a th:href="@{/communityMember}">멤버</a></div>
+      <div class="tab active"><a th:href="@{/communityClose}">폐쇄</a></div>
+    </div>
 
 <form>
     <ul>
         <li>이름 <input type="text"></li>
         <li>소개 <input type="text"></li>
-        <li>마스터 (+ 변경)</li>
-        <li>부마스터 +(추가)</li>
-
-        </li> 
+        <li>마스터 (+ 변경 버튼 )</li>
+        <li>부마스터 +(추가 버튼)</li>
     </ul>
     <div>
         <input type="submit" value="저장">
         <input type="reset" value="취소">
     </div>
+  </form>
+
 </div>
-</div>
-</form>
+
 </body>
 </html>

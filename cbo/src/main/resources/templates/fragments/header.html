@@ -15,11 +15,11 @@
             <li><a href="#">주소록</a></li>
             <li><a href="approvalMain">전자결재</a></li>
             <li><a href="#">자료실</a></li>
-            <li><a href="#">커뮤니티</a></li>
+            <li><a href="communityMainNewest">커뮤니티</a></li>
             <li><a href="#">메신저</a></li>
         </ul>
-        <div class="header-buttons">
-            <a href>사용자</a> | <a href="memberLogout">로그아웃</a>
+        <div class="header-a">
+            <a href="memberInfoUpdate"><lable th:text="${session.udto.name}"></lable> 님</a> | <a href="memberLogout">로그아웃</a>
         </div>
     </nav>
 </header>
