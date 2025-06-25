@@ -68,22 +68,32 @@
 </div>
 
 
-<form name="boardCreate" action="boardCreate">
+<form name="boardCreate" action="boardCreate" method="post">
   <ul>
     <li>커뮤니티 그룹
-      <select name="community_name">
-        <option>박주연의 그룹 1</option>
-        <option>박주연의 그룹 2</option>
-        <option>박주연의 그룹 3</option>
-      </select>
+    <!-- value 서버로 넘어가는 값 (c.id) -->
+	<!-- text  화면에 표시되는 값 (c.name) -->
+	<li>
+    	<select name="community_id">
+        	<option th:each="c : ${communities}" 
+                th:value="${c.id}" 
+                th:text="${c.name}">
+        	</option>
+        </select>
     </li>
-    <li><label>이름 </label> <input type="text" name="title"></li><br>
-    <li><label>설명 </label> <textarea name="아놔"  cols="30"></textarea></li>
-  <div>
-    <input type="submit" value="만들기">
-    <input type="reset" value="취소">
-  </div>
-</ul>
-</form>
+    <li>
+    	<label>이름 </label> <input type="text" name="name">
+    </li>
+    <li>
+    	<label>설명 </label> <textarea name="description"  cols="30"></textarea>
+    </li>
+	</ul>
+	<div>
+		<input type="submit" value="만들기">
+    	<input type="reset" value="취소">
+	</div>
+	</form>
+</div>
+
 </body>
 </html>
