@@ -23,7 +23,7 @@ public interface ApprovalMapper {
 	List<ApprovalLineDTO> selectApprovers(int id) throws Exception;
 	List<ApprovalLineDTO> selectReviewers(int id) throws Exception;
 	
-	FormatDTO selectFormat(int id) throws Exception;
+	Map<String, Object> selectFormat(int id) throws Exception;
 	List<Map<String, Object>> selectMembers() throws Exception;
 	int selectDocId() throws Exception;
 	int insertDoc(DocDTO dto) throws Exception;

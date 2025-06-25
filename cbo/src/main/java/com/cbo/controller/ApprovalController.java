@@ -126,7 +126,7 @@ public class ApprovalController {
 	
 	@GetMapping("submitDraft")
 	public ModelAndView submitDraftForm(int id) {
-		FormatDTO format = null;
+		Map<String, Object> format = null;
 		try {
 			format = approvalService.getFormat(id);
 		} catch (Exception e) {
@@ -178,13 +178,11 @@ public class ApprovalController {
 	
 	@GetMapping("/ckeditor")
 	public String editorTest(Model model) {
-		model.addAttribute("dto", new FormatDTO());
 		return "approval/CKEditorTest";
 	}
 	
 	@PostMapping("/ckeditor")
-	public String insertTemplate(@ModelAttribute FormatDTO dto, Model model) {
-		System.out.println("insert Template initiated");
+	public String insertTemplate(FormatDTO dto, Model model) {
 		int res = 0;
 		try {
 			res = approvalService.insertTemplate(dto);

@@ -91,7 +91,7 @@ public class ApprovalServiceImple implements ApprovalService {
 	
 	
 	@Override
-	public FormatDTO getFormat(int id) throws Exception {
+	public Map<String, Object> getFormat(int id) throws Exception {
 		// TODO Auto-generated method stub
 		return mapper.selectFormat(id);
 	}

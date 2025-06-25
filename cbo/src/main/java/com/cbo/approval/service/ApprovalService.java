@@ -23,7 +23,7 @@ public interface ApprovalService {
 	List<ApprovalLineDTO> getApprovers(int id) throws Exception;
 	List<ApprovalLineDTO> getReviewers(int id) throws Exception;
 	
-	FormatDTO getFormat(int id) throws Exception;
+	Map<String, Object> getFormat(int id) throws Exception;
 	List<Map<String, Object>> getMembers() throws Exception;
 	
 	int insertTemplate(FormatDTO dto) throws Exception;

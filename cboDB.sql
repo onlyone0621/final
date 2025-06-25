@@ -436,13 +436,206 @@ INSERT INTO member (
 );
 
 INSERT INTO format 
-VALUES (sq_format_id.NEXTVAL, '기안문', '<p>기안문입니다</p>');
+VALUES (sq_format_id.NEXTVAL, '기안문', '<div style="font-family: Arial, sans-serif; margin: 20px;">
+  <h1 style="text-align: center; letter-spacing: 15px;">기 안 용 지</h1>
+  <div style="text-align: right; margin-top: 20px; margin-bottom: 10px; font-size: 12px;">[결재선]</div>
+  <div style="display: flex; justify-content: space-between; gap: 20px;">
+    <table style="width: 400px; border-collapse: collapse; margin-bottom: 20px;">
+      <tr>
+        <td style="border: 1px solid #000; padding: 5px; font-size: 14px;">부서</td>
+        <td style="border: 1px solid #000; padding: 5px; font-size: 14px;" id="dept"></td>
+      </tr>
+      <tr>
+        <td style="border: 1px solid #000; padding: 5px; font-size: 14px;">기안일</td>
+        <td style="border: 1px solid #000; padding: 5px; font-size: 14px;" id="write-date"></td>
+      </tr>
+      <tr>
+        <td style="border: 1px solid #000; padding: 5px; font-size: 14px;">기안자</td>
+        <td style="border: 1px solid #000; padding: 5px; font-size: 14px;" id="writer"></td>
+      </tr>
+      <tr>
+        <td style="border: 1px solid #000; padding: 5px; font-size: 14px;">시행일자</td>
+        <td style="border: 1px solid #000; padding: 5px; font-size: 14px;">
+          <input type="text" style="width: 100%; box-sizing: border-box;">
+        </td>
+      </tr>
+      <tr>
+        <td style="border: 1px solid #000; padding: 5px; font-size: 14px;">결재내용</td>
+        <td style="border: 1px solid #000; padding: 5px; font-size: 14px;">
+          <label><input type="radio" name="type" checked>인가</label>
+          <label><input type="radio" name="type">조건부</label>
+          <label><input type="radio" name="type">보류</label>
+          <label><input type="radio" name="type">부결</label>
+        </td>
+      </tr>
+    </table>
+    <div id="approval-line-container" style="display: flex; gap: 10px;">
+    </div>
+  </div>
+  <table style="width: 100%; border-collapse: collapse; margin-bottom: 10px;">
+    <tr>
+      <th style="border: 1px solid #000; padding: 8px; background-color: #ccc; text-align: left;">제목</th>
+      <td style="border: 1px solid #000; padding: 8px;">
+        <input type="text" style="width: 100%; box-sizing: border-box;">
+      </td>
+    </tr>
+    <tr>
+      <th colspan="2" style="border: 1px solid #000; padding: 8px; background-color: #ccc; text-align: center;">상 세 내 용</th>
+    </tr>
+  </table>
+  <div contenteditable="true" style="width: 100%; height: 300px; border: 1px solid #000; font-size: 14px; box-sizing: border-box; padding: 10px;">
+    본문
+  </div>
+</div>');
 
 INSERT INTO format 
-VALUES (sq_format_id.NEXTVAL, '법인카드 신청서', '<p>법인카드 신청서입니다</p>');
+VALUES (sq_format_id.NEXTVAL, '진료비 지원 신청서', '   <div style="font-family: Arial, sans-serif; margin: 20px;">
+  <h1 style="text-align: center; letter-spacing: 10px;">진료비지원신청서</h1>
+  <div style="text-align: right; font-size: 12px; margin-bottom: 10px;">[결재선]</div>
+  <div style="display: flex; justify-content: space-between; gap: 20px;">
+    <table style="width: 400px; border-collapse: collapse; margin-bottom: 20px;">
+      <tr>
+        <td style="border: 1px solid #000; padding: 5px; font-size: 14px;">부서</td>
+        <td style="border: 1px solid #000; padding: 5px; font-size: 14px;" id="dept"></td>
+      </tr>
+      <tr>
+        <td style="border: 1px solid #000; padding: 5px; font-size: 14px;">기안일</td>
+        <td style="border: 1px solid #000; padding: 5px; font-size: 14px;" id="write-date"></td>
+      </tr>
+      <tr>
+        <td style="border: 1px solid #000; padding: 5px; font-size: 14px;">기안자</td>
+        <td style="border: 1px solid #000; padding: 5px; font-size: 14px;" id="writer"></td>
+      </tr>
+    </table>
+    <div id="approval-line-container" style="display: flex; gap: 10px;">
+    </div>
+  </div>
+  <table style="width: 100%; border-collapse: collapse; margin-bottom: 10px;">
+    <tr>
+      <th style="border: 1px solid #000; padding: 5px; background-color: #ccc;">제목</th>
+      <td style="border: 1px solid #000; padding: 5px;">
+        <input type="text" style="width: 100%; box-sizing: border-box;">
+      </td>
+    </tr>
+    <tr>
+      <td colspan="2" style="border: 1px solid #000; padding: 5px;">
+        <div contenteditable="true" style="height: 200px; width: 100%; outline: none;">
+          본문
+        </div>
+      </td>
+    </tr>
+  </table>
+  <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
+    <tr>
+      <td style="border: 1px solid #000; padding: 5px; width: 120px;">진료기관명</td>
+      <td style="border: 1px solid #000; padding: 5px;">
+        <input type="text" style="width: 100%; box-sizing: border-box;">
+      </td>
+      <td style="border: 1px solid #000; padding: 5px; width: 120px;">병명</td>
+      <td style="border: 1px solid #000; padding: 5px;">
+        <input type="text" style="width: 100%; box-sizing: border-box;">
+      </td>
+    </tr>
+    <tr>
+      <td style="border: 1px solid #000; padding: 5px;">신청금액</td>
+      <td style="border: 1px solid #000; padding: 5px;">
+        <input type="text" style="width: 90%; box-sizing: border-box;"> 원
+      </td>
+      <td style="border: 1px solid #000; padding: 5px;">본인부담금</td>
+      <td style="border: 1px solid #000; padding: 5px;">
+        <input type="text" style="width: 90%; box-sizing: border-box;"> 원
+      </td>
+    </tr>
+  </table>
+    <div style="font-size: 14px; line-height: 1.6; text-align: center;">
+    복리후생 규정 제2장 복리후생 제4조 ⑤ 항에 의거 지원<br>
+    "임직원 본인과 직계가족의 질병 및 재판 의료비가 발생하여 부담한 비용이 년간 50만원을 초과한 경우<br>
+    그 초과금에 대한 50%(1인 연간 300만원 한도)를 지원한다."<br>
+    아래와 같이 진료비를 신청합니다.
+    </div>
+    <div style="margin-top: 10px; font-size: 13px; text-align: center;">
+    * 첨부서류 : 진료비 계산서·영수증(병원발행용), 의사진단서, 가족관계증빙자료(통본 또는 가족관계증명서)
+    </div>
+</div>');
 
 INSERT INTO format 
-VALUES (sq_format_id.NEXTVAL, '휴가 신청서', '<p>휴가 신청서입니다</p>');
+VALUES (sq_format_id.NEXTVAL, '휴가 신청서', '    <div style="font-family: Arial, sans-serif; margin: 20px;">
+  <h1 style="text-align: center; letter-spacing: 15px;">휴 가 신 청 서</h1>
+  <div style="text-align: right; font-size: 12px; margin-bottom: 5px;">[결재선]</div>
+  <div style="display: flex; justify-content: space-between; gap: 20px;">
+    <table style="width: 400px; border-collapse: collapse; margin-bottom: 20px;">
+      <tr>
+        <td style="border: 1px solid #000; padding: 5px; font-size: 14px;">부서</td>
+        <td style="border: 1px solid #000; padding: 5px; font-size: 14px;" id="dept"></td>
+      </tr>
+      <tr>
+        <td style="border: 1px solid #000; padding: 5px; font-size: 14px;">기안일</td>
+        <td style="border: 1px solid #000; padding: 5px; font-size: 14px;" id="write-date"></td>
+      </tr>
+      <tr>
+        <td style="border: 1px solid #000; padding: 5px; font-size: 14px;">기안자</td>
+        <td style="border: 1px solid #000; padding: 5px; font-size: 14px;" id="writer"></td>
+      </tr>
+    </table>
+    <div id="approval-line-container" style="display: flex; gap: 10px;">
+    </div>
+  </div>
+
+  <table style="border-collapse: collapse; width: 100%; margin-bottom: 10px;">
+  <tr>
+    <th style="border: 1px solid #000; padding: 8px; width: 100px; background-color: #ccc; text-align: center;">제목</th>
+    <td style="border: 1px solid #000; padding: 8px;">
+      <input type="text" style="width: 100%; box-sizing: border-box;">
+    </td>
+  </tr>
+</table>
+  <table style="border-collapse: collapse; width: 100%; margin-bottom: 20px;">
+    <tr>
+      <th colspan="4" style="border: 1px solid #000; padding: 8px; background-color: #ccc; text-align: center;">신청인</th>
+    </tr>
+    <tr>
+      <td style="border: 1px solid #000; padding: 8px; width: 100px;">소속</td>
+      <td style="border: 1px solid #000; padding: 8px;"><input type="text" style="width: 100%; box-sizing: border-box;"></td>
+      <td style="border: 1px solid #000; padding: 8px; width: 100px;">직책</td>
+      <td style="border: 1px solid #000; padding: 8px;"><input type="text" style="width: 100%; box-sizing: border-box;"></td>
+    </tr>
+    <tr>
+      <td style="border: 1px solid #000; padding: 8px;">성명</td>
+      <td colspan="3" style="border: 1px solid #000; padding: 8px;"><input type="text" style="width: 100%; box-sizing: border-box;"></td>
+    </tr>
+  </table>
+  <table style="border-collapse: collapse; width: 100%; margin-bottom: 20px;">
+    <tr>
+      <td style="border: 1px solid #000; padding: 8px; width: 100px;">휴가종류</td>
+      <td colspan="3" style="border: 1px solid #000; padding: 8px;"><input type="text" style="width: 100%; box-sizing: border-box;"></td>
+    </tr>
+    <tr>
+      <td style="border: 1px solid #000; padding: 8px;">휴가기간</td>
+      <td style="border: 1px solid #000; padding: 8px;">
+        <input type="text" style="width: 100%; box-sizing: border-box;">
+      </td>
+      <td style="border: 1px solid #000; padding: 8px; width: 100px; text-align: center;">~</td>
+      <td style="border: 1px solid #000; padding: 8px;">
+        <input type="text" style="width: 100%; box-sizing: border-box;">
+      </td>
+    </tr>
+    <tr>
+      <td style="border: 1px solid #000; padding: 8px;">잔여일</td>
+      <td colspan="3" style="border: 1px solid #000; padding: 8px;">
+        <input type="text" style="width: 90%; box-sizing: border-box;"> 일
+      </td>
+    </tr>
+    <tr>
+      <td style="border: 1px solid #000; padding: 8px;">휴가사유</td>
+      <td colspan="3" style="border: 1px solid #000; padding: 8px;">
+        <input type="text" style="width: 100%; box-sizing: border-box;">
+      </td>
+    </tr>
+  </table>
+  <div style="margin-top: 20px; font-size: 14px; text-align: center;">
+    휴가기준 제 13조에 의거 휴가를 신청하오니 허락하여 주시기 바랍니다.
+  </div>
+</div>');
 
 -- Docs sample
 INSERT INTO doc (id, title, member_id, format_id, content)
@@ -491,7 +684,7 @@ INSERT INTO doc (id, title, member_id, format_id, content)
 VALUES (sq_doc_id.NEXTVAL, '내부 보안정책 개편안', 15, 3, '내부 정보 보안정책의 문제점과 개편 방향을 제시합니다.');
 
 INSERT INTO doc (id, title, member_id, format_id, content)
-VALUES (sq_doc_id.NEXTVAL, '시스템 점검 결과 보고서', 16, 3, '시스템 정기 점검 결과와 발견된 이슈를 정리한 보고서입니다.');
+VALUES (sq_doc_id.NEXTVAL, '시스템 점검 결과 보고서', 16, 3, '시스템 정기 점검 결과와 발견된 이슈를 정리한 보고서입니다.');  
 
 INSERT INTO doc (id, title, member_id, format_id, content)
 VALUES (sq_doc_id.NEXTVAL, '기술 세미나 개최 계획서', 17, 3, '예정된 기술 세미나의 개최 목적, 일정, 예산 등을 포함한 계획서입니다.');
