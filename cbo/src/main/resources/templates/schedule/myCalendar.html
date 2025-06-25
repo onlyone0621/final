@@ -30,6 +30,34 @@
     color : blue;
 }
 
+.fc .fc-button, .fc .fc-button-primary {
+    background-color: #ffc0b8 !important;   /* 메인색1 */
+    color: #fff !important;
+    border: none !important;
+    border-radius: 20px !important;         /* 동글동글하게 */
+   	padding: 4px 12px !important;      /* 기존 8px 20px에서 더 작게 */
+    font-size: 0.95rem !important; 
+    font-weight: bold;
+    box-shadow: none !important;
+    transition: background 0.2s;
+    min-width: 0 !important;
+}
+
+.calendar-header {
+  padding: 16px 0 8px 0;
+  border-bottom: 2px solid #ffe6de; /* 은은한 메인 라인 */
+  text-align: left;
+  background: none;
+}
+
+.calendar-header h3 {
+  color: #ff8a65; /* 메인 계열의 코랄 오렌지 */
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin: 0;
+  letter-spacing: 0.5px;
+  font-family: 'Segoe UI', 'Apple SD Gothic Neo', Arial, sans-serif;
+}
 </style>
 
 
@@ -114,9 +142,45 @@ function insertWork() {
     });
 }
 
+function saveWork(event){
+	const formData = new FormData(event);
+	
+	fetch("/api/calendar/saveWork",
+			{method:'POST',
+			body: formData	
+			})
+			.then(res => res.json())
+			.then(result => {
+				if(result>0){
+					alert("성공");
+				}else{
+					alert("실패");
+				}
+			});
+}
+
+function checking(){
+	 var check = document.getElementById('allDay');
+	 var checked = document.getElementById('allDay').checked;
+	 
+	 document.getElementById('start_time').style.display = checked?'':'none';
+	 document.getElementById('start_time_date').style.display = checked?'none':'';
+
+	 document.getElementById('end_time').style.display = checked?'':'none';
+	 document.getElementById('end_time_date').style.display = checked?'none':'';
+	 
+	 	console.log(checked);
+	 
+	 	if(checked){
+			
+	 	}
+
+}
+
 </script>
 <script>
 let calendar;
+
 
 function refreshCalendar() {
     if(calendar) {
@@ -130,16 +194,16 @@ function refreshCalendar() {
 		let calendarEl = document.getElementById('calendar');
 		
 		 calendar = new FullCalendar.Calendar(calendarEl, {
-
 			 
+			  
 
 			initialView : 'dayGridMonth', //달력 양식
 			selectable : true, //날짜 칸 선택 가능 여부
-			height : 850, //높이 설정
+			height : 550, //높이 설정
 			locale : 'ko', //언어 지정
 			editable : true, //이벤트 수정 가능 여부
 			dayMaxEventRows : true, // 이벤트 최대 갯수 설정 및 팝오버 띄우기
-			aspectRatio:2.5,
+			aspectRatio:2.5, //종횡비
 			views : {
 				timeGrid : {
 					dayMaxEventRows : 3 //하루 최대 이벤트 갯수
@@ -151,8 +215,24 @@ function refreshCalendar() {
 				  myCustomButton: {
 				    text: '저장',
 				    click: function() {
-				      alert('커스텀 버튼 클릭!');
-				      // 원하는 기능 추가
+						const events = calendar.getEvents().map(ev =>{
+						id: ev.id
+						start_time: ev.startStr
+						end_time: ev.endStr
+						})
+						
+						fetch("/api/calendar/saveWork",{
+							method:'POST',
+							header:{
+								'Content-Type':'application/json'		
+							},
+							body: JSON.stringify(events)
+						})
+						.then(res => res.json())
+						.then(result =>{
+							if(result>0) alert('성공');
+							else alert('실패');
+						})
 				    }
 				  }
 				},
@@ -174,6 +254,9 @@ function refreshCalendar() {
     			//window.open('calendarWorkReg?start_date=' + info.dateStr,'popup','width=500 height=500');
 			 },
 			 select: function(info) {
+
+				
+
 
 					var label1 = document.getElementById("eventModalLabel1");
 					var label2 = document.getElementById("eventModalLabel2");
@@ -252,16 +335,17 @@ function refreshCalendar() {
 			        //alert('start: ' + info.event.startStr + 'end : '+ endStr );
 			    	//window.open('calendarOptionView?start_date='+info.event.startStr+'&end_date='+endStr+'&title='+info.event.title+'&content='+info.event.extendedProps.content+'&id='+info.event.id, 'optionPopup','width=500,height=500');
 			    },	
-			    events: '/api/calendar/events'
-		            
+			    events: '/api/calendar/events',
 			    	
 		});
-		calendar.render();
 		 
+		calendar.render();
+		
 	});
 	
 	
 </script>
+
 
 </head>
 <body>
@@ -276,7 +360,6 @@ function refreshCalendar() {
          </div>
          <div class="modal-body">
             <form id="editEventForm">
-               <input type="hidden" id="planNo" name="planNo">
                <div class="form-group">
                   <input type="hidden" class="form-control" name="id" id="id" >
                </div>
@@ -291,13 +374,15 @@ function refreshCalendar() {
                <div class="form-group">
                  <label for="start_time" class="form-label">시작일</label>
                  <input type="date" name="start_time"  id="start_time" class="form-control" th:value = "${start_time}">
+                 <input type="datetime-local" step="1800" name="start_time"  id="start_time_date" class="form-control" th:value = "${start_time}" style="display:none">
                </div>
                <div>
                   <label for="end_time" class="form-label">종료일</label>
                   <input type="date" name="end_time"  id="end_time" class="form-control" th:value = "${end_time}">
+                  <input type="datetime-local" step="1800" name="end_time"  id="end_time_date" class="form-control" th:value = "${end_time}" style="display:none">
                </div>
                <div class="modal-footer">               
-                  종일<input type="checkbox" class="btn btn-primary" id="checkbox">
+                   종일<input type="checkbox" class="btn btn-primary" id="allDay" onchange="checking(this);" checked>
                   <button type="button" class="btn btn-primary" id="edit_btn1" onclick = "updateWork()" style="display: none">수정</button>
                   <button type="button" class="btn btn-primary" id="edit_btn2" onclick = "deleteWork()" style="display: none">삭제</button>
                   <button type="button" class="btn btn-primary" id="edit_btn3" onclick = "insertWork()" style="display: none">등록</button>
@@ -306,6 +391,9 @@ function refreshCalendar() {
          </div>
       </div>
    </div>
+</div>
+<div class="calendar-header">
+  <h3>일정관리</h3>
 </div>
 <div class="container-fluid">
   <div class="row">
@@ -323,7 +411,7 @@ function refreshCalendar() {
     </ul>
 </div>
 </div>
-<div class = "col-md-9" id = 'calendar'>
+<div class = "col-md-7" id = 'calendar'>
 </div>
 </div>
 </div>

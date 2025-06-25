@@ -46,4 +46,9 @@ public class CalendarServiceImple implements CalendarService {
 		return count;
 	}
 	
+	@Override
+	public int saveWork(List<CalendarDTO> dto) throws Exception {
+		int count = mapper.saveWork(dto);
+		return count;
+	}
 }
