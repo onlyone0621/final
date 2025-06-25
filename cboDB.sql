@@ -435,7 +435,14 @@ INSERT INTO member (
     sq_member_id.NEXTVAL, 'user020', '1234', '유인나', 'user020@example.com', '서울시 성북구', '010-1020-1020', DEFAULT, 2, 4, NULL
 );
 
+INSERT INTO format 
+VALUES (sq_format_id.NEXTVAL, '기안문', '<p>기안문입니다</p>');
 
+INSERT INTO format 
+VALUES (sq_format_id.NEXTVAL, '법인카드 신청서', '<p>법인카드 신청서입니다</p>');
+
+INSERT INTO format 
+VALUES (sq_format_id.NEXTVAL, '휴가 신청서', '<p>휴가 신청서입니다</p>');
 
 -- Docs sample
 INSERT INTO doc (id, title, member_id, format_id, content)
@@ -681,3 +688,4 @@ INSERT INTO approval_line VALUES (20, 6, '결재 완료', TO_DATE('2025-06-11', 
 INSERT INTO approval_line VALUES (20, 11, '결재 예정', NULL);
 INSERT INTO approval_line VALUES (20, 18, '결재 예정', NULL);
 INSERT INTO approval_line VALUES (20, 1, '참조', TO_DATE('2025-06-10', 'YYYY-MM-DD'));
+

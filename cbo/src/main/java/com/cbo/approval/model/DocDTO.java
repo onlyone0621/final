@@ -14,12 +14,12 @@ import lombok.Setter;
 public class DocDTO {
 	private int id;
 	private String title;
-	private int memberId;
+	private int member_id;
 	private String writer;
-	private Date writeDate;
-	private int formatId;
-	private String formatName;
+	private Date write_date;
+	private int format_id;
+	private String format_name;
 	private String content;
 	private int retention;
-	private String fileName;
+	private String file_name;
 }

@@ -13,9 +13,9 @@
 		<form action="ckeditor" method="post" th:object="${dto}">
 			<input type="number" th:field="*{id}">
 			<input type="text" th:field="*{name}">
-		<textarea th:field="*{template}" rows="10" cols="80">
+		    <textarea th:field="*{template}" rows="10" cols="80">
 			
-		</textarea>
+		    </textarea>
 		<button type="submit">Confirm</button>
 		</form>
         <script src="https://cdn.ckeditor.com/ckeditor5/45.2.0/ckeditor5.umd.js"></script>
