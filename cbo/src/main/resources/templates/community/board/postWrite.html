@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>커뮤니티 개설</title>
+  <style>
+    .sidebar {
+      width: 200px;
+      background-color: #fbf9fd;
+      padding: 20px;
+      box-sizing: border-box;
+      border-right: 1px solid #ddd;
+    }
+
+    .sidebar h4 {
+      margin-bottom: 15px;
+      font-size: 18px;
+    }
+
+    .sidebar button {
+      width: 100%;
+      padding: 8px;
+      margin-bottom: 15px;
+    }
+
+    .sidebar ul {
+      list-style: none;
+      padding-left: 0;
+      font-size: 14px;
+    }
+
+    .sidebar ul li {
+      margin-bottom: 8px;
+    }
+
+    .container {
+      display: flex;
+    }
+
+    .main {
+      padding: 10px;
+      flex-grow: 1;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <div class="sidebar">
+
+   <input type="button" value="글쓰기">
+    <ul>
+      <li>가입 멤버 1</li>
+      <li>가입 멤버 2</li>
+      <li>가입 멤버 3</li>
+      <li>가입 멤버 4</li>
+      <li>가입 멤버 5</li>
+    </ul>
+  </div>
+
+ <form name="postWrite" action="postWrite" method="post"  enctype="multipart/form-data" >
+  <ul>
+    <li>게시판 선택
+      <select>
+          <option>1</option>
+          <option>1</option>
+      </select>
+    </li>
+ 
+     <li><label>제목 </label><input type="text" name="title" placeholder=" 제목 "> </li>
+     <li><label>파일 첨부 </label><input type="file"> <input type="text" placeholder="이곳에 파일을 드래그 하세요"></li>
+    <textarea rows="20" cols="30"></textarea>
+    </textarea>
+    </ul>
+    <div>
+      <input type="reset" value="취소">
+       <input type="submit" value="등록">
+    </div>
+ </form>
+</div>
+</div>
+</body>
+</html>

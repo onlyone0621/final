@@ -29,4 +29,6 @@ public interface ApprovalMapper {
 	int insertDoc(DocDTO dto) throws Exception;
 	int insertDrafterOrReviewers(ApprovalLineDTO dto) throws Exception;
 	int insertApprovers(ApprovalLineDTO dto) throws Exception;
+	
+	int insertTemplate(FormatDTO dto) throws Exception;
 }

@@ -3,7 +3,7 @@
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.cbo.mapper.MemberMapper">
-	<select id="selectMember" parameterType="String" resultType="com.cbo.member.model.MemberDTO">
+	<select id="selectMember" resultType="com.cbo.member.model.MemberDTO" parameterType="String">
 		select * from member where user_id = #{user_id}
 	</select>
 	<select id="selectMemberId" resultType="String" parameterType="String">
@@ -30,5 +30,8 @@
 	</select>
 	<update id="updateMemberPwd" parameterType="String">
 		update member set pwd=#{pwd} where user_id=#{user_id}
+	</update>
+	<update id="updateMemberInfo">
+		update member set name=#{name},dept_id=#{dept_id},grade_id=#{grade_id},tel=#{tel},address=#{address},profile_image=#{profile_image} where id=#{id}
 	</update>
 </mapper>

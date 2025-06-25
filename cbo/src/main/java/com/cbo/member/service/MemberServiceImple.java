@@ -14,7 +14,6 @@ import com.cbo.member.model.MemberDTO;
 public class MemberServiceImple implements MemberService {
 	@Autowired
 	private MemberMapper mapper;
-	
 	@Override
 	public MemberDTO getMember(String user_id) throws Exception {
 		MemberDTO dto = mapper.selectMember(user_id);
@@ -67,6 +66,12 @@ public class MemberServiceImple implements MemberService {
 	public String getMemberPwd2(String email, String user_id) throws Exception {
 		String pwd = mapper.selectMemberPwd2(email, user_id);
 		return pwd;
+	}
+	
+	@Override
+	public int setMemberInfo(MemberDTO dto) throws Exception {
+		int result = mapper.updateMemberInfo(dto);
+		return result;
 	}
 	
 }

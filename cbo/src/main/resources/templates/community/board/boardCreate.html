@@ -1,10 +1,99 @@
 <!DOCTYPE html>
-<html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+				xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 <head>
 <meta charset="UTF-8">
-<title>Insert title here</title>
+  <title> 커뮤니티 이름 </title>
+  <style>
+    .sidebar {
+      width: 200px;
+      background-color: #fbf9fd;
+      padding: 20px;
+      box-sizing: border-box;
+      border-right: 1px solid #ddd;
+    }
+
+    .sidebar h4 {
+      margin-bottom: 15px;
+      font-size: 18px;
+    }
+
+    .sidebar button {
+      width: 100%;
+      padding: 8px;
+      margin-bottom: 15px;
+    }
+
+    .sidebar ul {
+      list-style: none;
+      padding-left: 0;
+      font-size: 14px;
+    }
+
+    .sidebar ul li {
+      margin-bottom: 8px;
+    }
+
+    .container {
+      display: flex;
+    }
+
+    .main {
+      padding: 20px;
+      flex-grow: 1;
+    }
+  </style>
 </head>
 <body>
+
+<div class="container">
+  <div class="sidebar">
+    <h6>커뮤니티 이름</h6>
+	<input type="button" value="글쓰기"><br>
+	<label>게시판 1</label><br>
+  <label>게시판 2</label><br>
+  <label>게시판 3</label><br>
+  <br>
+
+	<input type="button" value="게시판 추가"><br>
+	<br>
+	      </h3>가입 멤버</h3>
+    <br><Br>
+	    박주연<br>
+  박주연<br>
+	박주연<br>
+  박주연<br>
++초대하기 (탈퇴하기)
+
+</div>
+
+
+<form name="boardCreate" action="boardCreate" method="post">
+  <ul>
+    <li>커뮤니티 그룹
+    <!-- value 서버로 넘어가는 값 (c.id) -->
+	<!-- text  화면에 표시되는 값 (c.name) -->
+	<li>
+    	<select name="community_id">
+        	<option th:each="c : ${communities}" 
+                th:value="${c.id}" 
+                th:text="${c.name}">
+        	</option>
+        </select>
+    </li>
+    <li>
+    	<label>이름 </label> <input type="text" name="name">
+    </li>
+    <li>
+    	<label>설명 </label> <textarea name="description"  cols="30"></textarea>
+    </li>
+	</ul>
+	<div>
+		<input type="submit" value="만들기">
+    	<input type="reset" value="취소">
+	</div>
+	</form>
+</div>
 
 </body>
 </html>

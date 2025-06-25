@@ -1,23 +1,24 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+				xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+				layout:decorate="layouts/mainLayout">
 <head>
 <meta charset="UTF-8">
-<title>비밀번호 재설정</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>내 정보 수정하기</title>
 <style>
     body {
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        background-color: #FFD8D8;
+        background-color: white;
         margin: 0;
         padding: 0;
     }
 
     form {
-        max-width: 500px;
+        max-width: 600px;
         margin: 50px auto;
         padding: 30px;
         background-color: white;
-        border-radius: 10px;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     }
 
     form div {
@@ -31,9 +32,10 @@
         border-radius: 6px;
         font-size: 14px;
     }
-   
+    
     input[type="button"],
-    input[type="submit"]{
+    input[type="submit"],
+    input[type="reset"] {
     	width: 23%;
         padding: 10px 15px;
         background-color: #FFC6C6;
@@ -47,39 +49,97 @@
     }
 
     input[type="button"]:hover,
-    input[type="submit"]:hover {
+    input[type="submit"]:hover,
+    input[type="reset"]:hover {
         background-color: #FFA2A2;
     }
-	#hlabel {
+	label {
 		color: #909090;
 		display: inline-block;
 		width: 120px;
 		margin-bottom: 5px;
         font-weight: bold;
         font-size: 16px;
-        text-align: left;
 	}
 
-    #pwdCheckResult {
-        color: #909090;
-		display: inline-block;
-		width: 200px;
-		margin-bottom: 5px;
-        font-size: 13px;
-        text-align: left;
-    }
 
     input::placeholder {
         color: #999;
     }
 
-    .button-group {
-        display: flex;
-        justify-content: center;
-    }
-    .main-div{
-    	text-align: center;
-    }
+	.button-group {
+		display: flex;
+		margin-left: 100px;
+	}
+    
+	.sidebar {
+	    display: flex;
+	    flex-direction: column;
+	    align-items: center;
+	    height: 740px;
+	    gap: 64px;
+	    margin: 24px;
+	    padding-top: 50px;
+	    padding-bottom: 50px;
+	    border: 1px black solid;
+	    border-radius: 30px;
+	   	width: 200px;
+	}
+	
+	.sidebar > button {
+	    width: 160px;
+	    height: 40px;
+	}
+	
+	.sidebar-menu {
+	    display: flex;
+	    flex-direction: column;
+	    align-items: center;
+	    gap: 24px;
+	}
+	
+	.sidebar-menu ul {
+	    display: flex;
+	    flex-direction: column;
+	    align-items: center;
+	    gap: 24px;
+	    list-style-type: none;
+	    margin: 0;
+	    padding: 0;
+	    height: 180px;
+	}
+	
+	.sidebar-menu a {
+	    text-decoration: none;
+	    color: black;
+	}
+	
+	.content {
+	    flex: 5;
+	}
+	.menu-title{
+		text-align: center;
+		font-size: 22px;
+		font-weight: bold;
+	}
+	.sidebar-menu hr{
+		border: solid 1.5px;
+		width: 140px;
+	}
+	
+	.main-div{
+		display: flex;
+	}
+	.title{
+		margin-top: 50px;
+		font-size: 30px;
+		margin-left: 30px;
+		font-weight: bold;
+	}
+	.title hr{
+		border: solid 1.5px;
+		width: 1580px;
+	}
 </style>
 <script>
 var pwdValidate=false;
@@ -117,31 +177,55 @@ function validate(event){
 	}
 }
 
-function goMemberLogin(){
-	location.href="memberLogin";
-}
 </script>
 </head>
 <body>
-<form name="memberPwdUpdate" action="memberPwdUpdate" method="post" onsubmit="validate(event)">
-<div class="main-div">
-     <div>
-        <label id="hlabel">새로운 비밀번호</label>
-        <input type="password" id="pwd1" name="pwd" placeholder="비밀번호" onblur="checkPwd()">
-        <input type="hidden" name="user_id" th:value="${user_id}">
-    </div>
-    <div>
-        <label id="hlabel">비밀번호 확인</label>
-        <input type="password" id="pwd2" placeholder="비밀번호 확인" onblur="checkPwd()">
-    </div>
-    <div>
-        <label id="pwdCheckResult"></label>
-    </div>
-    <div class="button-group">
-        <input type="submit" value="비밀번호 변경">
-        <input type="button" value="돌아가기" onclick="goMemberLogin()">
-    </div>
+<div layout:fragment="content">
+	<div class="main-div">
+        <div class="sidebar">          
+            <div class="sidebar-menu">
+                <div class="menu-title">나의 정보
+                	<hr>
+                </div>
+                
+                <ul>
+                    <li><a href="memberInfoUpdate">개인정보 수정</a></li>
+                    <li><a href="memberPwdUpdate" style="font-weight: bold;">비밀번호 변경</a></li>
+                </ul>
+            </div>
+        </div>
+        <div>
+        	<div class="title">
+        		<lable>비밀번호 변경</lable>
+        		<hr>
+        	</div>
+			<form name="memberPwdUpdate" action="memberPwdUpdate" method="post" onsubmit="validate(event)">
+				<div>
+				 	<div>
+				    	<label id="hlabel">현재 비밀번호</label>
+				        <input type="password" id="pwd" name="pwd" placeholder="현재 비밀번호" onblur="checkPwd()">
+				        <input type="hidden" name="user_id" th:value="${user_id}">
+				    </div>
+				    <div>
+				    	<label id="hlabel">새로운 비밀번호</label>
+				        <input type="password" id="pwd1" name="pwd" placeholder="새로운 비밀번호" onblur="checkPwd()">
+				        <input type="hidden" name="user_id" th:value="${user_id}">
+				    </div>
+				    <div>
+				        <label id="hlabel">비밀번호 확인</label>
+				        <input type="password" id="pwd2" placeholder="비밀번호 확인" onblur="checkPwd()">
+				    </div>
+				    <div>
+				        <label id="pwdCheckResult"></label>
+				    </div>
+				    <div class="button-group">
+				        <input type="submit" value="비밀번호 변경">
+				        <input type="button" value="돌아가기" onclick="goMemberLogin()">
+				    </div>
+				</div>
+			</form>
+		</div>
+	</div>
 </div>
-</form>
 </body>
 </html>
