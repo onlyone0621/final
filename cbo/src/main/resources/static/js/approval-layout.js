@@ -7,3 +7,4 @@ formatModal.addEventListener('hidden.bs.modal', function () {
       document.activeElement.blur();
   }
 });
+

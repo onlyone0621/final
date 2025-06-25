@@ -10,7 +10,7 @@ import lombok.Setter;
 @Setter
 @Getter
 public class CalendarDTO {
-	private int id;
+	private Integer id;
 	private int member_id;
 	private int dept_id;
 	private String title;
