@@ -2,6 +2,7 @@ package com.cbo.mapper;
 
 import java.util.List;
 
+import com.cbo.community.model.BoardDTO;
 import com.cbo.community.model.CommunityDTO;
 
 public interface CommunityMapper {
@@ -10,6 +11,6 @@ public interface CommunityMapper {
 	public int insertCommunity(CommunityDTO dto) throws Exception;
 	public int deleteCommunity(int id) throws Exception;
 	public List<CommunityDTO> communityList() throws Exception;
-	
+	public int insertBoard(BoardDTO dto) throws Exception;
 	
 }

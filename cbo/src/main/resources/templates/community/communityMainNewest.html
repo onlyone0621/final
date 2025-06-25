@@ -9,8 +9,8 @@
 <script>
 	function listSetting(){
 
-		var id = document.getElementById('id').value;
-		location.href="communityUpdate?id="+id+"&board=";
+		//var id = document.getElementById('id').value;
+		//location.href="communityUpdate?id="+id+"&board=";
 	}
 </script>
   <style>
@@ -129,7 +129,18 @@
 	
 </ul>
  </div>
+<!-- {id} url패턴 변수 자리 {url템플릿용} -->
+<!-- ${dto.id ->타임리프에서 값 꺼내기 (실제값)-->
 
+<ul th:each="dto : ${lists}">
+  <li>				<!-- @ 넣는 것 url -->
+    <a th:href="@{/community/{id}(id=${dto.id})}">[[${dto.name}]]</a>
+    
+    <input type="button"
+           th:onclick="|location.href='/community/${dto.id}/update'|"
+           value="설정">
+  </li>
+</ul>
 
 
   <div class="main-content">

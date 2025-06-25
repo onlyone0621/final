@@ -58,62 +58,25 @@
     </ul>
   </div>
 
-  <div class="main">
-    <h4>(해당 커뮤니티 이름)</h4>
-    <h6>
-        
-        <select id="commuSearch" name="search">
-        <option value="1">제목</option>
-         <option value="2">내용</option>
-      	</select>
-      	<input type="text" placeholder="검색">
-        <input type="button" value="검색">
-  
-    </h6>
-    
-    <hr>
-    <ul>
-        <li>운영자 : (이름)</li>
-        <li>게시판 주소 : ~~~ </li>
+ <form name="postWrite" action="postWrite" method="post"  enctype="multipart/form-data" >
+  <ul>
+    <li>게시판 선택
+      <select>
+          <option>1</option>
+          <option>1</option>
+      </select>
+    </li>
+ 
+     <li><label>제목 </label><input type="text" name="title" placeholder=" 제목 "> </li>
+     <li><label>파일 첨부 </label><input type="file"> <input type="text" placeholder="이곳에 파일을 드래그 하세요"></li>
+    <textarea rows="20" cols="30"></textarea>
+    </textarea>
     </ul>
-    <hr>
-    <label>새글쓰기   </label><label>이동 </label><label>삭제 </label>
-    <form name="community">
-        <table border="0" cellspacing="0" width="100%">
-      <thead>
-        <tr> 
-          <th><input type="checkbox"></th>
-          <th>번호</th>
-          <th>제목</th>
-          <th>작성자</th>
-          <th>작성일</th>
-          <th>조회</th>
-          <th>좋아요</th>
-        </tr>
-        <hr>
-      </thead>
-      <tbody>
-        <tr>
-          <td><input type="checkbox"></td>
-          <td>2</td>
-          <td>안녕하세요</td>
-          <td>박주연</td>
-          <td>25/06/19</td>
-          <td>5</td>
-          <td>2</td>
-        </tr>
-        <tr>
-          <td><input type="checkbox"></td>
-          <td>3</td>
-          <td>방가</td>
-          <td>박주연</td>
-          <td>25/06/19</td>
-          <td>3</td>
-          <td>5</td>
-        </tr>
-      </tbody>
-    </table>
-    </form>
+    <div>
+      <input type="reset" value="취소">
+       <input type="submit" value="등록">
+    </div>
+ </form>
 </div>
 </div>
 </body>
