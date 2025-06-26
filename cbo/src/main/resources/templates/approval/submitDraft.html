@@ -15,84 +15,181 @@
 </head>
 <body>
 <div layout:fragment="content">
-    <div >
+    <form action="submitDraft" method="post" enctype="" class="form">
+        <div class="container d-flex flex-row gap-5">
+            <div class="d-flex flex-column gap-3 w-75">
+                <!-- Type of format -->
+                <nav class="navbar bg-body-tertiary">
+                    <div class="container-fluid">
+                        <span class="navbar-text fs-1" th:text="${format.name}">
+                        </span>
+                    </div>
+                </nav>
+                <!-- Button toolbar -->
+                <div>
+                    <nav
+                        class="nav nav-pills flex-row"
+                    >
+                        <button class="nav-link active" href="#"
+                            >결재 요청</button
+                        >
+                        <a class="nav-link" href="javascript:window.history.back();">취소</a>
+                        <a class="nav-link ms-auto" href="#">결재선 설정</a>
+                    </nav>
+                </div>
+                <!-- Template -->
+                <div id="draft" th:utext="${format.template}" class="align-self-center"></div>
 
+                <!-- File input -->
+                <div class="mb-3 w-75 align-self-center">
+                    <label for="file_name" class="form-label">파일 첨부</label>
+                    <input
+                        type="file"
+                        class="form-control"
+                        name="file_name"
+                        id="file_name"
+                        aria-describedby="helpId"
+                    />
+                    <small id="helpId" class="form-text text-muted">10MB 까지만 첨부 가능</small>
+                </div>
+                
+            </div>
+            <div class="w-25">
+                <!-- Nav tabs -->
+                <ul class="nav nav-tabs" id="myTab" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button
+                            class="nav-link active"
+                            id="approval-lines-tab"
+                            data-bs-toggle="tab"
+                            data-bs-target="#approval-lines"
+                            type="button"
+                            role="tab"
+                            aria-controls="approval-lines"
+                            aria-selected="true"
+                        >
+                            결재선
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button
+                            class="nav-link"
+                            id="doc-info-tab"
+                            data-bs-toggle="tab"
+                            data-bs-target="#doc-info"
+                            type="button"
+                            role="tab"
+                            aria-controls="doc-info"
+                            aria-selected="false"
+                        >
+                            문서 정보
+                        </button>
+                    </li>
+                </ul>
+                
+                <!-- Tab panes -->
+                <div class="tab-content">
+                    <div
+                        class="tab-pane active"
+                        id="approval-lines"
+                        role="tabpanel"
+                        aria-labelledby="approval-lines-tab"
+                    >
+                        home 
+                    </div>
+                    <div
+                        class="tab-pane"
+                        id="doc-info"
+                        role="tabpanel"
+                        aria-labelledby="doc-info-tab"
+                    >
+                        profile 
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+    </form>
+
+
+    <!--  Modal trigger button  -->
+<button
+    type="button"
+    class="btn btn-primary btn-lg"
+    data-bs-toggle="modal"
+    data-bs-target="#set-lines"
+>
+    결재선 설정
+</button>
+
+<!-- Modal Body-->
+<div
+    class="modal fade"
+    id="set-lines"
+    tabindex="-1"
+    role="dialog"
+    aria-labelledby="modalTitleId"
+    aria-hidden="true"
+>
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalTitleId">
+                    결재선
+                </h5>
+                <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="modal"
+                    aria-label="Close"
+                ></button>
+            </div>
+            <div class="modal-body">
+                <div class="accordion" id="accordionExample">
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingOne">
+                            <button
+                                class="accordion-button"
+                                type="button"
+                                data-bs-toggle="collapse"
+                                data-bs-target="#collapseOne"
+                                aria-expanded="true"
+                                aria-controls="collapseOne"
+                            >
+                                Accordion Item #1
+                            </button>
+                        </h2>
+                        <div
+                            id="collapseOne"
+                            class="accordion-collapse collapse show"
+                            aria-labelledby="headingOne"
+                            data-bs-parent="#accordionExample"
+                        >
+                            <div class="accordion-body">
+                                This is the first item's accordion body.
+                            </div>
+                        </div>
+                    </div>
+                    
+                </div>
+                
+            </div>
+            <div class="modal-footer">
+                <button
+                    type="button"
+                    class="btn btn-secondary"
+                    data-bs-dismiss="modal"
+                >
+                    닫기
+                </button>
+                <button type="button" class="btn btn-primary">확인</button>
+            </div>
+        </div>
     </div>
-    <div id="draft" th:utext="${format.template}"></div>
-    <!-- Nav tabs -->
-    <ul class="nav nav-tabs" id="myTab" role="tablist">
-        <li class="nav-item" role="presentation">
-            <button
-                class="nav-link active"
-                id="home-tab"
-                data-bs-toggle="tab"
-                data-bs-target="#home"
-                type="button"
-                role="tab"
-                aria-controls="home"
-                aria-selected="true"
-            >
-                Home
-            </button>
-        </li>
-        <li class="nav-item" role="presentation">
-            <button
-                class="nav-link"
-                id="profile-tab"
-                data-bs-toggle="tab"
-                data-bs-target="#profile"
-                type="button"
-                role="tab"
-                aria-controls="profile"
-                aria-selected="false"
-            >
-                Profile
-            </button>
-        </li>
-        <li class="nav-item" role="presentation">
-            <button
-                class="nav-link"
-                id="messages-tab"
-                data-bs-toggle="tab"
-                data-bs-target="#messages"
-                type="button"
-                role="tab"
-                aria-controls="messages"
-                aria-selected="false"
-            >
-                Messages
-            </button>
-        </li>
-    </ul>
-    
-    <!-- Tab panes -->
-    <div class="tab-content">
-        <div
-            class="tab-pane active"
-            id="home"
-            role="tabpanel"
-            aria-labelledby="home-tab"
-        >
-             home 
-        </div>
-        <div
-            class="tab-pane"
-            id="profile"
-            role="tabpanel"
-            aria-labelledby="profile-tab"
-        >
-             profile 
-        </div>
-        <div
-            class="tab-pane"
-            id="messages"
-            role="tabpanel"
-            aria-labelledby="messages-tab"
-        >
-             messages 
-        </div>
-    </div>
-    
 </div>
+</div>
+
+
+
 </body>
 </html>

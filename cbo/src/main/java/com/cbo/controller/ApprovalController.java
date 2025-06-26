@@ -127,15 +127,19 @@ public class ApprovalController {
 	@GetMapping("submitDraft")
 	public ModelAndView submitDraftForm(int id) {
 		Map<String, Object> format = null;
+		List<Map<String, Object>> members = null;
 		try {
 			format = approvalService.getFormat(id);
+			members = approvalService.getMembers();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
+		
 		ModelAndView mav = new ModelAndView("approval/submitDraft");
 		mav.addObject("format", format);
+		mav.addObject("members", members);
 		return mav;
 	}
 	
