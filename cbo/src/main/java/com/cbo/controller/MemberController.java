@@ -281,13 +281,20 @@ public class MemberController {
 	
 	public void profileImageUpload(MultipartFile profileImage) {
 		try {
-			byte bytes[] = profileImage.getBytes();
-			File image = new File("C:/Users/KSW/git/cbo/cbo/target/classes/static/profileImage/"+profileImage.getOriginalFilename());
-			FileCopyUtils.copy(bytes, image);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+	        String contentType = profileImage.getContentType();
+	        if (contentType == null || !contentType.startsWith("image")) {
+	            throw new IllegalArgumentException("이미지 파일만 업로드할 수 있습니다.");
+	        }
+	        File dir = new File("C:/upload/profileImage/");
+	        if (!dir.exists()) {
+	            dir.mkdirs();
+	        }
+	        File image = new File(dir, profileImage.getOriginalFilename());
+	        FileCopyUtils.copy(profileImage.getBytes(), image);
+
+	    } catch (IOException | IllegalArgumentException e) {
+	        e.printStackTrace();
+	    }
 		
 	}
 	
@@ -299,7 +306,11 @@ public class MemberController {
 		MemberDTO udto = (MemberDTO)(session.getAttribute(com.cbo.constant.MemberConst.USER_KEY));
 		dto.setAddress(dto.getAddress()+"("+adrNum+")");
 		if(profileImage==null || profileImage.isEmpty()) {
-			dto.setProfile_image(udto.getProfile_image());
+			if(udto.getProfile_image() != null) {
+				dto.setProfile_image(udto.getProfile_image());				
+			}else {
+				dto.setProfile_image("/profileImage/defaultProfileImage.jpg");
+			}
 		}else {
 			dto.setProfile_image("/profileImage/"+profileImage.getOriginalFilename());
 			profileImageUpload(profileImage);

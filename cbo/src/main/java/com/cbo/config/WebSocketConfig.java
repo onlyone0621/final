@@ -12,7 +12,7 @@ public class WebSocketConfig implements WebSocketConfigurer {
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
         registry.addHandler(new EchoHandler(), "/ws/chat")
-        		.addInterceptors(new HttpSessionHandshakeInterceptor()) // 🌟 HttpSession을 가져오기 위한 인터셉터
+        		.addInterceptors(new HttpSessionHandshakeInterceptor()) // HttpSession을 가져오기 위한 인터셉터
                 .setAllowedOrigins("*"); // CORS 허용 도메인 설정
     }
 }
