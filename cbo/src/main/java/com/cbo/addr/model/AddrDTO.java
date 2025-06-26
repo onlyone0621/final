@@ -14,6 +14,7 @@ public class AddrDTO {
 	private String name;
 	private String nickname;
 	private String company;
+	private String companytel;	
 	private String dept;
 	private String grade;
 	private String tel;

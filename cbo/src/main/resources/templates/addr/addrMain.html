@@ -1,44 +1,73 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org"
-				xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-				layout:decorate="layouts/mainLayout">
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="layouts/mainLayout">
+
 <head>
 <meta charset="UTF-8">
 <title>Insert title here</title>
+<link
+	href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css"
+	rel="stylesheet">
+<script
+	src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
 </head>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
 <body>
-<div layout:fragment="content">
-<table class="table table-hover">
-  <thead>
-    <tr>
-      <th scope="col">#</th>
-      <th scope="col">First</th>
-      <th scope="col">Last</th>
-      <th scope="col">Handle</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th scope="row">1</th>
-      <td>Mark</td>
-      <td>Otto</td>
-      <td>@mdo</td>
-    </tr>
-    <tr>
-      <th scope="row">2</th>
-      <td>Jacob</td>
-      <td>Thornton</td>
-      <td>@fat</td>
-    </tr>
-    <tr>
-      <th scope="row">3</th>
-      <td colspan="2">Larry the Bird</td>
-      <td>@twitter</td>
-    </tr>
-  </tbody>
-</table>
-</div>
+
+
+	<div layout:fragment="content">
+		<aside            th:fragment="approval">
+			<div class="sidebar">
+				<button type="button" class="btn btn-primary btn-lg"
+					data-bs-toggle="modal" data-bs-target="#formatModal">
+					새 결재 진행</button>
+				<div class="sidebar-menu">
+					<div>결재하기</div>
+					<ul>
+						<li><a href="pendingApprovalDocs">결재 대기 문서</a></li>
+						<li><a href="pendingReferenceDocs">참조 대기 문서</a></li>
+						<li><a href="scheduledApprovalDocs">결재 예정 문서</a></li>
+					</ul>
+				</div>
+				<div class="sidebar-menu">
+					<div>문서함</div>
+					<ul>
+						<li><a href="approvalDocs">결재 문서함</a></li>
+						<li><a href="referenceDocs">참조 문서함</a></li>
+						<li><a href="draftDocs">기안 문서함</a></li>
+					</ul>
+				</div>
+			</div>
+		</aside>
+		<table class="table table-hover">
+			<thead>
+				<tr>
+					<th scope="col">#</th>
+					<th scope="col">이름(표시명)</th>
+					<th scope="col">휴대폰</th>
+					<th scope="col">이메일</th>
+					<th scope="col">회사</th>
+					<th scope="col">회사전화</th>
+					<th scope="col">그룹</th>
+				</tr>
+			</thead>
+			<tr th:if="${#lists.isEmpty(lists)}">
+				<td colspan="7" align="center">등록된 사원이 없습니다</td>
+			</tr>
+			<tbody>
+				<tr th:each="dto:${lists}">
+					<td th:text="${dto.id}"></td>
+					<td th:text="${dto.nickname}" onclick="location.href='addrModify'" style="cursor:pointer;"></td>
+					<td th:text="${dto.tel}"></td>
+					<td th:text="${dto.email}"></td>
+					<td th:text="${dto.company}"></td>
+					<td th:text="${dto.companytel}"></td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+
 </body>
 </html>

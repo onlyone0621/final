@@ -142,10 +142,12 @@ function insertWork() {
 }
 
 function saveWork(event){
+
+	const formData = new FormData(event);
 	
 	fetch("/api/calendar/saveWork",
 			{method:'POST',
-			body: event	
+			body: formData	
 			})
 			.then(res => res.json())
 			.then(result => {
@@ -156,6 +158,7 @@ function saveWork(event){
 				}
 			});
 }
+
 
 function checking() {
     var checked = document.getElementById('allDay').checked;
@@ -187,7 +190,6 @@ function checking() {
     }
 }
 
-
 </script>
 <script>
 let calendar;
@@ -206,6 +208,7 @@ function refreshCalendar() {
 		
 		 calendar = new FullCalendar.Calendar(calendarEl, {
 			 
+			  
 
 			initialView : 'dayGridMonth', //달력 양식
 			selectable : true, //날짜 칸 선택 가능 여부
@@ -225,26 +228,25 @@ function refreshCalendar() {
 				  myCustomButton: {
 				    text: '저장',
 				    click: function() {
-				      
-				      const events = calendar.getEvents().map(ev => ({
-				        id: ev.id,
-				        start_time: ev.startStr,
-				        end_time: ev.endStr
-				        
-				      }));
-				      
-				      fetch('/api/calendar/saveWork', {
-				        method: 'POST',
-				        headers: {
-				          'Content-Type': 'application/json'
-				        },
-				        body: JSON.stringify(events)
-				      })
-				      .then(res => res.json())
-				      .then(result => {
-				        if(result > 0) alert("성공");
-				        else alert("실패");
-				      });
+
+						const events = calendar.getEvents().map(ev =>{
+						id: ev.id
+						start_time: ev.startStr
+						end_time: ev.endStr
+						})
+						
+						fetch("/api/calendar/saveWork",{
+							method:'POST',
+							header:{
+								'Content-Type':'application/json'		
+							},
+							body: JSON.stringify(events)
+						})
+						.then(res => res.json())
+						.then(result =>{
+							if(result>0) alert('성공');
+							else alert('실패');
+						})
 				    }
 				  }
 				},
@@ -266,6 +268,7 @@ function refreshCalendar() {
     			//window.open('calendarWorkReg?start_date=' + info.dateStr,'popup','width=500 height=500');
 			 },
 			 select: function(info) {
+
 					var label1 = document.getElementById("eventModalLabel1");
 					var label2 = document.getElementById("eventModalLabel2");
 					var btn1 = document.getElementById("edit_btn1");
@@ -345,6 +348,7 @@ function refreshCalendar() {
 			    },	
 			    events: '/api/calendar/events'
 
+
 			    	
 		});
 		 
@@ -354,6 +358,7 @@ function refreshCalendar() {
 	
 	
 </script>
+
 </head>
 <body>
 <div layout:fragment="content">
@@ -382,11 +387,13 @@ function refreshCalendar() {
                  <label for="start_time" class="form-label">시작일</label>
                  <input type="date" name="start_time"  id="start_time" class="form-control" th:value = "${start_time}">
                  <input type="datetime-local" step="1800" name="start_time"  id="start_time_date" class="form-control" style="display:none">
+
                </div>
                <div>
                   <label for="end_time" class="form-label">종료일</label>
                   <input type="date" name="end_time"  id="end_time" class="form-control" th:value = "${end_time}">
                   <input type="datetime-local" step="1800" name="end_time"  id="end_time_date" class="form-control"  style="display:none">
+
                </div>
                <div class="modal-footer">               
                    종일<input type="checkbox" class="btn btn-primary" id="allDay" onchange="checking(this);" checked>
