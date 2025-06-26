@@ -1,13 +1,16 @@
 package com.cbo.controller;
 
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.SessionAttribute;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.cbo.approval.model.ApprovalLineDTO;
@@ -15,6 +18,10 @@ import com.cbo.approval.model.DocDTO;
 import com.cbo.approval.model.DocViewDTO;
 import com.cbo.approval.model.FormatDTO;
 import com.cbo.approval.service.ApprovalService;
+import com.cbo.constant.ApprovalConst;
+import com.cbo.constant.MemberConst;
+import com.cbo.member.model.MemberDTO;
+import com.cbo.member.model.OrganDTO;
 
 @Controller
 public class ApprovalController {
@@ -127,7 +134,7 @@ public class ApprovalController {
 	@GetMapping("submitDraft")
 	public ModelAndView submitDraftForm(int id) {
 		Map<String, Object> format = null;
-		List<Map<String, Object>> members = null;
+		List<OrganDTO> members = null;
 		try {
 			format = approvalService.getFormat(id);
 			members = approvalService.getMembers();
@@ -135,11 +142,12 @@ public class ApprovalController {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+		Map<String, List<OrganDTO>> membersByDept = members.stream()
+		 	.collect(Collectors.groupingBy(OrganDTO :: getDept_name, LinkedHashMap :: new, Collectors.toList()));
 		
 		ModelAndView mav = new ModelAndView("approval/submitDraft");
 		mav.addObject("format", format);
-		mav.addObject("members", members);
+		mav.addObject("membersByDept", membersByDept);
 		return mav;
 	}
 	
@@ -171,34 +179,37 @@ public class ApprovalController {
 	}
 	
 	@PostMapping("/approve")
-	public ModelAndView approve() {
-		return null;
-	}
-	
-	@PostMapping("/reject")
-	public ModelAndView reject() {
-		return null;
-	}
-	
-	@GetMapping("/ckeditor")
-	public String editorTest(Model model) {
-		return "approval/CKEditorTest";
-	}
-	
-	@PostMapping("/ckeditor")
-	public String insertTemplate(FormatDTO dto, Model model) {
+	public ModelAndView approve(@SessionAttribute(MemberConst.USER_KEY) MemberDTO userInfo, int docId) {
 		int res = 0;
 		try {
-			res = approvalService.insertTemplate(dto);
+			res = approvalService.approve(docId, userInfo.getId(), ApprovalConst.APPROVED);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
-		String msg = res > 0 ? "양식 등록 성공" : "양식 등록 실패";
-		String dest = "/";
-		model.addAttribute("msg", msg);
-		model.addAttribute("dest", dest);
-		return "approval/approvalMsg";
+		String msg = res > 0 ? "결재 성공" : "결재 실패";
+		ModelAndView mav = new ModelAndView("approval/approvalMsg");
+		mav.addObject("msg", msg);
+		mav.addObject("dest", "approvalMain");
+		return mav;
 	}
+	
+	@PostMapping("/reject")
+	public ModelAndView reject(@SessionAttribute(MemberConst.USER_KEY) MemberDTO userInfo, int docId) {
+		int res = 0;
+		try {
+			res = approvalService.reject(docId, userInfo.getId(), ApprovalConst.REJECTED);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		String msg = res > 0 ? "반려 성공" : "반려 실패";
+		ModelAndView mav = new ModelAndView("approval/approvalMsg");
+		mav.addObject("msg", msg);
+		mav.addObject("dest", "approvalMain");
+		return mav;
+	}
+	
 }

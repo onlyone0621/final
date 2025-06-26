@@ -212,7 +212,7 @@ create table doc(
     format_id NUMBER(10) NOT NULL,
     content CLOB NOT NULL,
     retention NUMBER(5) DEFAULT 5 not null CHECK (retention >= 0),
-    file_name VARCHAR2(100) DEFAULT NULL,
+    attatchment VARCHAR2(100) DEFAULT NULL,
     foreign key (member_id) references member(id) ON DELETE SET NULL,
     FOREIGN KEY (format_id) REFERENCES format(id)
 );
@@ -286,13 +286,13 @@ create table community_comment(
 CREATE OR REPLACE VIEW doc_view AS
 SELECT doc.id, TO_CHAR(write_date, 'YYYY-MM-DD') AS write_date, 
     CASE
-        WHEN '결재 완료' = ALL(SELECT status FROM approval_line WHERE approval_line.doc_id = doc.id AND status != '참조') THEN TO_CHAR((SELECT MAX(process_date) FROM approval_line WHERE approval_line.doc_id = doc.id AND status = '결재 완료'), 'YYYY-MM-DD')
+        WHEN '결재 완료' = ALL(SELECT status FROM approval_line WHERE approval_line.doc_id = doc.id AND status NOT IN ('참조', '기안 상신')) THEN TO_CHAR((SELECT MAX(process_date) FROM approval_line WHERE approval_line.doc_id = doc.id AND status = '결재 완료'), 'YYYY-MM-DD')
         ELSE '-'
     END AS completion,
 format_id, format.name AS format_name, title, doc.member_id, member.name AS writer, 
     CASE
         WHEN EXISTS (SELECT 1 FROM approval_line WHERE approval_line.doc_id = doc.id AND status = '반려') THEN '반려'
-        WHEN '결재 완료' = ALL(SELECT status FROM approval_line WHERE approval_line.doc_id = doc.id AND status != '참조') THEN '완료'
+        WHEN '결재 완료' = ALL(SELECT status FROM approval_line WHERE approval_line.doc_id = doc.id AND status NOT IN ('기안 상신', '참조')) THEN '완료'
         ELSE '진행 중'
     END AS status
 FROM doc

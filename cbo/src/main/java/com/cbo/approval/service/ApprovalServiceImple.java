@@ -1,5 +1,6 @@
 package com.cbo.approval.service;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -10,6 +11,7 @@ import com.cbo.approval.model.DocDTO;
 import com.cbo.approval.model.DocViewDTO;
 import com.cbo.approval.model.FormatDTO;
 import com.cbo.mapper.ApprovalMapper;
+import com.cbo.member.model.OrganDTO;
 
 @Service
 public class ApprovalServiceImple implements ApprovalService {
@@ -98,16 +100,29 @@ public class ApprovalServiceImple implements ApprovalService {
 
 
 	@Override
-	public List<Map<String, Object>> getMembers() throws Exception {
+	public List<OrganDTO> getMembers() throws Exception {
 		// TODO Auto-generated method stub
 		return mapper.selectMembers();
 	}
 
 
 	@Override
-	public int insertTemplate(FormatDTO dto) throws Exception {
-		// TODO Auto-generated method stub
-		return mapper.insertTemplate(dto);
+	public int approve(int docId, int memberId, String status) throws Exception {
+		Map<String, Object> map = new HashMap<>();
+		map.put("doc_id", docId);
+		map.put("member_id", memberId);
+		map.put("status", status);
+		return mapper.updateStatusToApproved(map);
+	}
+
+
+	@Override
+	public int reject(int docId, int memberId, String status) throws Exception {
+		Map<String, Object> map = new HashMap<>();
+		map.put("doc_id", docId);
+		map.put("member_id", memberId);
+		map.put("status", status);
+		return mapper.updateStatusToRejected(map);
 	}
 
 }

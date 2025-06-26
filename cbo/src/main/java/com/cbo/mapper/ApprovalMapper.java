@@ -7,6 +7,7 @@ import com.cbo.approval.model.ApprovalLineDTO;
 import com.cbo.approval.model.DocDTO;
 import com.cbo.approval.model.DocViewDTO;
 import com.cbo.approval.model.FormatDTO;
+import com.cbo.member.model.OrganDTO;
 
 public interface ApprovalMapper {
 	List<Map<String, Object>> selectFormatNames() throws Exception;
@@ -24,11 +25,12 @@ public interface ApprovalMapper {
 	List<ApprovalLineDTO> selectReviewers(int id) throws Exception;
 	
 	Map<String, Object> selectFormat(int id) throws Exception;
-	List<Map<String, Object>> selectMembers() throws Exception;
+	List<OrganDTO> selectMembers() throws Exception;
 	int selectDocId() throws Exception;
 	int insertDoc(DocDTO dto) throws Exception;
 	int insertDrafterOrReviewers(ApprovalLineDTO dto) throws Exception;
 	int insertApprovers(ApprovalLineDTO dto) throws Exception;
 	
-	int insertTemplate(FormatDTO dto) throws Exception;
+	int updateStatusToApproved(Map<String, Object> map) throws Exception;
+	int updateStatusToRejected(Map<String, Object> map) throws Exception;
 }
