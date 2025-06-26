@@ -4,7 +4,7 @@
 				xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 <head>
   <meta charset="UTF-8">
-  <title>커뮤니티 개설</title>
+  <title> 커뮤니티 이름 </title>
   <style>
     .sidebar {
       width: 200px;
@@ -49,31 +49,33 @@
 
 <div class="container">
   <div class="sidebar">
-    <h4>커뮤니티</h4>
-	<input type="button" value="글쓰기">
-	<label>목록</label>
+    <h6>커뮤니티 이름</h6>
+	<input type="button" value="글쓰기"><br>
+	<label>게시판 1</label>
+  <label>게시판 2</label>
+  <label>게시판 3</label>
 	<input type="button" value="게시판 추가"><br>
 	<label>
 	가입 멤버 
-	~~~
+	박주연<br>
+  박주연<br>
+	박주연<br>
+  박주연<br>
++초대하기 (탈퇴하기)
 	</label>
+
   </div>
 
 
   <div class="main">
-    <h2>커뮤니티 개설</h2>
+    <h2>커뮤니티 글</h2>
 <form name="communityCreate" action="communityCreate" method="post">
   <ul>
-    <li>커뮤니티 명 : 
-      <input type="text" name="name" placeholder="2자 이상 60자 이하를 입력">
-    </li>
-    <li>소개 : 
-      <input type="text" name="description">
-    </li>
+    	<li>아직 등록된 글이 없습니다. 아래 버튼을 클릭하여 글을 등록해주세요</li>
   </ul>
+  </form>
   <div>
-    <input type="submit" value="확인">
-    <input type="reset" value="취소">
+    <input type="submit" value="새글 작성하기">
   </div>
 </form>
   </div>

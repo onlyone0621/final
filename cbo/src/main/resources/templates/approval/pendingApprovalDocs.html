@@ -31,14 +31,14 @@
 				<tr th:if="${#lists.isEmpty(pendingApprovalDocs)}">
 					<td colspan="7">문서가 없습니다</td>
 				</tr>
-				<tr class="" th:unless="${#lists.isEmpty(pendingApprovalDocs)}" th:each="pendingApprovalDoc : ${pendingApprovalDocs}">
-					<td scope="row" th:text="${pendingApprovalDoc.id}"></td>
-					<td scope="row" th:text="${pendingApprovalDoc.writeDate}"></td>
-					<td scope="row" th:text="${pendingApprovalDoc.completion}"></td>
-					<td scope="row" th:text="${pendingApprovalDoc.formatName}"></td>
-					<td scope="row" th:text="${pendingApprovalDoc.title}"></td>
-					<td scope="row" th:text="${pendingApprovalDoc.writer}"></td>
-					<td scope="row" th:text="${pendingApprovalDoc.status}"></td>
+				<tr class="" th:unless="${#lists.isEmpty(pendingApprovalDocs)}" th:each="pendingApprovalDoc : ${pendingApprovalDocs}" th:object="${pendingApprovalDoc}">
+					<td scope="row" th:text="*{id}"></td>
+					<td scope="row" th:text="*{write_date}"></td>
+					<td scope="row" th:text="*{completion}"></td>
+					<td scope="row" th:text="*{format_name}"></td>
+					<td scope="row"><a th:text="*{title}" th:href="@{docContent(id=*{id})}"></a></td>
+					<td scope="row" th:text="*{writer}"></td>
+					<td scope="row" th:text="*{status}"></td>
 				</tr>
 			</tbody>
 		</table>

@@ -11,6 +11,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -41,24 +42,17 @@ public class CalendarController {
 		return "schedule/calendarWorkReg";
 	}
 	
-	@RequestMapping("/workReg")
-	public ModelAndView workReg(CalendarDTO dto) {
-		
-		ModelAndView mav = new ModelAndView();
-		String msg ="";
-		List<CalendarDTO> list = null;
-		try {
-			int result = service.insertWork(dto);
-			//msg = result>0?"등록성공":"등록실패";
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		
-		mav.addObject("msg","완료");
-		mav.setViewName("schedule/CalendarMsg");
-		
-		return mav;
-	}
+	/*
+	 * @RequestMapping("/workReg") public ModelAndView workReg(CalendarDTO dto) {
+	 * 
+	 * ModelAndView mav = new ModelAndView(); String msg =""; List<CalendarDTO> list
+	 * = null; try { int result = service.insertWork(dto); //msg =
+	 * result>0?"등록성공":"등록실패"; } catch (Exception e) { e.printStackTrace(); }
+	 * 
+	 * mav.addObject("msg","완료"); mav.setViewName("schedule/CalendarMsg");
+	 * 
+	 * return mav; }
+	 */
 	
 	@PostMapping("/api/calendar/add")
 	@ResponseBody
@@ -104,6 +98,20 @@ public class CalendarController {
 		
 		return result;
 		
+	}
+	
+	@PostMapping("/api/calendar/saveWork")
+	@ResponseBody
+	public int saveWork(@RequestBody List<CalendarDTO> dto) {
+		int result = 0;
+		try {
+			result = service.saveWork(dto);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return result;
 	}
 	
 	

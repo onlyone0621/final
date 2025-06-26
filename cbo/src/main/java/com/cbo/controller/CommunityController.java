@@ -11,23 +11,35 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.cbo.community.model.BoardDTO;
 import com.cbo.community.model.CommunityDTO;
 import com.cbo.community.service.CommunityService;
 
 @Controller
 public class CommunityController {
+
+    private final IndexController indexController;
 	
 	@Autowired
 	private CommunityService service;
 	
 	
-	public CommunityController() {
+	public CommunityController(IndexController indexController) {
+        this.indexController = indexController;
+
+    }
+	
+	///mainNewest
+	@GetMapping("communityMainNewset")
+	public String CommunityMainNewestGo() {
 		
+		
+		return "community/communityMainNewset";
+
 	}
-	
-	
-	@GetMapping("communityMainNewest")
-public ModelAndView CommunityMainNewest() {
+	///mainNewest 최신글 불러오기 5개 
+	@PostMapping("communityMainNewset")
+	public ModelAndView CommunityMainNewest() {
 		
 		List<CommunityDTO> lists=null;
 		try {
@@ -37,7 +49,7 @@ public ModelAndView CommunityMainNewest() {
 		}
 		ModelAndView mav = new ModelAndView();
 		mav.addObject("lists", lists);
-		mav.setViewName("community/CommunityMainNewest");
+		mav.setViewName("community/communityMainNewset");
 		
 		return mav;
 	}
@@ -49,7 +61,7 @@ public ModelAndView CommunityMainNewest() {
 		return "community/communityMainJoin";
 	}
 
-//전체 목록 조회'
+	//전체 목록 조회'
 	@GetMapping("communityMainAll")
 	public ModelAndView CommunityList() {
 		
@@ -70,6 +82,7 @@ public ModelAndView CommunityMainNewest() {
 	@GetMapping("communityCreate")
 	public String communityCreate() {
 		return "community/manage/communityCreate";
+	
 	}
 	//커뮤니티 생성 post방식
 	@PostMapping("communityCreate")
@@ -114,15 +127,18 @@ public ModelAndView CommunityMainNewest() {
 	@GetMapping("/community/{id}/close")
 	public ModelAndView closePage(@PathVariable("id") String id) {
 	    ModelAndView mav = new ModelAndView();
-	    mav.addObject("id", id);
+	    mav.addObject("id", id); 
+	    //<input type="hidden" name="id" th:value="${id}">
+	    //통해 값을 담았음ㅁ th:vallue
 	    mav.setViewName("community/manage/communityClose");
 	    return mav;
 	}
-	//커뮤니티 폐쇄 기능
 	
+	
+	//커뮤니티 폐쇄 기능
 	@PostMapping("/community/{id}/close")
 	public ModelAndView deleteCommunity(@PathVariable("id") int id) {	
-		
+		 
 		int result = 0;
 	    String msg = null;
 	    try {
@@ -138,9 +154,51 @@ public ModelAndView CommunityMainNewest() {
 		return mav;
 	}
 	
+
 	
+
+	// 커뮤니티 home 각 커뮤니티의 첫 화면
+	@GetMapping("/community/{id}")
+	public ModelAndView viewCommunity(@PathVariable("id") int id) {
+		ModelAndView mav = new ModelAndView("community/manage/communityHome");
+		mav.addObject("id", id);
+		return mav;
+	}
 	
-	
+	//게시판 생성 url 이동
+	@GetMapping("/boardCreate")
+	public ModelAndView boardCreate() {
+		List<CommunityDTO> communities=null;
+		try {
+		communities=service.communityList();
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		ModelAndView mav=new ModelAndView();
+		mav.addObject("communities", communities);
+		mav.setViewName("community/board/boardCreate");
+		return mav;
+		
+	}
+	//게시판 생성 기능
+	@PostMapping("/boardCreate")
+	public ModelAndView boardCreate(BoardDTO dto) {
+	    int result = 0;
+	    String msg = null;
+	    
+		try {
+			result=service.insertBoard(dto);
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		msg = result > 0 ? "게시판 생성 성공!" : "커뮤니티 생성 실패!";
+		ModelAndView mav=new ModelAndView();
+		mav.addObject("msg", msg);
+		mav.setViewName("community/board/boardMsg");
+		return mav;
+		
+		
+	}
 	
 	
 	

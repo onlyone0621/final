@@ -1,4 +1,4 @@
-package com.cbo.approval.model;
+package com.cbo.member.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,12 +9,10 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ApprovalLineDTO {
-	private int doc_id;
+public class OrganDTO {
 	private int member_id;
 	private String member_name;
 	private String dept_name;
 	private String grade_name;
-	private String status;
-	private String process_date;
+	private String profile_image;
 }

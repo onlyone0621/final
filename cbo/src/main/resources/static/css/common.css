@@ -21,7 +21,9 @@ body {
 .header, .footer {
     display: flex;
     align-items: center;
+
     background-color: #FFC6C6;
+
 }
 
 .header {
@@ -34,6 +36,7 @@ body {
     color: #f9faf8;
     font-weight: bolder;
     text-decoration: none;
+
 }
 
 .header-links {
@@ -44,6 +47,7 @@ body {
     gap: 80px;
 
     font-size: 20px;
+
 }
 
 .header-links > li > a {
@@ -61,6 +65,7 @@ body {
 .header-a a{ 
 	text-decoration: none;
 	color: #f9faf8;
+
 }
 
 .body {

@@ -1,4 +1,5 @@
-package com.cbo.addr.model;
+package com.cbo.community.model;
+import java.sql.*;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,15 +10,12 @@ import lombok.Setter;
 @NoArgsConstructor
 @Setter
 @Getter
-public class AddrDTO {
+public class BoardDTO {
+
 	private int id;
+	private int community_id;
 	private String name;
-	private String nickname;
-	private String company;
-	private String companytel;	
-	private String dept;
-	private String grade;
-	private String tel;
-	private String email;
 	private String description;
+	private Date create_date;
+
 }

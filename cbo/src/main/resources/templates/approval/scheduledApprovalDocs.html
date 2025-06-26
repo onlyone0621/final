@@ -31,14 +31,14 @@
 				<tr th:if="${#lists.isEmpty(scheduledApprovalDocs)}">
 					<td colspan="7">문서가 없습니다</td>
 				</tr>
-				<tr class="" th:unless="${#lists.isEmpty(scheduledApprovalDocs)}" th:each="scheduledApprovalDoc : ${scheduledApprovalDocs}">
-					<td scope="row" th:text="${scheduledApprovalDoc.id}"></td>
-					<td scope="row" th:text="${scheduledApprovalDoc.writeDate}"></td>
-					<td scope="row" th:text="${scheduledApprovalDoc.completion}"></td>
-					<td scope="row" th:text="${scheduledApprovalDoc.formatName}"></td>
-					<td scope="row" th:text="${scheduledApprovalDoc.title}"></td>
-					<td scope="row" th:text="${scheduledApprovalDoc.writer}"></td>
-					<td scope="row" th:text="${scheduledApprovalDoc.status}"></td>
+				<tr class="" th:unless="${#lists.isEmpty(scheduledApprovalDocs)}" th:each="scheduledApprovalDoc : ${scheduledApprovalDocs}" th:object="${scheduledApprovalDoc}">
+					<td scope="row" th:text="*{id}"></td>
+					<td scope="row" th:text="*{write_date}"></td>
+					<td scope="row" th:text="*{completion}"></td>
+					<td scope="row" th:text="*{format_name}"></td>
+					<td scope="row"><a th:text="*{title}" th:href="@{docContent(id=*{id})}"></a></td>
+					<td scope="row" th:text="*{writer}"></td>
+					<td scope="row" th:text="*{status}"></td>
 				</tr>
 			</tbody>
 		</table>

@@ -6,8 +6,177 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>결재 문서 작성</title>
+<style>
+    #draft {
+        width: 800px;
+        height: auto;
+    }
+</style>
 </head>
 <body>
-<h1 th:text="${format.name}"></h1>
+<div layout:fragment="content">
+    <form action="submitDraft" method="post" enctype="" class="form">
+        <div class="container d-flex flex-row gap-5">
+            <div class="d-flex flex-column gap-3 w-75">
+                <!-- Type of format -->
+                <nav class="navbar bg-body-tertiary">
+                    <div class="container-fluid">
+                        <span class="navbar-text fs-1" th:text="${format.name}">
+                        </span>
+                    </div>
+                </nav>
+                <!-- Button toolbar -->
+                <div>
+                    <nav
+                        class="nav nav-pills flex-row"
+                    >
+                        <button class="nav-link active"
+                            >결재 요청</button
+                        >
+                        <a class="nav-link" href="javascript:window.history.back();">취소</a>
+                        <button type="button" class="nav-link ms-auto" data-bs-toggle="modal" data-bs-target="#set-lines">결재선 설정</button>
+                    </nav>
+                </div>
+                <!-- Template -->
+                <div id="draft" th:utext="${format.template}" class="align-self-center"></div>
+
+                <!-- File input -->
+                <div class="mb-3 w-75 align-self-center">
+                    <label for="file_name" class="form-label">파일 첨부</label>
+                    <input
+                        type="file"
+                        class="form-control"
+                        name="attatchment"
+                        id="file_name"
+                        aria-describedby="helpId"
+                    />
+                    <small id="helpId" class="form-text text-muted">10MB 까지만 첨부 가능</small>
+                </div>
+                
+            </div>
+            <div class="w-25">
+                <!-- Nav tabs -->
+                <ul class="nav nav-tabs" id="myTab" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button
+                            class="nav-link active"
+                            id="approval-lines-tab"
+                            data-bs-toggle="tab"
+                            data-bs-target="#approval-lines"
+                            type="button"
+                            role="tab"
+                            aria-controls="approval-lines"
+                            aria-selected="true"
+                        >
+                            결재선
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button
+                            class="nav-link"
+                            id="doc-info-tab"
+                            data-bs-toggle="tab"
+                            data-bs-target="#doc-info"
+                            type="button"
+                            role="tab"
+                            aria-controls="doc-info"
+                            aria-selected="false"
+                        >
+                            문서 정보
+                        </button>
+                    </li>
+                </ul>
+                
+                <!-- Tab panes -->
+                <div class="tab-content">
+                    <div
+                        class="tab-pane active"
+                        id="approval-lines"
+                        role="tabpanel"
+                        aria-labelledby="approval-lines-tab"
+                    >
+                        home 
+                    </div>
+                    <div
+                        class="tab-pane"
+                        id="doc-info"
+                        role="tabpanel"
+                        aria-labelledby="doc-info-tab"
+                    >
+                        profile 
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+    </form>
+
+<!-- Member list modal Body-->
+<div
+    class="modal fade"
+    id="set-lines"
+    tabindex="-1"
+    role="dialog"
+    aria-labelledby="modalTitleId"
+    aria-hidden="true"
+>
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalTitleId">
+                    결재선
+                </h5>
+                <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="modal"
+                    aria-label="Close"
+                ></button>
+            </div>
+            <div class="modal-body">
+                <div class="accordion" id="member-list">
+                    <div class="accordion-item" th:each="deptGroup : ${membersByDept}">
+                        <h2 class="accordion-header" th:id="${#ids.seq('dept')}">
+                            <button
+                                class="accordion-button"
+                                type="button"
+                                data-bs-toggle="collapse"
+                                th:data-bs-target="'#' + ${#ids.next('members')}"
+                                aria-expanded="true"
+                                th:aria-controls="${#ids.next('members')}"
+                                th:text="${deptGroup.key}"
+                            >
+                                
+                            </button>
+                        </h2>
+                        <div
+                            th:id="${#ids.seq('members')}"
+                            class="accordion-collapse collapse show"
+                            th:aria-labelledby="${#ids.prev('dept')}"
+                        >
+                            <div class="accordion-body" th:each="member : ${deptGroup.value}" th:text="${member.member_name}">
+                                
+                            </div>
+                        </div>
+                    </div>
+                    
+                </div>
+                
+            </div>
+            <div class="modal-footer">
+                <button
+                    type="button"
+                    class="btn btn-secondary"
+                    data-bs-dismiss="modal"
+                >
+                    닫기
+                </button>
+                <button type="button" class="btn btn-primary">확인</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+</div>
 </body>
 </html>
