@@ -59,9 +59,6 @@
   font-family: 'Segoe UI', 'Apple SD Gothic Neo', Arial, sans-serif;
 }
 </style>
-
-
-
 <script
 	src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.17/index.global.min.js'></script>
 
@@ -124,9 +121,11 @@ function insertWork() {
     const form = document.getElementById('editEventForm');
     const formData = new FormData(form); // 폼의 모든 input 값을 자동으로 묶음
 
+    
+    
     fetch('/api/calendar/add', {
         method: 'POST',
-        body: formData
+        body: formData  
     })
     .then(res => res.json())
     .then(result => {
@@ -143,6 +142,7 @@ function insertWork() {
 }
 
 function saveWork(event){
+
 	const formData = new FormData(event);
 	
 	fetch("/api/calendar/saveWork",
@@ -159,22 +159,35 @@ function saveWork(event){
 			});
 }
 
-function checking(){
-	 var check = document.getElementById('allDay');
-	 var checked = document.getElementById('allDay').checked;
-	 
-	 document.getElementById('start_time').style.display = checked?'':'none';
-	 document.getElementById('start_time_date').style.display = checked?'none':'';
 
-	 document.getElementById('end_time').style.display = checked?'':'none';
-	 document.getElementById('end_time_date').style.display = checked?'none':'';
-	 
-	 	console.log(checked);
-	 
-	 	if(checked){
-			
-	 	}
+function checking() {
+    var checked = document.getElementById('allDay').checked;
 
+    // 시작일
+    if (checked) {
+        document.getElementById('start_time').style.display = '';
+        document.getElementById('start_time_date').style.display = 'none';
+        document.getElementById('start_time').setAttribute('name', 'start_time');
+        document.getElementById('start_time_date').removeAttribute('name');
+    } else {
+        document.getElementById('start_time').style.display = 'none';
+        document.getElementById('start_time_date').style.display = '';
+        document.getElementById('start_time_date').setAttribute('name', 'start_time');
+        document.getElementById('start_time').removeAttribute('name');
+    }
+
+    // 종료일
+    if (checked) {
+        document.getElementById('end_time').style.display = '';
+        document.getElementById('end_time_date').style.display = 'none';
+        document.getElementById('end_time').setAttribute('name', 'end_time');
+        document.getElementById('end_time_date').removeAttribute('name');
+    } else {
+        document.getElementById('end_time').style.display = 'none';
+        document.getElementById('end_time_date').style.display = '';
+        document.getElementById('end_time_date').setAttribute('name', 'end_time');
+        document.getElementById('end_time').removeAttribute('name');
+    }
 }
 
 </script>
@@ -215,6 +228,7 @@ function refreshCalendar() {
 				  myCustomButton: {
 				    text: '저장',
 				    click: function() {
+
 						const events = calendar.getEvents().map(ev =>{
 						id: ev.id
 						start_time: ev.startStr
@@ -254,9 +268,6 @@ function refreshCalendar() {
     			//window.open('calendarWorkReg?start_date=' + info.dateStr,'popup','width=500 height=500');
 			 },
 			 select: function(info) {
-
-				
-
 
 					var label1 = document.getElementById("eventModalLabel1");
 					var label2 = document.getElementById("eventModalLabel2");
@@ -335,7 +346,9 @@ function refreshCalendar() {
 			        //alert('start: ' + info.event.startStr + 'end : '+ endStr );
 			    	//window.open('calendarOptionView?start_date='+info.event.startStr+'&end_date='+endStr+'&title='+info.event.title+'&content='+info.event.extendedProps.content+'&id='+info.event.id, 'optionPopup','width=500,height=500');
 			    },	
-			    events: '/api/calendar/events',
+			    events: '/api/calendar/events'
+
+
 			    	
 		});
 		 
@@ -345,7 +358,6 @@ function refreshCalendar() {
 	
 	
 </script>
-
 
 </head>
 <body>
@@ -374,12 +386,14 @@ function refreshCalendar() {
                <div class="form-group">
                  <label for="start_time" class="form-label">시작일</label>
                  <input type="date" name="start_time"  id="start_time" class="form-control" th:value = "${start_time}">
-                 <input type="datetime-local" step="1800" name="start_time"  id="start_time_date" class="form-control" th:value = "${start_time}" style="display:none">
+                 <input type="datetime-local" step="1800" name="start_time"  id="start_time_date" class="form-control" style="display:none">
+
                </div>
                <div>
                   <label for="end_time" class="form-label">종료일</label>
                   <input type="date" name="end_time"  id="end_time" class="form-control" th:value = "${end_time}">
-                  <input type="datetime-local" step="1800" name="end_time"  id="end_time_date" class="form-control" th:value = "${end_time}" style="display:none">
+                  <input type="datetime-local" step="1800" name="end_time"  id="end_time_date" class="form-control"  style="display:none">
+
                </div>
                <div class="modal-footer">               
                    종일<input type="checkbox" class="btn btn-primary" id="allDay" onchange="checking(this);" checked>
