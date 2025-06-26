@@ -10,6 +10,7 @@ import com.cbo.member.model.MemberDTO;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 
+import java.io.IOException;
 import java.net.Authenticator.RequestorType;
 import java.net.http.HttpRequest;
 import java.util.*;
@@ -29,8 +30,12 @@ public class EchoHandler extends TextWebSocketHandler {
 		MemberDTO dto = (MemberDTO)(m.get(com.cbo.constant.MemberConst.USER_KEY));
 		String user_id = dto.getUser_id();
 		String name = dto.getName();
-		userSessions.put(user_id, session);
-		System.out.println(name+"님 입장");
+		if(userSessions.get(user_id) == null) {
+			userSessions.put(user_id, session);
+			for(WebSocketSession temp:userSessions.values()) {
+				temp.sendMessage(new TextMessage(name + "님 입장"));
+			}
+		}
 	}
 
 	//처리(메세지 작성 및 전달)
@@ -38,16 +43,25 @@ public class EchoHandler extends TextWebSocketHandler {
 	protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
 		Map<String, Object> m = session.getAttributes();
 		MemberDTO dto = (MemberDTO)(m.get(com.cbo.constant.MemberConst.USER_KEY));
-		String nick = dto.getName();
-		
-		System.out.println(nick+"님으로부터 받은 메세지 :" + message.getPayload());
-		
+		String name = dto.getName();
+		if((message.getPayload()).equals(name+"님 퇴장")) {
+			for(WebSocketSession temp:userSessions.values()) {
+				temp.sendMessage(new TextMessage(message.getPayload()));
+			}
+		}else {
+			for(WebSocketSession temp:userSessions.values()) {
+				temp.sendMessage(new TextMessage(name + " : " + message.getPayload()));
+			}
+		}
 	}
+	
 	//퇴장
 	@Override
 	public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
-		System.out.println(session.getId()+"번 사람 연결 끊김");
-		userSessions.remove(session);
+		Map<String, Object> m = session.getAttributes();
+		MemberDTO dto = (MemberDTO)(m.get(com.cbo.constant.MemberConst.USER_KEY));
+		String user_id = dto.getUser_id();
+		String name = dto.getName();
+		userSessions.remove(user_id);
 	}
-	
 }
