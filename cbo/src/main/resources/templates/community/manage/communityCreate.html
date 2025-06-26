@@ -1,10 +1,16 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org"
-				xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+              xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+              layout:decorate="layouts/mainLayout">
 <head>
   <meta charset="UTF-8">
   <title>커뮤니티 개설</title>
   <style>
+    .layout {
+      display: flex;
+      min-height: 100vh;
+    }
+
     .sidebar {
       width: 200px;
       background-color: #fbf9fd;
@@ -22,6 +28,9 @@
       width: 100%;
       padding: 8px;
       margin-bottom: 15px;
+      background-color: #eee;
+      border: 1px solid #ccc;
+      cursor: pointer;
     }
 
     .sidebar ul {
@@ -32,50 +41,62 @@
 
     .sidebar ul li {
       margin-bottom: 8px;
-    }
-
-    .container {
       display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
 
-    .main {
+    .main-content {
+      flex: 1;
       padding: 20px;
-      flex-grow: 1;
     }
   </style>
 </head>
 <body>
+<div layout:fragment="content">
+  <div class="layout">
+    <!-- 사이드바 -->
+    <div class="sidebar">
+      <h4>커뮤니티</h4>
 
-<div class="container">
-  <div class="sidebar">
-    <h4>커뮤니티</h4>
-    <button>커뮤니티 생성</button>
-    <ul>
-      <li>가입 커뮤니티 1</li>
-      <li>가입 커뮤니티 2</li>
-      <li>가입 커뮤니티 3</li>
-    </ul>
-  </div>
+      <a th:href="@{/communityCreate}">
+        <button>커뮤니티 생성</button>
+      </a>
 
+      <ul th:if="${#lists.isEmpty(lists)}">
+        <li>생성된 커뮤니티가 없습니다.</li>
+      </ul>
 
-  <div class="main">
-    <h2>커뮤니티 개설</h2>
-<form name="communityCreate" action="communityCreate" method="post">
-  <ul>
-    <li>커뮤니티 명 : 
-      <input type="text" name="name" placeholder="2자 이상 60자 이하를 입력">
-    </li>
-    <li>소개 : 
-      <input type="text" name="description">
-    </li>
-  </ul>
-  <div>
-    <input type="submit" value="확인">
-    <input type="reset" value="취소">
-  </div>
-</form>
+      <ul th:each="cdto : ${lists}">
+        <li>   <!-- home으로 가도록 함 !!! -->
+          <a th:href="@{/community/{id}(id=${cdto.id})}">[[${cdto.name}]]</a>
+          <input type="button"
+                 th:onclick="|location.href='/community/${cdto.id}/update'|"
+                 value="설정">
+        </li>
+      </ul>
+    </div>
+
+    <!-- 메인 컨텐츠 -->
+    <div class="main-content">
+      <h2>커뮤니티 개설</h2>
+
+      <form name="communityCreate" action="communityCreate" method="post">
+        <ul>
+          <li>커뮤니티 명 :
+            <input type="text" name="name" placeholder="2자 이상 60자 이하 입력">
+          </li>
+          <li>소개 :
+            <input type="text" name="description">
+          </li>
+        </ul>
+        <div>
+          <input type="submit" value="확인">
+          <input type="reset" value="취소">
+        </div>
+      </form>
+    </div>
   </div>
 </div>
-
 </body>
 </html>

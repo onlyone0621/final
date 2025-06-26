@@ -1,10 +1,15 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org"
-				xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+              xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+              layout:decorate="layouts/mainLayout">
 <head>
-<meta charset="UTF-8">
-  <title> 커뮤니티 이름 </title>
+  <meta charset="UTF-8">
+  <title>게시판 생성</title>
   <style>
+    .container {
+      display: flex;
+    }
+
     .sidebar {
       width: 200px;
       background-color: #fbf9fd;
@@ -18,10 +23,13 @@
       font-size: 18px;
     }
 
-    .sidebar button {
-      width: 100%;
-      padding: 8px;
-      margin-bottom: 15px;
+    .sidebar a button {
+      width: auto;
+      padding: 2px 6px;
+      font-size: 12px;
+      border: 1px solid #bbb;
+      background-color: #f5f5f5;
+      cursor: pointer;
     }
 
     .sidebar ul {
@@ -31,69 +39,88 @@
     }
 
     .sidebar ul li {
-      margin-bottom: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 4px;
     }
 
-    .container {
-      display: flex;
+    .sidebar ul li a {
+      color: #6a1b9a;
+      text-decoration: none;
+      font-weight: bold;
+      font-size: 14px;
     }
 
     .main {
       padding: 20px;
       flex-grow: 1;
     }
+
+    a {
+      text-decoration: none;
+    }
   </style>
 </head>
 <body>
+<div layout:fragment="content">
+  <div class="container">
+    <div class="sidebar">
+      <h4>커뮤니티</h4>
 
-<div class="container">
-  <div class="sidebar">
-    <h6>커뮤니티 이름</h6>
-	<input type="button" value="글쓰기"><br>
-	<label>게시판 1</label><br>
-  <label>게시판 2</label><br>
-  <label>게시판 3</label><br>
-  <br>
+      <a th:href="@{/community/{cId}/board/create(cId=${cId})}">
+        <button>게시판 추가</button>
+      </a>
 
-	<input type="button" value="게시판 추가"><br>
-	<br>
-	      </h3>가입 멤버</h3>
-    <br><Br>
-	    박주연<br>
-  박주연<br>
-	박주연<br>
-  박주연<br>
-+초대하기 (탈퇴하기)
+      <ul th:if="${#lists.isEmpty(boardLists)}">
+        <li>생성된 게시판이 없습니다.</li>
+      </ul>
 
+      <ul th:each="bdto : ${boardLists}">
+        <li>
+          <a th:href="@{/community/{cId}/board/{boardId}(cId=${cId}, boardId=${bdto.id})}">
+            [[${bdto.name}]]
+          </a>
+          <a th:href="@{/community/{cId}/board/{boardId}/create(cId=${cId}, boardId=${bdto.id})}">
+            <button>설정</button>
+          </a>
+        </li>
+      </ul>
+
+      <h4>가입 멤버</h4>
+      <p>박주연<br>+ 초대하기 / 탈퇴하기</p>
+    </div>
+
+    <!-- 본문 -->
+    <div class="main">
+      <h2>게시판 생성</h2>
+      <form th:action="@{/community/{cId}/board/create(cId=${cId})}" method="post" name="boardCreate">
+        <ul>
+          <li>
+            커뮤니티 그룹:
+            <select name="community_id">
+              <option th:each="c : ${communities}"
+                      th:value="${c.id}"
+                      th:text="${c.name}">
+              </option>
+            </select>
+          </li>
+          <li>
+            <label>이름 </label>
+            <input type="text" name="name">
+          </li>
+          <li>
+            <label>설명 </label>
+            <textarea name="description" cols="30"></textarea>
+          </li>
+        </ul>
+        <div>
+          <input type="submit" value="만들기">
+          <input type="reset" value="취소">
+        </div>
+      </form>
+    </div>
+  </div>
 </div>
-
-
-<form name="boardCreate" action="boardCreate" method="post">
-  <ul>
-    <li>커뮤니티 그룹
-    <!-- value 서버로 넘어가는 값 (c.id) -->
-	<!-- text  화면에 표시되는 값 (c.name) -->
-	<li>
-    	<select name="community_id">
-        	<option th:each="c : ${communities}" 
-                th:value="${c.id}" 
-                th:text="${c.name}">
-        	</option>
-        </select>
-    </li>
-    <li>
-    	<label>이름 </label> <input type="text" name="name">
-    </li>
-    <li>
-    	<label>설명 </label> <textarea name="description"  cols="30"></textarea>
-    </li>
-	</ul>
-	<div>
-		<input type="submit" value="만들기">
-    	<input type="reset" value="취소">
-	</div>
-	</form>
-</div>
-
 </body>
 </html>

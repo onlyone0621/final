@@ -108,46 +108,31 @@
 <div class="layout">
   <div class="sidebar">
     <h4>커뮤니티</h4>
-    <button>커뮤니티 생성</button>
+      <a th:href="@{/communityCreate}">
+        <button>커뮤니티 생성</button>
+      </a>
+ 
 
- <!-- --------------------------------- -->
- 
- 
 <ul th:if="${#lists.isEmpty(lists)}">
-	<li>
-	생성된 커뮤니티가 없습니다.
-	</li>
+   <li>생성된 커뮤니티가 없습니다.</li>
 </ul>
-<ul th:each="dto:${lists}">
-	<li>
-		
-		<!--input type = "hidden" id = "id" th:value = "${dto.id}"-->
-    	<!--input type="button" value = "설정" onclick="listSetting()"-->
-    	<a th:href="@{/community/{id}/close(id=${dto.id})}">[[${dto.name}]]</a>
-    	<a th:href="@{/community/{id}/close(id=${dto.id})}"><input type="button" value ="설정"></a>
-    </li>
-	
+ <ul th:each="dto : ${lists}">
+   <li>
+      <a th:href="@{/community/{id}(id=${dto.id})}">[[${dto.name}]]</a>
+   <input type="button"
+       th:onclick="|location.href='/community/${dto.id}/update'|"
+       value="설정">
+   </li>
 </ul>
- </div>
-<!-- {id} url패턴 변수 자리 {url템플릿용} -->
-<!-- ${dto.id ->타임리프에서 값 꺼내기 (실제값)-->
+   </div>
 
-<ul th:each="dto : ${lists}">
-  <li>				<!-- @ 넣는 것 url -->
-    <a th:href="@{/community/{id}(id=${dto.id})}">[[${dto.name}]]</a>
-    
-    <input type="button"
-           th:onclick="|location.href='/community/${dto.id}/update'|"
-           value="설정">
-  </li>
-</ul>
 
 
   <div class="main-content">
     <div class="main-tabs">
-      <div class="tab active"><a href="communityMainNewest">최근글</a></div>
-      <div class="tab"><a href="communityMainJoin">가입 커뮤니티</a></div>
-      <div class="tab "><a href="communityMainAll">전체 커뮤니티</a></div>
+      <div class="tab active"><a th:href="@{/communityMainNewest}">최근글</a></div>
+      <div class="tab"><a th:href="@{/communityMainJoin}">가입 커뮤니티</a></div>
+      <div class="tab "><a th:href="@{/communityMainAll}">전체 커뮤니티</a></div>
     </div>
 
 
