@@ -135,24 +135,63 @@
 	}
 </style>
 <script>
+document.addEventListener("keyup", function(event){
+    if (event.key === "Enter"){
+        document.getElementById("sendBtn").click();
+    }
+});
+
+function scrollToBottom() {
+    const chatArea = document.getElementsByName("chatList")[0];
+    chatArea.scrollTop = chatArea.scrollHeight;
+}
+
 var ws;
+var sw=false;
 function conn(){
-	ws = new WebSocket("ws://192.168.0.141:9090/ws/chat");
-	ws.onmessage = onMsg;
+	sw=false;
+	var user = document.getElementById("user").value;
+	if(user==null){
+		alert('로그인 정보를 확인해주세요.');
+		location.href="/";
+	}else{
+		ws = new WebSocket("ws://192.168.0.141:9090/ws/chat");
+		ws.onmessage = onMsg;	
+	}
 }
 
 function onMsg(evt){
 	var data = evt.data;
 	document.messenger.chatList.value+=data+'\n';
+	scrollToBottom()
+	if(sw){
+		cl();
+	}
+}
+
+function exit(){
+	var user = document.getElementById("user").value;
+	ws.send(user+'님 퇴장');
+	sw=true;
 }
 function cl(){
 	ws.close();
 }
 function show(){
+	var user = document.getElementById("user").value;
 	var msg = document.messenger.msg.value;
-	document.messenger.msg.value="";
-	document.messenger.msg.focus();
-	ws.send(msg);
+	if(ws == null || ws == ''){
+		alert('채팅방에 입장후 이용해주세요.');
+	}else{
+		if(user == null){
+			alert('로그인 정보를 확인해주세요.');
+			location.href="/";
+		}else{
+			document.messenger.msg.value="";
+			document.messenger.msg.focus();
+			ws.send(msg);
+		}	
+	}
 }
 </script>
 </head>
@@ -176,13 +215,15 @@ function show(){
         		<lable>비밀번호 변경</lable>
         		<hr>
         	</div>
-			<form name="messenger" action="messenger" method="post">
+			<form name="messenger" action="messenger" method="post" onsubmit="return false;">
+				<input type="hidden" id="user" th:if="${session.udto.name != null}" th:value="${session.udto.name}" />
+				<input type="hidden" id="user" th:unless="${session.udto.name != null}" th:value="" />
 				<div>
 					<textarea rows='10' cols='55' name="chatList" readonly></textarea><br>
-					<input type="text" name="msg">
-					<input type="button" value="전송" onclick="show()"><br>
+					<input type="text" id="inputMsg" name="msg">
+					<input type="button" value="전송" id="sendBtn" onclick="show()"><br>
 					<input type="button" value="입장하기" onclick="conn()">
-					<input type="button" value="퇴장하기" onclick="cl()"> 
+					<input type="button" value="퇴장하기" onclick="exit()"> 
 				</div>
 			</form>
 		</div>

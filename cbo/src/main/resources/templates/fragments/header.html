@@ -19,7 +19,10 @@
             <li><a href="messengerMain">메신저</a></li>
         </ul>
         <div class="header-a">
-            <a href="memberInfoUpdate"><label th:text="${session.udto.name}"></label> 님</a> | <a href="memberLogout">로그아웃</a>
+            <a href="memberInfoUpdate">
+            	<label th:if="${session.udto != null}" th:text="${session.udto.name}"></label>
+        		<label th:unless="${session.udto != null}">사용자</label> 님
+            </a> | <a href="memberLogout">로그아웃</a>
         </div>
     </nav>
 </header>
