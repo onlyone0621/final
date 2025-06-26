@@ -16,12 +16,11 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class EchoHandler extends TextWebSocketHandler {
-	private List<WebSocketSession> lists;
-	private final Map<String, WebSocketSession> userSessions = new ConcurrentHashMap<>();
+	private final Map<String, WebSocketSession> userSessions;
 	
 	
 	public EchoHandler() {
-		lists = new ArrayList<WebSocketSession>();
+		userSessions = new ConcurrentHashMap<>();
 	}
 	//입장
 	@Override
@@ -43,15 +42,12 @@ public class EchoHandler extends TextWebSocketHandler {
 		
 		System.out.println(nick+"님으로부터 받은 메세지 :" + message.getPayload());
 		
-		for(WebSocketSession temp:lists) {
-			temp.sendMessage(new TextMessage(nick + " : " + message.getPayload()));
-		}
 	}
 	//퇴장
 	@Override
 	public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
 		System.out.println(session.getId()+"번 사람 연결 끊김");
-		lists.remove(session);
+		userSessions.remove(session);
 	}
 	
 }
