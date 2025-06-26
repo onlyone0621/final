@@ -164,8 +164,8 @@
 		WHERE id = #{id}
 	</select>
 	
-	<select id="selectMembers" resultType="map">
-  		SELECT member.id AS member_id, member.name AS member_name, dept.name AS dept_name, grade.name AS grade_name
+	<select id="selectMembers" resultType="com.cbo.member.model.OrganDTO">
+  		SELECT member.id AS member_id, member.name AS member_name, dept.name AS dept_name, grade.name AS grade_name, member.profile_image
 		FROM member
 		    JOIN dept ON member.dept_id = dept.id
 		    JOIN grade ON member.grade_id = grade.id 
@@ -179,28 +179,26 @@
 	
 	<insert id="insertDoc" parameterType="com.cbo.approval.model.DocDTO">
 		INSERT INTO doc (id, title, member_id, format_id, content, file_name)
-		VALUES (#{id}, #{title}, #{memberId}, {formatId}, #{content}, #{fileName})
+		VALUES (#{id}, #{title}, #{member_id}, {format_id}, #{content}, #{file_name})
 	</insert>
 	
 	<insert id="insertDrafterOrReviewers" parameterType="com.cbo.approval.model.ApprovalLineDTO">
 		INSERT INTO approval_line 
-		VALUES (#{docId}, #{memberId}, #{status}, SYSDATE)
+		VALUES (#{doc_id}, #{member_id}, #{status}, SYSDATE)
 	</insert>
 	
 	<insert id="insertApprovers" parameterType="com.cbo.approval.model.ApprovalLineDTO">
 		INSERT INTO approval_line (doc_id, member_id, status)
-		VALUES (#{docId}, #{memberId}, #{status})
+		VALUES (#{doc_id}, #{member_id}, #{status})
 	</insert>
 	
 	<!-- Approve or Reject -->
-	<update id="updateStatusToApproved">
-	
+	<update id="updateStatusToApproved" parameterType="map">
+		UPDATE approval_line SET status = '결재 완료' WHERE doc_id = #{doc_id} AND member_id = #{member_id}
 	</update>
 	
-	<update id="updateStatusToRejected"></update>
+	<update id="updateStatusToRejected" parameterType="map">
+		UPDATE approval_line SET status = '반려' WHERE doc_id = #{doc_id} AND member_id = #{member_id}
+	</update>
 	
-	<insert id="insertTemplate" parameterType="com.cbo.approval.model.FormatDTO">
-		INSERT INTO format (id, name, template)
-  		VALUES (#{id}, #{name}, #{template, jdbcType=CLOB})
-	</insert>
   </mapper>
