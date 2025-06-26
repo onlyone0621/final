@@ -218,7 +218,7 @@ public class MemberController {
 	}
 	
 	@PostMapping("memberSetNewPwd")
-	public ModelAndView memberPwdUpdate(@RequestParam("pwd")String pwd, @RequestParam("user_id")String user_id) {
+	public ModelAndView memberSetNewPwd(@RequestParam("pwd")String pwd, @RequestParam("user_id")String user_id) {
 		int result = 0;
 		String msg = "";
 		try {
@@ -281,24 +281,36 @@ public class MemberController {
 	
 	public void profileImageUpload(MultipartFile profileImage) {
 		try {
-			byte bytes[] = profileImage.getBytes();
-			File image = new File("C:/Users/KSW/git/cbo/cbo/target/classes/static/profileImage/"+profileImage.getOriginalFilename());
-			FileCopyUtils.copy(bytes, image);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+	        String contentType = profileImage.getContentType();
+	        if (contentType == null || !contentType.startsWith("image")) {
+	            throw new IllegalArgumentException("이미지 파일만 업로드할 수 있습니다.");
+	        }
+	        File dir = new File("C:/upload/profileImage/");
+	        if (!dir.exists()) {
+	            dir.mkdirs();
+	        }
+	        File image = new File(dir, profileImage.getOriginalFilename());
+	        FileCopyUtils.copy(profileImage.getBytes(), image);
+
+	    } catch (IOException | IllegalArgumentException e) {
+	        e.printStackTrace();
+	    }
 		
 	}
 	
 	@PostMapping("memberInfoUpdate")
-	public ModelAndView memberInfoUpdate(MemberDTO dto, @RequestParam("adrNum")String adrNum, MultipartFile profileImage, HttpServletRequest req) {
+	public ModelAndView memberInfoUpdate(@RequestParam("adrNum")String adrNum, @RequestParam(value = "profileImage", required = false) MultipartFile profileImage, HttpServletRequest req, MemberDTO dto) {
 		int result = 0;
 		String msg = "";
 		HttpSession session = req.getSession();
+		MemberDTO udto = (MemberDTO)(session.getAttribute(com.cbo.constant.MemberConst.USER_KEY));
 		dto.setAddress(dto.getAddress()+"("+adrNum+")");
-		if(profileImage.getOriginalFilename()=="") {
-			dto.setProfile_image(profileImage.getOriginalFilename());
+		if(profileImage==null || profileImage.isEmpty()) {
+			if(udto.getProfile_image() != null) {
+				dto.setProfile_image(udto.getProfile_image());				
+			}else {
+				dto.setProfile_image("/profileImage/defaultProfileImage.jpg");
+			}
 		}else {
 			dto.setProfile_image("/profileImage/"+profileImage.getOriginalFilename());
 			profileImageUpload(profileImage);
@@ -310,12 +322,37 @@ public class MemberController {
 			e.printStackTrace();
 		}
 		msg = result > 0 ? "정보가 수정되었습니다." : "정보 수정에 실패하였습니다.";
-		profileImageUpload(profileImage);
 		session.setAttribute(com.cbo.constant.MemberConst.USER_KEY, dto);
 		ModelAndView mav = new ModelAndView();
 		mav.addObject("msg", msg);
 		mav.addObject("gourl", "memberInfoUpdate");
 		mav.setViewName("member/memberMsg");
+		return mav;
+	}
+	
+	@PostMapping("memberPwdUpdate")
+	public ModelAndView memberPwdUpdate(HttpServletRequest req, @RequestParam("pwd")String pwd, @RequestParam("user_id")String user_id) {
+		HttpSession session = req.getSession();
+		int result = 0;
+		String msg = "";
+		try {
+			result = service.setNewPwd(user_id, pwd);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		msg = result > 0 ? "비밀번호가 변경되었습니다. 변경된 비밀번호로 로그인 해주세요." : "비밀번호 변경에 실패하였습니다.";
+		ModelAndView mav = new ModelAndView();
+		if(result>0) {
+			session.removeAttribute("udto");
+			mav.addObject("msg", msg);
+			mav.addObject("gourl", "memberLogin");
+			mav.setViewName("member/memberMsg");
+		}else {
+			mav.addObject("msg", msg);
+			mav.addObject("gourl", "memberPwdUpdate");
+			mav.setViewName("member/memberMsg");
+		}
 		return mav;
 	}
 }

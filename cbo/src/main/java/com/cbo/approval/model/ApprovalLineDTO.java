@@ -10,11 +10,11 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ApprovalLineDTO {
-	private int docId;
-	private int memberId;
-	private String memberName;
-	private String deptName;
-	private String gradeName;
+	private int doc_id;
+	private int member_id;
+	private String member_name;
+	private String dept_name;
+	private String grade_name;
 	private String status;
-	private String processDate;
+	private String process_date;
 }

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org"
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
 				xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
 				layout:decorate="layouts/mainLayout">
 <head>
@@ -63,25 +63,12 @@
         text-align: left;
 	}
 
-    #pwdCheckResult {
-        color: #909090;
-		display: inline-block;
-		width: 250px;
-		margin-bottom: 5px;
-        font-size: 13px;
-        margin-left: 120px;
-    }
-
 
     input::placeholder {
         color: #999;
     }
 
-	.button-group {
-		display: flex;
-		margin-left: 100px;
-	}
-    
+   
 	.sidebar {
 	    display: flex;
 	    flex-direction: column;
@@ -148,48 +135,25 @@
 	}
 </style>
 <script>
-var pwdValidate=false;
-function checkPwd() {
-	var newp = document.getElementById("newPwd").value;
-	var pwdc = document.getElementById("pwdCheck").value;
-    var resultPwdCheck = document.getElementById("pwdCheckResult");
-    if(newp == "" || pwdc == ""){
-    	resultPwdCheck.innerHTML = "";
-    	return;
-    }
-    
-    if(newp == pwdc){
-    	resultPwdCheck.style.color = 'green';
-    	resultPwdCheck.innerHTML = "비밀번호가 일치합니다.";
-    	pwdValidate = true;
-    }else{
-    	resultPwdCheck.style.color = 'red';
-    	resultPwdCheck.innerHTML = "비밀번호가 일치하지 않습니다.";
-    	pwdValidate = false;
-    }
+var ws;
+function conn(){
+	ws = new WebSocket("ws://192.168.0.141:9090/ws/chat");
+	ws.onmessage = onMsg;
 }
 
-function validate(event){
-	var pwd = document.getElementById("sessionPwd").value;
-	var nowp = document.getElementById("nowPwd").value;
-	var newp = document.getElementById("newPwd").value;
-	var pwdc = document.getElementById("pwdCheck").value;
-	if(pwd != nowp){
-		event.preventDefault();
-		alert('현재 비밀번호를 잘못 입력하였습니다.');
-	}else{
-		if((nowp != null || nowp!='')&&
-			(newp != null || newp != '')&&
-			(pwdc != null || pwdc != '')&&
-			(pwdValidate == true)){
-			return;
-		}else{
-			event.preventDefault();
-			alert('입력 정보를 확인해주세요.');
-		}
-	}
+function onMsg(evt){
+	var data = evt.data;
+	document.messenger.chatList.value+=data+'\n';
 }
-
+function cl(){
+	ws.close();
+}
+function show(){
+	var msg = document.messenger.msg.value;
+	document.messenger.msg.value="";
+	document.messenger.msg.focus();
+	ws.send(msg);
+}
 </script>
 </head>
 <body>
@@ -209,32 +173,16 @@ function validate(event){
         </div>
         <div>
         	<div class="title">
-        		<label>비밀번호 변경</label>
+        		<lable>비밀번호 변경</lable>
         		<hr>
         	</div>
-			<form name="memberPwdUpdate" action="memberPwdUpdate" method="post" onsubmit="validate(event)">
+			<form name="messenger" action="messenger" method="post">
 				<div>
-				 	<div>
-				    	<label id="hlabel">현재 비밀번호</label>
-				        <input type="password" id="nowPwd" placeholder="현재 비밀번호">
-				        <input type="hidden" id="sessionPwd" th:value="${session.udto.pwd}">
-				        <input type="hidden" name="user_id" th:value="${session.udto.user_id}">
-				    </div>
-				    <div>
-				    	<label id="hlabel">새로운 비밀번호</label>
-				        <input type="password" id="newPwd" name="pwd" placeholder="새로운 비밀번호" onblur="checkPwd()">
-				    </div>
-				    <div>
-				        <label id="hlabel">비밀번호 확인</label>
-				        <input type="password" id="pwdCheck" placeholder="비밀번호 확인" onblur="checkPwd()">
-				    </div>
-				    <div>
-				        <label id="pwdCheckResult"></label>
-				    </div>
-				    <div class="button-group">
-				        <input type="submit" value="비밀번호 변경">
-				        <input type="button" value="돌아가기" onclick="goMemberLogin()">
-				    </div>
+					<textarea rows='10' cols='55' name="chatList" readonly></textarea><br>
+					<input type="text" name="msg">
+					<input type="button" value="전송" onclick="show()"><br>
+					<input type="button" value="입장하기" onclick="conn()">
+					<input type="button" value="퇴장하기" onclick="cl()"> 
 				</div>
 			</form>
 		</div>

@@ -1,6 +1,7 @@
 package com.cbo.controller;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -24,7 +25,7 @@ public class ApprovalController {
 	}
 	
 	@ModelAttribute("formats")
-	List<FormatDTO> formatNames(){
+	List<Map<String, Object>> formatNames(){
 		try {
 			return approvalService.getFormatNames();
 		} catch (Exception e) {
@@ -125,7 +126,7 @@ public class ApprovalController {
 	
 	@GetMapping("submitDraft")
 	public ModelAndView submitDraftForm(int id) {
-		FormatDTO format = null;
+		Map<String, Object> format = null;
 		try {
 			format = approvalService.getFormat(id);
 		} catch (Exception e) {
@@ -145,7 +146,7 @@ public class ApprovalController {
 	
 	@GetMapping("/docContent")
 	public ModelAndView docContent(int id) {
-		DocDTO docContent = null;
+		Map<String, Object> docContent = null;
 		List<ApprovalLineDTO> approvers = null;
 		List<ApprovalLineDTO> reviewers = null;
 		
@@ -177,13 +178,11 @@ public class ApprovalController {
 	
 	@GetMapping("/ckeditor")
 	public String editorTest(Model model) {
-		model.addAttribute("dto", new FormatDTO());
 		return "approval/CKEditorTest";
 	}
 	
 	@PostMapping("/ckeditor")
-	public String insertTemplate(@ModelAttribute FormatDTO dto, Model model) {
-		System.out.println("insert Template initiated");
+	public String insertTemplate(FormatDTO dto, Model model) {
 		int res = 0;
 		try {
 			res = approvalService.insertTemplate(dto);
