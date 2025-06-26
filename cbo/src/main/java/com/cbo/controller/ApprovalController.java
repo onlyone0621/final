@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttribute;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.cbo.approval.model.ApprovalLineDTO;
@@ -155,7 +156,14 @@ public class ApprovalController {
 	}
 	
 	@PostMapping("submitDraft")
-	public ModelAndView submitDraft() {
+	public ModelAndView submitDraft(DocDTO dto,
+			@RequestParam MultipartFile attatchment,
+			@RequestParam List<Integer> approvers,
+			@RequestParam List<Integer> reviewers,
+			@SessionAttribute(MemberConst.USER_KEY) MemberDTO userInfo) {
+		
+		dto.setMember_id(userInfo.getId());
+		
 		return null;
 	}
 	

@@ -14,4 +14,5 @@ public class OrganDTO {
 	private String member_name;
 	private String dept_name;
 	private String grade_name;
+	private String profile_image;
 }

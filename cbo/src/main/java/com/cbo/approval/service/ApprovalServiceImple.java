@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.cbo.approval.model.ApprovalLineDTO;
 import com.cbo.approval.model.DocDTO;
@@ -103,6 +104,19 @@ public class ApprovalServiceImple implements ApprovalService {
 	public List<OrganDTO> getMembers() throws Exception {
 		// TODO Auto-generated method stub
 		return mapper.selectMembers();
+	}
+
+
+	@Override
+	@Transactional
+	public boolean submitDraft(DocDTO dto, List<Integer> approvers, List<Integer> reviewers) throws Exception {
+		int docId = mapper.selectDocId();
+		dto.setId(docId);
+		
+		int res =  mapper.insertDoc(dto);
+		
+		mapper.insertDrafterOrReviewers(null);
+		
 	}
 
 

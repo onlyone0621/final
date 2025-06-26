@@ -165,7 +165,7 @@
 	</select>
 	
 	<select id="selectMembers" resultType="com.cbo.member.model.OrganDTO">
-  		SELECT member.id AS member_id, member.name AS member_name, dept.name AS dept_name, grade.name AS grade_name
+  		SELECT member.id AS member_id, member.name AS member_name, dept.name AS dept_name, grade.name AS grade_name, member.profile_image
 		FROM member
 		    JOIN dept ON member.dept_id = dept.id
 		    JOIN grade ON member.grade_id = grade.id 
