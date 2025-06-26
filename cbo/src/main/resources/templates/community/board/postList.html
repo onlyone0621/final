@@ -1,9 +1,15 @@
 <!DOCTYPE html>
-<html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+              xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+              layout:decorate="layouts/mainLayout">
 <head>
   <meta charset="UTF-8">
-  <title>게시판 목록</title>
+  <title>게시글 목록</title>
   <style>
+    .container {
+      display: flex;
+    }
+
     .sidebar {
       width: 200px;
       background-color: #fbf9fd;
@@ -12,14 +18,7 @@
       border-right: 1px solid #ddd;
     }
 
-    .sidebar h4 {
-      margin-bottom: 15px;
-      font-size: 18px;
-    }
-
-    .sidebar button {
-      width: 100%;
-      padding: 8px;
+    .sidebar h3 {
       margin-bottom: 15px;
     }
 
@@ -33,94 +32,102 @@
       margin-bottom: 8px;
     }
 
-    .container {
-      display: flex;
+    .main {
+      padding: 20px;
+      flex-grow: 1;
     }
 
-    .main {
-      padding: 10px;
-      flex-grow: 1;
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    table, th, td {
+      border: 1px solid #ddd;
+    }
+
+    th, td {
+      padding: 8px;
+      text-align: center;
+    }
+
+    th {
+      background-color: #f2f2f2;
+    }
+
+    .post-controls {
+      margin: 10px 0;
     }
   </style>
 </head>
 <body>
+<div layout:fragment="content">
+  <div class="container">
+    <div class="sidebar">
+      <h3>[[${communityName}]]</h3>
+      <a th:href="@{/community/{cId}/board/{boardId}/create(cId=${cId}, boardId=${boardId})}"><input type="button" value="글쓰기"></a>
+      <ul>
+        <li th:each="bdto : ${boardLists}">
+          <a th:href="@{/community/{cId}/board/{boardId}(cId=${cId}, boardId=${bdto.id})}">[[${bdto.name}]]</a>
+        </li>
+      </ul>
 
-<div class="container">
-  <div class="sidebar">
-    <h3>커뮤니티 이름 (select박스)</h3>
-   <input type="button" value="글쓰기">
-   <ul>
-      <li>게시판 1</li>
-      <li>게시판 2</li>
-      <li>게시판 3</li>
-   </ul><br>
-   <h5>가입 멤버</h5>
-    <ul>
-      <li>가입 멤버 1</li>
-      <li>가입 멤버 2</li>
-      <li>가입 멤버 3</li>
-      <li>가입 멤버 4</li>
-      <li>가입 멤버 5</li>
-    </ul>
-  </div>
+      <h5>가입 멤버</h5>
+      <ul>
+        <li>박주연</li>
+        <li>+ 초대하기 / 탈퇴하기</li>
+      </ul>
+    </div>
 
-  <div class="main">
-    <h4>게시판 이름)</h4>
-    <h6>
-        
-        <select id="commuSearch" name="search">
-        <option value="1">제목</option>
-         <option value="2">내용</option>
-      	</select>
-      	<input type="text" placeholder="검색">
+    <div class="main">
+      <h4>게시판: [[${boardName}]]</h4>
+
+      <div class="post-controls">
+        <select>
+          <option>제목</option>
+          <option>내용</option>
+        </select>
+        <input type="text" placeholder="검색">
         <input type="button" value="검색">
-  
-    </h6>
-    
-    <hr>
-    <ul>
-        <li>운영자 : (이름)</li>
-        <li>게시판 주소 : ~~~ </li>
-    </ul>
-    <hr>
-    <label>새글쓰기   </label><label>수정 </label><label>삭제 </label>(운영자만 수정, 삭제 가능)
-    <form name="community">
-        <table border="0" cellspacing="0" width="100%">
-      <thead>
-        <tr> 
-          <th><input type="checkbox"></th>
-          <th>번호</th>
-          <th>제목</th>
-          <th>작성자</th>
-          <th>작성일</th>
-          <th>조회</th>
-          <th>좋아요</th>
-        </tr>
-        <hr>
-      </thead>
-      <tbody>
-        <tr>
-          <td><input type="checkbox"></td>
-          <td>2</td>
-          <td>안녕하세요</td>
-          <td>박주연</td>
-          <td>25/06/19</td>
-          <td>5</td>
-          <td>2</td>
-        </tr>
-        <tr>
-          <td><input type="checkbox"></td>
-          <td>3</td>
-          <td>방가</td>
-          <td>박주연</td>
-          <td>25/06/19</td>
-          <td>3</td>
-          <td>5</td>
-        </tr>
-      </tbody>
-    </table>
-    </form>
-</div>
+      </div>
+
+      <ul>
+        <li>운영자 : 김주연</li>
+        <li>게시판 주소 : /community/[[${cId}]]/board/[[${boardId}]]</li>
+      </ul>
+
+      <form name="postListForm">
+        <table>
+          <thead>
+            <tr>
+              <th><input type="checkbox"></th>
+              <th>번호</th>
+              <th>제목</th>
+              <th>작성자</th>
+              <th>작성일</th>
+              <th>조회</th>
+              <th>좋아요</th>
+            </tr>
+          </thead>
+          <tbody>
+ 			<tr th:if="${#lists.isEmpty(postLists)}">
+    			<td colspan="7" style="text-align:center;">게시글이 아직 없습니다.</td>
+  			</tr>
+  			<tr th:each="post, stat : ${postLists}">
+    		<td><input type="checkbox"></td>
+    		<td th:text="${stat.count}">1</td>
+    		<td th:text="${post.title}">제목</td>
+    		<td th:text="${post.writer}">작성자</td>
+    		<td th:text="${#dates.format(post.writeDate, 'yyyy-MM-dd')}">작성일</td>
+    		<td th:text="${post.viewCount}">조회</td>
+    		<td th:text="${post.likeCount}">좋아요</td>
+  			</tr>
+	
+          </tbody>
+        </table>
+      </form>
+    </div>
+  </div>
 </div>
 </body>
 </html>
