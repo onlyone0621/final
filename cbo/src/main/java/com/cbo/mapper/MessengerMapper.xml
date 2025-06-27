@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cbo.mapper.MessengerMapper">
+<insert id="insertMessage" parameterType="com.cbo.messenger.model.ChatMessageDTO">
+    insert into chat_message values(sq_chat_message_id.nextval, #{chatroom_id}, #{member_id}, sysdate, #{content})
+</insert>
+<select id="selectMessage" parameterType="int" resultType="com.cbo.messenger.model.MessageListDTO">
+	SELECT 
+	    cm.content, 
+	    m.name 
+	FROM 
+	    chat_message cm
+	JOIN 
+	    member m 
+	ON 
+	    cm.member_id = m.id
+	WHERE
+	    cm.chatroom_id = #{chatroom_id}
+	ORDER BY 
+	    cm.write_date ASC
+</select>
+</mapper>

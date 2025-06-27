@@ -135,6 +135,10 @@
 	}
 </style>
 <script>
+window.onload = function() {
+    scrollToBottom();
+}
+
 document.addEventListener("keyup", function(event){
     if (event.key === "Enter"){
         document.getElementById("sendBtn").click();
@@ -147,16 +151,24 @@ function scrollToBottom() {
 }
 
 var ws;
+var con=false;
 var sw=false;
 function conn(){
-	sw=false;
-	var user = document.getElementById("user").value;
-	if(user==null){
-		alert('로그인 정보를 확인해주세요.');
-		location.href="/";
+	if(con){
+		alert('이미 채팅방을 이용중입니다.');
+		return;
 	}else{
-		ws = new WebSocket("ws://192.168.0.141:9090/ws/chat");
-		ws.onmessage = onMsg;	
+		sw=false;
+		con=true;
+		var user = document.getElementById("user").value;
+		if(user==null){
+			alert('로그인 정보를 확인해주세요.');
+			location.href="/";
+		}else{
+			const room_id = 1;
+			ws = new WebSocket("ws://192.168.0.141:9090/ws/chat?room_id="+room_id);
+			ws.onmessage = onMsg;	
+		}
 	}
 }
 
@@ -170,27 +182,37 @@ function onMsg(evt){
 }
 
 function exit(){
-	var user = document.getElementById("user").value;
-	ws.send(user+'님 퇴장');
-	sw=true;
+	if(con == false){
+		alert('채팅방을 이용중이지 않습니다.')
+	}else{
+		var user = document.getElementById("user").value;
+		ws.send(user+'님이 퇴장하셨습니다.');
+		sw=true;		
+	}
 }
 function cl(){
 	ws.close();
+	con=false;
 }
 function show(){
 	var user = document.getElementById("user").value;
 	var msg = document.messenger.msg.value;
-	if(ws == null || ws == ''){
+	if(con == false){
 		alert('채팅방에 입장후 이용해주세요.');
+		return;
 	}else{
-		if(user == null){
-			alert('로그인 정보를 확인해주세요.');
-			location.href="/";
+		if(msg == null || msg == ''){
+			alert('메세지를 입력해주세요.');
 		}else{
-			document.messenger.msg.value="";
-			document.messenger.msg.focus();
-			ws.send(msg);
-		}	
+			if(user == null){
+				alert('로그인 정보를 확인해주세요.');
+				location.href="/";
+			}else{
+				document.messenger.msg.value="";
+				document.messenger.msg.focus();
+				ws.send(msg);
+			}	
+		}
 	}
 }
 </script>
@@ -216,10 +238,10 @@ function show(){
         		<hr>
         	</div>
 			<form name="messenger" action="messenger" method="post" onsubmit="return false;">
-				<input type="hidden" id="user" th:if="${session.udto.name != null}" th:value="${session.udto.name}" />
-				<input type="hidden" id="user" th:unless="${session.udto.name != null}" th:value="" />
+				<input type="hidden" id="user" th:if="${session.udto != null}" th:value="${session.udto.name}" />
+				<input type="hidden" id="user" th:unless="${session.udto != null}" th:value="" />
 				<div>
-					<textarea rows='10' cols='55' name="chatList" readonly></textarea><br>
+					<textarea rows="30" cols="80" name="chatList" th:text="${msgList}" readonly></textarea>
 					<input type="text" id="inputMsg" name="msg">
 					<input type="button" value="전송" id="sendBtn" onclick="show()"><br>
 					<input type="button" value="입장하기" onclick="conn()">
