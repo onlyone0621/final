@@ -158,8 +158,8 @@ public class ApprovalController {
 	@PostMapping("submitDraft")
 	public ModelAndView submitDraft(DocDTO dto,
 			@RequestParam MultipartFile attatchment,
-			@RequestParam List<Integer> approvers,
-			@RequestParam List<Integer> reviewers,
+			@RequestParam List<Integer> approversId,
+			@RequestParam List<Integer> reviewersId,
 			@SessionAttribute(MemberConst.USER_KEY) MemberDTO userInfo) {
 		
 		dto.setMember_id(userInfo.getId());
