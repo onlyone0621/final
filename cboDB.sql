@@ -98,7 +98,7 @@ create table message(
     receiver_id number(10),
     sender_id number(10),
     write_date date DEFAULT SYSDATE NOT NULL,
-    is_read varchar2(60) default '안 읽음' not null,
+    is_read varchar2(60) default '안 읽음' CHECK (is_read IN ('읽음', '안 읽음')) not null,
     file_name varchar2(300),
     ref number(10) not null CHECK (ref >= 1),
     lev number(10) not null CHECK (lev >= 0),

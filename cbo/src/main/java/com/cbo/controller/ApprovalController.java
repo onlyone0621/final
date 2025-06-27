@@ -115,7 +115,7 @@ public class ApprovalController {
 			e.printStackTrace();
 		}
 		ModelAndView mav = new ModelAndView("approval/referenceDocs");
-		mav.addObject("refernceDocs", res);
+		mav.addObject("referenceDocs", res);
 		return mav;
 	}
 	
