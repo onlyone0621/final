@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org"
-              xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-              layout:decorate="layouts/mainLayout">
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="layouts/mainLayout">
 <head>
   <meta charset="UTF-8">
   <title>커뮤니티 홈</title>
@@ -68,6 +68,12 @@
     a {
       text-decoration: none;
     }
+
+    .board-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
   </style>
 </head>
 <body>
@@ -85,7 +91,7 @@
       </ul>
 
       <ul th:each="bdto : ${boardLists}">
-        <li>
+        <li class="board-item">
           <a th:href="@{/community/{cId}/board/{boardId}(cId=${cId}, boardId=${bdto.id})}">
             [[${bdto.name}]]
           </a>
@@ -96,7 +102,10 @@
       </ul>
 
       <h4>가입 멤버</h4>
-      <p>박주연<br>+ 초대하기 / 탈퇴하기</p>
+      <p>박주연<br>
+        <button>+ 초대하기</button> /
+        <button>탈퇴하기</button>
+      </p>
     </div>
 
     <div class="main">
