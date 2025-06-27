@@ -182,14 +182,14 @@
 		VALUES (#{id}, #{title}, #{member_id}, {format_id}, #{content}, #{file_name})
 	</insert>
 	
-	<insert id="insertDrafterOrReviewers" parameterType="com.cbo.approval.model.ApprovalLineDTO">
+	<insert id="insertApprovalLines" parameterType="com.cbo.approval.model.ApprovalLineDTO">
 		INSERT INTO approval_line 
-		VALUES (#{doc_id}, #{member_id}, #{status}, SYSDATE)
-	</insert>
-	
-	<insert id="insertApprovers" parameterType="com.cbo.approval.model.ApprovalLineDTO">
-		INSERT INTO approval_line (doc_id, member_id, status)
-		VALUES (#{doc_id}, #{member_id}, #{status})
+		<if test="dto.status = '결재 예정'">
+			VALUES (#{doc_id}, #{member_id}, #{status}, NULL)
+		</if>
+		<if test="dto.status != '결재 예정">
+			VALUES (#{doc_id}, #{member_id}, #{status}, SYSDATE)
+		</if>
 	</insert>
 	
 	<!-- Approve or Reject -->

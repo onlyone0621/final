@@ -32,8 +32,7 @@ public interface ApprovalMapper {
 	List<OrganDTO> selectMembers() throws Exception;
 	int selectDocId() throws Exception;
 	int insertDoc(DocDTO dto) throws Exception;
-	int insertDrafterOrReviewers(Map<String, Object> map) throws Exception;
-	int insertApprovers(Map<String, Object> map) throws Exception;
+	int insertApprovalLines(Map<String, Object> map) throws Exception;
 	
 	int updateStatusToApproved(Map<String, Object> map) throws Exception;
 	int updateStatusToRejected(Map<String, Object> map) throws Exception;
