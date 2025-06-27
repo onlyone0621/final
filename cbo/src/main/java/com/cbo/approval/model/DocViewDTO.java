@@ -11,12 +11,12 @@ import lombok.Setter;
 @AllArgsConstructor
 public class DocViewDTO {
 	private int id;
-	private String writeDate;
+	private String write_date;
 	private String completion;
-	private int formatId;
-	private String formatName;
+	private int format_id;
+	private String format_name;
 	private String title;
-	private int memberId;
+	private int member_id;
 	private String writer;
 	private String status;
 }

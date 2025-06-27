@@ -2,7 +2,9 @@
 <!DOCTYPE mapper
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
  <mapper namespace="com.cbo.mapper.CommunityMapper">
+ 
  <insert id="insertCommunity" parameterType="com.cbo.community.model.CommunityDTO">
     INSERT INTO community VALUES (
         sq_community_id.nextval, #{name}, #{description}, SYSDATE, #{member_id}
@@ -15,4 +17,30 @@
 <select id="communityList" resultType="com.cbo.community.model.CommunityDTO">
 	select * from community
 </select>
+
+<insert id="insertBoard" parameterType="com.cbo.community.model.BoardDTO">
+ insert into community_board 
+values(sq_community_board_id.nextval, #{community_id} ,#{name} ,#{description}, SYSDATE)
+</insert>
+<!-- 특정 커뮤니티에 소속된 게시판만 가져오기 -->
+<select id="boardListByCommunityId" resultType="com.cbo.community.model.BoardDTO" parameterType="map">
+SELECT * FROM community_board
+WHERE community_id = #{cId}
+ORDER BY id ASC
+</select>
+
+<!-- board 게시판 리스트 전체 -->
+<select id="boardList" resultType="com.cbo.community.model.BoardDTO">
+  SELECT * FROM community_board
+</select>
+
+<insert id="insertPost" parameterType="com.cbo.community.model.PostDTO">
+  INSERT INTO board_post
+  VALUES (sq_board_post_id.NEXTVAL, #{board_id}, #{member_id}, #{title}, #{content}, SYSDATE)
+</insert>
+
+
+
  </mapper>
+ 
+ 

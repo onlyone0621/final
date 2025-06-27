@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+				xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+				layout:decorate="layouts/mainLayout">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>내 정보 수정하기</title>
+<style>
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background-color: white;
+        margin: 0;
+        padding: 0;
+    }
+
+    form {
+        max-width: 600px;
+        margin: 50px auto;
+        padding: 30px;
+        background-color: white;
+    }
+
+    form div {
+        margin-bottom: 15px;
+    }
+
+    input[type="password"]{
+        width: 45%;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        font-size: 14px;
+    }
+    
+    input[type="button"],
+    input[type="submit"],
+    input[type="reset"] {
+    	width: 25%;
+        padding: 10px 15px;
+        background-color: #FFC6C6;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 14px;
+        margin-top: 5px;
+        margin-left: 5px;
+    }
+
+    input[type="button"]:hover,
+    input[type="submit"]:hover,
+    input[type="reset"]:hover {
+        background-color: #FFA2A2;
+    }
+	#hlabel {
+		color: #909090;
+		display: inline-block;
+		width: 120px;
+		margin-bottom: 5px;
+        font-weight: bold;
+        font-size: 16px;
+        text-align: left;
+	}
+
+
+    input::placeholder {
+        color: #999;
+    }
+
+   
+	.sidebar {
+	    display: flex;
+	    flex-direction: column;
+	    align-items: center;
+	    height: 740px;
+	    gap: 64px;
+	    margin: 24px;
+	    padding-top: 50px;
+	    padding-bottom: 50px;
+	    border: 1px black solid;
+	    border-radius: 30px;
+	   	width: 230px;
+	}
+	
+	
+	.sidebar-menu {
+	    display: flex;
+	    flex-direction: column;
+	    align-items: center;
+	    gap: 24px;
+	}
+	
+	.sidebar-menu ul {
+	    display: flex;
+	    flex-direction: column;
+	    align-items: center;
+	    gap: 24px;
+	    list-style-type: none;
+	    margin: 0;
+	    padding: 0;
+	    height: 180px;
+	}
+	
+	.sidebar-menu a {
+	    text-decoration: none;
+	    color: black;
+	}
+	
+	.content {
+	    flex: 5;
+	}
+	.menu-title{
+		text-align: center;
+		font-size: 22px;
+		font-weight: bold;
+	}
+	.sidebar-menu hr{
+		border: solid 1.5px;
+		width: 160px;
+	}
+	
+	.main-div{
+		display: flex;
+	}
+	.title{
+		margin-top: 50px;
+		font-size: 30px;
+		margin-left: 30px;
+		font-weight: bold;
+	}
+	.title hr{
+		border: solid 1.5px;
+		width: 1550px;
+	}
+</style>
+<script>
+window.onload = function() {
+    scrollToBottom();
+}
+
+document.addEventListener("keyup", function(event){
+    if (event.key === "Enter"){
+        document.getElementById("sendBtn").click();
+    }
+});
+
+function scrollToBottom() {
+    const chatArea = document.getElementsByName("chatList")[0];
+    chatArea.scrollTop = chatArea.scrollHeight;
+}
+
+var ws;
+var con=false;
+var sw=false;
+function conn(){
+	if(con){
+		alert('이미 채팅방을 이용중입니다.');
+		return;
+	}else{
+		sw=false;
+		con=true;
+		var user = document.getElementById("user").value;
+		if(user==null){
+			alert('로그인 정보를 확인해주세요.');
+			location.href="/";
+		}else{
+			const room_id = 1;
+			ws = new WebSocket("ws://192.168.0.141:9090/ws/chat?room_id="+room_id);
+			ws.onmessage = onMsg;	
+		}
+	}
+}
+
+function onMsg(evt){
+	var data = evt.data;
+	document.messenger.chatList.value+=data+'\n';
+	scrollToBottom()
+	if(sw){
+		cl();
+	}
+}
+
+function exit(){
+	if(con == false){
+		alert('채팅방을 이용중이지 않습니다.')
+	}else{
+		var user = document.getElementById("user").value;
+		ws.send(user+'님이 퇴장하셨습니다.');
+		sw=true;		
+	}
+}
+function cl(){
+	ws.close();
+	con=false;
+}
+function show(){
+	var user = document.getElementById("user").value;
+	var msg = document.messenger.msg.value;
+	if(con == false){
+		alert('채팅방에 입장후 이용해주세요.');
+		return;
+	}else{
+		if(msg == null || msg == ''){
+			alert('메세지를 입력해주세요.');
+		}else{
+			if(user == null){
+				alert('로그인 정보를 확인해주세요.');
+				location.href="/";
+			}else{
+				document.messenger.msg.value="";
+				document.messenger.msg.focus();
+				ws.send(msg);
+			}	
+		}
+	}
+}
+</script>
+</head>
+<body>
+<div layout:fragment="content">
+	<div class="main-div">
+        <div class="sidebar">          
+            <div class="sidebar-menu">
+                <div class="menu-title">나의 정보
+                	<hr>
+                </div>
+                
+                <ul>
+                    <li><a href="memberInfoUpdate">개인정보 수정</a></li>
+                    <li><a href="memberPwdUpdate" style="font-weight: bold;">비밀번호 변경</a></li>
+                </ul>
+            </div>
+        </div>
+        <div>
+        	<div class="title">
+        		<lable>비밀번호 변경</lable>
+        		<hr>
+        	</div>
+			<form name="messenger" action="messenger" method="post" onsubmit="return false;">
+				<input type="hidden" id="user" th:if="${session.udto != null}" th:value="${session.udto.name}" />
+				<input type="hidden" id="user" th:unless="${session.udto != null}" th:value="" />
+				<div>
+					<textarea rows="30" cols="80" name="chatList" th:text="${msgList}" readonly></textarea>
+					<input type="text" id="inputMsg" name="msg">
+					<input type="button" value="전송" id="sendBtn" onclick="show()"><br>
+					<input type="button" value="입장하기" onclick="conn()">
+					<input type="button" value="퇴장하기" onclick="exit()"> 
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+</body>
+</html>

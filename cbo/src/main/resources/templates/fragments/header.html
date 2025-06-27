@@ -12,14 +12,17 @@
         <ul class="header-links">
             <li><a href="myCalendar">일정관리</a></li>
             <li><a href="#">메시지</a></li>
-            <li><a href="#">주소록</a></li>
+            <li><a href="addrMain">주소록</a></li>
             <li><a href="approvalMain">전자결재</a></li>
             <li><a href="#">자료실</a></li>
             <li><a href="communityMainNewest">커뮤니티</a></li>
-            <li><a href="#">메신저</a></li>
+            <li><a href="messengerMain">메신저</a></li>
         </ul>
         <div class="header-a">
-            <a href="memberInfoUpdate"><lable th:text="${session.udto.name}"></lable> 님</a> | <a href="memberLogout">로그아웃</a>
+            <a href="memberInfoUpdate">
+            	<label th:if="${session.udto != null}" th:text="${session.udto.name}"></label>
+        		<label th:unless="${session.udto != null}">사용자</label> 님
+            </a> | <a href="memberLogout">로그아웃</a>
         </div>
     </nav>
 </header>

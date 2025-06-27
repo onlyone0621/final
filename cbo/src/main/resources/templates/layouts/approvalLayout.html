@@ -46,7 +46,7 @@
 				<form action="submitDraft" >
 					<div class="modal-body">
 						<ul class="list-group">
-							<li class="list-group-item" th:each="format : ${formats}" th:object="${format}">
+							<li class="list-group-item" th:each="format : ${formats}">
 								<input class="form-check-input me-1" type="radio" name="id" th:id="${#ids.seq('format')}" th:value="${format.id}"/>
 								<label class="form-check-label" th:for="${#ids.prev('format')}" th:text="${format.name}"></label>
 							</li>

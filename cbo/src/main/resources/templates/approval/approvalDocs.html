@@ -33,9 +33,9 @@
 				</tr>
 				<tr class="" th:unless="${#lists.isEmpty(approvalDocs)}" th:each="approvalDoc : ${approvalDocs}" th:object="${approvalDoc}">
 					<td scope="row" th:text="*{id}"></td>
-					<td scope="row" th:text="*{writeDate}"></td>
+					<td scope="row" th:text="*{write_date}"></td>
 					<td scope="row" th:text="*{completion}"></td>
-					<td scope="row" th:text="*{formatName}"></td>
+					<td scope="row" th:text="*{format_name}"></td>
 					<td scope="row"><a th:text="*{title}" th:href="@{docContent(id=*{id})}"></a></td>
 					<td scope="row" th:text="*{writer}"></td>
 					<td scope="row" th:text="*{status}"></td>

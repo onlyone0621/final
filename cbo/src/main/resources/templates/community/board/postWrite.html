@@ -1,9 +1,16 @@
 <!DOCTYPE html>
-<html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="layouts/mainLayout">
 <head>
   <meta charset="UTF-8">
-  <title>커뮤니티 개설</title>
+  <title>게시글 작성</title>
   <style>
+    .container {
+      display: flex;
+    }
+
     .sidebar {
       width: 200px;
       background-color: #fbf9fd;
@@ -13,13 +20,7 @@
     }
 
     .sidebar h4 {
-      margin-bottom: 15px;
       font-size: 18px;
-    }
-
-    .sidebar button {
-      width: 100%;
-      padding: 8px;
       margin-bottom: 15px;
     }
 
@@ -30,91 +31,104 @@
     }
 
     .sidebar ul li {
-      margin-bottom: 8px;
-    }
-
-    .container {
-      display: flex;
+      margin-bottom: 10px;
     }
 
     .main {
-      padding: 10px;
       flex-grow: 1;
+      padding: 20px;
+    }
+
+    .main h2 {
+      margin-bottom: 20px;
+    }
+
+    .main form ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .main form li {
+      margin-bottom: 15px;
+    }
+
+    .main input[type="text"],
+    .main select,
+    .main textarea {
+      width: 100%;
+      padding: 8px;
+      box-sizing: border-box;
+    }
+
+    .main input[type="file"] {
+      margin-top: 5px;
+    }
+
+    .main .btns {
+      margin-top: 20px;
+    }
+
+    .main .btns input {
+      padding: 8px 16px;
+      margin-right: 10px;
+      cursor: pointer;
     }
   </style>
 </head>
 <body>
+<div layout:fragment="content">
+  <div class="container">
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <h4>게시판</h4>
+      <ul>
+        <li th:each="b : ${boardList}">
+          <a th:href="@{/board/{boardId}(boardId=${b.id})}" th:text="${b.name}"></a>
+        </li>
+      </ul>
+    </div>
 
-<div class="container">
-  <div class="sidebar">
+    <!-- Main Content -->
+    <div class="main">
+      <h2>게시글 작성</h2>
 
-   <input type="button" value="글쓰기">
-    <ul>
-      <li>가입 멤버 1</li>
-      <li>가입 멤버 2</li>
-      <li>가입 멤버 3</li>
-      <li>가입 멤버 4</li>
-      <li>가입 멤버 5</li>
-    </ul>
+      <form name="postWrite" th:action="@{/postWrite}" method="post" enctype="multipart/form-data">
+        <ul>
+          <!-- 게시판 선택 -->
+          <li>
+            <label>게시판 선택</label>
+            <select name="board_id" required>
+              <option value="" disabled selected>게시판 선택</option>
+              <option th:each="b : ${boardList}" th:value="${b.id}" th:text="${b.name}"></option>
+            </select>
+          </li>
+
+          <!-- 제목 -->
+          <li>
+            <label>제목</label>
+            <input type="text" name="title" placeholder="제목을 입력하세요" required>
+          </li>
+
+          <!-- 내용 -->
+          <li>
+            <label>내용</label>
+            <textarea name="content" rows="15" placeholder="내용을 입력하세요" required></textarea>
+          </li>
+
+          <!-- 파일 업로드 -->
+          <li>
+            <label>파일 첨부</label>
+            <input type="file" name="images" multiple>
+          </li>
+        </ul>
+
+        <div class="btns">
+          <input type="submit" value="등록">
+          <input type="reset" value="취소">
+        </div>
+      </form>
+    </div>
   </div>
-
-  <div class="main">
-    <h4>(해당 커뮤니티 이름)</h4>
-    <h6>
-        
-        <select id="commuSearch" name="search">
-        <option value="1">제목</option>
-         <option value="2">내용</option>
-      	</select>
-      	<input type="text" placeholder="검색">
-        <input type="button" value="검색">
-  
-    </h6>
-    
-    <hr>
-    <ul>
-        <li>운영자 : (이름)</li>
-        <li>게시판 주소 : ~~~ </li>
-    </ul>
-    <hr>
-    <label>새글쓰기   </label><label>이동 </label><label>삭제 </label>
-    <form name="community">
-        <table border="0" cellspacing="0" width="100%">
-      <thead>
-        <tr> 
-          <th><input type="checkbox"></th>
-          <th>번호</th>
-          <th>제목</th>
-          <th>작성자</th>
-          <th>작성일</th>
-          <th>조회</th>
-          <th>좋아요</th>
-        </tr>
-        <hr>
-      </thead>
-      <tbody>
-        <tr>
-          <td><input type="checkbox"></td>
-          <td>2</td>
-          <td>안녕하세요</td>
-          <td>박주연</td>
-          <td>25/06/19</td>
-          <td>5</td>
-          <td>2</td>
-        </tr>
-        <tr>
-          <td><input type="checkbox"></td>
-          <td>3</td>
-          <td>방가</td>
-          <td>박주연</td>
-          <td>25/06/19</td>
-          <td>3</td>
-          <td>5</td>
-        </tr>
-      </tbody>
-    </table>
-    </form>
-</div>
 </div>
 </body>
 </html>
