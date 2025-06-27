@@ -58,7 +58,7 @@ public int insertCommunity(CommunityDTO dto) throws Exception {
 	}
 // 게시글 작성
 @Override
-	public int insertPost() throws Exception {
+	public int insertPost(PostDTO pdto) throws Exception {
 		int result = mapper.insertPost();
 		return result;
 	}

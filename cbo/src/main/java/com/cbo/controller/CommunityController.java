@@ -11,10 +11,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.cbo.community.model.BoardDTO;
 import com.cbo.community.model.CommunityDTO;
+import com.cbo.community.model.PostDTO;
 import com.cbo.community.service.CommunityService;
 import com.cbo.config.WebSocketConfig;
 import com.cbo.member.model.MemberDTO;
@@ -255,7 +257,6 @@ public class CommunityController {
 	@PostMapping("/community/{cId}/board/create")
 	public ModelAndView boardCreate(@PathVariable("cId") int cId, BoardDTO dto) {
 	    
-		 
 		int result = 0;
 	    String msg = null;
 
@@ -275,22 +276,25 @@ public class CommunityController {
 	    return mav;
 	
 	}
+	//////////////////////////////////////////////////////////
 	
-	// 게시글(post) 작성 url 이동
-	@GetMapping("/community/{cId}/board/{boardId}/write")
-	public ModelAndView postWrite(@PathVariable("cId") int cId,
-								  @PathVariable("boardId") int boardId) {
-		ModelAndView mav=new ModelAndView();
-		return mav;
+	//postList 목록 맨 첫화면 (각각 다름))
+	@GetMapping("/community/{cId}/board/{boardId}")
+	public ModelAndView postListUrl(@PathVariable("cId") int cId,
+            @PathVariable("boardId") int boardId) {
+		 
+		Map<String, Object> map = new HashMap<>();
+		    map.put("cId", cId);
+		    map.put("boardId", boardId);
 		
+		ModelAndView mav = new ModelAndView();
+		    mav.addObject("boardId", boardId);
+		    mav.addObject("cId", cId);
+		    mav.setViewName("community/board/postList");
+		    return mav;
 	}
 	
-	
-	
-
 	//postList 로 url이동  	//게시판 목록 post목록
-
-	
 	@PostMapping("/community/{cId}/board/{boardId}")
 	public ModelAndView postList(@PathVariable("cId") int cId,
 	                             @PathVariable("boardId") int boardId) {
@@ -307,17 +311,74 @@ public class CommunityController {
 	    //mav.addObject("postLists", postLists);
 	    mav.addObject("boardId", boardId);
 	    mav.addObject("cId", cId);
-	    mav.addObject("communityName", "ㅎㅎ"); // 실제 값으로 바꿔줘
+	    mav.addObject("communityName", "실제값ㅅ"); // 
 	    mav.addObject("boardName", "게시판이름"); // 실제 게시판 이름 가져오기
 	    mav.setViewName("community/board/postList");
 	    return mav;
 	}
 	
-	
-	
 
-	//
 	
+	
+//	// 게시글(post) 작성 url 이동
+//	@GetMapping("/community/{cId}/board/{boardId}/write")
+//	public ModelAndView postWrite(@PathVariable("cId") int cId,
+//	                              @PathVariable("boardId") int boardId) {
+//	    ModelAndView mav = new ModelAndView();
+//
+//	    try {
+//	    	 // 해당 커뮤니티의 게시판 목록 (사이드바용 wj정보임 )
+//	        Map<String, Object> map = new HashMap<>();
+//	        map.put("cId", cId);  // 커뮤니티 ID로 게시판 목록 조회
+//	        List<BoardDTO> boardList = service.boardListByCommunityId(map);  
+//
+//	        mav.addObject("boardList", boardList); // 사이드바에 사용될 게시판 목록 전달
+//	    } catch (Exception e) {
+//	        e.printStackTrace();
+//	    }
+//
+//	    mav.addObject("cId", cId); // 커뮤니티 ID
+//	    mav.addObject("boardId", boardId); // 게시판 ID
+//	    mav.setViewName("community/board/postWrite");  // 게시글 작성 페이지로 이동
+//	    return mav;
+//	}
+//	
+//	// 게시글(post) 작성 기능
+//	@GetMapping("/community/{cId}/board/{boardId}/write")
+//	public ModelAndView postWriteSubmit(@PathVariable("cId") int cId,
+//	                                    @PathVariable("boardId") int boardId,
+//	                                    PostDTO pdto,
+//	                                    @RequestParam(value = "images", required = false) MultipartFile[] images,
+//	                                    HttpSession session) {
+//	    int result = 0;
+//	    String msg = null;
+//	    String goUrl = null;
+//
+//	    try {
+//	        int memberId = (int) session.getAttribute("id");
+//
+//	        // 글 등록
+//	        pdto.setBoard_id(boardId);
+//	        pdto.setMember_id(memberId);
+//	        result = service.insertPost(pdto); // 시퀀스 처리된다고 했으니
+//
+//	        // 파일 업로드는 나중에
+//	        // 필요 시 여기서 dto.getId()로 이미지 연계 가능
+//
+//	    } catch (Exception e) {
+//	        e.printStackTrace();
+//	    }
+//
+//	    msg = result > 0 ? "게시글 작성 성공!" : "게시글 작성 실패!";
+//	    goUrl = result > 0 ? "/community/" + cId + "/board/" + boardId : "/community/" + cId + "/board/" + boardId + "/write";
+//
+//	    ModelAndView mav = new ModelAndView();
+//	    mav.addObject("msg", msg);
+//	    mav.addObject("goUrl", goUrl);
+//	    mav.setViewName("community/board/postMsg"); // boardMsg랑 똑같은 방식
+//	    return mav;
+//	}
+
 	
 	
 }
