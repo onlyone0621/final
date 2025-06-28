@@ -212,7 +212,7 @@ create table doc(
     format_id NUMBER(10) NOT NULL,
     content CLOB NOT NULL,
     retention NUMBER(5) DEFAULT 5 not null CHECK (retention >= 0),
-    attatchment VARCHAR2(100) DEFAULT NULL,
+    file_name VARCHAR2(100) DEFAULT NULL,
     foreign key (member_id) references member(id) ON DELETE SET NULL,
     FOREIGN KEY (format_id) REFERENCES format(id)
 );
@@ -221,7 +221,7 @@ CREATE TABLE approval_line (
     doc_id NUMBER(10) NOT NULL,
     member_id NUMBER(10),
     status VARCHAR2(100) DEFAULT '결재 예정' CHECK (status IN ('기안 상신', '결재 예정', '결재 완료', '참조', '반려')),
-    process_date DATE DEFAULT NULL,
+    process_date DATE,
     CONSTRAINT pk_approval_line PRIMARY KEY (doc_id, member_id),
     CONSTRAINT fk_approval_line_doc FOREIGN KEY (doc_id) REFERENCES doc(id) ON DELETE CASCADE,
     CONSTRAINT fk_approval_line_member FOREIGN KEY (member_id) REFERENCES member(id) ON DELETE SET NULL
@@ -447,7 +447,7 @@ VALUES (sq_format_id.NEXTVAL, '기안문', '<div style="font-family: Arial, sans
       </tr>
       <tr>
         <td style="border: 1px solid #000; padding: 5px; font-size: 14px;">기안일</td>
-        <td style="border: 1px solid #000; padding: 5px; font-size: 14px;" id="write-date"></td>
+        <td style="border: 1px solid #000; padding: 5px; font-size: 14px;" id="writeDate"></td>
       </tr>
       <tr>
         <td style="border: 1px solid #000; padding: 5px; font-size: 14px;">기안자</td>
@@ -469,14 +469,14 @@ VALUES (sq_format_id.NEXTVAL, '기안문', '<div style="font-family: Arial, sans
         </td>
       </tr>
     </table>
-    <div id="approval-line-container" style="display: flex; gap: 10px;">
+    <div id="approvalLineContainer" style="display: flex; gap: 10px;">
     </div>
   </div>
   <table style="width: 100%; border-collapse: collapse; margin-bottom: 10px;">
     <tr>
       <th style="border: 1px solid #000; padding: 8px; background-color: #ccc; text-align: left;">제목</th>
       <td style="border: 1px solid #000; padding: 8px;">
-        <input type="text" style="width: 100%; box-sizing: border-box;">
+        <input type="text" name="title" style="width: 100%; box-sizing: border-box;">
       </td>
     </tr>
     <tr>
@@ -500,21 +500,21 @@ VALUES (sq_format_id.NEXTVAL, '진료비 지원 신청서', '   <div style="font
       </tr>
       <tr>
         <td style="border: 1px solid #000; padding: 5px; font-size: 14px;">기안일</td>
-        <td style="border: 1px solid #000; padding: 5px; font-size: 14px;" id="write-date"></td>
+        <td style="border: 1px solid #000; padding: 5px; font-size: 14px;" id="writeDate"></td>
       </tr>
       <tr>
         <td style="border: 1px solid #000; padding: 5px; font-size: 14px;">기안자</td>
         <td style="border: 1px solid #000; padding: 5px; font-size: 14px;" id="writer"></td>
       </tr>
     </table>
-    <div id="approval-line-container" style="display: flex; gap: 10px;">
+    <div id="approvalLineContainer" style="display: flex; gap: 10px;">
     </div>
   </div>
   <table style="width: 100%; border-collapse: collapse; margin-bottom: 10px;">
     <tr>
       <th style="border: 1px solid #000; padding: 5px; background-color: #ccc;">제목</th>
       <td style="border: 1px solid #000; padding: 5px;">
-        <input type="text" style="width: 100%; box-sizing: border-box;">
+        <input type="text" name="title" style="width: 100%; box-sizing: border-box;">
       </td>
     </tr>
     <tr>
@@ -570,14 +570,14 @@ VALUES (sq_format_id.NEXTVAL, '휴가 신청서', '    <div style="font-family: 
       </tr>
       <tr>
         <td style="border: 1px solid #000; padding: 5px; font-size: 14px;">기안일</td>
-        <td style="border: 1px solid #000; padding: 5px; font-size: 14px;" id="write-date"></td>
+        <td style="border: 1px solid #000; padding: 5px; font-size: 14px;" id="writeDate"></td>
       </tr>
       <tr>
         <td style="border: 1px solid #000; padding: 5px; font-size: 14px;">기안자</td>
         <td style="border: 1px solid #000; padding: 5px; font-size: 14px;" id="writer"></td>
       </tr>
     </table>
-    <div id="approval-line-container" style="display: flex; gap: 10px;">
+    <div id="approvalLineContainer" style="display: flex; gap: 10px;">
     </div>
   </div>
 
@@ -585,7 +585,7 @@ VALUES (sq_format_id.NEXTVAL, '휴가 신청서', '    <div style="font-family: 
   <tr>
     <th style="border: 1px solid #000; padding: 8px; width: 100px; background-color: #ccc; text-align: center;">제목</th>
     <td style="border: 1px solid #000; padding: 8px;">
-      <input type="text" style="width: 100%; box-sizing: border-box;">
+      <input type="text" name="title" style="width: 100%; box-sizing: border-box;">
     </td>
   </tr>
 </table>

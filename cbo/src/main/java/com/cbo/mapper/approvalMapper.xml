@@ -179,7 +179,16 @@
 	
 	<insert id="insertDoc" parameterType="com.cbo.approval.model.DocDTO">
 		INSERT INTO doc (id, title, member_id, format_id, content, file_name)
-		VALUES (#{id}, #{title}, #{member_id}, {format_id}, #{content}, #{file_name})
+		VALUES (#{id}, #{title}, #{member_id}, #{format_id}, #{content}
+		<choose>
+			<when test="file_name == null">
+				, NULL
+			</when>
+			<otherwise>
+				, #{file_name}
+			</otherwise>
+		</choose>
+		 )
 	</insert>
 	
 	<insert id="insertApprovalLines" parameterType="com.cbo.approval.model.ApprovalLineDTO">
