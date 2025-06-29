@@ -120,7 +120,7 @@ public class ApprovalServiceImple implements ApprovalService {
 				super(message);
 			}
 		}
-		
+
 		// Get id to be inserted in doc table
 		int docId = mapper.selectDocId();
 		dto.setId(docId);

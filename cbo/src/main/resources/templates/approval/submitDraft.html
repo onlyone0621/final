@@ -6,6 +6,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>결재 문서 작성</title>
+<script th:src="@{/js/submit-draft.js}" defer></script>
 </head>
 <body>
 <div layout:fragment="content">
@@ -36,6 +37,7 @@
                 <div id="draft" th:utext="${format.template}" class="align-self-center w-100"></div>
 
                 <input type="hidden" name="content">
+                <input type="hidden" name="title">
 
                 <!-- File input -->
                 <div class="mb-3 w-75 align-self-center">
@@ -182,20 +184,6 @@
     if (userInfo){
         document.querySelector('#writer').textContent = userInfo.name;
     }
-
-    const today = new Date();
-    const year = today.getFullYear();
-    const month = String(today.getMonth() + 1).padStart(2, '0');
-    const day = String(today.getDay()).padStart(2, '0');
-    document.querySelector('#writeDate').textContent = `${year}-${month}-${day}`;
-
-    document.querySelector('form').addEventListener('submit', () => {
-        const hiddenInput = document.querySelector('input[name="content"]');
-        const draft = document.querySelector('#draft');
-
-        hiddenInput.value = draft.innerHTML;
-    });
-
 </script>
 
 </div>

@@ -472,17 +472,23 @@ VALUES (sq_format_id.NEXTVAL, '기안문', '<div style="font-family: Arial, sans
     <div id="approvalLineContainer" style="display: flex; gap: 10px;">
     </div>
   </div>
-  <table style="width: 100%; border-collapse: collapse; margin-bottom: 10px;">
-    <tr>
-      <th style="border: 1px solid #000; padding: 8px; background-color: #ccc; text-align: left;">제목</th>
-      <td style="border: 1px solid #000; padding: 8px;">
-        <input type="text" name="title" style="width: 100%; box-sizing: border-box;">
-      </td>
-    </tr>
-    <tr>
-      <th colspan="2" style="border: 1px solid #000; padding: 8px; background-color: #ccc; text-align: center;">상 세 내 용</th>
-    </tr>
-  </table>
+  <table style="width: 100%; border-collapse: collapse; margin-bottom: 10px; table-layout: fixed;">
+  <colgroup>
+    <col style="width: 12.5%;">   
+    <col style="width: 87.5%;">   
+  </colgroup>
+  <tr>
+    <th style="border: 1px solid #000; padding: 8px; background-color: #ccc; text-align: left;">제목</th>
+    <td style="border: 1px solid #000; padding: 8px;">
+      <input type="text" id="title" style="width: 100%; box-sizing: border-box;">
+    </td>
+  </tr>
+  <tr>
+    <th colspan="2" style="border: 1px solid #000; padding: 8px; background-color: #ccc; text-align: center;">
+      상 세 내 용
+    </th>
+  </tr>
+</table>
   <div contenteditable="true" style="width: 100%; height: 300px; border: 1px solid #000; font-size: 14px; box-sizing: border-box; padding: 10px;">
     본문
   </div>
@@ -510,21 +516,25 @@ VALUES (sq_format_id.NEXTVAL, '진료비 지원 신청서', '   <div style="font
     <div id="approvalLineContainer" style="display: flex; gap: 10px;">
     </div>
   </div>
-  <table style="width: 100%; border-collapse: collapse; margin-bottom: 10px;">
-    <tr>
-      <th style="border: 1px solid #000; padding: 5px; background-color: #ccc;">제목</th>
-      <td style="border: 1px solid #000; padding: 5px;">
-        <input type="text" name="title" style="width: 100%; box-sizing: border-box;">
-      </td>
-    </tr>
-    <tr>
-      <td colspan="2" style="border: 1px solid #000; padding: 5px;">
-        <div contenteditable="true" style="height: 200px; width: 100%; outline: none;">
-          본문
-        </div>
-      </td>
-    </tr>
-  </table>
+  <table style="width: 100%; border-collapse: collapse; margin-bottom: 10px; table-layout: fixed;">
+  <colgroup>
+    <col style="width: 12.5%;">   
+    <col style="width: 87.5%;">   
+  </colgroup>
+  <tr>
+    <th style="border: 1px solid #000; padding: 5px; background-color: #ccc;">제목</th>
+    <td style="border: 1px solid #000; padding: 5px;">
+      <input type="text" id="title" style="width: 100%; box-sizing: border-box;">
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2" style="border: 1px solid #000; padding: 5px;">
+      <div contenteditable="true" style="height: 200px; width: 100%; outline: none;">
+        본문
+      </div>
+    </td>
+  </tr>
+</table>
   <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
     <tr>
       <td style="border: 1px solid #000; padding: 5px; width: 120px;">진료기관명</td>
@@ -580,12 +590,17 @@ VALUES (sq_format_id.NEXTVAL, '휴가 신청서', '    <div style="font-family: 
     <div id="approvalLineContainer" style="display: flex; gap: 10px;">
     </div>
   </div>
-
-  <table style="border-collapse: collapse; width: 100%; margin-bottom: 10px;">
+  <table style="border-collapse: collapse; width: 100%; margin-bottom: 10px; table-layout: fixed;">
+  <colgroup>
+    <col style="width: 12.5%;">  
+    <col style="width: 87.5%;">  
+  </colgroup>
   <tr>
-    <th style="border: 1px solid #000; padding: 8px; width: 100px; background-color: #ccc; text-align: center;">제목</th>
+    <th style="border: 1px solid #000; padding: 8px; background-color: #ccc; text-align: center;">
+      제목
+    </th>
     <td style="border: 1px solid #000; padding: 8px;">
-      <input type="text" name="title" style="width: 100%; box-sizing: border-box;">
+      <input type="text" id="title" style="width: 100%; box-sizing: border-box;">
     </td>
   </tr>
 </table>
