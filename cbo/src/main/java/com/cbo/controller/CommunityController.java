@@ -228,46 +228,46 @@ public class CommunityController {
 
 	//////////////////////////////////////////////////////////////////
 	///
-	//게시판(board) 생성 url 이동
+	//게시판(board) create 생성 url 이동
 	@GetMapping("/community/{cId}/board/create")
 	public ModelAndView boardCreateForm(@PathVariable("cId") int cId) {
-	    List<CommunityDTO> communities = null;
-	    List<BoardDTO> boardLists = null;
+	    List<CommunityDTO> communities = null; //커뮤니티 목록들 
+	    List<BoardDTO> boardLists = null; //게시판 목록들
 
 	    try {
-	        communities = service.communityList();
+	        communities = service.communityList(); //커뮤니티 목록들
 
 	        Map<String, Object> map = new HashMap<>();
-	        map.put("cId", cId);
+	        map.put("cId", cId);     //map= {"cid" : 3} 의미임 !!! cid가 3일때
 	        boardLists = service.boardListByCommunityId(map); // map
 	    } catch (Exception e) {
 	        e.printStackTrace();
 	    }
 
 	    ModelAndView mav = new ModelAndView();
-	    mav.addObject("communities", communities);
-	    mav.addObject("boardLists", boardLists); // → 이제 목록 잘 뜸
+	    mav.addObject("communities", communities); //커뮤니티 목록들
+	    mav.addObject("boardLists", boardLists);  //선택된 커뮤니티의 게시판 목록들
 	    mav.addObject("cId", cId);
 	    mav.setViewName("community/board/boardCreate");
 	    return mav;
 	}
-	
+	    
 
-//게시판(board) 생성 기능
+//게시판(board) create 생성 기능
 	@PostMapping("/community/{cId}/board/create")
-	public ModelAndView boardCreate(@PathVariable("cId") int cId, BoardDTO dto) {
+	public ModelAndView boardCreate(@PathVariable("cId") int cId, BoardDTO bdto) {
 	    
 		int result = 0;
 	    String msg = null;
 
 	    try {
-	    		result = service.insertBoard(dto);
+	    		result = service.insertBoard(bdto);
 	    } catch (Exception e) {
 	        	e.printStackTrace();
 	    }
 
 	    msg = result > 0 ? "게시판 생성 성공!" : "게시판 생성 실패!";
-	    String goUrl = result > 0 ? "/community/" + dto.getCommunity_id() : "/community/" + cId + "/board/create";
+	    String goUrl = result > 0 ? "/community/" + bdto.getCommunity_id() : "/community/" + cId + "/board/create";
 
 	    ModelAndView mav = new ModelAndView();
 	    mav.addObject("msg", msg);
@@ -281,7 +281,7 @@ public class CommunityController {
 	//postList 목록 맨 첫화면 (각각 다름))
 	@GetMapping("/community/{cId}/board/{boardId}")
 	public ModelAndView postListUrl(@PathVariable("cId") int cId,
-            @PathVariable("boardId") int boardId) {
+            						@PathVariable("boardId") int boardId) {
 		 
 		Map<String, Object> map = new HashMap<>();
 		    map.put("cId", cId);
@@ -317,68 +317,121 @@ public class CommunityController {
 	    return mav;
 	}
 	
+/////////////////////////////////////////////////////////////////////
+	
+	// 게시글(post) 작성 url 이동
+	@GetMapping("/community/{cId}/board/{boardId}/write")
+	public ModelAndView postWrite(@PathVariable("cId") int cId,
+	                              @PathVariable("boardId") int boardId) {
+	    ModelAndView mav = new ModelAndView();
+
+	    try {
+	    	 // 해당 커뮤니티의 게시판 목록 (사이드바용 wj정보임 )
+	        Map<String, Object> map = new HashMap<>();
+	        map.put("cId", cId);  // map에 cid : 3 정보 넣어줌 key,value
+	        List<BoardDTO> boardList = service.boardListByCommunityId(map); //3(value)에 대한 게시판 목록들 
+	        mav.addObject("boardList", boardList); // 사이드바에 사용될 게시판 목록 전달
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
+
+	    mav.addObject("cId", cId); // 커뮤니티 ID
+	    mav.addObject("boardId", boardId); // 게시판 ID
+	    mav.setViewName("community/board/postWrite");  // 게시글 작성 페이지로 이동
+	    return mav;
+	}
 
 	
-	
-//	// 게시글(post) 작성 url 이동
-//	@GetMapping("/community/{cId}/board/{boardId}/write")
-//	public ModelAndView postWrite(@PathVariable("cId") int cId,
-//	                              @PathVariable("boardId") int boardId) {
-//	    ModelAndView mav = new ModelAndView();
-//
-//	    try {
-//	    	 // 해당 커뮤니티의 게시판 목록 (사이드바용 wj정보임 )
-//	        Map<String, Object> map = new HashMap<>();
-//	        map.put("cId", cId);  // 커뮤니티 ID로 게시판 목록 조회
-//	        List<BoardDTO> boardList = service.boardListByCommunityId(map);  
-//
-//	        mav.addObject("boardList", boardList); // 사이드바에 사용될 게시판 목록 전달
-//	    } catch (Exception e) {
-//	        e.printStackTrace();
-//	    }
-//
-//	    mav.addObject("cId", cId); // 커뮤니티 ID
-//	    mav.addObject("boardId", boardId); // 게시판 ID
-//	    mav.setViewName("community/board/postWrite");  // 게시글 작성 페이지로 이동
-//	    return mav;
-//	}
-//	
-//	// 게시글(post) 작성 기능
-//	@GetMapping("/community/{cId}/board/{boardId}/write")
-//	public ModelAndView postWriteSubmit(@PathVariable("cId") int cId,
-//	                                    @PathVariable("boardId") int boardId,
-//	                                    PostDTO pdto,
-//	                                    @RequestParam(value = "images", required = false) MultipartFile[] images,
-//	                                    HttpSession session) {
-//	    int result = 0;
-//	    String msg = null;
-//	    String goUrl = null;
-//
-//	    try {
-//	        int memberId = (int) session.getAttribute("id");
-//
-//	        // 글 등록
-//	        pdto.setBoard_id(boardId);
-//	        pdto.setMember_id(memberId);
-//	        result = service.insertPost(pdto); // 시퀀스 처리된다고 했으니
-//
-//	        // 파일 업로드는 나중에
-//	        // 필요 시 여기서 dto.getId()로 이미지 연계 가능
-//
-//	    } catch (Exception e) {
-//	        e.printStackTrace();
-//	    }
-//
-//	    msg = result > 0 ? "게시글 작성 성공!" : "게시글 작성 실패!";
-//	    goUrl = result > 0 ? "/community/" + cId + "/board/" + boardId : "/community/" + cId + "/board/" + boardId + "/write";
-//
-//	    ModelAndView mav = new ModelAndView();
-//	    mav.addObject("msg", msg);
-//	    mav.addObject("goUrl", goUrl);
-//	    mav.setViewName("community/board/postMsg"); // boardMsg랑 똑같은 방식
-//	    return mav;
-//	}
+	// 게시글(post) 작성 기능 (사진은 나중에 넣을거임 )
+	@PostMapping("/community/{cId}/board/{boardId}/write")
+	public ModelAndView postWriteSubmit(@PathVariable int cId,
+	                                    @PathVariable int boardId,
+	                                    PostDTO pdto,
+	                                    @RequestParam(value = "images", required = false) MultipartFile[] images,
+	                                    HttpServletRequest request) {
+
+	    HttpSession session = request.getSession();
+	    MemberDTO udto = (MemberDTO) session.getAttribute(com.cbo.constant.MemberConst.USER_KEY);
+
+	    if (udto == null) {
+	        ModelAndView mav = new ModelAndView();
+	        mav.addObject("msg", "로그인 해주세요.");
+	        mav.addObject("goUrl", "/memberLogin");
+	        mav.setViewName("community/board/postMsg");
+	        return mav;
+	    }
+
+	    try {
+	        pdto.setBoard_id(boardId);  // URL boardId 고정
+	        pdto.setMember_id(udto.getId());
+
+	        int result = service.insertPost(pdto);
+	        int postId = pdto.getId();
+
+	        String msg;
+	        String goUrl;
+
+	        if (result > 0) {
+	            msg = "게시글 작성 성공!";
+	            goUrl = "/community/" + cId + "/board/" + boardId + "/post/" + postId;
+
+	            // TODO: 이미지 업로드 자리 (MultipartFile[] 처리)
+	        } else {
+	            msg = "게시글 작성 실패!";
+	            goUrl = "/community/" + cId + "/board/" + boardId + "/write";
+	        }
+
+	        ModelAndView mav = new ModelAndView();
+	        mav.addObject("msg", msg);
+	        mav.addObject("goUrl", goUrl);
+	        mav.setViewName("community/board/postMsg");
+	        return mav;
+
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        ModelAndView mav = new ModelAndView();
+	        mav.addObject("msg", "에러 발생!");
+	        mav.addObject("goUrl", "/community/" + cId + "/board/" + boardId + "/write");
+	        mav.setViewName("community/board/postMsg");
+	        return mav;
+	    }
+	}
 
 	
+	// 본문 보기
+	@GetMapping("/community/{cId}/board/{boardId}/post/{postId}")
+	public ModelAndView postContent(@PathVariable int cId,
+	                                @PathVariable int boardId,
+	                                @PathVariable int postId) {
+	    ModelAndView mav = new ModelAndView();
+
+	    try {
+	        Map<String, Object> map = new HashMap<>();
+	        map.put("cId", cId);
+	        List<BoardDTO> boardList = service.boardListByCommunityId(map);
+	        mav.addObject("boardList", boardList);
+
+	        PostDTO post = service.selectPostById(postId);
+	        mav.addObject("post", post);
+
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
+
+	    mav.addObject("cId", cId);
+	    mav.addObject("boardId", boardId);
+	    mav.setViewName("community/board/postContent");
+	    return mav;
+	}
+
+
+
+
+
+
+
+
+
+
 	
 }

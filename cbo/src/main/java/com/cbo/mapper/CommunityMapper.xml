@@ -14,14 +14,18 @@
 	
 	DELETE FROM community where id=#{id}
 </delete>
+
+<!-- 커뮤니티 모든 목록 -->
 <select id="communityList" resultType="com.cbo.community.model.CommunityDTO">
 	select * from community
 </select>
 
+<!-- 게시판 작성 -->
 <insert id="insertBoard" parameterType="com.cbo.community.model.BoardDTO">
  insert into community_board 
 values(sq_community_board_id.nextval, #{community_id} ,#{name} ,#{description}, SYSDATE)
 </insert>
+
 <!-- 특정 커뮤니티에 소속된 게시판만 가져오기 -->
 <select id="boardListByCommunityId" resultType="com.cbo.community.model.BoardDTO" parameterType="map">
 SELECT * FROM community_board
@@ -34,12 +38,47 @@ ORDER BY id ASC
   SELECT * FROM community_board
 </select>
 
+<!-- 게시글 글만 작성 -->
 <insert id="insertPost" parameterType="com.cbo.community.model.PostDTO">
-  INSERT INTO board_post
-  VALUES (sq_board_post_id.NEXTVAL, #{board_id}, #{member_id}, #{title}, #{content}, SYSDATE)
+  
+  <selectKey keyProperty="id" order="BEFORE" resultType="int">
+    SELECT sq_board_post_id.NEXTVAL FROM dual
+  </selectKey>
+  
+  INSERT INTO board_post (
+    id, board_id, member_id, title, content, write_date, view_num, upvote
+  )
+  VALUES (
+    #{id}, #{board_id}, #{member_id}, #{title}, #{content}, SYSDATE, 0, 0
+  )
 </insert>
 
+<!-- 게시글 본문보기 -->
+<select id="selectPostById" parameterType="int" resultType="com.cbo.community.model.PostDTO">
+    SELECT *
+    FROM board_post
+    WHERE id = #{postId}
+</select>
 
+<!-- 게시글 작성 이미지 넣기  -->
+<insert id="insertImage" parameterType="com.cbo.community.model.BoardImageDTO">
+  <selectKey keyProperty="id" order="BEFORE" resultType="int">
+    SELECT sq_board_image_id.NEXTVAL FROM dual
+  </selectKey>
+  INSERT INTO board_image (
+    id, post_id, member_id, saved_name, original_name, upload_date
+  )
+  VALUES (
+    #{id}, #{post_id}, #{member_id}, #{saved_name}, #{original_name}, SYSDATE
+  )
+</insert>
+
+<!-- 이미지 본문보기 -->
+<select id="selectImagesByPostId" parameterType="int" resultType="com.cbo.community.model.BoardImageDTO">
+  SELECT *
+  FROM board_image
+  WHERE post_id = #{postId}
+</select>
 
  </mapper>
  

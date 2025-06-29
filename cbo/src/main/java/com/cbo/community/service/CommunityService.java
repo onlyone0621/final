@@ -15,5 +15,9 @@ public interface CommunityService {
 	public int insertBoard(BoardDTO dto) throws Exception;
 	public List<BoardDTO> boardListByCommunityId(Map<String, Object> map) throws Exception;
 	public List<BoardDTO> boardList() throws Exception;
+	
+	//게시글(post)
 	public int insertPost(PostDTO pdto) throws Exception;
+	public PostDTO selectPostById(int postId) throws Exception;
+	
 }
