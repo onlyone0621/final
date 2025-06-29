@@ -179,17 +179,28 @@
 	
 	<insert id="insertDoc" parameterType="com.cbo.approval.model.DocDTO">
 		INSERT INTO doc (id, title, member_id, format_id, content, file_name)
-		VALUES (#{id}, #{title}, #{member_id}, {format_id}, #{content}, #{file_name})
+		VALUES (#{id}, #{title}, #{member_id}, #{format_id}, #{content}
+		<choose>
+			<when test="file_name == null">
+				, NULL
+			</when>
+			<otherwise>
+				, #{file_name}
+			</otherwise>
+		</choose>
+		 )
 	</insert>
 	
-	<insert id="insertDrafterOrReviewers" parameterType="com.cbo.approval.model.ApprovalLineDTO">
-		INSERT INTO approval_line 
-		VALUES (#{doc_id}, #{member_id}, #{status}, SYSDATE)
-	</insert>
-	
-	<insert id="insertApprovers" parameterType="com.cbo.approval.model.ApprovalLineDTO">
-		INSERT INTO approval_line (doc_id, member_id, status)
-		VALUES (#{doc_id}, #{member_id}, #{status})
+	<insert id="insertApprovalLines" parameterType="com.cbo.approval.model.ApprovalLineDTO">
+		INSERT INTO approval_line (doc_id, member_id, status, process_date)
+		<choose>
+			<when test="status == '결재 예정'">
+				VALUES (#{doc_id}, #{member_id}, #{status}, NULL)
+			</when>
+			<otherwise>
+				VALUES (#{doc_id}, #{member_id}, #{status}, SYSDATE)
+			</otherwise>
+		</choose>
 	</insert>
 	
 	<!-- Approve or Reject -->

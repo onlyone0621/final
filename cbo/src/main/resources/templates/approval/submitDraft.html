@@ -6,25 +6,21 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>결재 문서 작성</title>
-<style>
-    #draft {
-        width: 800px;
-        height: auto;
-    }
-</style>
+<script th:src="@{/js/submit-draft.js}" defer></script>
 </head>
 <body>
 <div layout:fragment="content">
-    <form action="submitDraft" method="post" enctype="" class="form">
+    <form action="submitDraft" method="post" enctype="multipart/form-data">
         <div class="container d-flex flex-row gap-5">
             <div class="d-flex flex-column gap-3 w-75">
                 <!-- Type of format -->
-                <nav class="navbar bg-body-tertiary">
+                
                     <div class="container-fluid">
                         <span class="navbar-text fs-1" th:text="${format.name}">
                         </span>
+                        <input type="hidden" name="format_id" th:value="${format.id}">
                     </div>
-                </nav>
+                
                 <!-- Button toolbar -->
                 <div>
                     <nav
@@ -38,7 +34,10 @@
                     </nav>
                 </div>
                 <!-- Template -->
-                <div id="draft" th:utext="${format.template}" class="align-self-center"></div>
+                <div id="draft" th:utext="${format.template}" class="align-self-center w-100"></div>
+
+                <input type="hidden" name="content">
+                <input type="hidden" name="title">
 
                 <!-- File input -->
                 <div class="mb-3 w-75 align-self-center">
@@ -95,7 +94,10 @@
                         role="tabpanel"
                         aria-labelledby="approval-lines-tab"
                     >
-                        home 
+                        <input type="hidden" name="approversId" value="3">
+                        <input type="hidden" name="approversId" value="4">
+                        <input type="hidden" name="approversId" value="5">
+                        <input type="hidden" name="reviewersId" value="6">
                     </div>
                     <div
                         class="tab-pane"
@@ -176,6 +178,13 @@
         </div>
     </div>
 </div>
+
+<script th:inline="javascript">
+    const userInfo = /*[[${session.udto}]]*/ {};
+    if (userInfo){
+        document.querySelector('#writer').textContent = userInfo.name;
+    }
+</script>
 
 </div>
 </body>

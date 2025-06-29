@@ -115,7 +115,7 @@ public class ApprovalController {
 			e.printStackTrace();
 		}
 		ModelAndView mav = new ModelAndView("approval/referenceDocs");
-		mav.addObject("refernceDocs", res);
+		mav.addObject("referenceDocs", res);
 		return mav;
 	}
 	
@@ -158,13 +158,26 @@ public class ApprovalController {
 	@PostMapping("submitDraft")
 	public ModelAndView submitDraft(DocDTO dto,
 			@RequestParam MultipartFile attatchment,
-			@RequestParam List<Integer> approvers,
-			@RequestParam List<Integer> reviewers,
+			@RequestParam List<Integer> approversId,
+			@RequestParam List<Integer> reviewersId,
 			@SessionAttribute(MemberConst.USER_KEY) MemberDTO userInfo) {
 		
 		dto.setMember_id(userInfo.getId());
 		
-		return null;
+		boolean res = false;
+		try {
+			res = approvalService.submitDraft(dto, approversId, reviewersId);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		String msg = res ? "결재 요청 성공" : "결재 요청 실패";
+		
+		ModelAndView mav = new ModelAndView("approval/approvalMsg");
+		mav.addObject("msg", msg);
+		mav.addObject("dest", "approvalMain");
+		return mav;
 	}
 	
 	@GetMapping("/docContent")

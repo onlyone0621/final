@@ -5,11 +5,110 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Document</title>
+<title>문서 보기</title>
 </head>
 <body>
 <div layout:fragment="content">
-	<h1 th:text="${docContent.title}"></h1>
+	<div class="container d-flex flex-row gap-5">
+		<div class="d-flex flex-column gap-3 w-75">
+			<!-- Title and format's name -->
+			<div class="container-fluid">
+				<span class="navbar-text fs-1" th:text="${docContent.title}"></span>
+				<span class="navbar-text fs-2" th:text="${docContent.format_name}"></span>
+			</div>
+		
+			<!-- Button toolbar -->
+			<div>
+				<nav
+					class="nav nav-pills flex-row"
+				>
+					<button class="nav-link active"
+						>결재 요청</button
+					>
+					<a class="nav-link" href="javascript:window.history.back();">취소</a>
+				</nav>
+			</div>
+
+			<!-- Doc content -->
+			<div id="draft" th:utext="${docContent.content}" class="align-self-center w-100"></div>
+
+			<!-- File input -->
+			<div class="mb-3 w-75 align-self-center">
+				<!-- <label for="file_name" class="form-label">파일 첨부</label>
+				<input
+					type="file"
+					class="form-control"
+					name="attatchment"
+					id="file_name"
+					aria-describedby="helpId"
+				/>
+				<small id="helpId" class="form-text text-muted">10MB 까지만 첨부 가능</small> -->
+			</div>
+		</div>
+			
+			<!-- Right sidebar -->
+			<div class="w-25">
+                <!-- Nav tabs -->
+                <ul class="nav nav-tabs" id="myTab" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button
+                            class="nav-link active"
+                            id="approval-lines-tab"
+                            data-bs-toggle="tab"
+                            data-bs-target="#approval-lines"
+                            type="button"
+                            role="tab"
+                            aria-controls="approval-lines"
+                            aria-selected="true"
+                        >
+                            결재선
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button
+                            class="nav-link"
+                            id="doc-info-tab"
+                            data-bs-toggle="tab"
+                            data-bs-target="#doc-info"
+                            type="button"
+                            role="tab"
+                            aria-controls="doc-info"
+                            aria-selected="false"
+                        >
+                            문서 정보
+                        </button>
+                    </li>
+                </ul>
+                
+                <!-- Tab panes -->
+                <div class="tab-content">
+                    <div
+                        class="tab-pane active"
+                        id="approval-lines"
+                        role="tabpanel"
+                        aria-labelledby="approval-lines-tab"
+                    >
+                        <ul class="list-group list-group-flush">
+							<li class="list-group-item" th:each="approver : ${approvers}" th:object="${approver}" th:text="|*{dept_name} *{member_name} *{grade_name} *{status} *{process_date}|"></li>
+						</ul>
+                    </div>
+                    <div
+                        class="tab-pane"
+                        id="doc-info"
+                        role="tabpanel"
+                        aria-labelledby="doc-info-tab"
+                    >
+                        	<ul class="list-group list-group-flush" th:object="${docContent}">
+								<li class="list-group-item" th:text="*{writer}"></li>
+								<li class="list-group-item" th:text="*{write_date}"></li>
+								<li class="list-group-item" th:text="*{retention}"></li>
+							</ul>
+                    </div>
+                </div>
+            </div>
+
+	</div>
+	<!-- <h1 th:text="${docContent.title}"></h1>
 	<span th:text="${docContent.format_name}"></span>
 	<div th:text="${docContent.content}"></div>
 	<ul class="list-group list-group-flush">
@@ -22,7 +121,7 @@
 		<li class="list-group-item" th:text="*{writer}"></li>
 		<li class="list-group-item" th:text="*{write_date}"></li>
 		<li class="list-group-item" th:text="*{retention}"></li>
-	</ul>
+	</ul> -->
 </div>
 </body>
 </html>
