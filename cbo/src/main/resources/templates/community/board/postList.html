@@ -65,7 +65,9 @@
   <div class="container">
     <div class="sidebar">
       <h3>[[${communityName}]]</h3>
-      <a th:href="@{/community/{cId}/board/{boardId}/create(cId=${cId}, boardId=${boardId})}"><input type="button" value="글쓰기"></a>
+      <a th:href="@{'/community/' + ${cId} + '/board/' + ${boardId} + '/write'}">
+    <button type="button">글쓰기</button>
+	  </a>
       <ul>
         <li th:each="bdto : ${boardLists}">
           <a th:href="@{/community/{cId}/board/{boardId}(cId=${cId}, boardId=${bdto.id})}">[[${bdto.name}]]</a>
@@ -92,7 +94,7 @@
       </div>
 
       <ul>
-        <li>운영자 : 김주연</li>
+        <li>운영자 : 박주연</li>
         <li>게시판 주소 : /community/[[${cId}]]/board/[[${boardId}]]</li>
       </ul>
 

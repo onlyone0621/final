@@ -59,7 +59,24 @@ public int insertCommunity(CommunityDTO dto) throws Exception {
 // 게시글 작성
 @Override
 	public int insertPost(PostDTO pdto) throws Exception {
-		int result = mapper.insertPost();
+		int result = mapper.insertPost(pdto);
 		return result;
 	}
+
+//게시긃 본문보기
+@Override
+	public PostDTO selectPostById(int postId) throws Exception {
+		PostDTO pdto=mapper.selectPostById(postId);
+		pdto.setContent(pdto.getContent().replaceAll("\n", "<br>"));
+		return pdto;
+	}
+
+
+
 }
+
+
+
+
+
+

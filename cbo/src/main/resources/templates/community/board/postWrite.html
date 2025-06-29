@@ -6,6 +6,16 @@
 <head>
   <meta charset="UTF-8">
   <title>게시글 작성</title>
+    <script>
+    function showFiles(input) {
+      const fileNamesDiv = document.getElementById('fileNames');
+      fileNamesDiv.innerHTML = '';  // 기존 표시 지우기
+
+       for (let i = 0; i < input.files.length; i++) {
+        fileNamesDiv.innerHTML += input.files[i].name + '<br>';
+    }
+  }
+</script>
   <style>
     .container {
       display: flex;
@@ -53,7 +63,6 @@
     }
 
     .main input[type="text"],
-    .main select,
     .main textarea {
       width: 100%;
       padding: 8px;
@@ -77,49 +86,43 @@
 </head>
 <body>
 <div layout:fragment="content">
+
   <div class="container">
-    <!-- Sidebar -->
     <div class="sidebar">
       <h4>게시판</h4>
       <ul>
         <li th:each="b : ${boardList}">
-          <a th:href="@{/board/{boardId}(boardId=${b.id})}" th:text="${b.name}"></a>
+          <a th:href="@{'/community/' + ${cId} + '/board/' + ${b.id}}" th:text="${b.name}"></a>
         </li>
       </ul>
     </div>
 
-    <!-- Main Content -->
     <div class="main">
       <h2>게시글 작성</h2>
 
-      <form name="postWrite" th:action="@{/postWrite}" method="post" enctype="multipart/form-data">
+      <form name="postWrite"
+            th:action="@{'/community/' + ${cId} + '/board/' + ${boardId} + '/write'}"
+            method="post"
+            enctype="multipart/form-data">
         <ul>
-          <!-- 게시판 선택 -->
-          <li>
-            <label>게시판 선택</label>
-            <select name="board_id" required>
-              <option value="" disabled selected>게시판 선택</option>
-              <option th:each="b : ${boardList}" th:value="${b.id}" th:text="${b.name}"></option>
-            </select>
-          </li>
-
-          <!-- 제목 -->
           <li>
             <label>제목</label>
             <input type="text" name="title" placeholder="제목을 입력하세요" required>
           </li>
 
-          <!-- 내용 -->
           <li>
             <label>내용</label>
             <textarea name="content" rows="15" placeholder="내용을 입력하세요" required></textarea>
           </li>
 
-          <!-- 파일 업로드 -->
           <li>
             <label>파일 첨부</label>
-            <input type="file" name="images" multiple>
+            <input type="file" name="images" multiple onchange="showFiles(this)">
+            <div id="fileNames"></div>
           </li>
+
+
+
         </ul>
 
         <div class="btns">

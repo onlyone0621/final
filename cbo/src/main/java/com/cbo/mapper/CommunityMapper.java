@@ -19,5 +19,8 @@ public interface CommunityMapper {
 	//public List<BoardDTO> boardList(@Param("cId")int cId) throws Exception;
 	public List<BoardDTO> boardListByCommunityId(Map<String, Object> map) throws Exception;
 	public List<BoardDTO> boardList() throws Exception;
-	public int insertPost() throws Exception;
+	
+	//게시글 작성, 본문보기;
+	public int insertPost(PostDTO pdto) throws Exception;
+	public PostDTO selectPostById(int postId) throws Exception;
 }

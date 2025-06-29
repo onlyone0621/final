@@ -1,10 +1,55 @@
 <!DOCTYPE html>
-<html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="layouts/mainLayout">
 <head>
-<meta charset="UTF-8">
-<title>Insert title here</title>
+  <meta charset="UTF-8">
+  <title>게시글 상세보기</title>
+  <style>
+    .container { display: flex; }
+    .sidebar {
+      width: 200px;
+      background-color: #fbf9fd;
+      padding: 20px;
+      border-right: 1px solid #ddd;
+    }
+    .main {
+      flex-grow: 1;
+      padding: 20px;
+    }
+    .post-header h2 {
+      margin-bottom: 10px;
+    }
+    .post-content {
+      margin-bottom: 20px;
+    }
+  </style>
 </head>
 <body>
+<div layout:fragment="content">
+  <div class="container">
 
+    <!-- 사이드바 -->
+    <div class="sidebar">
+      <h4>게시판</h4>
+      <ul>
+        <li th:each="b : ${boardList}">
+          <a th:href="@{'/community/' + ${cId} + '/board/' + ${b.id}}"
+             th:text="${b.name}">게시판이름</a>
+        </li>
+      </ul>
+    </div>
+
+    <!-- 본문 -->
+    <div class="main">
+      <div class="post-header">
+        <h2 th:text="${post.title}">제목</h2>
+      </div>
+
+      <div class="post-content" th:utext="${post.content}">내용</div>
+    </div>
+
+  </div>
+</div>
 </body>
 </html>
