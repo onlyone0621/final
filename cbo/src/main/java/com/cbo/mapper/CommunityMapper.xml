@@ -61,7 +61,7 @@ ORDER BY id ASC
 </select>
 
 <!-- 게시글 작성 이미지 넣기  -->
-<insert id="insertImage" parameterType="com.cbo.community.model.BoardImageDTO">
+<insert id="insertImage" parameterType="com.cbo.community.model.ImageDTO">
   <selectKey keyProperty="id" order="BEFORE" resultType="int">
     SELECT sq_board_image_id.NEXTVAL FROM dual
   </selectKey>
@@ -74,7 +74,7 @@ ORDER BY id ASC
 </insert>
 
 <!-- 이미지 본문보기 -->
-<select id="selectImagesByPostId" parameterType="int" resultType="com.cbo.community.model.BoardImageDTO">
+<select id="selectImagesByPostId" parameterType="int" resultType="com.cbo.community.model.ImageDTO">
   SELECT *
   FROM board_image
   WHERE post_id = #{postId}
