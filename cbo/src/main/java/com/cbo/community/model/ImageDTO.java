@@ -16,7 +16,7 @@ public class ImageDTO {
 	private int id;
 	private int post_id;
 	private int member_id;
-	private String save_name;
+	private String saved_name;
 	private String original_name;
 	private Date upload_date;
 
