@@ -15,10 +15,13 @@ public class MessageDTO {
 	private String title;
 	private String content;
 	private int receiver_id;
+	private String receiver;
 	private int sender_id;
-	private Date write_date;
+	private String sender;
+	private String write_date;
 	private String is_read;
 	private String file_name;
 	private int ref;
 	private int lev;
+	private int max_rows;
 }
