@@ -11,7 +11,10 @@ public interface MessageService {
 	List<MessageDTO> getSentMessages(int memberId) throws Exception;
 	
 	List<OrganDTO> getMembers() throws Exception;
-	int sendMessage(MessageDTO dto) throws Exception;
+	boolean sendMessages(MessageDTO dto, List<Integer> selectedIds) throws Exception;
 	
 	MessageDTO getMessageContent(int id) throws Exception;
+	
+	int markAsRead(List<Integer> selectedIds) throws Exception;
+	int deleteMessages(List<Integer> selectedIds) throws Exception;
 }

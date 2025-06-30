@@ -3,5 +3,52 @@
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
   <mapper namespace="com.cbo.mapper.MessageMapper">
-  
+  	<select id="selectUnreadMessages" resultType="com.cbo.message.model.MessageDTO">
+  		SELECT *
+  		FROM message
+  		WHERE receiver_id = #{memberId}
+  		AND is_read = '안 읽음'
+  	</select>
+  	
+  	<select id="selectReceivedMessages" resultType="com.cbo.message.model.MessageDTO">
+  		SELECT *
+  		FROM message
+  		WHERE receiver_id = #{memberId}
+  	</select>
+  	
+  	<select id="selectSentMessages" resultType="com.cbo.message.model.MessageDTO">
+  		SELECT *
+  		FROM message
+  		WHERE sender_id = #{memberId}
+  	</select>
+  	
+  	<select id="selectMembers" resultType="com.cbo.member.model.OrganDTO">
+  		SELECT member.id AS member_id, member.name AS member_name, dept.name AS dept_name, grade.name AS grade_name, member.profile_image
+		FROM member
+		    JOIN dept ON member.dept_id = dept.id
+		    JOIN grade ON member.grade_id = grade.id 
+		ORDER BY dept.id, grade.seq
+  	</select>
+  	
+  	<select id="insertMessages" parameterType="com.cbo.message.model.MessageDTO">
+  		INSERT INTO (title, content, receiver_id, sender_id, file_name,)
+  	</select>
+  	
+  	<select id="selectMessage" resultType="com.cbo.message.model.MessageDTO">
+  		SELECT *
+  		FROM message
+  		WHERE id = #{id}
+  	</select>
+  	
+  	<update id="updateReadStatus">
+  	
+  	</update>
+  	
+  	<delete id="deleteMessages">
+  		DELETE FROM message
+  		WHERE id IN
+  		<foreach collection="list" item="selectedId" open="(" close=")" separator=",">
+  			#{selectedId}
+  		</foreach>
+  	</delete>
   </mapper>

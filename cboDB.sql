@@ -897,3 +897,265 @@ INSERT INTO approval_line VALUES (20, 11, '결재 예정', NULL);
 INSERT INTO approval_line VALUES (20, 18, '결재 예정', NULL);
 INSERT INTO approval_line VALUES (20, 1, '참조', TO_DATE('2025-06-10', 'YYYY-MM-DD'));
 
+
+-- Message sample insert queries
+-- 원글 1 (2025-06-20)
+INSERT INTO message (id, title, content, receiver_id, sender_id, write_date, is_read, file_name, ref, lev)
+VALUES (
+  sq_message_id.NEXTVAL,
+  '첫 번째 메시지',
+  '이것은 첫 번째 원글입니다.',
+  2, 1,
+  TO_DATE('2025-06-20', 'YYYY-MM-DD'),
+  '안 읽음',
+  NULL,
+  1,
+  0
+);
+
+-- 답글 1-1 (2025-06-21)
+INSERT INTO message VALUES (
+  sq_message_id.NEXTVAL,
+  'RE: 첫 번째 메시지',
+  '답변드립니다.',
+  1, 2,
+  TO_DATE('2025-06-21', 'YYYY-MM-DD'),
+  '읽음',
+  NULL,
+  1,
+  1
+);
+
+-- 답글 1-2 (2025-06-22)
+INSERT INTO message VALUES (
+  sq_message_id.NEXTVAL,
+  'RE: RE: 첫 번째 메시지',
+  '추가 답변입니다.',
+  2, 1,
+  TO_DATE('2025-06-22', 'YYYY-MM-DD'),
+  '읽음',
+  NULL,
+  1,
+  2
+);
+
+-- 원글 2 (2025-06-23)
+INSERT INTO message VALUES (
+  sq_message_id.NEXTVAL,
+  '두 번째 메시지',
+  '다른 원글입니다.',
+  3, 4,
+  TO_DATE('2025-06-23', 'YYYY-MM-DD'),
+  '안 읽음',
+  NULL,
+  2,
+  0
+);
+
+-- 답글 2-1 (2025-06-24)
+INSERT INTO message VALUES (
+  sq_message_id.NEXTVAL,
+  'RE: 두 번째 메시지',
+  '네 확인했습니다.',
+  4, 3,
+  TO_DATE('2025-06-24', 'YYYY-MM-DD'),
+  '읽음',
+  NULL,
+  2,
+  1
+);
+
+-- 원글 3 (2025-06-25)
+INSERT INTO message VALUES (
+  sq_message_id.NEXTVAL,
+  '세 번째 메시지',
+  '추가로 문의드립니다.',
+  5, 6,
+  TO_DATE('2025-06-25', 'YYYY-MM-DD'),
+  '안 읽음',
+  NULL,
+  3,
+  0
+);
+
+-- 원글 4 (2025-06-26)
+INSERT INTO message VALUES (
+  sq_message_id.NEXTVAL,
+  '네 번째 메시지',
+  '공지사항입니다.',
+  7, 8,
+  TO_DATE('2025-06-26', 'YYYY-MM-DD'),
+  '안 읽음',
+  NULL,
+  4,
+  0
+);
+
+-- 원글 5 (2025-06-27)
+INSERT INTO message VALUES (
+  sq_message_id.NEXTVAL,
+  '다섯 번째 메시지',
+  '업무 협조 부탁드립니다.',
+  9, 10,
+  TO_DATE('2025-06-27', 'YYYY-MM-DD'),
+  '읽음',
+  NULL,
+  5,
+  0
+);
+
+-- 답글 5-1 (2025-06-28)
+INSERT INTO message VALUES (
+  sq_message_id.NEXTVAL,
+  'RE: 다섯 번째 메시지',
+  '확인했습니다.',
+  10, 9,
+  TO_DATE('2025-06-28', 'YYYY-MM-DD'),
+  '읽음',
+  NULL,
+  5,
+  1
+);
+
+-- 답글 5-2 (2025-06-28)
+INSERT INTO message VALUES (
+  sq_message_id.NEXTVAL,
+  'RE: RE: 다섯 번째 메시지',
+  '감사합니다.',
+  9, 10,
+  TO_DATE('2025-06-28', 'YYYY-MM-DD'),
+  '읽음',
+  NULL,
+  5,
+  2
+);
+
+-- 원글 6 (2025-06-19)
+INSERT INTO message VALUES (
+  sq_message_id.NEXTVAL,
+  '여섯 번째 메시지',
+  '새로운 공지사항입니다.',
+  11, 12,
+  TO_DATE('2025-06-19', 'YYYY-MM-DD'),
+  '안 읽음',
+  NULL,
+  6,
+  0
+);
+
+-- 답글 6-1 (2025-06-18)
+INSERT INTO message VALUES (
+  sq_message_id.NEXTVAL,
+  'RE: 여섯 번째 메시지',
+  '확인했습니다.',
+  12, 11,
+  TO_DATE('2025-06-18', 'YYYY-MM-DD'),
+  '읽음',
+  NULL,
+  6,
+  1
+);
+
+-- 원글 7 (2025-06-17)
+INSERT INTO message VALUES (
+  sq_message_id.NEXTVAL,
+  '일곱 번째 메시지',
+  '자료 요청드립니다.',
+  13, 14,
+  TO_DATE('2025-06-17', 'YYYY-MM-DD'),
+  '안 읽음',
+  NULL,
+  7,
+  0
+);
+
+-- 답글 7-1 (2025-06-16)
+INSERT INTO message VALUES (
+  sq_message_id.NEXTVAL,
+  'RE: 일곱 번째 메시지',
+  '자료 전달드립니다.',
+  14, 13,
+  TO_DATE('2025-06-16', 'YYYY-MM-DD'),
+  '읽음',
+  NULL,
+  7,
+  1
+);
+
+-- 원글 8 (2025-06-15)
+INSERT INTO message VALUES (
+  sq_message_id.NEXTVAL,
+  '여덟 번째 메시지',
+  '긴급 상황 보고합니다.',
+  15, 16,
+  TO_DATE('2025-06-15', 'YYYY-MM-DD'),
+  '안 읽음',
+  NULL,
+  8,
+  0
+);
+
+-- 원글 9 (2025-06-14)
+INSERT INTO message VALUES (
+  sq_message_id.NEXTVAL,
+  '아홉 번째 메시지',
+  '프로젝트 상황 공유드립니다.',
+  17, 18,
+  TO_DATE('2025-06-14', 'YYYY-MM-DD'),
+  '안 읽음',
+  NULL,
+  9,
+  0
+);
+
+-- 답글 9-1 (2025-06-13)
+INSERT INTO message VALUES (
+  sq_message_id.NEXTVAL,
+  'RE: 아홉 번째 메시지',
+  '공유 감사합니다.',
+  18, 17,
+  TO_DATE('2025-06-13', 'YYYY-MM-DD'),
+  '읽음',
+  NULL,
+  9,
+  1
+);
+
+-- 원글 10 (2025-06-12)
+INSERT INTO message VALUES (
+  sq_message_id.NEXTVAL,
+  '열 번째 메시지',
+  '휴가 일정 문의드립니다.',
+  19, 20,
+  TO_DATE('2025-06-12', 'YYYY-MM-DD'),
+  '안 읽음',
+  NULL,
+  10,
+  0
+);
+
+-- 답글 10-1 (2025-06-11)
+INSERT INTO message VALUES (
+  sq_message_id.NEXTVAL,
+  'RE: 열 번째 메시지',
+  '승인해드리겠습니다.',
+  20, 19,
+  TO_DATE('2025-06-11', 'YYYY-MM-DD'),
+  '읽음',
+  NULL,
+  10,
+  1
+);
+
+-- 답글 10-2 (2025-06-10)
+INSERT INTO message VALUES (
+  sq_message_id.NEXTVAL,
+  'RE: RE: 열 번째 메시지',
+  '감사합니다!',
+  19, 20,
+  TO_DATE('2025-06-10', 'YYYY-MM-DD'),
+  '읽음',
+  NULL,
+  10,
+  2
+);

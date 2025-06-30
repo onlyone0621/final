@@ -1,0 +1,55 @@
+@charset "UTF-8";
+
+.body {
+    display: flex;
+    align-items: stretch;
+}
+
+aside {
+    flex: 1;
+}
+
+.sidebar {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 740px;
+    gap: 64px;
+    margin: 24px;
+    padding-top: 50px;
+    padding-bottom: 50px;
+    border: 1px black solid;
+    border-radius: 30px;
+}
+
+.sidebar > button {
+    width: 160px;
+    height: 40px;
+}
+
+.sidebar-menu {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+}
+
+.sidebar-menu ul {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    height: 180px;
+}
+
+.sidebar-menu a {
+    text-decoration: none;
+}
+
+.content {
+    flex: 5;
+    padding: 24px;
+}
