@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+				xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+				layout:decorate="layouts/messageLayout">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>받은 메시지함</title>
+</head>
+<body>
+<div layout:fragment="content">
+	<h1>받은 메시지함</h1>
+	<div
+		class="table-responsive"
+	>
+		<table
+			class="table table-primary"
+		>
+			<thead>
+				<tr>
+					<th scope="col"><input type="checkbox"></th>
+					<th scope="col">보낸이</th>
+					<th scope="col">제목</th>
+					<th scope="col">날짜</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr class="" th:each="receivedMessage : ${receivedMessages}" th:object="${receivedMessage}">
+					<td scope="row"><input type="checkbox" name="" value=""></td>
+					<td>R1C2</td>
+					<td>R1C3</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	
+</div>
+</body>
+</html>

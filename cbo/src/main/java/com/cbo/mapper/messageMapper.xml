@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  <mapper namespace="com.cbo.mapper.MessageMapper">
+  	<select id="selectUnreadMessages" parameterType="map" resultType="com.cbo.message.model.MessageDTO">
+  		SELECT
+		    a.max_rows,
+		    a.id,
+		    a.title,
+		    a.write_date,
+		    a.sender,
+		    a.is_read
+		FROM (
+		    SELECT 
+		        COUNT(*) OVER() AS max_rows,
+		        ROW_NUMBER() OVER (ORDER BY message.write_date DESC) AS rn,
+		        message.id,
+		        message.title,
+		        TO_CHAR(message.write_date, 'YYYY-MM-DD HH24:MI:SS') AS write_date,
+		        member.name AS sender,
+		        message.is_read
+		    FROM message
+		    JOIN MEMBER ON member.id = message.sender_id
+		    WHERE receiver_id = #{memberId}
+		    ) a
+		WHERE a.rn BETWEEN #{start} AND #{start}
+  	</select>
+  	
+  	<select id="selectReceivedMessages" parameterType="map" resultType="com.cbo.message.model.MessageDTO">
+  		SELECT
+		    a.max_rows,
+		    a.id,
+		    a.title,
+		    a.write_date,
+		    a.sender,
+		    a.is_read
+		FROM (
+		    SELECT 
+		        COUNT(*) OVER() AS max_rows,
+		        ROW_NUMBER() OVER (ORDER BY message.write_date DESC) AS rn,
+		        message.id,
+		        message.title,
+		        TO_CHAR(message.write_date, 'YYYY-MM-DD HH24:MI:SS') AS write_date,
+		        member.name AS sender,
+		        message.is_read
+		    FROM message
+		    JOIN MEMBER ON member.id = message.sender_id
+		    WHERE receiver_id = #{memberId}
+		    ) a
+		WHERE a.rn BETWEEN #{start} AND #{end}
+  	</select>
+  	
+  	<select id="selectSentMessages" parameterType="map" resultType="com.cbo.message.model.MessageDTO">
+  		SELECT
+		    a.max_rows,
+		    a.id,
+		    a.title,
+		    a.write_date,
+		    a.receiver
+		FROM (
+		    SELECT 
+		        COUNT(*) OVER() AS max_rows,
+		        ROW_NUMBER() OVER (ORDER BY message.write_date DESC) AS rn,
+		        message.id,
+		        message.title,
+		        TO_CHAR(message.write_date, 'YYYY-MM-DD HH24:MI:SS') AS write_date,
+		        member.name AS receiver
+		    FROM message
+		    JOIN MEMBER ON member.id = message.receiver_id
+		    WHERE sender_id = #{memberId}
+		    ) a
+		WHERE a.rn BETWEEN #{start} AND #{end}
+  	</select>
+  	
+  	<select id="selectMembers" resultType="com.cbo.member.model.OrganDTO">
+  		SELECT member.id AS member_id, member.name AS member_name, dept.name AS dept_name, grade.name AS grade_name, member.profile_image
+		FROM member
+		    JOIN dept ON member.dept_id = dept.id
+		    JOIN grade ON member.grade_id = grade.id 
+		ORDER BY dept.id, grade.seq
+  	</select>
+  	
+  	<select id="insertMessages" parameterType="com.cbo.message.model.MessageDTO">
+  		INSERT INTO (title, content, receiver_id, sender_id, file_name, ref, lev)
+  		VALUES (#{title}, #{content}, #{receiver_id}, #{sender_id}, NULL, #{ref}, #{lev})
+  	</select>
+  	
+  	<select id="selectMessage" resultType="com.cbo.message.model.MessageDTO">
+  		SELECT *
+  		FROM message
+  		WHERE id = #{id}
+  	</select>
+  	
+  	<update id="updateReadStatus" parameterType="map">
+  		UPDATE message
+  		SET is_read = #{status}
+  		WHERE id IN
+  		<foreach collection="selectedIds" item="selectedId" open="(" close=")" separator=",">
+  			#{seletedId}
+  		</foreach>
+  	</update>
+  	
+  	<delete id="deleteMessages">
+  		DELETE FROM message
+  		WHERE id IN
+  		<foreach collection="list" item="selectedId" open="(" close=")" separator=",">
+  			#{selectedId}
+  		</foreach>
+  	</delete>
+  </mapper>
