@@ -2,6 +2,7 @@ package com.cbo.approval.service;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -106,11 +107,16 @@ public class ApprovalServiceImple implements ApprovalService {
 
 
 	@Override
-	public List<OrganDTO> getMembers() throws Exception {
+	public Map<String, List<OrganDTO>> getMembers() throws Exception {
 		// TODO Auto-generated method stub
-		return mapper.selectMembers();
+		List<OrganDTO> members = mapper.selectMembers();
+		
+		// Process members list grouping by dept 
+		return members.stream()
+				.collect(Collectors.groupingBy(OrganDTO :: getDept_name,
+						LinkedHashMap :: new,
+						Collectors.toList()));
 	}
-
 
 	@Override
 	@Transactional
