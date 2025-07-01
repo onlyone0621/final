@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import com.cbo.mapper.MessengerMapper;
 import com.cbo.messenger.model.ChatMessageDTO;
+import com.cbo.messenger.model.ChatRoomDTO;
 import com.cbo.messenger.model.MessageListDTO;
 @Service
 public class ChatMessageServiceImple implements ChatMessageService {
@@ -24,6 +25,12 @@ public class ChatMessageServiceImple implements ChatMessageService {
 	@Override
 	public List<MessageListDTO> getMessageList(int room_id) throws Exception {
 		List<MessageListDTO> list = mapper.selectMessage(room_id);
+		return list;
+	}
+	
+	@Override
+	public List<ChatRoomDTO> getChatList(int member_id) throws Exception {
+		List<ChatRoomDTO> list = mapper.selectChatList(member_id);
 		return list;
 	}
 

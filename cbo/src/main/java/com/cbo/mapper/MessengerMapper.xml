@@ -7,18 +7,17 @@
     insert into chat_message values(sq_chat_message_id.nextval, #{chatroom_id}, #{member_id}, sysdate, #{content})
 </insert>
 <select id="selectMessage" parameterType="int" resultType="com.cbo.messenger.model.MessageListDTO">
-	SELECT 
-	    cm.content, 
-	    m.name 
-	FROM 
-	    chat_message cm
-	JOIN 
-	    member m 
-	ON 
-	    cm.member_id = m.id
-	WHERE
-	    cm.chatroom_id = #{chatroom_id}
-	ORDER BY 
-	    cm.write_date ASC
+	SELECT cm.content, m.name 
+	FROM chat_message cm
+	JOIN member m 
+	ON cm.member_id = m.id
+	WHERE cm.chatroom_id = #{chatroom_id}
+	ORDER BY cm.write_date ASC
+</select>
+<select id="selectChatList" resultType="com.cbo.messenger.model.ChatRoomDTO" parameterType="int">
+	SELECT DISTINCT c.id, c.name
+	FROM chat_message m
+	JOIN chatroom c ON m.chatroom_id = c.id
+	WHERE m.member_id = ${id}	
 </select>
 </mapper>

@@ -40,7 +40,6 @@ public class EchoHandler extends TextWebSocketHandler {
 		    roomSessions.put(room_id, sessions);
 		}
 		sessions.add(session);
-        broadcastToRoom(room_id, dto.getName() + "님이 입장하셨습니다.");
 	}
 
 	//메세지 작성 및 전달

@@ -15,114 +15,32 @@
     }
 
     form {
-        max-width: 600px;
-        margin: 50px auto;
+        margin: 0px auto;
         padding: 30px;
         background-color: white;
     }
 
-    form div {
-        margin-bottom: 15px;
-    }
-
-    input[type="password"]{
-        width: 45%;
-        padding: 10px;
-        border: 1px solid #ccc;
-        border-radius: 6px;
-        font-size: 14px;
-    }
-    
-    input[type="button"],
-    input[type="submit"],
-    input[type="reset"] {
-    	width: 25%;
-        padding: 10px 15px;
-        background-color: #FFC6C6;
-        color: white;
-        border: none;
-        border-radius: 6px;
-        cursor: pointer;
-        font-size: 14px;
-        margin-top: 5px;
-        margin-left: 5px;
-    }
-
-    input[type="button"]:hover,
-    input[type="submit"]:hover,
-    input[type="reset"]:hover {
-        background-color: #FFA2A2;
-    }
-	#hlabel {
-		color: #909090;
-		display: inline-block;
-		width: 120px;
-		margin-bottom: 5px;
-        font-weight: bold;
-        font-size: 16px;
-        text-align: left;
-	}
-
-
     input::placeholder {
         color: #999;
-    }
-
-   
-	.sidebar {
-	    display: flex;
-	    flex-direction: column;
-	    align-items: center;
-	    height: 740px;
-	    gap: 64px;
-	    margin: 24px;
-	    padding-top: 50px;
-	    padding-bottom: 50px;
-	    border: 1px black solid;
-	    border-radius: 30px;
-	   	width: 230px;
-	}
-	
-	
-	.sidebar-menu {
-	    display: flex;
-	    flex-direction: column;
-	    align-items: center;
-	    gap: 24px;
-	}
-	
-	.sidebar-menu ul {
-	    display: flex;
-	    flex-direction: column;
-	    align-items: center;
-	    gap: 24px;
-	    list-style-type: none;
-	    margin: 0;
-	    padding: 0;
-	    height: 180px;
-	}
-	
-	.sidebar-menu a {
-	    text-decoration: none;
-	    color: black;
-	}
-	
-	.content {
-	    flex: 5;
-	}
+    }	
+    
 	.menu-title{
 		text-align: center;
 		font-size: 22px;
 		font-weight: bold;
 	}
-	.sidebar-menu hr{
-		border: solid 1.5px;
-		width: 160px;
-	}
 	
 	.main-div{
 		display: flex;
 	}
+	
+	.chat-div{
+		margin-left: 20px;
+		text-align: center;
+		display: flex;
+		width: 800px
+	}
+	
 	.title{
 		margin-top: 50px;
 		font-size: 30px;
@@ -131,12 +49,121 @@
 	}
 	.title hr{
 		border: solid 1.5px;
-		width: 1550px;
+		width: 1850px;
 	}
+
+    .chat-container {
+        flex: 1;
+        display: flex;
+        gap: 300px;
+        height: 100%;
+    }
+
+    .chat-room-list {
+        width: 300px;
+        height: 100%;
+        background-color: #f9f9f9;
+        padding: 20px;
+        border-radius: 12px;
+        box-shadow: inset 0 0 5px rgba(0,0,0,0.05);
+        overflow-y: auto;
+    }
+
+    .chat-room-list h3 {
+        margin-top: 0;
+        margin-bottom: 15px;
+        font-size: 18px;
+    }
+
+    .chat-room-item {
+    	height: 80px;
+        padding: 10px 12px;
+        margin-bottom: 10px;
+        background-color: white;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: background-color 0.3s, box-shadow 0.2s;
+    }
+
+    .chat-room-item:hover {
+        background-color: #e8f0ff;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    }
+
+    .chat-window {
+    	width: 400px;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        background-color: #f9f9f9;
+        border-radius: 12px;
+        box-shadow: inset 0 0 5px rgba(0,0,0,0.05);
+        padding: 15px;
+        box-sizing: border-box;
+    }
+
+    .chat-messages {
+        flex: 1;
+        border: 1px solid #eee;
+        padding: 10px;
+        margin-bottom: 10px;
+        border-radius: 8px;
+        background-color: #ffffff;
+        text-align: left;
+    }
+
+    .chat-input {
+        display: flex;
+        gap: 10px;
+    }
+
+    #chat-input {
+        flex: 1;
+        padding: 10px 14px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        font-size: 14px;
+    }
+
+    #sendBtn {
+        padding: 10px 20px;
+        border: none;
+        background-color: #FFC6C6;
+        color: white;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 14px;
+    }
+
+    #sendBtn:hover {
+        background-color: #FFA2A2;;
+    }
+
+    /* 반응형 대응 */
+    @media (max-width: 768px) {
+        .chat-container {
+            flex-direction: column;
+        }
+
+        .chat-room-list,
+        .chat-window {
+            width: 100%;
+        }
+    }
+	.chat-messages p {
+  		margin: 0;
+	}
+	
 </style>
 <script>
-window.onload = function() {
+window.onload = function () {
     scrollToBottom();
+};
+
+function scrollToBottom() {
+    const chatBox = document.getElementById("chatList");
+    chatBox.scrollTop = chatBox.scrollHeight;
 }
 
 document.addEventListener("keyup", function(event){
@@ -145,36 +172,20 @@ document.addEventListener("keyup", function(event){
     }
 });
 
-function scrollToBottom() {
-    const chatArea = document.getElementsByName("chatList")[0];
-    chatArea.scrollTop = chatArea.scrollHeight;
-}
-
 var ws;
 var con=false;
 var sw=false;
-function conn(){
-	if(con){
-		alert('이미 채팅방을 이용중입니다.');
-		return;
-	}else{
-		sw=false;
-		con=true;
-		var user = document.getElementById("user").value;
-		if(user==null){
-			alert('로그인 정보를 확인해주세요.');
-			location.href="/";
-		}else{
-			const room_id = 1;
-			ws = new WebSocket("ws://192.168.0.141:9090/ws/chat?room_id="+room_id);
-			ws.onmessage = onMsg;	
-		}
-	}
+function conn(roomId){
+	ws = new WebSocket("ws://192.168.0.141:9090/ws/chat?room_id="+roomId);
+	ws.onmessage = onMsg;	
 }
 
 function onMsg(evt){
+	const chatBox = document.getElementById("chatList");
 	var data = evt.data;
-	document.messenger.chatList.value+=data+'\n';
+	const p = document.createElement("p");
+    p.textContent = data;
+    chatBox.appendChild(p);
 	scrollToBottom()
 	if(sw){
 		cl();
@@ -197,21 +208,67 @@ function cl(){
 function show(){
 	var user = document.getElementById("user").value;
 	var msg = document.messenger.msg.value;
-	if(con == false){
-		alert('채팅방에 입장후 이용해주세요.');
-		return;
+	if(msg == null || msg == ''){
+		alert('메세지를 입력해주세요.');
 	}else{
-		if(msg == null || msg == ''){
-			alert('메세지를 입력해주세요.');
+		if(user == null){
+			alert('로그인 정보를 확인해주세요.');
+			location.href="/";
 		}else{
-			if(user == null){
-				alert('로그인 정보를 확인해주세요.');
-				location.href="/";
-			}else{
-				document.messenger.msg.value="";
-				document.messenger.msg.focus();
-				ws.send(msg);
-			}	
+			document.messenger.msg.value="";
+			document.messenger.msg.focus();
+			ws.send(msg);
+		}	
+	}
+}
+
+var XHR=null;
+function getXHR(){
+	if(window.ActioveXObject){
+		return new ActiveXObject("Msxml2.XMLHTTP");
+	}else if(window.XMLHttpRequest){
+		return new XMLHttpRequest();
+	}else{
+		return null;
+	}
+}
+
+function sendRequest(url,params,callback,method){
+	XHR = getXHR();
+	var newMethod = method ? method : 'GET';//1차 유효성 검사
+	//2차 유효성 검사
+	if(newMethod!='GET' && newMethod!='POST'){
+		newMethod = 'GET';
+	}
+	//3차 유효성 검사
+	var newParams = (params==null||params=='') ? null : params;
+	if(newMethod=='GET' && newParams!=null){
+		url = url + '?' + newParams;
+	}
+	XHR.onreadystatechange=callback;
+	XHR.open(newMethod, url, true);
+	XHR.setRequestHeader('Context-Type','application/x-www-form-urlencoded');
+	XHR.send(newParams);
+}
+
+function chatRoom(element) {
+	const id = element.getAttribute("data-room-id");
+	const name = element.getAttribute("data-room-name");
+	params = 'id='+id;
+	sendRequest('chatContent',params,function() {
+        chatContent(id);},'GET');
+	document.getElementById("chatRoomTitle").textContent = name;
+	
+}
+
+function chatContent(roomId){
+	if(XHR.readyState==4){
+		if(XHR.status==200){
+			var chatContent = document.getElementById("chatList");
+			var data = XHR.responseText;
+			chatContent.innerHTML = data;
+			scrollToBottom();
+			conn(roomId);
 		}
 	}
 }
@@ -220,34 +277,40 @@ function show(){
 <body>
 <div layout:fragment="content">
 	<div class="main-div">
-        <div class="sidebar">          
-            <div class="sidebar-menu">
-                <div class="menu-title">나의 정보
-                	<hr>
-                </div>
-                
-                <ul>
-                    <li><a href="memberInfoUpdate">개인정보 수정</a></li>
-                    <li><a href="memberPwdUpdate" style="font-weight: bold;">비밀번호 변경</a></li>
-                </ul>
-            </div>
-        </div>
         <div>
         	<div class="title">
-        		<lable>비밀번호 변경</lable>
+        		<lable>메신저</lable>
         		<hr>
         	</div>
-			<form name="messenger" action="messenger" method="post" onsubmit="return false;">
-				<input type="hidden" id="user" th:if="${session.udto != null}" th:value="${session.udto.name}" />
-				<input type="hidden" id="user" th:unless="${session.udto != null}" th:value="" />
-				<div>
-					<textarea rows="30" cols="80" name="chatList" th:text="${msgList}" readonly></textarea>
-					<input type="text" id="inputMsg" name="msg">
-					<input type="button" value="전송" id="sendBtn" onclick="show()"><br>
-					<input type="button" value="입장하기" onclick="conn()">
-					<input type="button" value="퇴장하기" onclick="exit()"> 
-				</div>
-			</form>
+        	<div class="chat-div">
+				<form name="messenger" action="messenger" method="post" onsubmit="return false;">
+				    <input type="hidden" id="user" th:if="${session.udto != null}" th:value="${session.udto.name}" />
+				    <input type="hidden" id="user" th:unless="${session.udto != null}" th:value="" />
+				    <div class="chat-container">
+				        <div class="chat-room-list">
+							<h3>참여 중인 채팅방</h3>						
+						   <div
+							  th:each="room : ${chatList}"
+							  class="chat-room-item"
+							  th:text="${room.name}"
+							  th:attr="data-room-id=${room.id}, data-room-name=${room.name}"
+							  onclick="chatRoom(this)">
+							</div>
+						</div>
+				
+				        <div class="chat-window">
+				        	<h3 id="chatRoomTitle">참여 중인 채팅방</h3>
+				            <div id="chat-messages" class="chat-messages">
+				            	<div id="chatList" th:text="${msgList}" style="white-space: pre-wrap; height: 400px; overflow-y: auto; border: 1px solid #ccc; padding: 10px;"></div>
+				            </div>
+				            <div class="chat-input">
+				                <input type="text" id="chat-input" name="msg" placeholder="메시지를 입력하세요..." onkeypress="if(event.key==='Enter') sendMessage()">
+				                <button type="button" id="sendBtn" onclick="show()">전송</button>
+				            </div>
+				        </div>
+				    </div>
+				</form>
+        	</div>
 		</div>
 	</div>
 </div>
