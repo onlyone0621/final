@@ -111,36 +111,6 @@ BEGIN
 END;
 /
 
-CREATE OR REPLACE TRIGGER trg_draft_id
-BEFORE INSERT ON draft
-FOR EACH ROW
-BEGIN
-    IF :NEW.id IS NULL THEN
-        :NEW.id := sq_draft_id.NEXTVAL;
-    END IF;
-END;
-/
-
-CREATE OR REPLACE TRIGGER trg_medical_support_id
-BEFORE INSERT ON medical_support
-FOR EACH ROW
-BEGIN
-    IF :NEW.id IS NULL THEN
-        :NEW.id := sq_medical_support_id.NEXTVAL;
-    END IF;
-END;
-/
-
-CREATE OR REPLACE TRIGGER trg_leave_application_id
-BEFORE INSERT ON leave_application
-FOR EACH ROW
-BEGIN
-    IF :NEW.id IS NULL THEN
-        :NEW.id := sq_leave_application_id.NEXTVAL;
-    END IF;
-END;
-/
-
 CREATE OR REPLACE TRIGGER trg_community_id
 BEFORE INSERT ON community
 FOR EACH ROW

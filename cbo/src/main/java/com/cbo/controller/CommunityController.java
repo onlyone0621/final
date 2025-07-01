@@ -29,9 +29,17 @@ public class CommunityController {
 
     }
 	
+	///mainNewest
+	@GetMapping("communityMainNewset")
+	public String CommunityMainNewestGo() {
+		
+		
+		return "community/communityMainNewset";
+
+	}
 	///mainNewest 최신글 불러오기 5개 
-	@GetMapping("communityMainNewest")
-public ModelAndView CommunityMainNewest() {
+	@PostMapping("communityMainNewset")
+	public ModelAndView CommunityMainNewest() {
 		
 		List<CommunityDTO> lists=null;
 		try {
@@ -41,10 +49,11 @@ public ModelAndView CommunityMainNewest() {
 		}
 		ModelAndView mav = new ModelAndView();
 		mav.addObject("lists", lists);
-		mav.setViewName("community/CommunityMainNewest");
+		mav.setViewName("community/communityMainNewset");
 		
 		return mav;
 	}
+	
 	
 	
 	@GetMapping("communityMainJoin")

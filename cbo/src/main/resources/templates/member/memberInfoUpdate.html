@@ -41,10 +41,20 @@
         font-size: 14px;
     }
 
-    input[type="button"],
-    input[type="submit"],
-    input[type="reset"] {
+    input[type="button"]{
     	width: 23%;
+        padding: 10px 15px;
+        background-color: #FFC6C6;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 14px;
+        margin-top: 5px;
+        margin-left: 5px;
+    }
+    input[type="submit"] {
+    	width: 55%;
         padding: 10px 15px;
         background-color: #FFC6C6;
         color: white;
@@ -57,8 +67,7 @@
     }
 
     input[type="button"]:hover,
-    input[type="submit"]:hover,
-    input[type="reset"]:hover {
+    input[type="submit"]:hover {
         background-color: #FFA2A2;
     }
 	label {
@@ -93,7 +102,6 @@
     }
 
 	.button-group {
-		display: flex;
 		margin-left: 100px;
 	}
     
@@ -108,7 +116,7 @@
 	    padding-bottom: 50px;
 	    border: 1px black solid;
 	    border-radius: 30px;
-	   	width: 200px;
+	   	width: 230px;
 	}
 	
 	.sidebar > button {
@@ -149,7 +157,7 @@
 	}
 	.sidebar-menu hr{
 		border: solid 1.5px;
-		width: 140px;
+		width: 160px;
 	}
 	.main-div{
 		display: flex;
@@ -162,7 +170,7 @@
 	}
 	.title hr{
 		border: solid 1.5px;
-		width: 1580px;
+		width: 1550px;
 	}
 	.profileImage-div{
 		display: flex;
@@ -235,7 +243,7 @@ window.addEventListener("DOMContentLoaded", function() {
 					<div>
 						<div class="profileImage-div">
 							<label id="profileImage-label">프로필 사진</label><br>
-							<img id="profilePreview" th:src="@{${session.udto.profile_image} != null ? ${session.udto.profile_image} : '/profileImage/defaultProfileImage.jpg'}">
+							<img id="profilePreview" th:src="@{${session.udto.profile_image}}">
 						</div>
 						<div class="profileImage-input">
 							<input type="file" id="profileImage" name="profileImage" onchange="previewProfileImage(event)">
@@ -272,7 +280,6 @@ window.addEventListener("DOMContentLoaded", function() {
 				    </div>
 				    <div class="button-group">
 				        <input type="submit" value="정보수정">
-				        <input type="reset" value="다시작성" onclick="clearForm()">
 				    </div>
 				</div>
 			</form>
