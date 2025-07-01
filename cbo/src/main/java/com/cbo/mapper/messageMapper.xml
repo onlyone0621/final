@@ -23,8 +23,9 @@
 		    FROM message
 		    JOIN MEMBER ON member.id = message.sender_id
 		    WHERE receiver_id = #{memberId}
+		    AND message.is_read = '안 읽음'
 		    ) a
-		WHERE a.rn BETWEEN #{start} AND #{start}
+		WHERE a.rn BETWEEN #{start} AND #{end}
   	</select>
   	
   	<select id="selectReceivedMessages" parameterType="map" resultType="com.cbo.message.model.MessageDTO">
@@ -109,7 +110,7 @@
   		SET is_read = #{status}
   		WHERE id IN
   		<foreach collection="selectedIds" item="selectedId" open="(" close=")" separator=",">
-  			#{seletedId}
+  			#{selectedId}
   		</foreach>
   	</update>
   	
