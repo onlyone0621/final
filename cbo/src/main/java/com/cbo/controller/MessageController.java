@@ -6,6 +6,7 @@ import java.util.Map;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttribute;
@@ -38,7 +39,7 @@ public class MessageController {
 			e.printStackTrace();
 		}
 		
-		ModelAndView mav = new ModelAndView("message/receivedMessages");
+		ModelAndView mav = new ModelAndView("message/unreadMessages");
 		mav.addObject("unreadMessages", res);
 		
 		int maxRows = res != null && res.size() > 0 ? res.get(0).getMax_rows() : 1;
@@ -82,7 +83,7 @@ public class MessageController {
 			e.printStackTrace();
 		}
 		
-		ModelAndView mav = new ModelAndView("message/receivedMessages");
+		ModelAndView mav = new ModelAndView("message/sentMessages");
 		mav.addObject("sentMessages", res);
 		
 		int maxRows = res != null && res.size() > 0 ? res.get(0).getMax_rows() : 1;
@@ -93,7 +94,7 @@ public class MessageController {
 		return mav;
 	}
 	
-	@GetMapping("sendMessage")
+	@GetMapping("sendMessages")
 	public String sendMessageForm(Model model) {
 		Map<String, List<OrganDTO>> membersByDept = null;
 		

@@ -5,7 +5,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Document</title>
+<title>안 읽은 메시지함</title>
 </head>
 <body>
 <div layout:fragment="content">
@@ -37,7 +37,7 @@
 				<tr th:if="${#lists.isEmpty(unreadMessages)}">
 					<td colspan="4">메시지가 없습니다</td>
 				</tr>
-				<tr class="" th:each="unreadMessage : ${unreadMessages}" th:object="${unreadMessage}" th:classappend="${is_read} == '안 읽음' ? 'fw-bold'">
+				<tr class="" th:each="unreadMessage : ${unreadMessages}" th:object="${unreadMessage}" th:classappend="*{is_read} == '안 읽음' ? 'fw-bold'">
 					<td scope="row"><input type="checkbox" name="selectedIds" th:value="*{id}"></td>
 					<td scope="row" th:text="*{sender}"></td>
 					<td scope="row"><a class="text-decoration-none" th:text="*{title}" th:href="@{messageContent(id=*{id})}"></td>
