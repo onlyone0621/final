@@ -140,7 +140,6 @@
         background-color: #FFA2A2;;
     }
 
-    /* 반응형 대응 */
     @media (max-width: 768px) {
         .chat-container {
             flex-direction: column;
@@ -289,13 +288,11 @@ function chatContent(roomId){
 				    <div class="chat-container">
 				        <div class="chat-room-list">
 							<h3>참여 중인 채팅방</h3>						
-						   <div
-							  th:each="room : ${chatList}"
-							  class="chat-room-item"
-							  th:text="${room.name}"
-							  th:attr="data-room-id=${room.id}, data-room-name=${room.name}"
-							  onclick="chatRoom(this)">
-							</div>
+							<div th:each="room : ${chatList}" class="chat-room-item" th:text="${room.name}" th:attr="data-room-id=${room.id}, data-room-name=${room.name}" onclick="chatRoom(this)"></div>
+							
+							<div class="create-chat-room-wrapper">
+						        <input type="button" value="채팅방 생성" onclick="createChatRoom()">
+						    </div>
 						</div>
 				
 				        <div class="chat-window">
@@ -304,7 +301,7 @@ function chatContent(roomId){
 				            	<div id="chatList" th:text="${msgList}" style="white-space: pre-wrap; height: 400px; overflow-y: auto; border: 1px solid #ccc; padding: 10px;"></div>
 				            </div>
 				            <div class="chat-input">
-				                <input type="text" id="chat-input" name="msg" placeholder="메시지를 입력하세요..." onkeypress="if(event.key==='Enter') sendMessage()">
+				                <input type="text" id="chat-input" name="msg" placeholder="메시지를 입력하세요." onkeypress="if(event.key==='Enter') sendMessage()">
 				                <button type="button" id="sendBtn" onclick="show()">전송</button>
 				            </div>
 				        </div>

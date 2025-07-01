@@ -8,9 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.cbo.mapper.MessengerMapper;
-import com.cbo.messenger.model.ChatMessageDTO;
-import com.cbo.messenger.model.ChatRoomDTO;
-import com.cbo.messenger.model.MessageListDTO;
+import com.cbo.messenger.model.*;
+
 @Service
 public class ChatMessageServiceImple implements ChatMessageService {
 	@Autowired
@@ -29,8 +28,8 @@ public class ChatMessageServiceImple implements ChatMessageService {
 	}
 	
 	@Override
-	public List<ChatRoomDTO> getChatList(int member_id) throws Exception {
-		List<ChatRoomDTO> list = mapper.selectChatList(member_id);
+	public List<ChatRoomListDTO> getChatRoomList(int member_id) throws Exception {
+		List<ChatRoomListDTO> list = mapper.selectChatRoomList(member_id);
 		return list;
 	}
 

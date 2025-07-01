@@ -14,10 +14,10 @@
 	WHERE cm.chatroom_id = #{chatroom_id}
 	ORDER BY cm.write_date ASC
 </select>
-<select id="selectChatList" resultType="com.cbo.messenger.model.ChatRoomDTO" parameterType="int">
-	SELECT DISTINCT c.id, c.name
-	FROM chat_message m
-	JOIN chatroom c ON m.chatroom_id = c.id
-	WHERE m.member_id = ${id}	
+<select id="selectChatRoomList" resultType="com.cbo.messenger.model.ChatRoomListDTO" parameterType="int">
+	SELECT c.id, c.name
+	FROM chatroom_user cu
+	JOIN chatroom c ON cu.chatroom_id = c.id
+	WHERE cu.member_id = ${member_id}
 </select>
 </mapper>
