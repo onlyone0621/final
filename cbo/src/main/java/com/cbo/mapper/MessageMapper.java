@@ -16,7 +16,7 @@ public interface MessageMapper {
 	
 	MessageDTO selectMessage(int id) throws Exception;
 	
-	int updateReadStatus(List<Integer> selectedIds) throws Exception;
+	int updateReadStatus(Map<String, Object> map) throws Exception;
 	int deleteMessages(List<Integer> selectedIds) throws Exception;
 	
 }

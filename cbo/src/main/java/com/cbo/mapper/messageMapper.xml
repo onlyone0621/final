@@ -102,7 +102,6 @@
 		  LEFT JOIN dept d2 ON m2.dept_id = d2.id
 		  LEFT JOIN grade g2 ON m2.grade_id = g2.id
 		WHERE message.id = #{id}
-
   	</select>
   	
   	<update id="updateReadStatus" parameterType="map">

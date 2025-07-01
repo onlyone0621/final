@@ -80,14 +80,32 @@ public class MessageServiceImple implements MessageService {
 
 	@Override
 	public MessageDTO getMessageContent(int id) throws Exception {
-		// TODO Auto-generated method stub
-		return mapper.selectMessage(id);
+		// Fetch content of message
+		MessageDTO res = mapper.selectMessage(id);
+		
+		// Update its read status to 'read'
+		if (res != null && res.getId() == id) {
+			String status = MessageConst.READ;
+			List<Integer> selectedIds = List.of(id);
+			
+			Map<String, Object> map = new HashMap<>();
+			map.put("status", status);
+			map.put("selectedIds", selectedIds);
+			
+			if (mapper.updateReadStatus(map) != 1) {
+				res = null;
+			}
+		}
+		
+		return res;
 	}
 
 	@Override
 	public int markAsRead(List<Integer> selectedIds) throws Exception {
-		// TODO Auto-generated method stub
-		return mapper.updateReadStatus(selectedIds);
+		Map<String, Object> map = new HashMap<>();
+		map.put("status", MessageConst.READ);
+		map.put("selectedIds", selectedIds);
+		return mapper.updateReadStatus(map);
 	}
 
 	@Override
