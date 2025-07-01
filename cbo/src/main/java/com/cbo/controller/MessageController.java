@@ -11,9 +11,11 @@ import org.springframework.web.bind.annotation.SessionAttribute;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.cbo.constant.MemberConst;
+import com.cbo.constant.MessageConst;
 import com.cbo.member.model.MemberDTO;
 import com.cbo.message.model.MessageDTO;
 import com.cbo.message.service.MessageService;
+import com.cbo.pagination.Pagination;
 
 @Controller
 public class MessageController {
@@ -28,7 +30,7 @@ public class MessageController {
 			@RequestParam(defaultValue = "1") int curPage) {
 		List<MessageDTO> res = null;
 		try {
-			res = messageService.getUnreadMessages(userInfo.getId());
+			res = messageService.getUnreadMessages(userInfo.getId(), curPage);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -36,14 +38,21 @@ public class MessageController {
 		
 		ModelAndView mav = new ModelAndView("message/receivedMessages");
 		mav.addObject("unreadMessages", res);
+		
+		int maxRows = res != null && res.size() > 0 ? res.get(0).getMax_rows() : 1;
+		
+		String pageBar = Pagination.makePaging("unreadMessages", maxRows, MessageConst.ROWS, MessageConst.PAGES, curPage);
+		mav.addObject("pageBar", pageBar);
+		
 		return mav;
 	}
 	
 	@GetMapping("receivedMessages")
-	public ModelAndView receivedMessages(@SessionAttribute(MemberConst.USER_KEY) MemberDTO userInfo) {
+	public ModelAndView receivedMessages(@SessionAttribute(MemberConst.USER_KEY) MemberDTO userInfo,
+			@RequestParam(defaultValue = "1") int curPage) {
 		List<MessageDTO> res = null;
 		try {
-			res = messageService.getReceivedMessages(userInfo.getId());
+			res = messageService.getReceivedMessages(userInfo.getId(), curPage);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -51,14 +60,21 @@ public class MessageController {
 		
 		ModelAndView mav = new ModelAndView("message/receivedMessages");
 		mav.addObject("receivedMessages", res);
+		
+		int maxRows = res != null && res.size() > 0 ? res.get(0).getMax_rows() : 1;
+		
+		String pageBar = Pagination.makePaging("receivedMessages", maxRows, MessageConst.ROWS, MessageConst.PAGES, curPage);
+		mav.addObject("pageBar", pageBar);
+		
 		return mav;
 	}
 	
 	@GetMapping("sentMessages")
-	public ModelAndView sentMessages(@SessionAttribute(MemberConst.USER_KEY) MemberDTO userInfo) {
+	public ModelAndView sentMessages(@SessionAttribute(MemberConst.USER_KEY) MemberDTO userInfo,
+			@RequestParam(defaultValue = "1") int curPage) {
 		List<MessageDTO> res = null;
 		try {
-			res = messageService.getSentMessages(userInfo.getId());
+			res = messageService.getSentMessages(userInfo.getId(), curPage);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -66,6 +82,12 @@ public class MessageController {
 		
 		ModelAndView mav = new ModelAndView("message/receivedMessages");
 		mav.addObject("sentMessages", res);
+		
+		int maxRows = res != null && res.size() > 0 ? res.get(0).getMax_rows() : 1;
+		
+		String pageBar = Pagination.makePaging("sentMessages", maxRows, MessageConst.ROWS, MessageConst.PAGES, curPage);
+		mav.addObject("pageBar", pageBar);
+		
 		return mav;
 	}
 	

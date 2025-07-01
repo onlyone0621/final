@@ -1,9 +1,12 @@
 package com.cbo.message.service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.stereotype.Service;
 
+import com.cbo.constant.MessageConst;
 import com.cbo.mapper.MessageMapper;
 import com.cbo.member.model.OrganDTO;
 import com.cbo.message.model.MessageDTO;
@@ -17,21 +20,42 @@ public class MessageServiceImple implements MessageService {
 	}
 
 	@Override
-	public List<MessageDTO> getUnreadMessages(int memberId) throws Exception {
+	public List<MessageDTO> getUnreadMessages(int memberId, int curPage) throws Exception {
 		// TODO Auto-generated method stub
-		return mapper.selectUnreadMessages(memberId);
+		Map<String, Object> map = new HashMap<>();
+		map.put("memberId", memberId);
+		
+		int start = (curPage - 1) * MessageConst.ROWS + 1;
+		int end = curPage * MessageConst.ROWS;
+		map.put("start", start);
+		map.put("end", end);
+		return mapper.selectUnreadMessages(map);
 	}
 
 	@Override
-	public List<MessageDTO> getReceivedMessages(int memberId) throws Exception {
+	public List<MessageDTO> getReceivedMessages(int memberId, int curPage) throws Exception {
 		// TODO Auto-generated method stub
-		return mapper.selectReceivedMessages(memberId);
+		Map<String, Object> map = new HashMap<>();
+		map.put("memberId", memberId);
+		
+		int start = (curPage - 1) * MessageConst.ROWS + 1;
+		int end = curPage * MessageConst.ROWS;
+		map.put("start", start);
+		map.put("end", end);
+		return mapper.selectUnreadMessages(map);
 	}
 
 	@Override
-	public List<MessageDTO> getSentMessages(int memberId) throws Exception {
+	public List<MessageDTO> getSentMessages(int memberId, int curPage) throws Exception {
 		// TODO Auto-generated method stub
-		return mapper.selectSentMessages(memberId);
+		Map<String, Object> map = new HashMap<>();
+		map.put("memberId", memberId);
+		
+		int start = (curPage - 1) * MessageConst.ROWS + 1;
+		int end = curPage * MessageConst.ROWS;
+		map.put("start", start);
+		map.put("end", end);
+		return mapper.selectUnreadMessages(map);
 	}
 
 	@Override

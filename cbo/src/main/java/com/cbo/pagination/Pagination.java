@@ -1,9 +1,9 @@
 package com.cbo.pagination;
 
 public class Pagination {
-	static public String makePaging(String pageName, int maxRow, int rows, int pages, int curPage) {
-		int maxPage = maxRow / rows + 1;
-		if (maxRow % rows == 0) {
+	static public String makePaging(String pageName, int maxRows, int rows, int pages, int curPage) {
+		int maxPage = maxRows / rows + 1;
+		if (maxRows % rows == 0) {
 			maxPage--;
 			
 		}
@@ -17,14 +17,14 @@ public class Pagination {
 		StringBuffer sb = new StringBuffer();
 		
 		if (userGroup != 0) {
-			sb.append("<a th:href='@{");
+			sb.append("<a href='");
 			sb.append(pageName);
-			sb.append("(curPage=");
+			sb.append("?curPage=");
 			
 			int temp = (userGroup - 1) * pages + pages;
 			
 			sb.append(temp);
-			sb.append(")}'>&lt;&lt;</a>");
+			sb.append("'>&lt;&lt;</a>");
 		}
 		
 		int begin = userGroup * pages + 1;
@@ -34,24 +34,24 @@ public class Pagination {
 		}
 		
 		for (int i = begin; i <= end; i++) {
-			sb.append("&nbsp;&nbsp;<a th:href='@{");
+			sb.append("&nbsp;&nbsp;<a href='");
 			sb.append(pageName);
-			sb.append("(curPage=");
+			sb.append("?curPage=");
 			sb.append(i);
-			sb.append(")}'>");
+			sb.append("'>");
 			sb.append(i);
 			sb.append("</a>");
 		}
 		// if (maxPage / pages - (maxPage % pages == 0 ? 1 : 0) != userGroup)
 		
 		if ((userGroup + 1) * pages + 1 <= maxPage) {
-			sb.append("&nbsp;&nbsp;<a th:href='@{");
+			sb.append("&nbsp;&nbsp;<a href='");
 			sb.append(pageName);
-			sb.append("(curPage=");
+			sb.append("?curPage=");
 			
 			int next = (userGroup + 1) * pages + 1;
 			sb.append(next);
-			sb.append("(}'>&gt;&gt;</a>");
+			sb.append("'>&gt;&gt;</a>");
 		}
 		
 		return sb.toString();

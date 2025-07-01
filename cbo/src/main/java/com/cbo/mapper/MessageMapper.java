@@ -1,14 +1,15 @@
 package com.cbo.mapper;
 
 import java.util.List;
+import java.util.Map;
 
 import com.cbo.member.model.OrganDTO;
 import com.cbo.message.model.MessageDTO;
 
 public interface MessageMapper {
-	List<MessageDTO> selectUnreadMessages(int memberId) throws Exception;
-	List<MessageDTO> selectReceivedMessages(int memberId) throws Exception;
-	List<MessageDTO> selectSentMessages(int memberId) throws Exception;
+	List<MessageDTO> selectUnreadMessages(Map<String, Object> map) throws Exception;
+	List<MessageDTO> selectReceivedMessages(Map<String, Object> map) throws Exception;
+	List<MessageDTO> selectSentMessages(Map<String, Object> map) throws Exception;
 	
 	List<OrganDTO> selectMembers() throws Exception;
 	int insertMessages(MessageDTO dto) throws Exception;
