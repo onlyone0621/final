@@ -24,7 +24,8 @@ public class MessageController {
 	}
 	
 	@GetMapping("unreadMessages")
-	public ModelAndView unreadMessages(@SessionAttribute(MemberConst.USER_KEY) MemberDTO userInfo) {
+	public ModelAndView unreadMessages(@SessionAttribute(MemberConst.USER_KEY) MemberDTO userInfo,
+			@RequestParam(defaultValue = "1") int curPage) {
 		List<MessageDTO> res = null;
 		try {
 			res = messageService.getUnreadMessages(userInfo.getId());
