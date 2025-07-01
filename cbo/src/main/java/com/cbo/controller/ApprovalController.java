@@ -136,18 +136,14 @@ public class ApprovalController {
 	@GetMapping("submitDraft")
 	public ModelAndView submitDraftForm(@RequestParam int id) {
 		Map<String, Object> format = null;
-		List<OrganDTO> members = null;
+		Map<String, List<OrganDTO>> membersByDept = null;
 		try {
 			format = approvalService.getFormat(id);
-			members = approvalService.getMembers();
+			membersByDept = approvalService.getMembers();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		// Process members grouping by dept
-		Map<String, List<OrganDTO>> membersByDept = members.stream()
-		 	.collect(Collectors.groupingBy(OrganDTO :: getDept_name, LinkedHashMap :: new, Collectors.toList()));
 		
 		ModelAndView mav = new ModelAndView("approval/submitDraft");
 		mav.addObject("format", format);

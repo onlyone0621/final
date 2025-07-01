@@ -29,7 +29,7 @@ public interface ApprovalService {
 	
 	// Submit draft
 	Map<String, Object> getFormat(int id) throws Exception;
-	List<OrganDTO> getMembers() throws Exception;
+	Map<String, List<OrganDTO>> getMembers() throws Exception;
 	boolean submitDraft(DocDTO dto, List<Integer> approversId, List<Integer> reviewersId) throws Exception;
 	
 	// Approve or Reject
