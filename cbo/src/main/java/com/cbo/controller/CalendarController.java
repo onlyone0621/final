@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
+import java.time.format.DateTimeFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -41,6 +41,8 @@ public class CalendarController {
 		
 		return "schedule/calendarWorkReg";
 	}
+	
+	
 	
 	/*
 	 * @RequestMapping("/workReg") public ModelAndView workReg(CalendarDTO dto) {
@@ -115,47 +117,46 @@ public class CalendarController {
 	}
 	
 	
+	
+
 	@GetMapping("/api/calendar/events")
-	@ResponseBody //json으로 받음
-    public List<Map<String, Object>> getEvents() {
-		
-		List<CalendarDTO> list = null;
-		try {
-			list = service.selectList();
-			
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		
-		List<Map<String, Object>> events = new ArrayList<>();
+	@ResponseBody
+	public List<Map<String, Object>> getEvents() {
+	    List<CalendarDTO> list = null;
+	    try {
+	        list = service.selectList();
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
 
-		for(int i = 0; i<list.size(); i++) {
+	    List<Map<String, Object>> events = new ArrayList<>();
+	    DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+	    DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
 
-		Map<String, Object> event = new HashMap<>();
-		if(list.get(i).getEnd_time()!=null&&!(list.get(i).getEnd_time().equals(""))) {
-		event.put("id", list.get(i).getId());
-		event.put("title", list.get(i).getTitle());
-		event.put("start", list.get(i).getStart_time());
-		event.put("end", list.get(i).getEnd_time());
-		if(list.get(i).getContent()!=null&&!(list.get(i).getContent().equals(""))) {
-		event.put("content",list.get(i).getContent());
-		}
-		events.add(event);
-		}else {
-		event.put("id", list.get(i).getId());
-		event.put("title", list.get(i).getTitle());
-		event.put("start", list.get(i).getStart_time());
-		if(list.get(i).getContent()!=null&&!(list.get(i).getContent().equals(""))) {
-		event.put("content",list.get(i).getContent());
-		}
-		}
+	    for (CalendarDTO dto : list) {
+	        Map<String, Object> event = new HashMap<>();
+	        event.put("id", dto.getId());
+	        event.put("title", dto.getTitle());
 
-		}
+	        // allDay를 int(0/1)로 관리할 때는 이렇게!
+	        boolean isAllDay = dto.getAllday() == 1;
+	        if (isAllDay) {
+	            // 종일 일정: 날짜만 
+	            event.put("start", dto.getStart_time().format(dateFormatter));
+	            if (dto.getEnd_time() != null) event.put("end", dto.getEnd_time().format(dateFormatter));
+	        } else {
+	            // 시간 일정: 날짜+시간
+	            event.put("start", dto.getStart_time().format(dateTimeFormatter));
+	            if (dto.getEnd_time() != null) event.put("end", dto.getEnd_time().format(dateTimeFormatter));
+	        }
+	        event.put("allDay", isAllDay); // Boolean 값으로 내려줌!
+	        event.put("content", dto.getContent());
+	        events.add(event);
+	    }
 
-		return events;
-		}
+	    return events;
+	}
+
 	
 	@RequestMapping("/calendarOptionView")
 	public String CalendarOptionView(@RequestParam("start_time") String start_date

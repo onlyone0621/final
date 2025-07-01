@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
@@ -9,7 +9,31 @@
   	select * from addr
   </select>
   
+  <select id="personalList" resultType="com.cbo.addr.model.AddrDTO">
+  	select distinct name from groups where division = 0 and member_id = #{id}
+  </select>
   
+  <select id="deptList" resultType="com.cbo.addr.model.AddrDTO">
+  	select distinct name from groups where division = 1  
+  </select>  
   
+  <select id="userDept" resultType="String">
+  	select name from dept where id = (select dept_id from member where user_id = #{saveid})  
+  </select>
   
+  <insert id="addPersonalAddr" parameterType="String">
+  	insert into groups values(sq_groups_id.nextval,#{id},#{name},0)
+  </insert>
+    
+    <select id="groupAddrList" resultType="com.cbo.addr.model.AddrDTO">
+     select * from addr where name in (select name from member where id in (select member_id from groups where name = #{name}))  
+    </select>
+    
+    <select id="findUserId">
+    	select id from member where user_id = #{saveid}
+    </select>
+    
+    <insert id="insertPersonalAlladdr">
+    	insert into addr values()
+    </insert>
   </mapper>

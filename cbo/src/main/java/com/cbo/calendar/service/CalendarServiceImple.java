@@ -47,8 +47,11 @@ public class CalendarServiceImple implements CalendarService {
 	}
 	
 	@Override
-	public int saveWork(List<CalendarDTO> dto) throws Exception {
-		int count = mapper.saveWork(dto);
-		return count;
+	public int saveWork(List<CalendarDTO> list) throws Exception {
+	    int result = 0;
+	    for (CalendarDTO dto : list) {
+	        result += mapper.saveWork(dto); // 각 update의 결과를 합산
+	    }
+	    return result; // 전체 성공한 update 개수 반환
 	}
 }

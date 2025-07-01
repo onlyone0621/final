@@ -137,7 +137,7 @@ function submitQuickForm() {
                 <div class="sidebar-sticky pt-4">
                     <!-- 개인 주소록 -->
                     <div class="sidebar-section">
-                    <button class="btn btn-outline-primary w-100 mb-3" onclick="location.href='/goInsertPage'">
+                    <button class="btn btn-outline-primary w-100 mb-3" onclick="location.href='/insertAddr'">
 					    연락처 추가
 					</button>
                         <div class="sidebar-section-title">
@@ -225,34 +225,7 @@ function submitQuickForm() {
 </div>
     </div>
 </div>
-                <table class="table table-hover mt-4">
-                    <thead>
-                        <tr>
-                            <th scope="col">#</th>
-                            <th scope="col">이름(표시명)</th>
-                            <th scope="col">휴대폰</th>
-                            <th scope="col">이메일</th>
-                            <th scope="col">회사</th>
-                            <th scope="col">회사전화</th>
-                            <th scope="col">그룹</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr th:if="${#lists.isEmpty(addrLists)}">
-                            <td colspan="7" align="center">등록된 사원이 없습니다</td>
-                        </tr>
-                        <tr th:each="dto:${addrLists}">
-                            <td th:text="${dto.id}"></td>
-                            <td th:text="${dto.nickname}"></td>
-                            <td th:text="${dto.tel}"></td>
-                            <td th:text="${dto.email}"></td>
-                            <td th:text="${dto.company}"></td>
-                            <td th:text="${dto.companytel}"></td>
-                            <td></td>
-                            <td></td>
-                        </tr>
-                    </tbody>
-                </table>
+            //본문
             </div>
         </div>
     </div>

@@ -32,7 +32,10 @@
   </update>
   
   <update id="saveWork" parameterType="com.cbo.calendar.model.CalendarDTO">
-  update calendar set start_time = #{start_time}, end_time = #{end_time}+1 where id = #{id}
+    update calendar
+    set start_time = #{start_time},
+        end_time = #{end_time}
+    where id = #{id}
   </update>
   
   </mapper>

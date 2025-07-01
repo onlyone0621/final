@@ -38,10 +38,22 @@ function addGroupFetch() {
     })
     .then(response => res => res.json())
     .then(data => {
-        const groupList = document.querySelector('.sidebar-group-list');
-        const newDiv = document.createElement('div');
-        newDiv.textContent = groupName;
-        groupList.appendChild(newDiv);
+    	const groupList = document.querySelector('.sidebar-group-list');
+    	const newDiv = document.createElement('div');
+    	const newA = document.createElement('a');
+    	const newSpan = document.createElement('span');
+
+    	newA.textContent = groupName; // 그룹명
+    	newA.href = '/groupAddrList/' + encodeURIComponent(groupName);
+    	newA.className = 'sidebar-link';
+    	newA.style = 'text-decoration:none; color:black;';
+
+    	newSpan.className = 'sidebar-contact-count';
+    	newSpan.textContent = '2'; // AJAX 응답에서 받은 연락처 수
+
+    	newDiv.appendChild(newA);
+    	newDiv.appendChild(newSpan);
+    	groupList.appendChild(newDiv);
 
         hideAddGroupInput();
     });
@@ -52,13 +64,13 @@ function toggleQuickForm() {
     form.style.display = (form.style.display === 'none' || form.style.display === '') ? 'block' : 'none';
 }
 function submitQuickForm() {
-    // 실제 등록 로직 구현 (AJAX 등)
-    alert('등록되었습니다!');
+
+	fetch('')
+	
     // 폼 리셋 및 숨김 처리
     document.getElementById('quickForm').style.display = 'none';
     return false; // 실제 등록 로직에 따라 return 값 조정
 }
-
 </script>
 <meta charset="UTF-8">
 <title>주소록 관리</title>
@@ -137,7 +149,7 @@ function submitQuickForm() {
                 <div class="sidebar-sticky pt-4">
                     <!-- 개인 주소록 -->
                     <div class="sidebar-section">
-                    <button class="btn btn-outline-primary w-100 mb-3" onclick="location.href='/goInsertPage'">
+                    <button class="btn btn-outline-primary w-100 mb-3" onclick="location.href='/insertAddr'">
 					    연락처 추가
 					</button>
                         <div class="sidebar-section-title">
@@ -147,13 +159,12 @@ function submitQuickForm() {
                             <i class="bi bi-gear ms-auto"></i>
                         </div>
                         <div class="collapse show" id="personalCollapse">
-                            <a href="addrMain" class="sidebar-link">전체 주소록</a>
+                            <a href="/addrMain" class="sidebar-link">전체 주소록</a>
                             
                             <div class="sidebar-group-list">
                                 <!-- 그룹명 반복 출력 -->
                                 <div th:each="group : ${personalLists}">
                                     <a th:href="@{'/groupAddrList/' + ${group.name}}" th:text="${group.name}" style="text-decoration:none; color:black;"></a>
-
                                     <span class="sidebar-contact-count" >2</span>
                                 </div>
                             </div>
@@ -194,9 +205,10 @@ function submitQuickForm() {
             </nav>
             <!-- Main content -->
             <div class="col-md-10 ms-sm-auto px-4">
+                <!-- 직원 내용 테이블 -->
                 <div class="mb-3" style="border-bottom:1px solid #eee; padding-bottom:12px;">
     <div>
-        <span style="font-size:2rem; font-weight:600;" >전체 주소록</span>
+        <span style="font-size:2rem; font-weight:600;" th:text=${groupName}>전체 주소록</span>
         <span style="color:#888; font-size:1rem; margin-left:8px;">
             in개인주소록
             <span th:text="'(총 ' + ${totalCount} + '건)'">(총 25건)</span>
@@ -204,17 +216,15 @@ function submitQuickForm() {
     </div>
     <div class="mt-2">
         <button type="button" class="btn btn-link px-2" style="font-weight:500; color:#222;" onclick="toggleQuickForm()">
-    <i class="bi bi-plus-lg"></i> 빠른 등록
-</button>
-
+   			 <i class="bi bi-plus-lg"></i> 빠른 등록
+		</button>
         <button type="button" class="btn btn-link px-2" style="font-weight:500; color:#222;">
             <i class="bi bi-people"></i> 그룹지정
         </button>
         <button type="button" class="btn btn-link px-2" style="font-weight:500; color:#222;">
             <i class="bi bi-trash"></i> 삭제
         </button>
-        
-        <div id="quickForm" style="display:none; margin-top:12px;">
+                <div id="quickForm" style="display:none; margin-top:12px;">
     <form class="d-flex align-items-center gap-2" onsubmit="return submitQuickForm();">
         <input type="text" class="form-control" style="max-width:160px;" placeholder="이름(표시명)" name="name" required>
         <input type="email" class="form-control" style="max-width:180px;" placeholder="이메일" name="email" required>
@@ -222,9 +232,10 @@ function submitQuickForm() {
         <button type="submit" class="btn btn-outline-primary">+</button>
         <button type="button" class="btn btn-link" style="color:#666;" onclick="alert('상세정보 폼 구현 필요!')">상세정보 추가</button>
     </form>
-</div>
+		</div>
     </div>
 </div>
+                
                 <table class="table table-hover mt-4">
                     <thead>
                         <tr>
@@ -238,10 +249,10 @@ function submitQuickForm() {
                         </tr>
                     </thead>
                     <tbody>
-                        <tr th:if="${#lists.isEmpty(addrLists)}">
+                        <tr th:if="${#lists.isEmpty(groupAddrLists)}">
                             <td colspan="7" align="center">등록된 사원이 없습니다</td>
                         </tr>
-                        <tr th:each="dto:${addrLists}">
+                        <tr th:each="dto:${groupAddrLists}">
                             <td th:text="${dto.id}"></td>
                             <td th:text="${dto.nickname}"></td>
                             <td th:text="${dto.tel}"></td>
