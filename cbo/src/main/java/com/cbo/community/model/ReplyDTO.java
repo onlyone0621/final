@@ -10,7 +10,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Setter
 @Getter
-public class CommentDTO {
+public class ReplyDTO {
 
 	private int id;
 	private int board_post_id;

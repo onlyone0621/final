@@ -1,10 +1,100 @@
 <!DOCTYPE html>
-<html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="layouts/mainLayout">
 <head>
-<meta charset="UTF-8">
-<title>Insert title here</title>
+  <meta charset="UTF-8">
+  <title>커뮤니티 게시판 관리</title>
+  
+<script>
+  // 전체 선택 기능
+  document.addEventListener("DOMContentLoaded", function() {
+    var selectAll = document.getElementById('selectAll');
+    var deleteBtn = document.getElementById('deleteBtn');
+    var form = document.getElementById('deleteForm');
+
+    selectAll.addEventListener('change', function() {
+      var checkboxes = document.querySelectorAll('input[name="boardIds"]');
+      for (var i = 0; i < checkboxes.length; i++) {
+        checkboxes[i].checked = this.checked;
+      }
+    });
+
+    deleteBtn.addEventListener('click', function() {
+      var checked = document.querySelectorAll('input[name="boardIds"]:checked');
+      if (checked.length === 0) {
+        alert("삭제할 게시판을 선택해주세요.");
+        return;
+      }
+      var confirmDelete = confirm("삭제 버튼을 누르시면 게시판 및 게시판 내 모든 데이터가 삭제됩니다.\n삭제하시겠습니까?");
+      if (confirmDelete) {
+        form.submit();
+      }
+    });
+  });
+</script>
+  
+  <style>
+    .container { display: flex; }
+    .sidebar { width: 200px; background-color: #fbf9fd; padding: 20px; border-right: 1px solid #ddd; }
+    .main { padding: 20px; flex-grow: 1; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { border: 1px solid #ddd; padding: 8px; text-align: center; }
+  </style>
 </head>
 <body>
+<div layout:fragment="content">
+  <div class="container">
+    <div class="sidebar">
+      <h4>커뮤니티 게시판</h4>
+      <ul th:if="${#lists.isEmpty(sidebarBoardList)}">
+        <li>생성된 게시판이 없습니다.</li>
+      </ul>
+      <ul th:each="bdto : ${sidebarBoardList}">
+        <li>
+          <a th:href="@{/community/{cId}/board/{boardId}(cId=${cId}, boardId=${bdto.id})}">
+            [[${bdto.name}]]
+          </a>
+        </li>
+      </ul>
+    </div>
+
+    <div class="main">
+      <form id="deleteForm" th:action="@{'/community/' + ${cId} + '/boardDelete'}" method="post">
+        <table>
+          <thead>
+            <tr>
+              <th><input type="checkbox" id="selectAll"></th>
+              <th>게시판 이름</th>
+              <th>운영자</th>
+              <th>설정</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr th:if="${#lists.isEmpty(boardLists)}">
+              <td colspan="4">생성된 게시판이 없습니다.</td>
+            </tr>
+            <tr th:each="board : ${boardLists}">
+              <td><input type="checkbox" name="boardIds" th:value="${board['BOARD_ID']}"></td>
+              <td th:text="${board['BOARD_NAME']}"></td>
+              <td th:text="${board['MASTER_NAME']} ?: '운영자 없음'"></td>
+              <td>
+                <a th:href="@{/community/{cId}/board/{boardId}/update(cId=${cId}, boardId=${board['BOARD_ID']})}">
+                  <button type="button">설정</button>
+                </a>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <br>
+        <button type="button" id="deleteBtn">삭제</button>
+        <a th:href="@{/community/{cId}/board/create(cId=${cId})}">
+          <button type="button">추가</button>
+        </a>
+      </form>
+    </div>
+  </div>
+</div>
 
 </body>
 </html>
