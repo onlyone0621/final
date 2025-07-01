@@ -1,5 +1,7 @@
 package com.cbo.messenger.model;
 
+import java.sql.Date;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,4 +14,5 @@ import lombok.Setter;
 public class MessageListDTO {
 	private String name;
 	private String content;
+	private String write_date;
 }

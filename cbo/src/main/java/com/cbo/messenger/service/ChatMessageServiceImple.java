@@ -32,5 +32,17 @@ public class ChatMessageServiceImple implements ChatMessageService {
 		List<ChatRoomListDTO> list = mapper.selectChatRoomList(member_id);
 		return list;
 	}
+	
+	@Override
+	public int createChatRoom(ChatRoomDTO dto) throws Exception {
+		int result = mapper.insertChatRoom(dto);
+		return result;
+	}
+	
+	@Override
+	public int addChatMember(ChatRoom_MemberDTO dto) throws Exception {
+		int result = mapper.insertChatMember(dto);
+		return result;
+	}
 
 }

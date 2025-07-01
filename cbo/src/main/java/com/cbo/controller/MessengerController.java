@@ -1,5 +1,6 @@
 package com.cbo.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -44,23 +45,32 @@ public class MessengerController {
 	
 	@ResponseBody
 	@GetMapping("chatContent")
-	public String chatContent(@RequestParam("id") int id) {
-	    List<MessageListDTO> lists = null;
-	    StringBuilder sb = new StringBuilder();
-
+	public List<MessageListDTO> chatContent(@RequestParam("id") int id) {
+	    List<MessageListDTO> lists = new ArrayList<>();
 	    try {
 	        lists = service.getMessageList(id);
-	        if (lists != null) {
-	            for (MessageListDTO msg : lists) {
-	                sb.append(msg.getName())
-	                  .append(" : ")
-	                  .append(msg.getContent())
-	                  .append("\n");
-	            }
-	        }
 	    } catch (Exception e) {
 	        e.printStackTrace();
 	    }
-	    return sb.toString();
+	    return lists;
+	}
+	
+	@ResponseBody
+	@GetMapping("createChatRoom")
+	public void createChatRoom(ChatRoomDTO cdto, HttpSession session) {
+		MemberDTO udto = (MemberDTO) session.getAttribute(com.cbo.constant.MemberConst.USER_KEY);
+		int craeteChatRoom = 0;
+		int addChatMember = 0;
+		try {
+			craeteChatRoom = service.createChatRoom(cdto);
+			if(craeteChatRoom > 0) {
+				System.out.println(cdto.getId()+""+udto.getId());
+				ChatRoom_MemberDTO cmdto = new ChatRoom_MemberDTO(cdto.getId(), udto.getId(), null);
+				addChatMember = service.addChatMember(cmdto);
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 }
