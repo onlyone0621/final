@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+				xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+				layout:decorate="layouts/messageLayout">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>메시지 내용 보기</title>
+</head>
+<body>
+<div layout:fragment="content">
+
+		<div class="d-flex flex-column h-100" th:object="${messageContent}">
+			<!-- Button toolbar -->
+			<div class="mb-3">
+				<nav
+					class="nav nav-pills flex-row"
+				>
+					<button class="nav-link active"
+						>답장</button
+					>
+					<a class="nav-link">삭제</a>
+				</nav>
+			</div>
+
+			<div class="mb-3 row">
+				<label for="title" class="col-sm-2 col-form-label">제목</label>
+				<div class="col-sm-10">
+					<input type="text" readonly class="form-control-plaintext" id="title" th:value="*{title}">
+				</div>
+			</div>
+			<div class="mb-3 row">
+				<label for="sender" class="col-sm-2 col-form-label">보낸 사람</label>
+				<div class="col-sm-10">
+					<input type="text" readonly class="form-control-plaintext" id="sender" th:value="|*{sender_dept} *{sender} *{sender_grade}|">
+				</div>
+			</div>
+			<div class="mb-3 row">
+				<label for="receiver" class="col-sm-2 col-form-label">받는 사람</label>
+				<div class="col-sm-10">
+					<input type="text" readonly class="form-control-plaintext" id="receiver" th:value="|*{receiver_dept} *{receiver} *{receiver_grade}|">
+				</div>
+			</div>
+			<div class="mb-3 row">
+				<span class="col-sm-2">첨부파일</span>
+				<div class="col-sm-10">
+					<span class="placeholder-wave col-3 placeholder-lg"><a class="text-decoration-none" href="#" th:unless="${#strings.isEmpty(messageContent.file_name)}" th:text="*{file_name}">첨부파일</a></span>
+				</div>
+			</div>
+			
+			
+
+			<!-- Doc content -->
+			<div th:text="*{content}" class="w-100 h-100 overflow-y-scroll p-3 border border-primary-subtle rounded-3"></div>
+
+			<!-- File input -->
+			<div class="mb-3 w-75 align-self-center">
+				<!-- <label for="file_name" class="form-label">파일 첨부</label>
+				<input
+					type="file"
+					class="form-control"
+					name="attatchment"
+					id="file_name"
+					aria-describedby="helpId"
+				/>
+				<small id="helpId" class="form-text text-muted">10MB 까지만 첨부 가능</small> -->
+			</div>
+		</div>
+
+</div>
+</body>
+</html>

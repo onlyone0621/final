@@ -5,11 +5,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>받은 메시지함</title>
+<title>보낸 메시지함</title>
 </head>
 <body>
 <div layout:fragment="content">
-	<h1>받은 메시지함</h1>
+	<h1>보낸 메시지함</h1>
 	<div
 		class="table-responsive"
 	>
@@ -24,9 +24,6 @@
 							class="nav nav-tabs"
 						>
 							<li class="nav-item">
-								<a href="#" class="nav-link">읽음</a>
-							</li>
-							<li class="nav-item disabled">
 								<a href="#" class="nav-link">삭제</a>
 							</li>
 						</ul>
@@ -34,12 +31,12 @@
 				</tr>
 			</thead>
 			<tbody>
-				<tr th:if="${#lists.isEmpty(receivedMessages)}">
+				<tr th:if="${#lists.isEmpty(sentMessages)}">
 					<td colspan="4">메시지가 없습니다</td>
 				</tr>
-				<tr class="" th:each="receivedMessage : ${receivedMessages}" th:object="${receivedMessage}" th:classappend="*{is_read} == '안 읽음' ? 'fw-bold'">
+				<tr class="" th:each="sentMessage : ${sentMessages}" th:object="${sentMessage}">
 					<td scope="row"><input type="checkbox" name="selectedIds" th:value="*{id}"></td>
-					<td scope="row" th:text="*{sender}"></td>
+					<td scope="row" th:text="*{receiver}"></td>
 					<td scope="row"><a class="text-decoration-none" th:text="*{title}" th:href="@{messageContent(id=*{id})}"></td>
 					<td scope="row" th:text="*{write_date}"></td>
 				</tr>
@@ -49,7 +46,6 @@
 			</tbody>
 		</table>
 	</div>
-	
 </div>
 </body>
 </html>

@@ -1,19 +1,24 @@
 package com.cbo.controller;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttribute;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.cbo.constant.MemberConst;
+import com.cbo.constant.MessageConst;
 import com.cbo.member.model.MemberDTO;
+import com.cbo.member.model.OrganDTO;
 import com.cbo.message.model.MessageDTO;
 import com.cbo.message.service.MessageService;
+import com.cbo.pagination.Pagination;
 
 @Controller
 public class MessageController {
@@ -24,25 +29,33 @@ public class MessageController {
 	}
 	
 	@GetMapping("unreadMessages")
-	public ModelAndView unreadMessages(@SessionAttribute(MemberConst.USER_KEY) MemberDTO userInfo) {
+	public ModelAndView unreadMessages(@SessionAttribute(MemberConst.USER_KEY) MemberDTO userInfo,
+			@RequestParam(defaultValue = "1") int curPage) {
 		List<MessageDTO> res = null;
 		try {
-			res = messageService.getUnreadMessages(userInfo.getId());
+			res = messageService.getUnreadMessages(userInfo.getId(), curPage);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
-		ModelAndView mav = new ModelAndView("message/receivedMessages");
+		ModelAndView mav = new ModelAndView("message/unreadMessages");
 		mav.addObject("unreadMessages", res);
+		
+		int maxRows = res != null && res.size() > 0 ? res.get(0).getMax_rows() : 1;
+		
+		String pageBar = Pagination.makePaging("unreadMessages", maxRows, MessageConst.ROWS, MessageConst.PAGES, curPage);
+		mav.addObject("pageBar", pageBar);
+		
 		return mav;
 	}
 	
 	@GetMapping("receivedMessages")
-	public ModelAndView receivedMessages(@SessionAttribute(MemberConst.USER_KEY) MemberDTO userInfo) {
+	public ModelAndView receivedMessages(@SessionAttribute(MemberConst.USER_KEY) MemberDTO userInfo,
+			@RequestParam(defaultValue = "1") int curPage) {
 		List<MessageDTO> res = null;
 		try {
-			res = messageService.getReceivedMessages(userInfo.getId());
+			res = messageService.getReceivedMessages(userInfo.getId(), curPage);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -50,26 +63,49 @@ public class MessageController {
 		
 		ModelAndView mav = new ModelAndView("message/receivedMessages");
 		mav.addObject("receivedMessages", res);
+		
+		int maxRows = res != null && res.size() > 0 ? res.get(0).getMax_rows() : 1;
+		
+		String pageBar = Pagination.makePaging("receivedMessages", maxRows, MessageConst.ROWS, MessageConst.PAGES, curPage);
+		mav.addObject("pageBar", pageBar);
+		
 		return mav;
 	}
 	
 	@GetMapping("sentMessages")
-	public ModelAndView sentMessages(@SessionAttribute(MemberConst.USER_KEY) MemberDTO userInfo) {
+	public ModelAndView sentMessages(@SessionAttribute(MemberConst.USER_KEY) MemberDTO userInfo,
+			@RequestParam(defaultValue = "1") int curPage) {
 		List<MessageDTO> res = null;
 		try {
-			res = messageService.getSentMessages(userInfo.getId());
+			res = messageService.getSentMessages(userInfo.getId(), curPage);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
-		ModelAndView mav = new ModelAndView("message/receivedMessages");
+		ModelAndView mav = new ModelAndView("message/sentMessages");
 		mav.addObject("sentMessages", res);
+		
+		int maxRows = res != null && res.size() > 0 ? res.get(0).getMax_rows() : 1;
+		
+		String pageBar = Pagination.makePaging("sentMessages", maxRows, MessageConst.ROWS, MessageConst.PAGES, curPage);
+		mav.addObject("pageBar", pageBar);
+		
 		return mav;
 	}
 	
-	@GetMapping("sendMessage")
+	@GetMapping("sendMessages")
 	public String sendMessageForm(Model model) {
+		Map<String, List<OrganDTO>> membersByDept = null;
+		
+		try {
+			membersByDept = messageService.getMembers();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		model.addAttribute("membersByDept", membersByDept);
 		return "message/sendMessages";
 	}
 	
@@ -114,12 +150,12 @@ public class MessageController {
 	}
 	
 	@PostMapping("deleteMessage")
-	public ModelAndView deleteMessage() {
+	public ModelAndView deleteMessage(List<Integer> selectedIds) {
 		return null;
 	}
 	
 	@PostMapping("markAsRead")
-	public ModelAndView markAsRead() {
+	public ModelAndView markAsRead(List<Integer> selectedIds) {
 		return null;
 	}
 }
