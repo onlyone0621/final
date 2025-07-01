@@ -1,5 +1,4 @@
 package com.cbo.messenger.model;
-import java.sql.*;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -13,6 +12,4 @@ import lombok.Setter;
 public class ChatRoomDTO {
 	private int id;
 	private String name;
-	private String description;
-	private Date create_date;
 }

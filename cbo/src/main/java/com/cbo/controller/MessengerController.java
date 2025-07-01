@@ -7,11 +7,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.cbo.member.model.MemberDTO;
 import com.cbo.messenger.model.ChatMessageDTO;
+import com.cbo.messenger.model.ChatRoomDTO;
 import com.cbo.messenger.model.MessageListDTO;
 import com.cbo.messenger.service.ChatMessageService;
+
+import jakarta.servlet.http.HttpSession;
 
 @Controller
 public class MessengerController {
@@ -23,24 +28,40 @@ public class MessengerController {
 	}
 	
 	@GetMapping("messengerMain")
-	public ModelAndView messengerForm() {
-		List<MessageListDTO> lists = null;
+	public ModelAndView messengerForm(HttpSession session) {
+		MemberDTO dto = (MemberDTO) session.getAttribute(com.cbo.constant.MemberConst.USER_KEY);
+		List<ChatRoomDTO> lists = null;
 		try {
-			lists = service.getMessageList(1);
+			lists = service.getChatList(dto.getId());
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		StringBuilder sb = new StringBuilder();
-		if (lists != null) {
-			for (MessageListDTO msg : lists) {
-				sb.append(msg.getName()).append(" : ").append(msg.getContent()).append("\n");
-			}
-		}
-
 		ModelAndView mav = new ModelAndView();
-		mav.addObject("msgList", sb.toString());
+		mav.addObject("chatList", lists);
 		mav.setViewName("messenger/messengerMain");
 		return mav;
+	}
+	
+	@ResponseBody
+	@GetMapping("chatContent")
+	public String chatContent(@RequestParam("id") int id) {
+	    List<MessageListDTO> lists = null;
+	    StringBuilder sb = new StringBuilder();
+
+	    try {
+	        lists = service.getMessageList(id);
+	        if (lists != null) {
+	            for (MessageListDTO msg : lists) {
+	                sb.append(msg.getName())
+	                  .append(" : ")
+	                  .append(msg.getContent())
+	                  .append("\n");
+	            }
+	        }
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
+	    return sb.toString();
 	}
 }
