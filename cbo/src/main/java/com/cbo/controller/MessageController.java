@@ -1,6 +1,7 @@
 package com.cbo.controller;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -13,6 +14,7 @@ import org.springframework.web.servlet.ModelAndView;
 import com.cbo.constant.MemberConst;
 import com.cbo.constant.MessageConst;
 import com.cbo.member.model.MemberDTO;
+import com.cbo.member.model.OrganDTO;
 import com.cbo.message.model.MessageDTO;
 import com.cbo.message.service.MessageService;
 import com.cbo.pagination.Pagination;
@@ -93,6 +95,16 @@ public class MessageController {
 	
 	@GetMapping("sendMessage")
 	public String sendMessageForm(Model model) {
+		Map<String, List<OrganDTO>> membersByDept = null;
+		
+		try {
+			membersByDept = messageService.getMembers();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		model.addAttribute("membersByDept", membersByDept);
 		return "message/sendMessages";
 	}
 	

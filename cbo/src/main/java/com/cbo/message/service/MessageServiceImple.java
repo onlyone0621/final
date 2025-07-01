@@ -1,8 +1,10 @@
 package com.cbo.message.service;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
@@ -59,9 +61,15 @@ public class MessageServiceImple implements MessageService {
 	}
 
 	@Override
-	public List<OrganDTO> getMembers() throws Exception {
+	public Map<String, List<OrganDTO>> getMembers() throws Exception {
 		// TODO Auto-generated method stub
-		return mapper.selectMembers();
+		List<OrganDTO> memberList = mapper.selectMembers();
+		Map<String, List<OrganDTO>> membersByDept = memberList.stream()
+				.collect(Collectors.groupingBy(OrganDTO :: getDept_name,
+						LinkedHashMap :: new,
+						Collectors.toList()));
+		
+		return membersByDept;
 	}
 
 	@Override
