@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+				xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+				layout:decorate="layouts/messageLayout">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>메시지 보내기</title>
+</head>
+<body>
+<div layout:fragment="content">
+	<form action="sendMessages" method="post" enctype="multipart/form-data">
+		<div class="container d-flex flex-row gap-5">
+			<div class="d-flex flex-column gap-3 w-75">
+				<!-- Title and format's name -->
+				<div class="container-fluid">
+					<span class="navbar-text fs-1">메시지 작성</span>
+					
+				</div>
+			
+				<!-- Button toolbar -->
+				<div>
+					<nav
+						class="nav nav-pills flex-row"
+					>
+						<button class="nav-link active"
+							>보내기</button
+						>
+					</nav>
+				</div>
+
+				<div class="row mb-3">
+					<label for="receiver" class="col-sm-2 col-form-label">받는 사람</label>
+					<div class="col-sm-10">
+						<input type="text" class="form-control" id="receiver">
+					</div>
+  				</div>
+				<div class="row mb-3">
+					<label for="title" class="col-sm-2 col-form-label">제목</label>
+					<div class="col-sm-10">
+						<input type="text" class="form-control" id="title">
+					</div>
+  				</div>
+				<div class="row mb-3">
+					<label for="attatchment" class="col-sm-2 col-form-label">첨부 파일</label>
+					<div class="col-sm-10">
+						<input type="file" class="form-control" id="attatchment">
+					</div>
+  				</div>
+
+				<div class="mb-3">
+					<label for="content" class="form-label"></label>
+					<textarea class="form-control" name="content" id="content" rows="3"></textarea>
+				</div>
+				
+			</div>
+				
+				<!-- Right sidebar -->
+				<div class="w-25">
+					<!-- Nav tabs -->
+					<ul class="nav nav-tabs" id="myTab" role="tablist">
+						<li class="nav-item" role="presentation">
+							<button
+								class="nav-link active"
+								id="approval-lines-tab"
+								data-bs-toggle="tab"
+								data-bs-target="#approval-lines"
+								type="button"
+								role="tab"
+								aria-controls="approval-lines"
+								aria-selected="true"
+							>
+								결재선
+							</button>
+						</li>
+						<li class="nav-item" role="presentation">
+							<button
+								class="nav-link"
+								id="doc-info-tab"
+								data-bs-toggle="tab"
+								data-bs-target="#doc-info"
+								type="button"
+								role="tab"
+								aria-controls="doc-info"
+								aria-selected="false"
+							>
+								문서 정보
+							</button>
+						</li>
+					</ul>
+					
+					<!-- Tab panes -->
+					<div class="tab-content">
+						<div
+							class="tab-pane active"
+							id="approval-lines"
+							role="tabpanel"
+							aria-labelledby="approval-lines-tab"
+						>
+							<ul class="list-group list-group-flush">
+								<li class="list-group-item" th:each="approver : ${approvers}" th:object="${approver}" th:text="|*{dept_name} *{member_name} *{grade_name} *{status} *{process_date}|"></li>
+							</ul>
+						</div>
+						<div
+							class="tab-pane"
+							id="doc-info"
+							role="tabpanel"
+							aria-labelledby="doc-info-tab"
+						>
+								<ul class="list-group list-group-flush" th:object="${docContent}">
+									<li class="list-group-item" th:text="*{writer}"></li>
+									<li class="list-group-item" th:text="*{write_date}"></li>
+									<li class="list-group-item" th:text="*{retention}"></li>
+								</ul>
+						</div>
+					</div>
+				</div>
+
+		</div>
+	</form>
+</div>
+</body>
+</html>
