@@ -114,12 +114,12 @@ public class MessageController {
 	}
 	
 	@PostMapping("deleteMessage")
-	public ModelAndView deleteMessage() {
+	public ModelAndView deleteMessage(List<Integer> selectedIds) {
 		return null;
 	}
 	
 	@PostMapping("markAsRead")
-	public ModelAndView markAsRead() {
+	public ModelAndView markAsRead(List<Integer> selectedIds) {
 		return null;
 	}
 }

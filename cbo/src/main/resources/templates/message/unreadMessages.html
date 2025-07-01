@@ -5,11 +5,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>받은 메시지함</title>
+<title>Document</title>
 </head>
 <body>
 <div layout:fragment="content">
-	<h1>받은 메시지함</h1>
+	<h1>안 읽은 메시지함</h1>
 	<div
 		class="table-responsive"
 	>
@@ -25,10 +25,10 @@
 				</tr>
 			</thead>
 			<tbody>
-				<tr th:if="${#lists.isEmpty(receivedMessages)}">
+				<tr th:if="${#lists.isEmpty(unreadMessages)}">
 					<td colspan="4">메시지가 없습니다</td>
 				</tr>
-				<tr class="" th:each="receivedMessage : ${receivedMessages}" th:object="${receivedMessage}">
+				<tr class="" th:each="unreadMessage : ${unreadMessages}" th:object="${unreadMessage}">
 					<td scope="row"><input type="checkbox" name="selectedIds" th:value="*{id}"></td>
 					<td scope="row" th:text="*{sender}"></td>
 					<td scope="row"><a th:text="*{title}" th:href="@{messageContent(id=*{id})}"></td>
@@ -37,7 +37,6 @@
 			</tbody>
 		</table>
 	</div>
-	
 </div>
 </body>
 </html>
