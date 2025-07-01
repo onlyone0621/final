@@ -40,7 +40,7 @@
 				<tr class="" th:each="sentMessage : ${sentMessages}" th:object="${sentMessage}">
 					<td scope="row"><input type="checkbox" name="selectedIds" th:value="*{id}"></td>
 					<td scope="row" th:text="*{receiver}"></td>
-					<td scope="row"><a th:text="*{title}" th:href="@{messageContent(id=*{id})}"></td>
+					<td scope="row"><a class="text-decoration-none" th:text="*{title}" th:href="@{messageContent(id=*{id})}"></td>
 					<td scope="row" th:text="*{write_date}"></td>
 				</tr>
 				<tr>
