@@ -33,7 +33,7 @@ public class EchoHandler extends TextWebSocketHandler {
             session.close(CloseStatus.BAD_DATA);
             return;
         }
-		Set<WebSocketSession> sessions = roomSessions.get(dto.getId());
+		Set<WebSocketSession> sessions = roomSessions.get(room_id);
 
 		if (sessions == null) {
 		    sessions = ConcurrentHashMap.newKeySet();

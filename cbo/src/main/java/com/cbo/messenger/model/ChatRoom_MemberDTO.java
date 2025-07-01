@@ -12,7 +12,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class ChatRoom_MemberDTO {
-	private int chatRoom_id;
+	private int chatroom_id;
 	private int member_id;
 	private Date join_date;
 }

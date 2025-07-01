@@ -14,6 +14,6 @@ import lombok.Setter;
 public class ChatRoomDTO {
 	private int id;
 	private String name;
-	private String DESCRIPTION;
+	private String description;
 	private Date create_date;
 }
