@@ -118,7 +118,6 @@ public class ApprovalServiceImple implements ApprovalService {
 						Collectors.toList()));
 	}
 
-
 	@Override
 	@Transactional
 	public boolean submitDraft(DocDTO dto, List<Integer> approversId, List<Integer> reviewersId) throws Exception {
