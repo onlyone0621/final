@@ -11,9 +11,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.cbo.member.model.MemberDTO;
-import com.cbo.messenger.model.ChatMessageDTO;
-import com.cbo.messenger.model.ChatRoomDTO;
-import com.cbo.messenger.model.MessageListDTO;
+import com.cbo.messenger.model.*;
+
 import com.cbo.messenger.service.ChatMessageService;
 
 import jakarta.servlet.http.HttpSession;
@@ -30,9 +29,9 @@ public class MessengerController {
 	@GetMapping("messengerMain")
 	public ModelAndView messengerForm(HttpSession session) {
 		MemberDTO dto = (MemberDTO) session.getAttribute(com.cbo.constant.MemberConst.USER_KEY);
-		List<ChatRoomDTO> lists = null;
+		List<ChatRoomListDTO> lists = null;
 		try {
-			lists = service.getChatList(dto.getId());
+			lists = service.getChatRoomList(dto.getId());
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

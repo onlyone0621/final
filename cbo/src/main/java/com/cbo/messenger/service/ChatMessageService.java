@@ -9,5 +9,5 @@ import com.cbo.messenger.model.*;
 public interface ChatMessageService {
 	public int addMessage(ChatMessageDTO dto) throws Exception;
 	public List<MessageListDTO> getMessageList(int room_id)throws Exception;
-	public List<ChatRoomDTO> getChatList(int member_id)throws Exception;
+	public List<ChatRoomListDTO> getChatRoomList(int member_id)throws Exception;
 }

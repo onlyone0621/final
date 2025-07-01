@@ -11,9 +11,8 @@ import lombok.Setter;
 @AllArgsConstructor
 @Getter
 @Setter
-public class ChatRoomDTO {
-	private int id;
-	private String name;
-	private String DESCRIPTION;
-	private Date create_date;
+public class ChatRoom_MemberDTO {
+	private int chatRoom_id;
+	private int member_id;
+	private Date join_date;
 }

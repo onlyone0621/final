@@ -9,5 +9,5 @@ import com.cbo.messenger.model.*;
 public interface MessengerMapper {
 	public int insertMessage(ChatMessageDTO dto)throws Exception;
 	public List<MessageListDTO> selectMessage(int room_id) throws Exception;
-	public List<ChatRoomDTO> selectChatList(int member_id) throws Exception;
+	public List<ChatRoomListDTO> selectChatRoomList(int member_id) throws Exception;
 }
