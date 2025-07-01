@@ -1,29 +1,134 @@
 <!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="layouts/mainLayout">
 <head>
   <meta charset="UTF-8">
-  <title>게시글 상세보기</title>
+  <title>게시글 본문보기</title>
   <style>
     .container { display: flex; }
     .sidebar {
       width: 200px;
       background-color: #fbf9fd;
       padding: 20px;
+      box-sizing: border-box;
       border-right: 1px solid #ddd;
     }
-    .main {
-      flex-grow: 1;
-      padding: 20px;
+    .sidebar h4 { font-size: 18px; margin-bottom: 15px; }
+    .sidebar ul { list-style: none; padding-left: 0; font-size: 14px; }
+    .sidebar ul li { margin-bottom: 10px; }
+    .main { flex-grow: 1; padding: 20px; }
+    .post-header h2 { margin-bottom: 10px; }
+    .post-content { margin-bottom: 20px; }
+    .post-images {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      margin-top: 20px;
     }
-    .post-header h2 {
-      margin-bottom: 10px;
+    .post-images img {
+      width: 100%;
+      height: auto;
+      max-height: 150px;
+      object-fit: contain;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      background: #f9f9f9;
     }
-    .post-content {
-      margin-bottom: 20px;
-    }
+    #replySection { margin-top: 20px; }
+    .reply-item { border-bottom: 1px solid #ccc; padding: 5px; margin: 5px 0; }
   </style>
+  
+  <script>
+  var cId = "[[${cId}]]";
+  var boardId = "[[${boardId}]]";
+  var postId = "[[${post.id}]]";
+
+    // 댓글 등록
+    function submitReply() {
+      var content = document.getElementById('replyContent').value.trim();
+      if (!content) {
+        alert('댓글 내용을 입력하세요');
+        return;
+      }
+      var xhr = new XMLHttpRequest();
+      xhr.open('POST', `/community/${cId}/board/${boardId}/post/${postId}/reply`, true);
+      xhr.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
+      xhr.onreadystatechange = function() {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+          var res = JSON.parse(xhr.responseText);
+          alert(res.msg);
+          if (res.status === 'success') {
+            document.getElementById('replyContent').value = '';
+            loadReplies();
+          }
+        }
+      };
+      xhr.send(JSON.stringify({ content: content }));
+    }
+
+    // 댓글 목록 불러오기
+    function loadReplies() {
+      var xhr = new XMLHttpRequest();
+      xhr.open('GET', `/community/${cId}/board/${boardId}/post/${postId}/replies`, true);
+      xhr.onreadystatechange = function() {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+          var replies = JSON.parse(xhr.responseText);
+          var html = '';
+          replies.forEach(function(r) {
+            html += `
+              <div class="reply-item">
+                <p>${r.content} (작성자: ${r.member_id})</p>
+                <button onclick="startEditReply(${r.id}, '${r.content.replace(/'/g, "\\'")}')">수정</button>
+                <button onclick="deleteReply(${r.id})">삭제</button>
+              </div>`;
+          });
+          document.getElementById('replyList').innerHTML = html;
+        }
+      };
+      xhr.send();
+    }
+
+    // 댓글 삭제
+    function deleteReply(replyId) {
+      if (!confirm('댓글을 삭제하시겠습니까?')) return;
+      var xhr = new XMLHttpRequest();
+      xhr.open('POST', `/community/${cId}/board/${boardId}/post/${postId}/reply/${replyId}/delete`, true);
+      xhr.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
+      xhr.onreadystatechange = function() {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+          var res = JSON.parse(xhr.responseText);
+          alert(res.msg);
+          if (res.status === 'success') loadReplies();
+        }
+      };
+      xhr.send();
+    }
+
+    // 댓글 수정
+    function startEditReply(replyId, oldContent) {
+      var newContent = prompt('댓글 수정:', oldContent);
+      if (newContent === null) return;
+      var xhr = new XMLHttpRequest();
+      xhr.open('POST', `/community/${cId}/board/${boardId}/post/${postId}/reply/${replyId}/edit`, true);
+      xhr.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
+      xhr.onreadystatechange = function() {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+          var res = JSON.parse(xhr.responseText);
+          alert(res.msg);
+          if (res.status === 'success') loadReplies();
+        }
+      };
+      xhr.send(JSON.stringify({ content: newContent }));
+    }
+
+    window.onload = function() {
+      loadReplies();
+    }
+    </script>
+
+  
 </head>
 <body>
 <div layout:fragment="content">
@@ -42,11 +147,54 @@
 
     <!-- 본문 -->
     <div class="main">
+      <ul>
+        <li>운영자 : 박주연</li>
+        <li>게시판 주소 : /community/[[${cId}]]/board/[[${boardId}]]/post/[[${post.id}]]</li>
+        <li>조회수: <span th:text="${post.view_num}">0</span></li>
+        <li>
+          
+            
+            <button type="button" onclick="likePost()">❤️ 좋아요</button>
+			<span>좋아요 수: <span id="upvoteCount" th:text="${post.upvote != null ? post.upvote : 0}">0</span></span>
+            
+        </li>
+      </ul>
+      <hr>
+
+      <!-- 게시글 수정/삭제 -->
+      <ul>
+        <li>
+          <a th:href="@{'/community/' + ${cId} + '/board/' + ${boardId} + '/post/' + ${post.id} + '/edit'}">
+            <input type="button" value="게시글 수정">
+          </a>
+          <form name="deletePost"
+                th:action="@{'/community/' + ${cId} + '/board/' + ${boardId} + '/post/' + ${post.id} + '/delete'}"
+                method="post" style="display:inline;"
+                onsubmit="return confirm('정말 삭제하시겠습니까?');">
+            <button type="submit">게시글 삭제</button>
+          </form>
+        </li>
+      </ul>
+      <hr>
+
+      <!-- 게시글 내용 -->
       <div class="post-header">
         <h2 th:text="${post.title}">제목</h2>
       </div>
-
       <div class="post-content" th:utext="${post.content}">내용</div>
+      <div class="post-images" th:if="${imageList != null}">
+        <div th:each="img : ${imageList}">
+          <img th:src="@{'/postImages/' + ${img.saved_name}}" th:alt="${img.original_name}">
+        </div>
+      </div>
+
+      <!-- 댓글 -->
+      <div id="replySection">
+        <h4>댓글</h4>
+        <textarea id="replyContent" placeholder="댓글을 입력하세요" style="width:100%;"></textarea><br>
+        <button type="button" onclick="submitReply()">댓글 등록</button>
+        <div id="replyList"></div>
+      </div>
     </div>
 
   </div>

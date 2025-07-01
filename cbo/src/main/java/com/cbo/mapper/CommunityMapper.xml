@@ -22,9 +22,19 @@
 
 <!-- 게시판 작성 -->
 <insert id="insertBoard" parameterType="com.cbo.community.model.BoardDTO">
- insert into community_board 
-values(sq_community_board_id.nextval, #{community_id} ,#{name} ,#{description}, SYSDATE)
+ 
+  <selectKey keyProperty="id" resultType="int" order="BEFORE">
+    SELECT sq_community_board_id.NEXTVAL FROM dual
+  </selectKey>
+
+  INSERT INTO community_board (
+    id, community_id, name, description, create_date
+  )
+  VALUES (
+    #{id}, #{community_id}, #{name}, #{description}, SYSDATE
+  )
 </insert>
+
 
 <!-- 특정 커뮤니티에 소속된 게시판만 가져오기 -->
 <select id="boardListByCommunityId" resultType="com.cbo.community.model.BoardDTO" parameterType="map">
@@ -53,6 +63,20 @@ ORDER BY id ASC
   )
 </insert>
 
+<!-- 조회수 +1 -->
+<update id="ViewNumPlus" parameterType="int">
+  UPDATE board_post
+  SET view_num = view_num + 1
+  WHERE id = #{postId}
+</update>
+
+<!-- 좋아요 +1 -->
+<update id="upvotePlus" parameterType="int">
+  UPDATE board_post
+  SET upvote = upvote + 1
+  WHERE id = #{postId}
+</update>
+
 <!-- 게시글 본문보기 -->
 <select id="selectPostById" parameterType="int" resultType="com.cbo.community.model.PostDTO">
     SELECT *
@@ -75,10 +99,122 @@ ORDER BY id ASC
 
 <!-- 이미지 본문보기 -->
 <select id="selectImagesByPostId" parameterType="int" resultType="com.cbo.community.model.ImageDTO">
-  SELECT *
-  FROM board_image
-  WHERE post_id = #{postId}
+  SELECT * FROM board_image
+  WHERE 
+  post_id = #{postId}
 </select>
+
+<!-- 게시글 수정 -->
+<update id="updatePost" parameterType="com.cbo.community.model.PostDTO">
+  UPDATE board_post SET 
+    title = #{title},
+    content = #{content}
+  WHERE id = #{id}
+</update>
+
+<!-- 게시글 삭제 -->
+<delete id="deletePost" parameterType="int">
+  DELETE FROM 
+  board_post
+  WHERE id = #{postId}
+</delete>
+
+<!-- 이미지 삭제 -->
+<delete id="deleteImage" parameterType="int">
+  DELETE FROM board_image WHERE id = #{id}
+</delete>
+
+<!-- 파일 삭제 시 파일명 얻기용 - 삭제용임 -->
+<select id="selectImageById" parameterType="int" resultType="com.cbo.community.model.ImageDTO">
+  SELECT * FROM board_image WHERE id = #{id}
+</select>
+
+<!-- 게시판 마다 게시글 목록 -->
+<select id="postListByBoardId" parameterType="int" resultType="com.cbo.community.model.PostDTO">
+  SELECT * FROM board_post
+  WHERE board_id = #{boardId}
+  ORDER BY id DESC
+</select>
+
+<!-- 게시글 LIST의 게시판 정보 가져오기 조인 게시판 - 커뮤니티 JOIN  -->
+<select id="selectBoardAndCommunity" parameterType="int" resultType="map">
+  SELECT 
+    comboard.name AS board_name, 
+    c.name AS community_name
+  FROM community_board comboard 
+  JOIN community c 
+    ON comboard.community_id = c.id
+  WHERE comboard.id = #{boardId}
+</select>
+
+
+<!--  댓글 닷ㄹ기 + 답글 -->
+<insert id="insertReply" parameterType="com.cbo.community.model.ReplyDTO">
+  <selectKey keyProperty="id" resultType="int" order="BEFORE">
+    SELECT sq_board_reply_id.NEXTVAL FROM dual
+  </selectKey>
+  INSERT INTO board_reply (
+    id, board_post_id, member_id, content, write_date, ref, lev, sunbun
+  )
+  VALUES (
+    #{id}, #{board_post_id}, #{member_id}, #{content}, SYSDATE, #{ref}, #{lev}, #{sunbun}
+  )
+</insert>
+
+
+
+
+<!-- 본인이 쓴 댓글만 수정 가능 -->
+<update id="updateReply" parameterType="com.cbo.community.model.ReplyDTO">
+  UPDATE board_reply
+  SET content = #{content}
+  WHERE id = #{id} AND member_id = #{member_id}
+</update>
+
+<!-- id 기준 댓글 삭제 -->
+<delete id="deleteReply" parameterType="int">
+  DELETE FROM board_reply
+  WHERE id = #{id}
+</delete>
+
+<!-- 댓글 목록 읽기-->
+<select id="selectReplyByPostId" parameterType="int" resultType="com.cbo.community.model.ReplyDTO">
+  SELECT *
+  FROM board_reply
+  WHERE board_post_id = #{postId}
+  ORDER BY ref ASC, sunbun ASC
+</select>
+
+<!-- sunbun 밀기 (답글 순서 확보) -->
+<update id="updateReplySunbun" parameterType="map">
+  UPDATE board_reply
+  SET sunbun = sunbun + 1
+  WHERE ref = #{ref} AND sunbun >= #{sunbun}
+ 
+</update>
+
+<!-- 해당 커뮤니티 게시판 목록 불러오기(게시판이름, 운영자,커뮤니티id -->
+<select id="boardListWithMaster" parameterType="int" resultType="map">
+  SELECT 
+    cb.id AS board_id,
+    cb.name AS board_name,
+    m.name AS master_name
+  FROM community_board cb
+  LEFT JOIN community c ON cb.community_id = c.id
+  LEFT JOIN community_member cm ON cm.community_id = c.id AND cm.role = 'master'
+  LEFT JOIN member m ON m.id = cm.member_id
+  WHERE cb.community_id = #{cId}
+  ORDER BY cb.id ASC
+</select>
+
+<!-- 해당 커뮤니티의 게시판 삭제(전체, 선택) -->   <!-- DELETE FROM community_board WHERE id IN (1, 2, 3) 순서로 -->
+<delete id="deleteBoards" parameterType="list">
+  DELETE FROM community_board
+  WHERE id IN
+  <foreach collection="list" item="id" separator="," open="(" close=")">
+    #{id}
+  </foreach>
+</delete>
 
  </mapper>
  
