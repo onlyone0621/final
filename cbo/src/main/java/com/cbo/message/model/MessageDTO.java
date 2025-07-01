@@ -1,5 +1,4 @@
 package com.cbo.message.model;
-import java.sql.*;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -16,8 +15,12 @@ public class MessageDTO {
 	private String content;
 	private int receiver_id;
 	private String receiver;
+	private String receiver_dept;
+	private String receiver_grade;
 	private int sender_id;
 	private String sender;
+	private String sender_dept;
+	private String sender_grade;
 	private String write_date;
 	private String is_read;
 	private String file_name;
