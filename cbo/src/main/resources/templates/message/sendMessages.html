@@ -11,7 +11,7 @@
 <div layout:fragment="content">
 	<form action="sendMessages" method="post" enctype="multipart/form-data">
 		<div class="container d-flex flex-row gap-5">
-			<div class="d-flex flex-column gap-3 w-75">
+			<div class="d-flex flex-column align-items-stretch gap-3 w-75">
 				<!-- Title and format's name -->
 				<div class="container-fluid">
 					<span class="navbar-text fs-1">메시지 작성</span>
@@ -50,15 +50,15 @@
 
 				<div class="mb-3">
 					<label for="content" class="form-label"></label>
-					<textarea class="form-control" name="content" id="content" rows="3"></textarea>
+					<textarea class="form-control h-100 overflow-y-scroll" name="content" id="content" rows="3"></textarea>
 				</div>
 				
 			</div>
 				
 				<!-- Right sidebar -->
-				<div class="w-25">
+				<!-- <div class="w-25"> -->
 					<!-- Nav tabs -->
-					<ul class="nav nav-tabs" id="myTab" role="tablist">
+					<!-- <ul class="nav nav-tabs" id="myTab" role="tablist">
 						<li class="nav-item" role="presentation">
 							<button
 								class="nav-link active"
@@ -87,10 +87,10 @@
 								문서 정보
 							</button>
 						</li>
-					</ul>
+					</ul> -->
 					
 					<!-- Tab panes -->
-					<div class="tab-content">
+					<!-- <div class="tab-content">
 						<div
 							class="tab-pane active"
 							id="approval-lines"
@@ -114,7 +114,7 @@
 								</ul>
 						</div>
 					</div>
-				</div>
+				</div> -->
 
 		</div>
 	</form>
