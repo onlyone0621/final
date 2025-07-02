@@ -1,12 +1,12 @@
 const checkAllcb = document.querySelector('#checkAll');
 
-checkAllcb.addEventListener('change', () => {
+checkAllcb.addEventListener('change', function() {
     const checkboxes = document.querySelectorAll('input[type="checkbox"][name="selectedIds"]');
     if (checkboxes)
         checkboxes.forEach(cb => cb.checked = this.checked);
 });
 
-const markAsRead = (curPage, action, pageName) => {
+const processSelectedItems = function(curPage, action, pageName) {
     const selectedIds = [...document.querySelectorAll('input[type="checkbox"][name="selectedIds"]:checked')]
         .map(cb => cb.value);
 
@@ -21,15 +21,23 @@ const markAsRead = (curPage, action, pageName) => {
         body: JSON.stringify(selectedIds)
     })
     .then(res => {
-        if (!res.ok) throw new Error('실패');
-
+        const result = parseInt(res.text());
+        if (!res.ok || result < 1) throw new Error('실패');
+        
         return fetch(`/${pageName}?curPage=${curPage}`, {
             headers: {'X-Requested-With': 'XMLHttpRequest'}
         });
-    }).then(res => res.text())
+    })
+    .then(res => res.text())
     .then(renderedHtml => {
         document.querySelector('#tableBody').innerHTML = renderedHtml;
         history.pushState(null, '', `/${pageName}?curPage=${curPage}`);
     })
     .catch(err => alert(err.message));
 };
+
+const markAsReadBtn = document.querySelector('#markAsRead');
+const deleteMessages = document.querySelector('#deleteMessages');
+
+markAsReadBtn?.addEventListener('click', () => processSelectedItems(curPage, 'markAsRead', pageName));
+deleteMessages?.addEventListener('click', () => processSelectedItems(curPage, 'deleteMessages', pageName));

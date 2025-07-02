@@ -8,7 +8,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttribute;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -51,17 +53,23 @@ public class MessageController {
 		String pageBar = Pagination.makePaging("unreadMessages", maxRows, MessageConst.ROWS, MessageConst.PAGES, curPage);
 		mav.addObject("pageBar", pageBar);
 		
-		String viewName = req.getHeader("X-Requestd-With").equals("XMLHttpRequest") ?
-				"message/unreadMessages :: tableBody" : "message/unreadMessages";
+		// If req is XmlHttpRequest
+		if ("XMLHttpRequest".equals(req.getHeader("X-Requested-With"))) {
+			mav.setViewName("message/unreadMessages :: tableBody");
+			return mav;
+		}
 		
-		mav.setViewName(viewName);
+		mav.setViewName("message/unreadMessages");
+		mav.addObject("curPage", curPage);
+		mav.addObject("pageName", "unreadMessages");
 		
 		return mav;
 	}
 	
 	@GetMapping("receivedMessages")
 	public ModelAndView receivedMessages(@SessionAttribute(MemberConst.USER_KEY) MemberDTO userInfo,
-			@RequestParam(defaultValue = "1") int curPage) {
+			@RequestParam(defaultValue = "1") int curPage,
+			HttpServletRequest req) {
 		List<MessageDTO> res = null;
 		try {
 			res = messageService.getReceivedMessages(userInfo.getId(), curPage);
@@ -70,20 +78,32 @@ public class MessageController {
 			e.printStackTrace();
 		}
 		
-		ModelAndView mav = new ModelAndView("message/receivedMessages");
+		ModelAndView mav = new ModelAndView();
 		mav.addObject("receivedMessages", res);
 		
+		// Get paging bar
 		int maxRows = res != null && res.size() > 0 ? res.get(0).getMax_rows() : 1;
 		
 		String pageBar = Pagination.makePaging("receivedMessages", maxRows, MessageConst.ROWS, MessageConst.PAGES, curPage);
 		mav.addObject("pageBar", pageBar);
+		
+		// If req is XmlHttpRequest
+		if ("XMLHttpRequest".equals(req.getHeader("X-Requested-With"))) {
+			mav.setViewName("message/receivedMessages :: tableBody");
+			return mav;
+		}
+		
+		mav.setViewName("message/receivedMessages");
+		mav.addObject("curPage", curPage);
+		mav.addObject("pageName", "receivedMessages");
 		
 		return mav;
 	}
 	
 	@GetMapping("sentMessages")
 	public ModelAndView sentMessages(@SessionAttribute(MemberConst.USER_KEY) MemberDTO userInfo,
-			@RequestParam(defaultValue = "1") int curPage) {
+			@RequestParam(defaultValue = "1") int curPage,
+			HttpServletRequest req) {
 		List<MessageDTO> res = null;
 		try {
 			res = messageService.getSentMessages(userInfo.getId(), curPage);
@@ -99,6 +119,15 @@ public class MessageController {
 		
 		String pageBar = Pagination.makePaging("sentMessages", maxRows, MessageConst.ROWS, MessageConst.PAGES, curPage);
 		mav.addObject("pageBar", pageBar);
+		
+		if ("XMLHttpRequest".equals(req.getHeader("X-Requested-With"))) {
+			mav.setViewName("message/sentMessages :: tableBody");
+			return mav;
+		}
+		
+		mav.setViewName("message/sentMessages");
+		mav.addObject("curPage", curPage);
+		mav.addObject("pageName", "sentMessages");
 		
 		return mav;
 	}
@@ -158,13 +187,27 @@ public class MessageController {
 		return mav;
 	}
 	
+	@ResponseBody
 	@PostMapping("deleteMessages")
-	public ModelAndView deleteMessages(List<Integer> selectedIds) {
-		return null;
+	public int deleteMessages(@RequestBody List<Integer> selectedIds) {
+		try {
+			return messageService.deleteMessages(selectedIds);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return -1;
 	}
 	
+	@ResponseBody
 	@PostMapping("markAsRead")
-	public ModelAndView markAsRead(List<Integer> selectedIds) {
-		return null;
+	public int markAsRead(@RequestBody List<Integer> selectedIds) {
+		try {
+			return messageService.markAsRead(selectedIds);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return -1;
 	}
 }
