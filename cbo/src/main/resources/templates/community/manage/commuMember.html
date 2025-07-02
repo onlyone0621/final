@@ -175,42 +175,44 @@
     <div class="main">
       <div class="tabs">
         <a class="tab" th:href="@{/community/{cId}/update(cId=${cId})}">정보</a>
-        <a class="tab active" th:href="@{/community/{cId}/boardDelete(cId=${cId})}">게시판</a>
-       	<a class="tab" th:href="@{/community/{cId}/member(cId=${cId})}">멤버</a>
+        <a class="tab" th:href="@{/community/{cId}/boardDelete(cId=${cId})}">게시판</a>
+       	<a class="tab active" th:href="@{/community/{cId}/member(cId=${cId})}">멤버</a>
         <a class="tab" th:href="@{/community/{cId}/close(cId=${cId})}">폐쇄</a>
       </div>
-      <form id="deleteForm" th:action="@{'/community/' + ${cId} + '/boardDelete'}" method="post">
-        <table>
-          <thead>
-            <tr>
-              <th><input type="checkbox" id="selectAll"></th>
-              <th>게시판 이름</th>
-              <th>운영자</th>
-              <th>설정</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr th:if="${#lists.isEmpty(boardLists)}">
-              <td colspan="4">생성된 게시판이 없습니다.</td>
-            </tr>
-            <tr th:each="board : ${boardLists}">
-              <td><input type="checkbox" name="boardIds" th:value="${board['BOARD_ID']}"></td>
-              <td th:text="${board['BOARD_NAME']}"></td>
-              <td th:text="${board['MASTER_NAME']} ?: '운영자 없음'"></td>
-              <td>
-                <a th:href="@{/community/{cId}/board/{boardId}/update(cId=${cId}, boardId=${board['BOARD_ID']})}">
-                  <input type="button" value="설정">
-                </a>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-        <br>
-        <button type="button" id="deleteBtn">삭제</button>
-        <a th:href="@{/community/{cId}/board/create(cId=${cId})}">
-          <button type="button">추가</button>
-        </a>
-      </form>
+<table>
+        <thead>
+          <tr>
+            <th>이름</th>
+            <th>이메일</th>
+            <th>권한</th>
+            <th>가입일</th>
+            <th>작업</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr th:each="m : ${members}">
+            <td th:text="${m.name}">이름</td>
+            <td th:text="${m.email}">이메일</td>
+            <td th:text="${m.role}">권한</td>
+            <td th:text="${#dates.format(m.joinDate, 'yyyy-MM-dd')}">가입일</td>
+            <td>
+              <div class="actions" th:if="${status == 'pending'}">
+                <form th:action="@{/community/{cId}/member/{memberId}/approve(cId=${cId}, memberId=${m.id})}" method="post">
+                  <button type="submit" class="btn approve-btn">승인</button>
+                </form>
+                <form th:action="@{/community/{cId}/member/{memberId}/reject(cId=${cId}, memberId=${m.id})}" method="post">
+                  <button type="submit" class="btn reject-btn">거절</button>
+                </form>
+              </div>
+              <div class="actions" th:if="${status != 'pending'}">
+                <form th:action="@{/community/{cId}/member/{memberId}/remove(cId=${cId}, memberId=${m.id})}" method="post">
+                  <button type="submit" class="btn remove-btn">탈퇴</button>
+                </form>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   </div>
 </div>

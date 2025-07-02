@@ -4,133 +4,144 @@
       layout:decorate="layouts/mainLayout">
 <head>
   <meta charset="UTF-8">
-  <title>커뮤니티 관리</title>
+  <title>게시판 수정</title>
   <style>
     .container {
       display: flex;
+      min-height: 100vh;
     }
-
     .sidebar {
-      width: 200px;
+      width: 220px;
       background-color: #fbf9fd;
       padding: 20px;
-      box-sizing: border-box;
       border-right: 1px solid #ddd;
     }
-
     .sidebar h4 {
-      margin-bottom: 15px;
       font-size: 18px;
+      margin: 0;
     }
-
     .sidebar ul {
       list-style: none;
       padding-left: 0;
       font-size: 14px;
+      margin-top: 10px;
     }
-
     .sidebar ul li {
+      margin-bottom: 6px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 8px;
     }
-
     .sidebar ul li a {
-      color: #6a1b9a;
       text-decoration: none;
+      color: #6a1b9a;
       font-weight: bold;
     }
-
-    .sidebar ul li button {
-      padding: 2px 6px;
+    .write-btn {
+      display: block;
+      padding: 6px 10px;
+      background-color: #f8bbd0;
+      color: #333;
+      text-decoration: none;
+      border-radius: 4px;
       font-size: 12px;
-      border: 1px solid #bbb;
-      background-color: #f5f5f5;
-      cursor: pointer;
+      margin: 10px 0;
+      text-align: center;
     }
-
-    .sidebar > a > button {
-      width: 100%;
-      padding: 8px;
-      margin-bottom: 15px;
-      background-color: #eee;
-      border: 1px solid #ccc;
-      cursor: pointer;
+    .write-btn:hover {
+      background-color: #f48fb1;
     }
-
-    .main {
-      padding: 20px;
-      flex-grow: 1;
-    }
-
-    .tab-wrapper {
-      display: flex;
-      gap: 1.5rem;
-      margin-bottom: 20px;
-      border-bottom: 1px solid #ccc;
-    }
-
-    .tab {
-      padding: 10px;
-      font-weight: bold;
+    .add-board-link {
+      font-size: 12px;
       color: #666;
+      text-decoration: none;
+      display: inline-block;
+      margin-top: 8px;
+    }
+    .add-board-link:hover {
+      color: #6a1b9a;
+      font-weight: bold;
+    }
+    .main {
+      flex-grow: 1;
+      padding: 20px;
+    }
+    .alert {
+      padding: 10px;
+      border-radius: 4px;
+      margin-bottom: 10px;
+    }
+    .alert-success {
+      background-color: #e1f5fe;
+      color: #0277bd;
+    }
+    .alert-error {
+      background-color: #ffebee;
+      color: #c62828;
+    }
+    form input[type="text"], form textarea {
+      width: 100%;
+      padding: 6px;
+      margin-bottom: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    form input[type="submit"] {
+      padding: 6px 12px;
+      background-color: #f8bbd0;
+      border: none;
+      border-radius: 4px;
+      color: #333;
       cursor: pointer;
     }
-
-    .tab.active {
-      color: #000;
-      border-bottom: 3px solid #f381a3;
-    }
-
-    form {
-      margin-top: 20px;
+    form input[type="submit"]:hover {
+      background-color: #f48fb1;
     }
   </style>
 </head>
 <body>
 <div layout:fragment="content">
   <div class="container">
+
     <!-- 사이드바 -->
     <div class="sidebar">
-      <h4>커뮤니티</h4>
-
-      <a th:href="@{/community/{cId}/board/create(cId=${cId})}">
-        <button>게시판 추가</button>
-      </a>
-
-      <ul th:if="${#lists.isEmpty(boardLists)}">
-        <li>생성된 게시판이 없습니다.</li>
-      </ul>
-
-      <ul th:each="bdto : ${boardLists}">
-        <li>
-          <a th:href="@{/community/{cId}/board/{boardId}(cId=${cId}, boardId=${bdto.id})}">[[${bdto.name}]]</a>
-          <a th:href="@{/community/{cId}/board/{boardId}/update(cId=${cId}, boardId=${bdto.id})}">
-            <button>설정</button>
-          </a>
-        </li>
-      </ul>
-    </div>
-
-    <!-- 메인 영역 -->
-    <div class="main">
-      <div class="tab-wrapper">
-        <div class="tab"><a th:href="@{'/community/' + ${cId} + '/update'}">정보</a></div>
-        <div class="tab"><a th:href="@{'/community/' + ${cId} + '/boardUpdate'}">게시판</a></div>
-        <div class="tab"><a th:href="@{'/community/' + ${cId} + '/members'}">멤버</a></div>
-        <div class="tab active"><a th:href="@{'/community/' + ${cId} + '/close'}">폐쇄</a></div>
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+        <h4 th:text="${communityName ?: '커뮤니티'}">커뮤니티</h4>
+        <a th:href="@{/community/{cId}/update(cId=${cId})}" style="font-size: 16px;">⚙</a>
       </div>
 
-      <form th:action="@{'/community/' + ${cId} + '/close'}" method="post">
-        <div>
-          *커뮤니티를 폐쇄하시면, 현재 커뮤니티 내에 있는 자료들이 삭제됩니다.<br>
-          <label style="color: crimson;">자료가 삭제된 이후에는 복구가 불가능 합니다.</label><br><br>
-          <input type="hidden" name="id" th:value="${cId}">
-          <input type="submit" value="폐쇄하기">
-        </div>
+      <a th:href="@{/community/{cId}/board/{boardId}/write(cId=${cId}, boardId=${boardId})}" class="write-btn">글쓰기</a>
+
+      <ul th:if="${#lists.isEmpty(sidebarBoardList)}">
+        <li>게시판이 없습니다.</li>
+      </ul>
+      <ul th:each="bdto : ${sidebarBoardList}">
+        <li>
+          <a th:href="@{/community/{cId}/board/{boardId}(cId=${cId}, boardId=${bdto.id})}"
+             th:text="${bdto.name}"></a>
+          <a th:href="@{/community/{cId}/board/{boardId}/update(cId=${cId}, boardId=${bdto.id})}">⚙</a>
+        </li>
+      </ul>
+
+      <a th:href="@{/community/{cId}/board/create(cId=${cId})}" class="add-board-link">+ 게시판 추가</a>
+    </div>
+
+    <!-- 메인 -->
+    <div class="main">
+      <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
+      <div th:if="${errorMessage}" class="alert alert-error" th:text="${errorMessage}"></div>
+
+      <form th:action="@{/community/{cId}/board/{boardId}/update(cId=${cId}, boardId=${boardId})}" method="post">
+        <label>게시판 이름</label>
+        <input type="text" name="name" th:value="${board.name}" required>
+
+        <label>게시판 설명</label>
+        <textarea name="description" required th:text="${board.description}"></textarea>
+
+        <input type="submit" value="저장">
       </form>
     </div>
+
   </div>
 </div>
 </body>

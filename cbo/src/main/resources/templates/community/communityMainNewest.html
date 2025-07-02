@@ -1,150 +1,141 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org"
-				xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-				layout:decorate="layouts/mainLayout">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+              xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+              layout:decorate="layouts/mainLayout">
 <head>
- <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>커뮤니티 보기</title>
-<script>
-	function listSetting(){
-
-		//var id = document.getElementById('id').value;
-		//location.href="communityUpdate?id="+id+"&board=";
-	}
-</script>
+  <meta charset="UTF-8">
+  <title>커뮤니티 최신글</title>
   <style>
-    body {
-      margin: 0;
-      font-family: 'Arial', sans-serif;
-      color: #333;
-    }
-
-    .layout {
-      display: flex;
-      min-height: 100vh;
-    }
-
+    .container { display: flex; min-height: 100vh; }
     .sidebar {
-      width: 200px;
-      background-color: #fbf9fd; 
+      width: 220px;
+      background-color: #fbf9fd;
       padding: 20px;
-      box-sizing: border-box;
-      border-right: 1px solid #ddd; /* 오른쪽 경계선 */
+      border-right: 1px solid #ddd;
     }
-    
-    .post-list li input[type="button"] {
-      margin-left: 10px;
-    }
-    
-    .sidebar ul li {
-  	  display: flex;
-  	  justify-content: space-between;
- 	  align-items: center;
-	}
-
-    .sidebar h4 {
-      margin-bottom: 15px;
-      font-size: 18px;
-    }
-
-    .sidebar button {
-      width: 100%;
-      padding: 8px;
-      margin-bottom: 15px;
-      background-color: #eee;
-      border: 1px solid #ccc;
-      cursor: pointer;
-    }
-
-    .sidebar ul {
-      list-style: none;
-      padding-left: 0;
-      font-size: 14px;
-    }
-
+    .sidebar h4 { margin-bottom: 10px; font-size: 18px; }
+    .sidebar ul { list-style: none; padding-left: 0; }
     .sidebar ul li {
       margin-bottom: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
-
-
-    .main-content { /** 중간정렬해줌*/
-      flex: 1;
-      padding: 20px;
+    .sidebar ul li a.name-link {
+      text-decoration: none;
+      color: #6a1b9a;
+      font-weight: bold;
     }
-
-    .main-tabs {
-      display: flex;/**가운데 정랼*/
-      gap: 1rem;
-      margin-bottom: 20px;
-      border-bottom: 1px solid #ddd;
+    .sidebar a.settings-btn {
+      text-decoration: none;
+      color: #999;
+      font-size: 16px;
+      margin-left: 5px;
     }
-
+    .sidebar a.settings-btn:hover {
+      color: #666;
+    }
+    .create-btn {
+      display: block;
+      width: 100%;
+      padding: 10px 0; /* 버튼 높이 ↑ */
+      margin-bottom: 12px;
+      border: 1px solid #ccc;
+      background-color: #f9f9f9;
+      color: #333;
+      border-radius: 4px;
+      text-align: center;
+      text-decoration: none;
+      font-size: 15px; /* 글자 크기 ↑ */
+    }
+    .create-btn:hover {
+      background-color: #eee;
+    }
+    .main { flex-grow: 1; padding: 20px; }
+    .tabs {
+      display: flex; gap: 1rem; margin-bottom: 20px; border-bottom: 1px solid #ddd;
+    }
     .tab {
       padding: 8px 12px;
       font-weight: bold;
       color: #666;
-      cursor: pointer;
+      text-decoration: none;
+      border-bottom: 2px solid transparent;
     }
-
-    .tab.active {
-      color: #000;
-      border-bottom: 2px solid #f381a3;
-    }
-    /** 목록 꾸밈 0*/
-    .post-list {
-      list-style: none;
-      padding-left: 0;
-    }
-
+    .tab.active { color: #d81b60; border-bottom: 2px solid #d81b60; }
+    .post-list { list-style: none; padding: 0; }
     .post-list li {
-      padding: 8px 0;
+      padding: 10px 0;
       border-bottom: 1px solid #eee;
     }
+    .post-title a {
+      font-size: 16px;
+      font-weight: bold;
+      color: #333;
+      text-decoration: none;
+    }
+    .post-title a:hover {
+      text-decoration: underline;
+    }
+    .post-meta { font-size: 12px; color: gray; }
   </style>
 </head>
 <body>
+
 <div layout:fragment="content">
-<div class="layout">
-  <div class="sidebar">
-    <h4>커뮤니티</h4>
-      <a th:href="@{/communityCreate}">
-        <button>커뮤니티 생성</button>
-      </a>
- 
+  <div class="container">
+    <!-- 사이드바 -->
+    <div class="sidebar">
+      <h4>커뮤니티</h4>
 
-<ul th:if="${#lists.isEmpty(lists)}">
-   <li>생성된 커뮤니티가 없습니다.</li>
-</ul>
- <ul th:each="dto : ${lists}">
-   <li>
-      <a th:href="@{/community/{id}(id=${dto.id})}">[[${dto.name}]]</a>
-   <input type="button"
-       th:onclick="|location.href='/community/${dto.id}/update'|"
-       value="설정">
-   </li>
-</ul>
-   </div>
+      <a th:href="@{/communityCreate}" class="create-btn">커뮤니티 생성</a>
 
-
-
-  <div class="main-content">
-    <div class="main-tabs">
-      <div class="tab active"><a th:href="@{/communityMainNewest}">최근글</a></div>
-      <div class="tab"><a th:href="@{/communityMainJoin}">가입 커뮤니티</a></div>
-      <div class="tab "><a th:href="@{/communityMainAll}">전체 커뮤니티</a></div>
+      <ul th:if="${#lists.isEmpty(lists)}">
+        <li>생성된 커뮤니티가 없습니다.</li>
+      </ul>
+      <ul th:each="dto : ${lists}">
+        <li>
+          <a th:href="@{/community/{id}(id=${dto.id})}" class="name-link">[[${dto.name}]]</a>
+          <a th:href="@{/community/{id}/update(id=${dto.id})}" class="settings-btn">⚙</a>
+        </li>
+      </ul>
     </div>
 
+    <!-- 메인 -->
+    <div class="main">
+      <div class="tabs">
+        <a class="tab active" th:href="@{/communityMainNewest}">최근글</a>
+        <a class="tab" th:href="@{/communityMainJoin}">가입 커뮤니티</a>
+        <a class="tab" th:href="@{/communityMainAll}">전체 커뮤니티</a>
+      </div>
 
-    <ul class="post-list">
-      <li>최신글 1</li>
-      <li>최신글 2</li>
-      <li>최신글 3</li>
-      <li>최신글 4</li>
-      <li>최신글 5</li>
-    </ul>
+      <ul class="post-list">
+        <li th:if="${#lists.isEmpty(newestPosts)}">아직 작성된 게시글이 없습니다.</li>
+        <li th:each="post : ${newestPosts}">
+          <div>
+            <span th:text="|${post['community_name']} > ${post['board_name']}|"></span>
+            <div class="post-title">
+              <a th:href="@{/community/{cId}/board/{boardId}/post/{postId}(
+                            cId=${post['community_id']},
+                            boardId=${post['board_id']},
+                            postId=${post['post_id']}
+                          )}"
+                 th:text="${post['title']}"></a>
+            </div>
+            <div th:text="${post['content']}"></div>
+            <div class="post-meta">
+              <span th:if="${post['member_name'] != null}" th:text="|작성자: ${post['member_name']}|"></span>
+              <span th:if="${post['member_name'] == null}" th:text="'작성자: 익명'"></span>
+              |
+              <span th:text="${#dates.format(post['write_date'], 'yyyy-MM-dd HH:mm')}"></span>
+              |
+              <span th:text="|댓글 ${post['reply_count']}|"></span>
+            </div>
+          </div>
+        </li>
+      </ul>
+    </div>
   </div>
-</div>
 </div>
 </body>
 </html>
