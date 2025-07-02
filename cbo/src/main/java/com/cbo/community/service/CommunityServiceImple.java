@@ -10,8 +10,11 @@ import com.cbo.community.model.BoardDTO;
 import com.cbo.community.model.CommunityDTO;
 import com.cbo.community.model.ImageDTO;
 import com.cbo.community.model.PostDTO;
+import com.cbo.community.model.PostListDTO;
 import com.cbo.community.model.ReplyDTO;
+import com.cbo.constant.CommunityConst;
 import com.cbo.mapper.CommunityMapper;
+import com.cbo.member.model.MemberDTO;
 @Service
 public class CommunityServiceImple implements CommunityService {
   @Autowired
@@ -36,9 +39,21 @@ public int insertCommunity(CommunityDTO dto) throws Exception {
 @Override
 	public List<CommunityDTO> communityList() throws Exception {
 		List<CommunityDTO> lists=mapper.communityList();
-		
 		return lists;
 	}
+//커뮤니티 정보 가져오기 id에 해당하는 각 커뮤니티 dto 정보 
+@Override
+	public CommunityDTO communityInfoById(int cId) throws Exception {
+			CommunityDTO cdto=mapper.communityInfoById(cId);
+			return cdto;
+		}
+//커뮤니티 수정(이름, 설명 변경)
+@Override
+	public int updateCommunityInfo(CommunityDTO cdto) throws Exception {
+		int result=mapper.updateCommunityInfo(cdto);
+		return result;
+	}
+
 // 게시판 생성
 @Override
 	public int insertBoard(BoardDTO dto) throws Exception {
@@ -184,7 +199,87 @@ public int insertCommunity(CommunityDTO dto) throws Exception {
 	public int deleteBoards(List<Integer> boardIds) throws Exception {
     	int result= mapper.deleteBoards(boardIds);
     		return result;
+	}
+//최신글 5개 가져오기
+@Override
+	public List<Map<String, Object>> newestPosts() throws Exception {
+	List<Map<String, Object>> newestPosts=mapper.newestPosts();
+		return newestPosts;
+	}
+
+//커뮤니티 홈 각 커뮤니티의 모든 글 리스트
+@Override
+	public List<PostListDTO> selectPostListByCommunityId(int commId) {
+		List<PostListDTO> postLists=mapper.selectPostListByCommunityId(commId);
+
+		return postLists;
+	}
+//게시판 수정 폼에 현재값 표시
+@Override
+	public BoardDTO selectBoardById(int boardId) throws Exception {
+		BoardDTO bdto=mapper.selectBoardById(boardId);
+		return bdto;
+	}
+
+//게시판 이름, 설명 수정
+@Override
+	public int updateBoardInfo(BoardDTO bdto) throws Exception {
+		int result=mapper.updateBoardInfo(bdto);
+		return result;
+	}
+
+
+//////// 권한 부여
+//public List<MemberDTO> joinMembersList(int cId) throws Exception {
+//List<MemberDTO> mdto =   mapper.selectMembersByRoles(cId, List.of("master", "submaster", "user"));
+		//return mdto;
+
+// 가입된 멤버 리스트 가져오기 
+@Override
+public List<Map<String, Object>> joinMemberList(int cId) throws Exception {
+    List<Map<String, Object>> mdto = mapper.selectMembersByRoles(cId, List.of(
+        CommunityConst.MASTER,
+        CommunityConst.SUBMASTER,
+        CommunityConst.USER
+    ));
+    return mdto;
 }
+
+// 가입 대기 멤버 리스트 가져오기
+@Override
+public List<Map<String, Object>> pendingMemberList(int cId) throws Exception {
+    List<Map<String, Object>> mdto = mapper.selectMembersByRoles(cId, List.of("가입대기"));
+    return mdto;
+}
+
+// 가입 승인 (가입대기 → user)
+@Override
+	public void approveMember(int cId, int memberId) throws Exception {
+		mapper.updateMemberRole(cId, memberId, "user");
+		
+	}
+
+// 가입 거절 (가입대기 → 거절)
+@Override
+	public void rejectMember(int cId, int memberId) throws Exception {
+		mapper.updateMemberRole(cId, memberId, "거절");
+		
+	}
+
+// 멤버 탈퇴
+@Override
+	public void removeMember(int cId, int memberId) throws Exception {
+		mapper.deleteCommunityMember(cId, memberId);
+		
+	}
+
+// 권한 변경 (예: submaster ↔ user)
+@Override
+	public void changeRole(int cId, int memberId, String role) {
+		mapper.updateMemberRole(cId, memberId, role);
+		
+	}
+
 
 }
 

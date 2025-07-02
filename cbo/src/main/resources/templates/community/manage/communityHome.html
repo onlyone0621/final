@@ -1,115 +1,68 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="layouts/mainLayout">
+              xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+              layout:decorate="layouts/mainLayout">
 <head>
   <meta charset="UTF-8">
   <title>커뮤니티 홈</title>
   <style>
-    .container {
-      display: flex;
-    }
-
-    .sidebar {
-      width: 200px;
-      background-color: #fbf9fd;
-      padding: 20px;
-      box-sizing: border-box;
-      border-right: 1px solid #ddd;
-    }
-
-    .sidebar h4 {
-      margin-bottom: 15px;
-      font-size: 18px;
-    }
-
-    .sidebar ul {
-      list-style: none;
-      padding-left: 0;
-      font-size: 14px;
-    }
-
-    .sidebar ul li {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 8px;
-    }
-
-    .sidebar ul li a {
-      color: #6a1b9a;
-      text-decoration: none;
-      font-weight: bold;
-      font-size: 14px;
-    }
-
-    .sidebar ul li button {
-      padding: 2px 6px;
-      font-size: 12px;
-      border: 1px solid #bbb;
-      background-color: #f5f5f5;
-      cursor: pointer;
-    }
-
-    .sidebar > a > button {
-      width: 100%;
-      padding: 8px;
-      margin-bottom: 15px;
-      background-color: #eee;
-      border: 1px solid #ccc;
-      cursor: pointer;
-    }
-
-    .main {
-      padding: 20px;
-      flex-grow: 1;
-    }
-
-    a {
-      text-decoration: none;
-    }
-
-    .board-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
+    .container { display: flex; min-height: 100vh; }
+    .sidebar { width: 200px; background: #fbf9fd; padding: 20px; border-right: 1px solid #ddd; }
+    .sidebar h4 { font-size: 18px; margin-bottom: 15px; }
+    .sidebar ul { list-style: none; padding: 0; font-size: 14px; }
+    .sidebar ul li { margin-bottom: 8px; }
+    .sidebar ul li a { text-decoration: none; color: #6a1b9a; font-weight: bold; }
+    .sidebar button { width: 100%; padding: 8px; margin-bottom: 10px; background: #eee; border: 1px solid #ccc; cursor: pointer; }
+    .main { flex-grow: 1; padding: 20px; }
+    .post-list { list-style: none; padding: 0; }
+    .post-list li { border-bottom: 1px solid #eee; padding: 10px 0; }
   </style>
 </head>
 <body>
 <div layout:fragment="content">
   <div class="container">
     <div class="sidebar">
-      <h4>커뮤니티</h4>
+      <h4 th:text="${communityInfo != null ? communityInfo.name : '커뮤니티'}">커뮤니티</h4>
 
       <a th:href="@{/community/{cId}/board/create(cId=${cId})}">
         <button>게시판 추가</button>
       </a>
 
-      <ul th:if="${#lists.isEmpty(boardLists)}">
+      <ul th:if="${#lists.isEmpty(sidebarBoardLists)}">
         <li>생성된 게시판이 없습니다.</li>
       </ul>
-
-      <ul th:each="bdto : ${boardLists}">
-        <li class="board-item">
+      <ul th:each="bdto : ${sidebarBoardLists}">
+        <li>
           <a th:href="@{/community/{cId}/board/{boardId}(cId=${cId}, boardId=${bdto.id})}">
             [[${bdto.name}]]
           </a>
-          <a th:href="@{/community/{cId}/board/{boardId}/create(cId=${cId}, boardId=${bdto.id})}">
-            <button>설정</button>
-          </a>
         </li>
       </ul>
-
-      <h4>가입 멤버</h4>
-      <p>박주연<br>
-        <button>+ 초대하기</button> /
-        <button>탈퇴하기</button>
-      </p>
     </div>
 
     <div class="main">
-      게시판을 생성하여, 글을 등록 할 수 있습니다.
+      <h3>커뮤니티 글</h3>
+      <hr>
+      <ul class="post-list">
+        <li th:if="${#lists.isEmpty(postLists)}">아직 작성된 게시글이 없습니다.</li>
+
+        <li th:each="post : ${postLists}">
+          <div th:text="${post.community_name + ' > ' + post.board_name}"></div>
+          <a th:href="@{/community/{cId}/board/{boardId}/post/{postId}(cId=${cId}, boardId=${post.board_id}, postId=${post.post_id})}"
+             th:text="${post.title}"></a>
+          <div th:text="${post.content}"></div>
+          <div style="font-size: 12px; color: gray;">
+            <span>작성자: </span>
+            <span th:text="${post.member_name != null ? post.member_name : '박주연'}"></span>
+            <span> | 댓글: </span>
+            <span th:text="${post.reply_count}"></span>
+            <span> | 좋아요: </span>
+            <span th:text="${post.upvote}"></span>
+            <span> | </span>
+            <span th:text="${#dates.format(post.write_date, 'yyyy-MM-dd HH:mm')}"></span>
+          </div>
+        </li>
+      </ul>
     </div>
   </div>
 </div>

@@ -1,27 +1,26 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+              xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+              layout:decorate="layouts/mainLayout">
 <head>
   <meta charset="UTF-8">
-  <title>커뮤니티 수정 </title>
+  <title>커뮤니티 정보 수정</title>
   <style>
+    .container {
+      display: flex;
+      min-height: 100vh;
+    }
+
     .sidebar {
-      width: 200px;
+      width: 220px;
       background-color: #fbf9fd;
       padding: 20px;
-      box-sizing: border-box;
       border-right: 1px solid #ddd;
     }
 
     .sidebar h4 {
-      margin-bottom: 15px;
       font-size: 18px;
-    }
-
-    .sidebar button {
-      width: 100%;
-      padding: 8px;
-      margin-bottom: 15px;
+      margin-bottom: 10px;
     }
 
     .sidebar ul {
@@ -32,81 +31,143 @@
 
     .sidebar ul li {
       margin-bottom: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
 
-    .container {
-      display: flex;
+    .sidebar ul li a {
+      text-decoration: none;
+      color: #6a1b9a;
+      font-weight: bold;
+    }
+
+    .settings-btn {
+      font-size: 16px;
+      color: #999;
+      margin-left: 5px;
+      text-decoration: none;
+    }
+
+    .add-board {
+      display: block;
+      margin-top: 10px;
+      font-size: 14px;
+      color: #d81b60;
+      font-weight: bold;
+      text-decoration: none;
     }
 
     .main {
-      padding: 10px;
       flex-grow: 1;
+      padding: 20px;
     }
-        .tab-wrapper {
-      display: flex;
-      gap: 1.5rem;
+
+    .tabs {
+      border-bottom: 1px solid #ddd;
       margin-bottom: 20px;
-      border-bottom: 1px solid #ccc;
     }
 
     .tab {
-      padding: 10px;
+      display: inline-block;
+      margin-right: 15px;
+      padding-bottom: 5px;
       font-weight: bold;
       color: #666;
-      cursor: pointer;
+      text-decoration: none;
+      border-bottom: 2px solid transparent;
     }
 
     .tab.active {
-      color: #000;
-      border-bottom: 3px solid #f381a3;
+      color: #d81b60;
+      border-bottom: 2px solid #d81b60;
     }
 
-    .step-container {
-      display: flex;
-      gap: 2rem;
+    form {
+      margin-top: 20px;
     }
-    
 
+    form label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+
+    form input[type="text"],
+    form textarea {
+      width: 100%;
+      padding: 6px;
+      margin-bottom: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    form input[type="submit"],
+    form input[type="reset"] {
+      padding: 8px 16px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    form input[type="submit"] {
+      background-color: #f8bbd0;
+      color: #333;
+    }
+
+    form input[type="submit"]:hover {
+      background-color: #f48fb1;
+    }
+
+    form input[type="reset"] {
+      background-color: #fce4ec;
+      color: #333;
+    }
+
+    form input[type="reset"]:hover {
+      background-color: #f8bbd0;
+    }
   </style>
 </head>
 <body>
-
-<div class="container">
-  <div class="sidebar">
-
-   <input type="button" value="글쓰기">
-    <ul>
-      <li>가입 멤버 1</li>
-      <li>가입 멤버 2</li>
-      <li>가입 멤버 3</li>
-      <li>가입 멤버 4</li>
-      <li>가입 멤버 5</li>
-    </ul>
-  </div>
-
-<div style="flex-grow: 1; padding: 20px;">
-
-
-    <div class="tab-wrapper">
-      <div class="tab"><a th:href="@{/communityUpdate}">정보</a></div>
-      <div class="tab"><a th:href="@{/communityMember}">멤버</a></div>
-      <div class="tab active"><a th:href="@{/communityClose}">폐쇄</a></div>
+<div layout:fragment="content">
+  <div class="container">
+    <div class="sidebar">
+      <h4 th:text="${communityInfo.name} ?: '커뮤니티'">커뮤니티</h4>
+      <ul th:if="${#lists.isEmpty(sidebarBoardList)}">
+        <li>게시판이 없습니다.</li>
+      </ul>
+      <ul th:each="bdto : ${sidebarBoardList}">
+        <li>
+          <a th:href="@{/community/{cId}/board/{boardId}(cId=${cId}, boardId=${bdto.id})}">
+            [[${bdto.name}]]
+          </a>
+          <a th:href="@{/community/{cId}/board/{boardId}/update(cId=${cId}, boardId=${bdto.id})}" class="settings-btn">⚙</a>
+        </li>
+      </ul>
+      <a class="add-board" th:href="@{/community/{cId}/board/create(cId=${cId})}">+ 게시판 추가</a>
     </div>
 
-<form>
-    <ul>
-        <li>이름 <input type="text"></li>
-        <li>소개 <input type="text"></li>
-        <li>마스터 (+ 변경 버튼 )</li>
-        <li>부마스터 +(추가 버튼)</li>
-    </ul>
-    <div>
+    <div class="main">
+      <div class="tabs">
+        <a class="tab active" th:href="@{/community/{cId}/update(cId=${cId})}">정보</a>
+        <a class="tab" th:href="@{/community/{cId}/boardDelete(cId=${cId})}">게시판</a>
+       	<a class="tab" th:href="@{/community/{cId}/member(cId=${cId})}">멤버</a>
+        <a class="tab" th:href="@{/community/{cId}/close(cId=${cId})}">폐쇄</a>
+      </div>
+
+      <form th:action="@{/community/{cId}/update(cId=${cId})}" method="post">
+        <label>이름</label>
+        <input type="text" name="name" th:value="${communityInfo.name}" required>
+
+        <label>소개</label>
+        <textarea name="description" required th:text="${communityInfo.description}"></textarea>
+
         <input type="submit" value="저장">
         <input type="reset" value="취소">
+      </form>
     </div>
-  </form>
-
+  </div>
 </div>
-
 </body>
 </html>

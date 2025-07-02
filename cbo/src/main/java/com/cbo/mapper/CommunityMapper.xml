@@ -20,6 +20,20 @@
 	select * from community
 </select>
 
+<!-- 해당 커뮤니티 정보 갖고오기(이름) -->
+<select id="communityInfoById" parameterType="int" resultType="com.cbo.community.model.CommunityDTO">
+  SELECT * FROM community
+  WHERE id = #{id}
+</select>
+
+<!-- 커뮤니티 커뮤니티 이름, 설명만 변경 -->
+<update id="updateCommunityInfo" parameterType="com.cbo.community.model.CommunityDTO">
+  UPDATE community
+  SET name = #{name}, description = #{description}
+  WHERE id = #{id}
+</update>
+
+
 <!-- 게시판 작성 -->
 <insert id="insertBoard" parameterType="com.cbo.community.model.BoardDTO">
  
@@ -215,6 +229,110 @@ ORDER BY id ASC
     #{id}
   </foreach>
 </delete>
+
+<!-- 최신글 5개 가져오기 -->
+<select id="newestPosts" resultType="map">
+
+  SELECT * FROM (
+    SELECT 
+      bp.id AS "post_id",
+      bp.title AS "title",
+      bp.content AS "content",
+      bp.write_date AS "write_date",
+      cb.id AS "board_id",
+      c.id AS "community_id",
+      cb.name AS "board_name",
+      c.name AS "community_name",
+      m.name AS "member_name",
+      (SELECT COUNT(*) FROM board_reply r WHERE r.board_post_id = bp.id) AS "reply_count"
+    FROM board_post bp
+    JOIN community_board cb ON bp.board_id = cb.id
+    JOIN community c ON cb.community_id = c.id
+    LEFT JOIN member m ON bp.member_id = m.id
+    ORDER BY bp.write_date DESC
+  )
+  WHERE ROWNUM &lt;= 5
+
+</select><!--  &lt로 rownum 비교함 -->
+
+<!-- 커뮤니티 홈 각 커뮤니티의 모든 글 리스트 -->
+
+<select id="selectPostListByCommunityId" resultType="com.cbo.community.model.PostListDTO" parameterType="int">
+  SELECT p.id AS post_id,
+         p.title,
+         p.content,
+         p.write_date,
+         p.upvote,
+         p.board_id,
+         b.name AS board_name,
+         c.name AS community_name,
+         m.name AS member_name,
+         (SELECT COUNT(*) FROM board_reply r WHERE r.board_post_id = p.id) AS reply_count
+  FROM board_post p
+  JOIN community_board b ON p.board_id = b.id
+  JOIN community c ON b.community_id = c.id  <!-- 여기!! -->
+  LEFT JOIN member m ON p.member_id = m.id
+  WHERE c.id = #{cId}
+  ORDER BY p.write_date DESC
+</select>
+
+<!-- 게시판 수정 정보 가져오기 -->
+<select id="selectBoardById" parameterType="int" resultType="com.cbo.community.model.BoardDTO">
+  SELECT *
+  FROM community_board
+  WHERE id = #{boardId}
+</select>
+
+<!--  게시판 수정하기(이름, 설명) -->
+<update id="updateBoardInfo" parameterType="com.cbo.community.model.BoardDTO">
+  UPDATE community_board
+  SET name = #{name},
+      description = #{description}
+  WHERE id = #{id}
+</update>
+
+
+<!-- 권한 부여 -->
+<!--  지정된 role 들에 해당하는 멤버 목록을 가져오는 쿼리 사용중 멤버: master, submaster, user  , 가입대기, 거절 -->
+
+<select id="selectMembersByRoles" parameterType="map" resultType="map">
+SELECT 
+  m.id AS id,
+  m.user_id AS user_id,
+  m.name AS name,
+  m.email AS email,
+  m.join_date AS join_date,
+  m.dept_id AS dept_id,
+  m.profile_image AS profile_image,
+  cm.role AS role,
+  d.name AS dept_name
+FROM community_member cm
+JOIN member m ON cm.member_id = m.id
+LEFT JOIN dept d ON m.dept_id = d.id
+WHERE cm.community_id = #{cId}
+  AND cm.role IN
+  <foreach collection="list" item="role" open="(" separator="," close=")">
+    #{role}
+  </foreach>
+</select>
+
+<!-- 권한 수정  ((권한 변경, 가입 승인, 가입 거절) -->
+<update id="updateMemberRole" parameterType="map">
+UPDATE community_member
+SET role = #{role}
+WHERE community_id = #{cId}
+  AND member_id = #{memberId}
+</update>
+
+
+
+<!-- 탈퇴 -->
+<delete id="deleteCommunityMember" parameterType="map">
+DELETE FROM community_member
+WHERE community_id = #{cId}
+  AND member_id = #{memberId}
+</delete>
+
 
  </mapper>
  

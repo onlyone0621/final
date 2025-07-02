@@ -9,18 +9,26 @@ import com.cbo.community.model.BoardDTO;
 import com.cbo.community.model.CommunityDTO;
 import com.cbo.community.model.ImageDTO;
 import com.cbo.community.model.PostDTO;
+import com.cbo.community.model.PostListDTO;
 import com.cbo.community.model.ReplyDTO;
+import com.cbo.member.model.MemberDTO;
 
 public interface CommunityMapper {
 
 	//int로 매개값 받게 하기
 	public int insertCommunity(CommunityDTO dto) throws Exception;
 	public int deleteCommunity(int id) throws Exception;
+	//커뮤니티 모든 목록 가져오기
 	public List<CommunityDTO> communityList() throws Exception;
+	//id에 해당하는 각 커뮤니티 dto 정보 가져오기
+	public CommunityDTO communityInfoById(int cId) throws Exception;
+	//커뮤니티 수정(이름, 설명 변경)
+	public int updateCommunityInfo(CommunityDTO cdto) throws Exception;
 	//게시판 생성 
 	public int insertBoard(BoardDTO dto) throws Exception;
-	//public List<BoardDTO> boardList(@Param("cId")int cId) throws Exception;
+	//community id 받은 게시판 목록
 	public List<BoardDTO> boardListByCommunityId(Map<String, Object> map) throws Exception;
+	//모든 게시판 목록
 	public List<BoardDTO> boardList() throws Exception;
 	
 	//게시글 작성, ;
@@ -71,4 +79,37 @@ public interface CommunityMapper {
 	
 	//각 커뮤니티의 모든 목록 선택 삭제, 모두 삭제
 	public int deleteBoards(List<Integer> boardIds)throws Exception;
-}
+	
+	//최신글 5개 가져오기
+	 public List<Map<String, Object>> newestPosts() throws Exception;
+
+	//커뮤니티 홈 각 커뮤니티의 모든 글 리스트
+	public List<PostListDTO> selectPostListByCommunityId(int commId);
+	
+	//게시판 수정 폼에 현재값 표시
+	public BoardDTO selectBoardById(int boardId) throws Exception;
+
+	//게시판 이름, 설명 수정
+	public int updateBoardInfo(BoardDTO bdto) throws Exception;
+	
+	//특정 커뮤니티에서 지정된 roles에 해당하는 멤버 리스트 가져오기 roles = role 목록 (예: ["user", "submaster"]) 
+	//파라미터 2개 이상이니까 XML에서 #{cId}, #{list} 이름으로 쓰려면 MyBatis에 이름을 지정해야 함
+	// list 이름을 @Param("list")로 지정해서 XML에서 list로 참조 가능하게 한 거
+	public List<Map<String, Object>> selectMembersByRoles(@Param("cId") int cId, @Param("list") List<String> roles);
+    
+	//멤버 권한 변경  -  가입 승인 / 거절 / 권한변경 / 부마스터 지정
+	//(cId = 커뮤니티 ID ) + (memberId = 멤버 ID)  + (role = 새 role 값)= (파라미터 2개 이상 → XML에서 #{cId}, #{memberId}, #{role} 쓸 이름 지정 필요)
+    public int updateMemberRole(@Param("cId") int cId, 
+    							@Param("memberId") int memberId, 
+    							@Param("role") String role);
+    
+    //특정 멤버를 커뮤니티 멤버 목록에서 삭제 - cId = 커뮤니티 ID -/memberId = 멤버 ID
+    public int deleteCommunityMember(@Param("cId") int cId, 
+    								 @Param("memberId") int memberId);
+
+
+}	 
+
+
+
+

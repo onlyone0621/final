@@ -22,6 +22,7 @@ import com.cbo.community.model.BoardDTO;
 import com.cbo.community.model.CommunityDTO;
 import com.cbo.community.model.ImageDTO;
 import com.cbo.community.model.PostDTO;
+import com.cbo.community.model.PostListDTO;
 import com.cbo.community.model.ReplyDTO;
 import com.cbo.community.service.CommunityService;
 import com.cbo.config.WebSocketConfig;
@@ -49,49 +50,50 @@ public class CommunityController {
 
     }
 	///MAIN ///////////////////
-	/// mainNewest URL 이동
-	@GetMapping("communityMainNewest")
-	public ModelAndView CommunityMainNewestGo() {
+	
+	///mainNewest 최신글 불러오기 5개 
+	@GetMapping("/communityMainNewest")
+	public ModelAndView communityMainNewest() {
+	    
+	    List<CommunityDTO> lists = null;  // 커뮤니티 목록
+	    List<Map<String, Object>> newestPosts = null;  // 최신글 5개
+	    
+	    try {
+	        lists = service.communityList(); 
+	        newestPosts = service.newestPosts(); 
+	        //model.addAttribute("isMaster", true); // 예시
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
+//	    System.out.println("newestPosts: " + newestPosts);
+	    ModelAndView mav = new ModelAndView();
+	    mav.addObject("lists", lists);
+	    mav.addObject("newestPosts", newestPosts); 
+	    mav.setViewName("community/communityMainNewest");
+	    System.out.println("newestPosts: " + newestPosts);
+	    return mav;
+	}
+	
+	
+	// 커뮤니티 가입 목록 URL이동
+	@GetMapping("communityMainJoin")
+	public ModelAndView mainJoinList() {
 		
 		List<CommunityDTO> lists=null;
-		try {
+		try { //커뮤니티 목록
+			
 			lists=service.communityList();
+	
 		}catch (Exception e) {
 			e.printStackTrace();
 		}
 		ModelAndView mav=new ModelAndView();
 		mav.addObject("lists", lists);
-		mav.setViewName("community/communityMainNewest");
+		mav.setViewName("community/communityMainJoin");
 		return mav;
-	}
-	
-	
-	
-	///mainNewest 최신글 불러오기 5개 
-	@PostMapping("communityMainNewest")
-	public ModelAndView CommunityMainNewest() {
-		
-		List<CommunityDTO> lists=null;
-		try {
-			lists=service.communityList();
-		}catch (Exception e) {
-			e.printStackTrace();
-		}
-		ModelAndView mav = new ModelAndView();
-		mav.addObject("lists", lists);
-		mav.setViewName("community/communityMainNewest");
-		
-		return mav;
-	}
-	
-	// 커뮤니티 가입 목록 URL이동
-	@GetMapping("communityMainJoin")
-	public String mainJoinList() {
-		return "community/communityMainJoin";
 	}
 
-	
-	
+
 	// 커뮤니티 전체 목록 조회 목록 URL 이동
 	@GetMapping("communityMainAll")
 	public ModelAndView CommunityList() {
@@ -162,58 +164,98 @@ public class CommunityController {
 	}
 	
 	// 커뮤니티 home 각 커뮤니티의 첫 화면
-	@GetMapping("community/{cId}")
-	public ModelAndView communityHome(@PathVariable("cId") String cId) {
-	    List<BoardDTO> boardLists = null;
+	@GetMapping("/community/{cId}")
+	public ModelAndView communityHome(@PathVariable("cId") int cId) {
+	    ModelAndView mav = new ModelAndView();
 
 	    try {
-	        Map<String, Object> map = new HashMap<>();
-	        map.put("cId", cId); 
-	        
+	        List<BoardDTO> sidebarBoardLists = service.boardListByCommunityId(Map.of("cId", cId));
+	        CommunityDTO communityInfo = service.communityInfoById(cId);
+	        List<PostListDTO> postLists =service.selectPostListByCommunityId(cId);
 
-	        boardLists = service.boardListByCommunityId(map);
+	        mav.addObject("sidebarBoardLists", sidebarBoardLists);
+	        mav.addObject("communityInfo", communityInfo);
+	        mav.addObject("postLists", postLists);
+	        mav.addObject("cId", cId);
+	        
+	        System.out.println("postLists = " + postLists);
+
 	    } catch (Exception e) {
 	        e.printStackTrace();
 	    }
 
-	    ModelAndView mav = new ModelAndView();
-	    mav.addObject("boardLists", boardLists);
-	    mav.addObject("cId", cId); 
 	    mav.setViewName("community/manage/communityHome");
 	    return mav;
 	}
 
-//마스터 관리 페이지
+
+				//마스터 관리 페이지
 	/////////////////////////////////////////////////////////////////
-	// 커뮤니티 정보 수정
-	@GetMapping("community/{cId}Update")
-	public ModelAndView communityUpdate(@PathVariable("cId")String cId) {
-		//model.addAttribute("id", id);
-		ModelAndView mav=new ModelAndView();
-		mav.addObject("cId", cId);
-		mav.setViewName("community/manage/communityUpdate");
-		return mav;
+	// 커뮤니티 정보 수정 url 버튼 클릭시 이동
+	@GetMapping("/community/{cId}/update")
+	public ModelAndView getCommunityUpdate(@PathVariable("cId") String cId) {
+	    ModelAndView mav = new ModelAndView();
+	    
+	    CommunityDTO communityInfo=null;
+	    List<BoardDTO> sidebarBoardList=null;
+	   // System.out.println("communityInfo: " + communityInfo);
+	    //System.out.println("sidebarBoardList: " + sidebarBoardList);
+        
+	    try {
+	    	
+	    	Map<String, Object> map = new HashMap<>();
+	        map.put("cId", cId);
+	        sidebarBoardList = service.boardListByCommunityId(map);
+	        communityInfo = service.communityInfoById(Integer.parseInt(cId));
+	        
+	        if (communityInfo == null) {
+	            ModelAndView err = new ModelAndView();
+	            err.addObject("msg", "해당 커뮤니티가 존재하지 않습니다.");
+	            err.addObject("goUrl", "/communityList");
+	            err.setViewName("community/communityMainNewset");
+	            return err;
+	        }
+	        
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
+	    mav.addObject("cId", cId);
+	    mav.addObject("communityInfo", communityInfo);
+	    mav.addObject("sidebarBoardList", sidebarBoardList);
+	    mav.setViewName("community/manage/communityUpdate");
+	    return mav;
+	}
+	
+	// 커뮤니티 정보 수정 기능
+	@PostMapping("/community/{cId}/update")
+	public ModelAndView communityUpdate(@PathVariable("cId") String cId, CommunityDTO cdto) {
+	    ModelAndView mav = new ModelAndView();
+	    int result = 0;
+	    try {
+	        cdto.setId(Integer.parseInt(cId));
+	        result = service.updateCommunityInfo(cdto);
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
+
+	    String msg = (result > 0) ? "커뮤니티 정보가 수정되었습니다." : "커뮤니티 정보 수정에 오류가 발생하였습니다.";
+	    mav.addObject("msg", msg);
+	    mav.addObject("goUrl", "/community/" + cId + "/update");
+	    mav.setViewName("community/communityMsg");
+	    return mav;
 	}
 
-
-	
-	//get 커뮤니티 게시판 관리 - 게시판 목록 ( 게시판 이름, 운영자, 설정버튼) 불러오기
+	// GET - 커뮤니티 게시판 관리 (게시판 목록 + 운영자 정보)
 	@GetMapping("/community/{cId}/boardDelete")
 	public ModelAndView deleteBoardLists(@PathVariable("cId") int cId) {
 	    ModelAndView mav = new ModelAndView();
-
+	    CommunityDTO communityInfo = null;
 	    try {
-	        // 사이드바용 게시판 목록
 	        Map<String, Object> map = new HashMap<>();
 	        map.put("cId", cId);
 	        List<BoardDTO> sidebarBoardList = service.boardListByCommunityId(map);
-
-	        // 게시판 + master 이름 + 설정용 목록
 	        List<Map<String, Object>> boardLists = service.boardListWithMaster(cId);
-
-	        // ✅ 콘솔에 boardLists 내용 출력
-	        System.out.println("boardLists = " + boardLists);
-
+	        communityInfo = service.communityInfoById(cId);
 	        mav.addObject("sidebarBoardList", sidebarBoardList);
 	        mav.addObject("boardLists", boardLists);
 	    } catch (Exception e) {
@@ -222,8 +264,10 @@ public class CommunityController {
 
 	    mav.addObject("cId", cId);
 	    mav.setViewName("community/manage/communityBoardDelete");
+	    mav.addObject("communityInfo", communityInfo);
 	    return mav;
 	}
+	
 	
 	// post 커뮤니티 게시판 관리 - 게시판 삭제  
 	@PostMapping("/community/{cId}/boardDelete")
@@ -237,7 +281,7 @@ public class CommunityController {
 	    } else {
 	        try {
 	            int result = service.deleteBoards(boardIds);
-	            msg = result > 0 ? "게시판 삭제되었습니다!" : "삭제할 게시판이 없습니다.";
+	            msg = (result > 0) ? "게시판이 삭제되었습니다!" : "삭제할 게시판이 없습니다.";
 	        } catch (Exception e) {
 	            e.printStackTrace();
 	            msg = "삭제 중 오류가 발생했습니다.";
@@ -246,110 +290,339 @@ public class CommunityController {
 
 	    mav.addObject("msg", msg);
 	    mav.addObject("goUrl", "/community/" + cId + "/boardDelete");
-	    mav.setViewName("community/manage/communityMsg");
-	    mav.addObject("msg", "삭제가 완료되었습니다.");
-	    mav.addObject("goUrl", "/community/" + cId + "/boardDelete");
+	    mav.setViewName("community/communityMsg");
+	    return mav;
+	}
+	
+	////////////////////////////////////////////////////////////////////////
+// 커뮤니티 멤버 
+	
+	// 멤버 리스트 (사용중 / 가입대기 구분해서 페이지 나눔)
+
+	// 멤버 목록 (사용중 / 가입대기)
+//	@GetMapping("/community/{cId}/member")
+//	public ModelAndView memberList(@PathVariable int cId,
+//	                               @RequestParam(defaultValue = "active") String status) {
+//	    ModelAndView mav = new ModelAndView();
+//	    List<MemberDTO> members = null;
+//	    List<BoardDTO> sidebarBoardList = null;
+//	    CommunityDTO communityInfo = null;
+//
+//	    try {
+//	        sidebarBoardList = service.boardListByCommunityId(Map.of("cId", cId));
+//	        communityInfo = service.communityInfoById(cId);
+//
+//	        if ("pending".equals(status)) {
+//	            members = service.pendingMemberList(cId);
+//	        } else {
+//	            members = service.joinMemberList(cId);
+//	        }
+//
+//	    } catch (Exception e) {
+//	        e.printStackTrace();
+//	        mav.setViewName("community/communityMsg");
+//	        mav.addObject("msg", "멤버 목록 로드 중 오류 발생");
+//	        mav.addObject("goUrl", "/community/" + cId);
+//	        mav.setViewName("community/manage/communityMember");
+//	        return mav;
+//	    }
+//
+//	    mav.addObject("members", members);
+//	    mav.addObject("sidebarBoardList", sidebarBoardList);
+//	    mav.addObject("communityInfo", communityInfo);
+//	    mav.addObject("cId", cId);
+//	    mav.addObject("status", status);
+//	    mav.setViewName("community/communityMsg");
+//
+//	    return mav;
+//	}
+	
+	@GetMapping("/community/{cId}/member")
+	public ModelAndView memberList(@PathVariable int cId,
+	                               @RequestParam(defaultValue = "active") String status) {
+	    ModelAndView mav = new ModelAndView();
+	    List<Map<String, Object>> members = null;
+	    List<BoardDTO> sidebarBoardList = null;
+	    CommunityDTO communityInfo = null;
+
+	    try {
+	        sidebarBoardList = service.boardListByCommunityId(Map.of("cId", cId));
+	        communityInfo = service.communityInfoById(cId);
+
+	        if ("pending".equals(status)) {
+	            members = service.pendingMemberList(cId);
+	        } else {
+	            members = service.joinMemberList(cId);
+	        }
+
+	        mav.setViewName("community/manage/communityMember");
+	        mav.addObject("members", members);
+	        mav.addObject("sidebarBoardList", sidebarBoardList);
+	        mav.addObject("communityInfo", communityInfo);
+	        mav.addObject("cId", cId);
+	        mav.addObject("status", status);
+	        System.out.println("members = " + members);
+
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        mav.setViewName("community/communityMsg");
+	        mav.addObject("msg", "멤버 목록 로드 중 오류 발생");
+	        mav.addObject("goUrl", "/community/" + cId);
+	    }
+
+	    return mav;
+	}
+
+	// 가입 승인
+	@PostMapping("/community/{cId}/member/{memberId}/approve")
+	public ModelAndView approveMember(@PathVariable int cId, @PathVariable int memberId) {
+	    ModelAndView mav = new ModelAndView();
+	    try {
+	        service.approveMember(cId, memberId);
+	        mav.addObject("msg", "가입 승인이 완료되었습니다.");
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        mav.addObject("msg", "가입 승인 중 오류 발생");
+	    }
+	    mav.addObject("goUrl", "/community/" + cId + "/member?status=pending");
+	    mav.setViewName("community/communityMsg");
+	    return mav;
+	}
+
+	// 가입 거절
+	@PostMapping("/community/{cId}/member/{memberId}/reject")
+	public ModelAndView rejectMember(@PathVariable int cId, @PathVariable int memberId) {
+	    ModelAndView mav = new ModelAndView();
+	    try {
+	        service.rejectMember(cId, memberId);
+	        mav.addObject("msg", "가입 요청을 거절했습니다.");
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        mav.addObject("msg", "가입 거절 중 오류 발생");
+	    }
+	    mav.addObject("goUrl", "/community/" + cId + "/member?status=pending");
+	    mav.setViewName("community/communityMsg");
+	    return mav;
+	}
+
+	// 멤버 탈퇴
+	@PostMapping("/community/{cId}/member/{memberId}/remove")
+	public ModelAndView removeMember(@PathVariable int cId, @PathVariable int memberId) {
+	    ModelAndView mav = new ModelAndView();
+	    try {
+	        service.removeMember(cId, memberId);
+	        mav.addObject("msg", "멤버 탈퇴 완료");
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        mav.addObject("msg", "멤버 탈퇴 중 오류 발생");
+	    }
+	    mav.addObject("goUrl", "/community/" + cId + "/member?status=active");
 	    mav.setViewName("community/communityMsg");
 	    return mav;
 	}
 
 	
 	
-	//커뮤니티 멤버 관리
-	@GetMapping("communityMember")
-	public String communityMember() {
-		return "community/manage/communityMember";
-	}
-	
-	
-	//커뮤니티 페쇄 URL 이동
-	@GetMapping("/community/{id}/close")
-	public ModelAndView closePage(@PathVariable("id") String id) {
+	////////////////////////////////////////////////////////////////
+	// 커뮤니티 삭제 페이지 GET
+	@GetMapping("/community/{cId}/close")
+	public ModelAndView closePage(@PathVariable("cId") String cId) {
 	    ModelAndView mav = new ModelAndView();
-	    mav.addObject("id", id); 
-	    //<input type="hidden" name="id" th:value="${id}">
-	    //통해 값을 담았음 th:vallue
-	    mav.setViewName("community/manage/communityClose");
-	    return mav;
-	}
-	
-	
-	//커뮤니티 폐쇄 기능
-	@PostMapping("/community/{cId}/close")
-	public ModelAndView deleteCommunity(@PathVariable("cId") int cId) {	
-		 
-		int result = 0;
-	    String msg = null;
+	    
 	    try {
-	    	result = service.deleteCommunity(cId);
-			msg = result > 0 ? "커뮤니티삭제 성공" : "커뮤니티삭제 실패";
-			
+	        // 사이드바용 게시판 목록
+	        Map<String, Object> map = new HashMap<>();
+	        map.put("cId", cId);
+	        List<BoardDTO> sidebarBoardList = service.boardListByCommunityId(map);
+	        CommunityDTO communityInfo = service.communityInfoById(Integer.parseInt(cId));
+
+	        mav.addObject("sidebarBoardList", sidebarBoardList);
+	        mav.addObject("communityInfo", communityInfo);
 	    } catch (Exception e) {
 	        e.printStackTrace();
 	    }
-		ModelAndView mav = new ModelAndView();
-		mav.addObject("msg", msg); 
-		mav.setViewName("community/communityMsg");
-		return mav;
+
+	    mav.addObject("cId", cId);
+	    mav.setViewName("community/manage/communityClose");
+	    return mav;
 	}
 
+	// 커뮤니티 삭제 POST
+	@PostMapping("/community/{cId}/close")
+	public ModelAndView postCommunityClose(@PathVariable("cId") int cId) {
+	    ModelAndView mav = new ModelAndView();
+	    String msg;
+
+	    try {
+	        Map<String, Object> map = new HashMap<>();
+	        map.put("cId", cId);
+	        List<BoardDTO> boards = service.boardListByCommunityId(map);
+
+	        if (boards != null && !boards.isEmpty()) {
+	            msg = "게시판이 남아 있어 커뮤니티를 삭제할 수 없습니다. 게시판을 먼저 삭제해 주세요.";
+	        } else {
+	            int result = service.deleteCommunity(cId);
+	            msg = result > 0 ? "커뮤니티가 성공적으로 삭제되었습니다." : "커뮤니티 삭제에 실패했습니다.";
+	        }
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        msg = "삭제 중 오류가 발생했습니다.";
+	    }
+
+	    mav.addObject("msg", msg);
+	    mav.addObject("goUrl", "/communityMainNewest");
+	    mav.setViewName("community/communityMsg");
+	    return mav;
+	}
 	//////////////////////////////////////////////////////////////////
 
 	//게시판(board) create 생성 url 이동
 	@GetMapping("/community/{cId}/board/create")
 	public ModelAndView boardCreateForm(@PathVariable("cId") int cId) {
 	    List<CommunityDTO> communities = null; //커뮤니티 목록들 
-	    List<BoardDTO> boardLists = null; //게시판 목록들
-
+	    List<BoardDTO> sidebarBoardList = null; //게시판 목록들
+	    CommunityDTO communityInfo=null;
 	    try {
 	        communities = service.communityList(); //커뮤니티 목록들
-
+	        communityInfo = service.communityInfoById(cId);
 	        Map<String, Object> map = new HashMap<>();
 	        map.put("cId", cId);     //map= {"cid" : 3} 의미임 !!! cid가 3일때
-	        boardLists = service.boardListByCommunityId(map); // map
+	        sidebarBoardList = service.boardListByCommunityId(map); // map
 	    } catch (Exception e) {
 	        e.printStackTrace();
 	    }
 
 	    ModelAndView mav = new ModelAndView();
 	    mav.addObject("communities", communities); //커뮤니티 목록들
-	    mav.addObject("boardLists", boardLists);  //선택된 커뮤니티의 게시판 목록들
+	    mav.addObject("sidebarBoardList", sidebarBoardList);  //선택된 커뮤니티의 게시판 목록들
 	    mav.addObject("cId", cId);
+	    mav.addObject("communityName", communityInfo != null ? communityInfo.getName() : "커뮤니티");
 	    mav.setViewName("community/board/boardCreate");
 	    return mav;
 	}
 	    
 
-//게시판(board) create 생성 기능
-	@PostMapping("/community/{cId}/board/create")
-	public ModelAndView boardCreate(@PathVariable("cId") int cId, BoardDTO bdto) {
-		bdto.setCommunity_id(cId);
-		int result = 0;
+	//게시판(board) create 생성 기능
+	@PostMapping("/community/board/create")
+	public ModelAndView boardCreate(BoardDTO bdto) {
+	    int result = 0;
 	    String msg = null;
 
 	    try {
-	    		result = service.insertBoard(bdto);
+	        result = service.insertBoard(bdto);
 	    } catch (Exception e) {
-	        	e.printStackTrace();
+	        e.printStackTrace();
 	    }
 
 	    msg = result > 0 ? "게시판 생성 성공!" : "게시판 생성 실패!";
 
-	    String goUrl = result > 0 ? 
-	    			"/community/" + bdto.getCommunity_id() + "/board/" + bdto.getId() :
-	    	    	"/community/" + cId + "/board/create";
+	    String goUrl = result > 0 ?
+	        "/community/" + bdto.getCommunity_id() + "/board/" + bdto.getId() :
+	        "/community/" + bdto.getCommunity_id() + "/board/create";
+
 	    ModelAndView mav = new ModelAndView();
 	    mav.addObject("msg", msg);
 	    mav.addObject("goUrl", goUrl);
 	    mav.setViewName("community/board/boardMsg");
 	    return mav;
-	
 	}
 	//////////////////////////////////////////////////////////
 
 	
-	//게시판 수정
+	//게시판 수정 url이동
+	@GetMapping("/community/{cId}/board/{boardId}/update")
+	public ModelAndView getBoardUpdate(@PathVariable int cId,
+	                                   @PathVariable int boardId) {
+	    ModelAndView mav = new ModelAndView();
+
+	    BoardDTO board = null;
+	    List<BoardDTO> sidebarBoardList = null;
+	    String errorMessage = null;
+
+	    try {
+	        board = service.selectBoardById(boardId);
+	        sidebarBoardList = service.boardListByCommunityId(Map.of("cId", cId));
+
+	        if (board == null) {
+	            errorMessage = "존재하지 않는 게시판입니다.";
+	            board = new BoardDTO(); // Null 방지용
+	        }
+
+	        if (sidebarBoardList == null) {
+	            sidebarBoardList = List.of(); // Null 방지용
+	        }
+
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        errorMessage = "에러가 발생했습니다.";
+	        board = new BoardDTO();
+	        sidebarBoardList = List.of();
+	    }
+
+	    mav.addObject("board", board);
+	    mav.addObject("sidebarBoardList", sidebarBoardList);
+	    mav.addObject("cId", cId);
+	    mav.addObject("boardId", boardId);
+	    if (errorMessage != null) {
+	        mav.addObject("errorMessage", errorMessage);
+	    }
+
+	    mav.setViewName("community/board/boardUpdate");
+	    return mav;
+	}
 	
+	//게시판 수정 기능
+	@PostMapping("/community/{cId}/board/{boardId}/update")
+	public ModelAndView postBoardUpdate(@PathVariable int cId,
+	                                    @PathVariable int boardId,
+	                                    BoardDTO bdto) {
+	    ModelAndView mav = new ModelAndView();
+
+	    BoardDTO board = null;
+	    List<BoardDTO> sidebarBoardList = null;
+	    String message = null;
+	    String messageType = null;  // success / error
+
+	    try {
+	        bdto.setId(boardId);
+	        int result = service.updateBoardInfo(bdto);
+
+	        if (result > 0) {
+	            message = "게시판 정보가 수정되었습니다!";
+	            messageType = "success";
+	        } else {
+	            message = "게시판 정보 수정에 실패했습니다.";
+	            messageType = "error";
+	        }
+
+	        board = service.selectBoardById(boardId);
+	        sidebarBoardList = service.boardListByCommunityId(Map.of("cId", cId));
+
+	        if (board == null) board = new BoardDTO();
+	        if (sidebarBoardList == null) sidebarBoardList = List.of();
+
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        message = "에러가 발생했습니다.";
+	        messageType = "error";
+	        board = new BoardDTO();
+	        sidebarBoardList = List.of();
+	    }
+
+	    mav.addObject("board", board);
+	    mav.addObject("sidebarBoardList", sidebarBoardList);
+	    mav.addObject("cId", cId);
+	    mav.addObject("boardId", boardId);
+	    mav.addObject("message", message);
+	    mav.addObject("messageType", messageType);
+	    mav.setViewName("community/board/boardUpdate");
+
+	    return mav;
+	}
+	
+	
+	
+	///////////////////////////////////////////////////////////
 	
 	
 	

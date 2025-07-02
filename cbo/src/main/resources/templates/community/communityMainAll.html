@@ -1,21 +1,87 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
-
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+				xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+				layout:decorate="layouts/mainLayout">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width= , initial-scale=1.0">
-  <title>커뮤니티 보기</title>
+ <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title> 가입 커뮤니티 목록</title>
+<script>
+	function listSetting(){
+
+		//var id = document.getElementById('id').value;
+		//location.href="communityUpdate?id="+id+"&board=";
+	}
+</script>
   <style>
-    .tab-wrapper {
+    body {
+      margin: 0;
+      font-family: 'Arial', sans-serif;
+      color: #333;
+    }
+
+    .layout {
       display: flex;
-      gap: 1.5rem;
+      min-height: 100vh;
+    }
+
+    .sidebar {
+      width: 200px;
+      background-color: #fbf9fd; 
+      padding: 20px;
+      box-sizing: border-box;
+      border-right: 1px solid #ddd; /* 오른쪽 경계선 */
+    }
+    
+    .post-list li input[type="button"] {
+      margin-left: 10px;
+    }
+    
+    .sidebar ul li {
+  	  display: flex;
+  	  justify-content: space-between;
+ 	  align-items: center;
+	}
+
+    .sidebar h4 {
+      margin-bottom: 15px;
+      font-size: 18px;
+    }
+
+    .sidebar button {
+      width: 100%;
+      padding: 8px;
+      margin-bottom: 15px;
+      background-color: #eee;
+      border: 1px solid #ccc;
+      cursor: pointer;
+    }
+
+    .sidebar ul {
+      list-style: none;
+      padding-left: 0;
+      font-size: 14px;
+    }
+
+    .sidebar ul li {
+      margin-bottom: 8px;
+    }
+
+
+    .main-content { /** 중간정렬해줌*/
+      flex: 1;
+      padding: 20px;
+    }
+
+    .main-tabs {
+      display: flex;/**가운데 정랼*/
+      gap: 1rem;
       margin-bottom: 20px;
-      border-bottom: 1px solid #ccc;
+      border-bottom: 1px solid #ddd;
     }
 
     .tab {
-      padding: 10px;
+      padding: 8px 12px;
       font-weight: bold;
       color: #666;
       cursor: pointer;
@@ -23,41 +89,50 @@
 
     .tab.active {
       color: #000;
-      border-bottom: 3px solid #f381a3;
+      border-bottom: 2px solid #f381a3;
+    }
+    /** 목록 꾸밈 0*/
+    .post-list {
+      list-style: none;
+      padding-left: 0;
     }
 
-    .step-container {
-      display: flex;
-      gap: 2rem;
+    .post-list li {
+      padding: 8px 0;
+      border-bottom: 1px solid #eee;
     }
   </style>
 </head>
 <body>
-
-<div style="display: flex;">
+<div layout:fragment="content">
+<div class="layout">
   
-  <!-- 사이드바 -->
-  <div style="width: 200px; background-color: #f4eefc; padding: 20px;">
+  <div class="sidebar">
     <h4>커뮤니티</h4>
-    <button>커뮤니티 생성</button>
-    <ul>
-      <li>가입 커뮤니티 1</li>
-      <li>가입 커뮤니티 2</li>
-      <li>가입 커뮤니티 3</li>
-    </ul>
-  </div>
+      <a th:href="@{/communityCreate}"> <button>커뮤니티 생성</button></a>
+       
+		<ul th:if="${#lists.isEmpty(lists)}">
+   			<li>생성된 커뮤니티가 없습니다.</li>
+		</ul>
+ 		<ul th:each="dto : ${lists}">
+   			<li>
+      			<a th:href="@{/community/{id}(id=${dto.id})}">[[${dto.name}]]</a>
+   				<input type="button" th:onclick="|location.href='/community/${dto.id}/update'|" value="설정">
+  			</li>
+		</ul>
+   </div>
 
-  <div style="flex-grow: 1; padding: 20px;">
+<!-- 사이드바 -->
 
 
-    <div class="tab-wrapper">
-      <div class="tab"><a href="communityMainNewest">최근글</a></div>
-      <div class="tab"><a href="communityMainJoin">가입 커뮤니티</a></div>
-      <div class="tab active"><a href="communityMainAll">전체 커뮤니티</a></div>
+  <div class="main-content">
+    <div class="main-tabs">
+      <div class="tab"><a th:href="@{/communityMainNewest}">최근글</a></div>
+      <div class="tab"><a th:href="@{/communityMainJoin}">가입 커뮤니티</a></div>
+      <div class="tab active"><a th:href="@{/communityMainAll}">전체 커뮤니티</a></div>
     </div>
 
-
-    <table border="1" cellspacing="0" width="100%">
+	<table border="1" cellspacing="0" width="100%">
       <thead>
         <tr>
           <th>커뮤니티</th>
@@ -66,17 +141,18 @@
           <th>마스터</th>
         </tr>
       </thead>
-      		<tbody>
-			<tr th:if="${#lists.isEmpty(lists)}">
-				<td colspan='4' align="center">
-				등록된 게시글이 없습니다.
-				</td>
-			</tr>
+            <tbody>
+         <tr th:if="${#lists.isEmpty(lists)}">
+            <td colspan='4' align="center">
+            등록된 게시글이 없습니다.
+            </td>
+         </tr>
 
-		</tbody>
+      </tbody>
     </table>
+
   </div>
 </div>
-
+</div>
 </body>
 </html>
