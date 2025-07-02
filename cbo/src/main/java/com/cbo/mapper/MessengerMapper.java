@@ -3,6 +3,7 @@ package com.cbo.mapper;
 import java.util.List;
 import java.util.Map;
 
+import com.cbo.member.model.*;
 import com.cbo.messenger.model.*;
 
 
@@ -12,4 +13,7 @@ public interface MessengerMapper {
 	public List<ChatRoomListDTO> selectChatRoomList(int member_id) throws Exception;
 	public int insertChatRoom(ChatRoomDTO dto) throws Exception;
 	public int insertChatMember(ChatRoom_MemberDTO dto)throws Exception;
+	public List<InviteeDTO> selectInvitee(int room_id) throws Exception;
+	public List<ChatMemberDTO> selectChatMember(int room_id) throws Exception;
+	public int deleteChatMember(ChatRoom_MemberDTO dto)throws Exception;
 }

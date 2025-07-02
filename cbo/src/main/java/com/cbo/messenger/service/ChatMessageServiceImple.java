@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.cbo.mapper.MessengerMapper;
+import com.cbo.member.model.ChatMemberDTO;
+import com.cbo.member.model.InviteeDTO;
 import com.cbo.messenger.model.*;
 
 @Service
@@ -42,6 +44,24 @@ public class ChatMessageServiceImple implements ChatMessageService {
 	@Override
 	public int addChatMember(ChatRoom_MemberDTO dto) throws Exception {
 		int result = mapper.insertChatMember(dto);
+		return result;
+	}
+	
+	@Override
+	public List<InviteeDTO> getInvitee(int room_id) throws Exception {
+		List<InviteeDTO> list = mapper.selectInvitee(room_id);
+		return list;
+	}
+	
+	@Override
+	public List<ChatMemberDTO> getChatMember(int room_id) throws Exception {
+		List<ChatMemberDTO> list = mapper.selectChatMember(room_id);
+		return list;
+	}
+	
+	@Override
+	public int delChatMember(ChatRoom_MemberDTO dto) throws Exception {
+		int result = mapper.deleteChatMember(dto);
 		return result;
 	}
 
