@@ -6,6 +6,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>안 읽은 메시지함</title>
+<script th:inline="javascript">
+	const curPage = /*[[${curPage}]]*/ 1;
+	const pageName = /*[[${pageName}]]*/ '';
+</script>
 </head>
 <body>
 <div layout:fragment="content">
@@ -24,10 +28,10 @@
 							class="nav nav-tabs"
 						>
 							<li class="nav-item">
-								<a href="#" class="nav-link">읽음</a>
+								<button type="button" class="nav-link" id="markAsRead">읽음</button>
 							</li>
 							<li class="nav-item disabled">
-								<a href="#" class="nav-link">삭제</a>
+								<button type="button" class="nav-link" id="deleteMessages">삭제</button>
 							</li>
 						</ul>
 					</th>

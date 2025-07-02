@@ -15,7 +15,6 @@
 				<!-- Title and format's name -->
 				<div class="container-fluid">
 					<span class="navbar-text fs-1">메시지 작성</span>
-					
 				</div>
 			
 				<!-- Button toolbar -->
@@ -26,6 +25,7 @@
 						<button class="nav-link active"
 							>보내기</button
 						>
+						<button type="button" class="btn btn-outline-info ms-auto" data-bs-toggle="modal" data-bs-target="#memberListModal">조직도</button> 
 					</nav>
 				</div>
 
@@ -50,7 +50,7 @@
 
 				<div class="mb-3">
 					<label for="content" class="form-label"></label>
-					<textarea class="form-control" name="content" id="content" rows="3"></textarea>
+					<textarea class="form-control h-100 overflow-y-scroll" name="content" id="content" rows="14"></textarea>
 				</div>
 				
 			</div>
@@ -62,29 +62,15 @@
 						<li class="nav-item" role="presentation">
 							<button
 								class="nav-link active"
-								id="approval-lines-tab"
+								id="receivers-tab"
 								data-bs-toggle="tab"
-								data-bs-target="#approval-lines"
+								data-bs-target="#receivers"
 								type="button"
 								role="tab"
-								aria-controls="approval-lines"
+								aria-controls="receivers"
 								aria-selected="true"
 							>
-								결재선
-							</button>
-						</li>
-						<li class="nav-item" role="presentation">
-							<button
-								class="nav-link"
-								id="doc-info-tab"
-								data-bs-toggle="tab"
-								data-bs-target="#doc-info"
-								type="button"
-								role="tab"
-								aria-controls="doc-info"
-								aria-selected="false"
-							>
-								문서 정보
+								받는 사람
 							</button>
 						</li>
 					</ul>
@@ -93,31 +79,86 @@
 					<div class="tab-content">
 						<div
 							class="tab-pane active"
-							id="approval-lines"
+							id="receivers"
 							role="tabpanel"
-							aria-labelledby="approval-lines-tab"
+							aria-labelledby="receivers-tab"
 						>
 							<ul class="list-group list-group-flush">
-								<li class="list-group-item" th:each="approver : ${approvers}" th:object="${approver}" th:text="|*{dept_name} *{member_name} *{grade_name} *{status} *{process_date}|"></li>
+								<li class="list-group-item">test</li>
 							</ul>
-						</div>
-						<div
-							class="tab-pane"
-							id="doc-info"
-							role="tabpanel"
-							aria-labelledby="doc-info-tab"
-						>
-								<ul class="list-group list-group-flush" th:object="${docContent}">
-									<li class="list-group-item" th:text="*{writer}"></li>
-									<li class="list-group-item" th:text="*{write_date}"></li>
-									<li class="list-group-item" th:text="*{retention}"></li>
-								</ul>
 						</div>
 					</div>
 				</div>
 
 		</div>
 	</form>
+
+<div
+    class="modal fade"
+    id="memberListModal"
+    tabindex="-1"
+    role="dialog"
+    aria-labelledby="modalTitleId"
+    aria-hidden="true"
+>
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalTitleId">
+                    조직도
+                </h5>
+                <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="modal"
+                    aria-label="Close"
+                ></button>
+            </div>
+            <div class="modal-body">
+                <div class="accordion">
+                    <div class="accordion-item" th:each="deptGroup : ${membersByDept}">
+                        <h2 class="accordion-header" th:id="${#ids.seq('dept')}">
+                            <button
+                                class="accordion-button"
+                                type="button"
+                                data-bs-toggle="collapse"
+                                th:data-bs-target="'#' + ${#ids.next('members')}"
+                                aria-expanded="true"
+                                th:aria-controls="${#ids.next('members')}"
+                                th:text="${deptGroup.key}"
+                            >
+                                
+                            </button>
+                        </h2>
+                        <div
+                            th:id="${#ids.seq('members')}"
+                            class="accordion-collapse collapse show"
+                            th:aria-labelledby="${#ids.prev('dept')}"
+                        >
+                            <div class="accordion-body" th:each="member : ${deptGroup.value}" th:object="${member}">
+                                <input type="checkbox" class="form-check-input" name="receiverIds" th:id="${#ids.seq(#ids.prev('dept') + '-')}" th:value="*{member_id}">
+								<label class="form-label" th:for="${#ids.prev(#ids.prev('dept') + '-')}" th:text="|*{member_name} *{grade_name}|"></label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                </div>
+                
+            </div>
+            <div class="modal-footer">
+                <button
+                    type="button"
+                    class="btn btn-secondary"
+                    data-bs-dismiss="modal"
+                >
+                    닫기
+                </button>
+                <button type="button" class="btn btn-primary">확인</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 </div>
 </body>
 </html>

@@ -18,7 +18,7 @@
 		FROM member
 		    JOIN dept ON dept.id = member.dept_id
 		    JOIN grade ON grade.id = member.grade_id
-		WHERE member.id = #{user_id}
+		WHERE member.user_id = #{user_id}
 	</select>
 	<select id="selectMemberId" resultType="String" parameterType="String">
 		select user_id from member where user_id=#{user_id}

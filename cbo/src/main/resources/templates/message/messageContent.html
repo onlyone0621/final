@@ -6,20 +6,23 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>메시지 내용 보기</title>
+<script>
+
+</script>
 </head>
 <body>
 <div layout:fragment="content">
-
+	<form>
 		<div class="d-flex flex-column h-100" th:object="${messageContent}">
 			<!-- Button toolbar -->
 			<div class="mb-3">
 				<nav
 					class="nav nav-pills flex-row"
 				>
-					<button class="nav-link active"
-						>답장</button
-					>
-					<a class="nav-link">삭제</a>
+					<button class="nav-link active" formaction="sendMessages">
+						답장
+					</button>
+					<button class="nav-link" formaction="deleteMessages" formmethod="post">삭제</button>
 				</nav>
 			</div>
 
@@ -66,7 +69,7 @@
 				<small id="helpId" class="form-text text-muted">10MB 까지만 첨부 가능</small> -->
 			</div>
 		</div>
-
+	</form>
 </div>
 </body>
 </html>
