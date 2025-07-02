@@ -31,4 +31,33 @@
 	INSERT INTO chatroom_user
 	VALUES(#{chatroom_id}, #{member_id}, sysdate)
 </insert>
+<select id="selectInvitee" resultType="com.cbo.member.model.InviteeDTO" parameterType="int">
+	SELECT 
+	    m.id AS member_id, 
+	    m.name AS member_name, 
+	    d.name AS dept_name, 
+	    g.name AS grade_name
+	FROM member m
+	JOIN dept d ON m.dept_id = d.id
+	JOIN grade g ON m.grade_id = g.id
+	WHERE m.id NOT IN (
+	    SELECT cu.member_id
+	    FROM chatroom_user cu
+	    WHERE cu.chatroom_id = #{room_id}
+	)
+	ORDER BY d.id, g.seq
+</select>
+<select id="selectChatMember" parameterType="int" resultType="com.cbo.member.model.ChatMemberDTO">
+	SELECT m.name, g.name AS grade_name, m.profile_image
+	FROM chatroom_user c
+	JOIN member m ON m.id = c.member_id
+	JOIN grade g ON m.grade_id = g.id
+	WHERE c.chatroom_id = #{room_id}
+	ORDER BY m.name ASC
+</select>
+<delete id="deleteChatMember" parameterType="com.cbo.messenger.model.ChatRoom_MemberDTO">
+	DELETE 
+	FROM chatroom_user
+	WHERE chatroom_id = ${chatroom_id} and member_id = #{member_id}
+</delete>
 </mapper>
