@@ -6,6 +6,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>받은 메시지함</title>
+<script th:src="@{/js/message/message-list.js}" defer></script>
 </head>
 <body>
 <div layout:fragment="content">
@@ -18,22 +19,20 @@
 		>
 			<thead>
 				<tr>
-					<th scope="col"><input type="checkbox"></th>
+					<th scope="col"><input type="checkbox" id="checkAll"></th>
 					<th scope="col" colspan="3" class="p-0">
-						<ul
-							class="nav nav-tabs"
-						>
+						<ul class="nav nav-tabs">
 							<li class="nav-item">
-								<a href="#" class="nav-link">읽음</a>
+								<button type="button" class="nav-link" id="markAsRead" th:onclick="markAsRead(${curPage}, 'markAsRead', 'receivedMessages')">읽음</button>
 							</li>
-							<li class="nav-item disabled">
-								<a href="#" class="nav-link">삭제</a>
+							<li class="nav-item">
+								<button type="button" class="nav-link" id="deleteMessages" th:onclick="deleteMessage(${curPage}, 'deleteMessages', 'receivedMessages')">삭제</button>
 							</li>
 						</ul>
 					</th>
 				</tr>
 			</thead>
-			<tbody>
+			<tbody id="tableBody" th:fragment="tableBody">
 				<tr th:if="${#lists.isEmpty(receivedMessages)}">
 					<td colspan="4">메시지가 없습니다</td>
 				</tr>

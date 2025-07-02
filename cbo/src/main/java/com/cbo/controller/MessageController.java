@@ -20,6 +20,8 @@ import com.cbo.message.model.MessageDTO;
 import com.cbo.message.service.MessageService;
 import com.cbo.pagination.Pagination;
 
+import jakarta.servlet.http.HttpServletRequest;
+
 @Controller
 public class MessageController {
 	private final MessageService messageService;
@@ -30,7 +32,8 @@ public class MessageController {
 	
 	@GetMapping("unreadMessages")
 	public ModelAndView unreadMessages(@SessionAttribute(MemberConst.USER_KEY) MemberDTO userInfo,
-			@RequestParam(defaultValue = "1") int curPage) {
+			@RequestParam(defaultValue = "1") int curPage,
+			HttpServletRequest req) {
 		List<MessageDTO> res = null;
 		try {
 			res = messageService.getUnreadMessages(userInfo.getId(), curPage);
@@ -39,13 +42,19 @@ public class MessageController {
 			e.printStackTrace();
 		}
 		
-		ModelAndView mav = new ModelAndView("message/unreadMessages");
+		ModelAndView mav = new ModelAndView();
 		mav.addObject("unreadMessages", res);
 		
+		// Get paging bar
 		int maxRows = res != null && res.size() > 0 ? res.get(0).getMax_rows() : 1;
 		
 		String pageBar = Pagination.makePaging("unreadMessages", maxRows, MessageConst.ROWS, MessageConst.PAGES, curPage);
 		mav.addObject("pageBar", pageBar);
+		
+		String viewName = req.getHeader("X-Requestd-With").equals("XMLHttpRequest") ?
+				"message/unreadMessages :: tableBody" : "message/unreadMessages";
+		
+		mav.setViewName(viewName);
 		
 		return mav;
 	}
@@ -95,7 +104,7 @@ public class MessageController {
 	}
 	
 	@GetMapping("sendMessages")
-	public String sendMessageForm(Model model) {
+	public String sendMessagesForm(Model model) {
 		Map<String, List<OrganDTO>> membersByDept = null;
 		
 		try {
@@ -109,8 +118,8 @@ public class MessageController {
 		return "message/sendMessages";
 	}
 	
-	@PostMapping("sendMessage")
-	public ModelAndView sendMessage(MessageDTO dto, List<Integer> receiverIds) {
+	@PostMapping("sendMessages")
+	public ModelAndView sendMessages(MessageDTO dto, List<Integer> receiverIds) {
 		boolean isSent = false; 
 		try {
 			isSent = messageService.sendMessages(dto, receiverIds);
@@ -149,8 +158,8 @@ public class MessageController {
 		return mav;
 	}
 	
-	@PostMapping("deleteMessage")
-	public ModelAndView deleteMessage(List<Integer> selectedIds) {
+	@PostMapping("deleteMessages")
+	public ModelAndView deleteMessages(List<Integer> selectedIds) {
 		return null;
 	}
 	

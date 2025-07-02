@@ -6,7 +6,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>결재 문서 작성</title>
-<script th:src="@{/js/submit-draft.js}" defer></script>
+<script th:src="@{/js/approval/submit-draft.js}" defer></script>
 </head>
 <body>
 <div layout:fragment="content">
@@ -30,7 +30,7 @@
                             >결재 요청</button
                         >
                         <a class="nav-link" href="javascript:window.history.back();">취소</a>
-                        <button type="button" class="nav-link ms-auto" data-bs-toggle="modal" data-bs-target="#set-lines">결재선 설정</button>
+                        <button type="button" class="nav-link ms-auto" data-bs-toggle="modal" data-bs-target="approvalLinesModal">결재선 설정</button>
                     </nav>
                 </div>
                 <!-- Template -->
@@ -59,12 +59,12 @@
                     <li class="nav-item" role="presentation">
                         <button
                             class="nav-link active"
-                            id="approval-lines-tab"
+                            id="approvalLinesTab"
                             data-bs-toggle="tab"
-                            data-bs-target="#approval-lines"
+                            data-bs-target="#approvalLines"
                             type="button"
                             role="tab"
-                            aria-controls="approval-lines"
+                            aria-controls="approvalLines"
                             aria-selected="true"
                         >
                             결재선
@@ -73,12 +73,12 @@
                     <li class="nav-item" role="presentation">
                         <button
                             class="nav-link"
-                            id="doc-info-tab"
+                            id="docInfoTab"
                             data-bs-toggle="tab"
-                            data-bs-target="#doc-info"
+                            data-bs-target="#docInfo"
                             type="button"
                             role="tab"
-                            aria-controls="doc-info"
+                            aria-controls="docInfo"
                             aria-selected="false"
                         >
                             문서 정보
@@ -90,9 +90,9 @@
                 <div class="tab-content">
                     <div
                         class="tab-pane active"
-                        id="approval-lines"
+                        id="approvalLines"
                         role="tabpanel"
-                        aria-labelledby="approval-lines-tab"
+                        aria-labelledby="approvalLinesTab"
                     >
                         <input type="hidden" name="approversId" value="3">
                         <input type="hidden" name="approversId" value="4">
@@ -101,9 +101,9 @@
                     </div>
                     <div
                         class="tab-pane"
-                        id="doc-info"
+                        id="docInfo"
                         role="tabpanel"
-                        aria-labelledby="doc-info-tab"
+                        aria-labelledby="docInfoTab"
                     >
                         profile 
                     </div>
@@ -116,7 +116,7 @@
 <!-- Member list modal Body-->
 <div
     class="modal fade"
-    id="set-lines"
+    id="approvalLinesModal"
     tabindex="-1"
     role="dialog"
     aria-labelledby="modalTitleId"
@@ -136,7 +136,7 @@
                 ></button>
             </div>
             <div class="modal-body">
-                <div class="accordion" id="member-list">
+                <div class="accordion" id="memberList">
                     <div class="accordion-item" th:each="deptGroup : ${membersByDept}">
                         <h2 class="accordion-header" th:id="${#ids.seq('dept')}">
                             <button
