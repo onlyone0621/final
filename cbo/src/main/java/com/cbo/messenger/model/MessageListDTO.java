@@ -15,4 +15,5 @@ public class MessageListDTO {
 	private String name;
 	private String content;
 	private String write_date;
+	private String type;
 }

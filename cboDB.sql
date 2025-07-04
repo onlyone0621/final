@@ -123,8 +123,9 @@ create table chatroom(
     id number(10) primary key,
     name varchar2(100) not null,
     description varchar2(200) not null,
-    create_date date DEFAULT SYSDATE NOT NULL
-
+    create_date date DEFAULT SYSDATE NOT NULL,
+    type VARCHAR2(20) NOT NULL
+        CHECK (type IN ('group', 'private'))
 );
 
 create table chat_message(
@@ -134,6 +135,8 @@ create table chat_message(
     member_id number(10),
     write_date date DEFAULT SYSDATE NOT NULL,
     content varchar2(1000) not null,
+    type VARCHAR2(20) DEFAULT 'user' NOT NULL
+        CHECK (type IN ('user', 'system')),
     foreign key (chatroom_id) references chatroom(id) ON DELETE CASCADE ,
     foreign key (member_id) references member(id) ON DELETE SET NULL  
 );
