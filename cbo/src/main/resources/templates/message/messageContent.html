@@ -12,30 +12,31 @@
 </head>
 <body>
 <div layout:fragment="content">
-	<form>
+	<form action="sendMessages">
 		<div class="d-flex flex-column h-100" th:object="${messageContent}">
 			<!-- Button toolbar -->
 			<div class="mb-3">
 				<nav
 					class="nav nav-pills flex-row"
 				>
-					<button class="nav-link active" formaction="sendMessages">
+					<button type="submit" class="nav-link active">
 						답장
 					</button>
-					<button class="nav-link" formaction="deleteMessages" formmethod="post">삭제</button>
+					<button type="button" class="nav-link" formaction="deleteMessages" formmethod="post">삭제</button>
 				</nav>
 			</div>
 
 			<div class="mb-3 row">
 				<label for="title" class="col-sm-2 col-form-label">제목</label>
 				<div class="col-sm-10">
-					<input type="text" readonly class="form-control-plaintext" id="title" th:value="*{title}">
+					<input type="text" readonly class="form-control-plaintext" id="title" name="title" th:value="*{title}">
 				</div>
 			</div>
 			<div class="mb-3 row">
 				<label for="sender" class="col-sm-2 col-form-label">보낸 사람</label>
 				<div class="col-sm-10">
 					<input type="text" readonly class="form-control-plaintext" id="sender" th:value="|*{sender_dept} *{sender} *{sender_grade}|">
+					<input type="hidden" name="receiver_id" th:value="${sender_id}">
 				</div>
 			</div>
 			<div class="mb-3 row">
@@ -54,20 +55,8 @@
 			
 
 			<!-- Doc content -->
-			<div th:text="*{content}" class="w-100 h-100 overflow-y-scroll p-3 border border-primary-subtle rounded-3"></div>
+			<textarea th:text="*{content}" name="content" readonly rows="19" class="w-100 h-100 form-control-plaintext overflow-y-scroll p-3 border border-primary-subtle rounded-3"></textarea>
 
-			<!-- File input -->
-			<div class="mb-3 w-75 align-self-center">
-				<!-- <label for="file_name" class="form-label">파일 첨부</label>
-				<input
-					type="file"
-					class="form-control"
-					name="attatchment"
-					id="file_name"
-					aria-describedby="helpId"
-				/>
-				<small id="helpId" class="form-text text-muted">10MB 까지만 첨부 가능</small> -->
-			</div>
 		</div>
 	</form>
 </div>
