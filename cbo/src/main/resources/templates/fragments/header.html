@@ -20,9 +20,9 @@
         </ul>
         <div class="header-a">
             <a href="memberInfoUpdate">
-            	<label th:if="${session.udto != null}" th:text="${session.udto.name}"></label>
-        		<label th:unless="${session.udto != null}">사용자</label> 님
-            </a> | <a href="memberLogout">로그아웃</a>
+			    <span th:if="${session.udto != null}" th:text="${session.udto.name}"></span>
+			    <span th:unless="${session.udto != null}">사용자</span> 님
+			</a> | <a href="memberLogout">로그아웃</a>
         </div>
     </nav>
 </header>

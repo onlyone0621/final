@@ -16,4 +16,5 @@ public class ChatMessageDTO {
 	private int member_id;
 	private Date write_date;
 	private String content;
+	private String type;
 }

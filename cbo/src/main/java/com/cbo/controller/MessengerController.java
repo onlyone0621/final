@@ -2,6 +2,7 @@ package com.cbo.controller;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -20,6 +21,7 @@ import org.springframework.web.servlet.ModelAndView;
 import com.cbo.member.model.ChatMemberDTO;
 import com.cbo.member.model.InviteeDTO;
 import com.cbo.member.model.MemberDTO;
+import com.cbo.member.model.OrganDTO;
 import com.cbo.messenger.model.*;
 
 import com.cbo.messenger.service.ChatMessageService;
@@ -53,15 +55,51 @@ public class MessengerController {
 	
 	@ResponseBody
 	@GetMapping("chatContent")
-	public List<MessageListDTO> chatContent(@RequestParam("id") int id) {
+	public List<MessageListDTO> chatContent(@RequestParam("id") int id, @RequestParam("room_id") int room_id) {
 	    List<MessageListDTO> lists = new ArrayList<>();
+	    Map<String, Object> param = new HashMap<>();
+	    param.put("id", id);
+	    param.put("room_id", room_id);
 	    try {
-	        lists = service.getMessageList(id);
+	        lists = service.getMessageList(param);
 	    } catch (Exception e) {
 	        e.printStackTrace();
 	    }
 	    return lists;
 	}
+	
+	@ResponseBody
+	@GetMapping("createPrivateChatRoom")
+	public String createOneToOneChatRoom(@RequestParam("target_id") int target_id, 
+	                                     @RequestParam("type") String type,
+	                                     @RequestParam("target_name") String target_name,
+	                                     HttpSession session) {
+		MemberDTO udto = (MemberDTO) session.getAttribute(com.cbo.constant.MemberConst.USER_KEY);
+		int roomId = 0;
+
+		try {
+			Integer existingRoomId = service.findPrivateRoom(udto.getId(), target_id);
+			if (existingRoomId != null) {
+				return existingRoomId.toString(); 
+			}
+
+			ChatRoomDTO cdto = new ChatRoomDTO();
+			cdto.setType("private");
+			cdto.setName(udto.getName() + "-" + target_name);  // 필요시 유저 정보 가져와 이름 변경
+			cdto.setDescription(udto.getName() + "-" + target_name);
+			service.createChatRoom(cdto);  // 생성 시 ID 자동 생성됨 (mybatis useGeneratedKeys 등)
+
+			service.addChatMember(new ChatRoom_MemberDTO(cdto.getId(), udto.getId(), null));
+			service.addChatMember(new ChatRoom_MemberDTO(cdto.getId(), target_id, null));
+
+			roomId = cdto.getId();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return String.valueOf(roomId);
+	}
+	
 	
 	@ResponseBody
 	@GetMapping("createChatRoom")
@@ -163,5 +201,18 @@ public class MessengerController {
 		}
 		msg = result > 0 ? "성공" : "실패";
 		return msg;
+	}
+	
+	@ResponseBody
+	@GetMapping("memberDepartmentList")
+	public List<OrganDTO> memberDepartmentList(@RequestParam("id")int id){
+		List<OrganDTO> lists = null;
+		try {
+			lists = service.getMembers(id);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return lists;
 	}
 }

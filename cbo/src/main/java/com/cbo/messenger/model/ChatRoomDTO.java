@@ -16,4 +16,5 @@ public class ChatRoomDTO {
 	private String name;
 	private String description;
 	private Date create_date;
+	private String type;
 }

@@ -251,7 +251,13 @@ window.addEventListener("DOMContentLoaded", function() {
 					<div>
 						<div class="profileImage-div">
 							<label id="profileImage-label">프로필 사진</label><br>
-							<img id="profilePreview" th:src="@{${session.udto.profile_image}}">
+							<img id="profilePreview"
+							     th:if="${session.udto != null and session.udto.profile_image != null}"
+							     th:src="@{${session.udto.profile_image}}" />
+							
+							<img id="profilePreview"
+							     th:unless="${session.udto != null and session.udto.profile_image != null}"
+							     src="/profileImage/defaultProfileImage.jpg" />
 						</div>
 						<div class="profileImage-input">
 							<input type="file" id="profileImage" name="profileImage" onchange="previewProfileImage(event)">
