@@ -55,7 +55,7 @@
 					</th>
 				</tr>
 			</thead>
-			<tbody id="tableBody">
+			<tbody id="tableBody" th:fragment="tableBody">
 				<tr th:if="${#lists.isEmpty(unreadMessages)}">
 					<td colspan="4">메시지가 없습니다</td>
 				</tr>

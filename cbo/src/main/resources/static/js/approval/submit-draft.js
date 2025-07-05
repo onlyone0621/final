@@ -1,3 +1,9 @@
+// Render writer's name and dept name
+if (userInfo){
+    document.querySelector('#writer').textContent = userInfo.name;
+    document.querySelector('#dept').textContent = userInfo.dept_name;
+}
+
 // Render today's date
 const today = new Date();
 const year = today.getFullYear();
@@ -40,4 +46,23 @@ document.querySelector('form').addEventListener('submit', () => {
     // Submit through hidden input
     const hiddenInput = document.querySelector('input[type="hidden"][name="content"]');
     hiddenInput.value = draft.innerHTML;
+});
+
+const approvalLinesModal = document.querySelector('#approvalLinesModal');
+
+approvalLinesModal.addEventListener('hide.bs.modal', function () {
+    const accordionButtons = approvalLinesModal.querySelectorAll('button.accordion-button')
+
+    accordionButtons.forEach(button => {
+        button.classList.add('collapsed');
+        button.setAttribute('aria-expanded', 'false');
+        document.querySelector(button.dataset.bsTarget).classList.remove('show');
+    });
+
+    const checkboxes = approvalLinesModal.querySelectorAll('input[type="checkbox"][name="selectedIds"]');
+    checkboxes.forEach(cb => cb.checked = false);
+
+    if (approvalLinesModal.contains(document.activeElement)) {
+        document.activeElement.blur();
+    }
 });

@@ -1,8 +1,8 @@
-const memberListModal = document.querySelector('#memberListModal');
+const approvalLinesModal = document.querySelector('#memberListModal');
 
 // Uncheck all checkboxes and fold accordion when modal is closed
-memberListModal.addEventListener('hide.bs.modal', function () {
-    const accordionButtons = memberListModal.querySelectorAll('button.accordion-button')
+approvalLinesModal.addEventListener('hide.bs.modal', function () {
+    const accordionButtons = approvalLinesModal.querySelectorAll('button.accordion-button')
 
     accordionButtons.forEach(button => {
         button.classList.add('collapsed');
@@ -10,10 +10,10 @@ memberListModal.addEventListener('hide.bs.modal', function () {
         document.querySelector(button.dataset.bsTarget).classList.remove('show');
     });
 
-    const checkboxes = memberListModal.querySelectorAll('input[type="checkbox"][name="receiverIds"]');
+    const checkboxes = approvalLinesModal.querySelectorAll('input[type="checkbox"][name="receiverIds"]');
     checkboxes.forEach(cb => cb.checked = false);
 
-    if (memberListModal.contains(document.activeElement)) {
+    if (approvalLinesModal.contains(document.activeElement)) {
         document.activeElement.blur();
     }
 });
@@ -21,7 +21,7 @@ memberListModal.addEventListener('hide.bs.modal', function () {
 // Pass selected member as receiver from modal to side tab's list
 const receiversList = document.querySelector('#receiversList');
 document.querySelector('#confirmReceivers').addEventListener('click', function () {
-    const selectedCheckboxes = memberListModal.querySelectorAll('input[type="checkbox"][name="receiverIds"]:checked');
+    const selectedCheckboxes = approvalLinesModal.querySelectorAll('input[type="checkbox"][name="receiverIds"]:checked');
     
     const receiversList = document.querySelector('#receiversList');
     const hiddenInputs = document.querySelector('#hiddenInputs')
@@ -49,7 +49,7 @@ document.querySelector('#confirmReceivers').addEventListener('click', function (
         hiddenInputs.appendChild(input);
 
         // Close modal
-        bootstrap.Modal.getInstance(memberListModal)?.hide();
+        bootstrap.Modal.getInstance(approvalLinesModal)?.hide();
     })
 });
 

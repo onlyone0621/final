@@ -1,12 +1,10 @@
 package com.cbo.controller;
 
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
+
 
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,7 +16,6 @@ import org.springframework.web.servlet.ModelAndView;
 import com.cbo.approval.model.ApprovalLineDTO;
 import com.cbo.approval.model.DocDTO;
 import com.cbo.approval.model.DocViewDTO;
-import com.cbo.approval.model.FormatDTO;
 import com.cbo.approval.service.ApprovalService;
 import com.cbo.constant.ApprovalConst;
 import com.cbo.constant.MemberConst;
