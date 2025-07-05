@@ -150,3 +150,13 @@ BEGIN
     END IF;
 END;
 /
+
+CREATE OR REPLACE TRIGGER trg_message_ref
+BEFORE INSERT ON message
+FOR EACH ROW
+BEGIN
+    IF :NEW.ref = 0 AND :NEW.lev = 0 THEN
+        :NEW.ref := sq_message_ref.NEXTVAL;
+    END IF;
+END;
+/

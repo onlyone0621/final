@@ -47,6 +47,8 @@
 					<label for="content" class="form-label">내용</label>
 					<textarea class="form-control h-100 overflow-y-scroll" name="content" id="content" th:text="${originalMessage.content}" rows="14"></textarea>
 				</div>
+				<input type="hidden" name="ref" th:value="${originalMessage.ref ?: 0}">
+				<input type="hidden" name="lev" th:value="${originalMessage.lev ? originalMessage.lev + 1 : 0}">
 				
 			</div>
 				

@@ -56,7 +56,8 @@
 
 			<!-- Doc content -->
 			<textarea th:text="*{content}" name="content" readonly rows="19" class="w-100 h-100 form-control-plaintext overflow-y-scroll p-3 border border-primary-subtle rounded-3"></textarea>
-
+			<input type="hidden" name="ref" th:value="*{ref}">
+			<input type="hidden" name="lev" th:value="*{lev}"> 
 		</div>
 	</form>
 </div>

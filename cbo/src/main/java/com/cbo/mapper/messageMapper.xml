@@ -84,7 +84,16 @@
   	
   	<select id="insertMessages" parameterType="com.cbo.message.model.MessageDTO">
   		INSERT INTO (title, content, receiver_id, sender_id, file_name, ref, lev)
-  		VALUES (#{title}, #{content}, #{receiver_id}, #{sender_id}, NULL, #{ref}, #{lev})
+  		VALUES (#{title}, #{content}, #{receiver_id}, #{sender_id} 
+  		<choose>
+			<when test="file_name == null">
+				, NULL
+			</when>
+			<otherwise>
+				, #{file_name}
+			</otherwise>
+		</choose>
+  		, #{ref}, #{lev})
   	</select>
   	
   	<select id="selectMessage" resultType="com.cbo.message.model.MessageDTO">

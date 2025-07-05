@@ -35,6 +35,7 @@ drop sequence sq_approval_line_id;
 drop sequence sq_community_id;
 drop sequence sq_community_post_id;
 drop sequence sq_community_comment_id;
+drop sequence sq_message_ref;
 
 
 create sequence sq_member_id nocache;
@@ -53,6 +54,7 @@ create sequence sq_approval_line_id nocache;
 create sequence sq_community_id nocache;
 create sequence sq_community_post_id nocache;
 create sequence sq_community_comment_id nocache;
+create SEQUENCE sq_message_ref nocache;
 
 
 
