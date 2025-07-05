@@ -36,8 +36,15 @@ const processSelectedItems = function(curPage, action, pageName) {
     .catch(err => alert(err.message));
 };
 
-const markAsReadBtn = document.querySelector('#markAsRead');
-const deleteMessages = document.querySelector('#deleteMessages');
-
-markAsReadBtn?.addEventListener('click', () => processSelectedItems(curPage, 'markAsRead', pageName));
-deleteMessages?.addEventListener('click', () => processSelectedItems(curPage, 'deleteMessages', pageName));
+document.querySelector('#markAsRead')?.addEventListener('click', () => {
+    processSelectedItems(curPage, 'markAsRead', pageName);
+    checkAllcb.checked = false;
+});
+document.querySelector('#markAsUnread')?.addEventListener('click', () => {
+    processSelectedItems(curPage, 'markAsUnread', pageName);
+    checkAllcb.checked = false;
+});
+document.querySelector('#deleteMessages')?.addEventListener('click', () => {
+    processSelectedItems(curPage, 'deleteMessages', pageName);
+    checkAllcb.checked = false;
+});

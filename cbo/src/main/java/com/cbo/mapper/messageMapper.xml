@@ -75,26 +75,30 @@
   	</select>
   	
   	<select id="selectMembers" resultType="com.cbo.member.model.OrganDTO">
-  		SELECT member.id AS member_id, member.name AS member_name, dept.name AS dept_name, grade.name AS grade_name, member.profile_image
+  		SELECT member.id AS member_id,
+  		 	member.name AS member_name,
+  		  	dept.name AS dept_name,
+  		   	grade.name AS grade_name,
+  		    NVL(member.profile_image, 'defaultProfileImage.jpg') AS profile_image
 		FROM member
 		    JOIN dept ON member.dept_id = dept.id
 		    JOIN grade ON member.grade_id = grade.id 
 		ORDER BY dept.id, grade.seq
   	</select>
   	
-  	<select id="insertMessages" parameterType="com.cbo.message.model.MessageDTO">
-  		INSERT INTO (title, content, receiver_id, sender_id, file_name, ref, lev)
-  		VALUES (#{title}, #{content}, #{receiver_id}, #{sender_id} 
+  	<insert id="insertMessages" parameterType="com.cbo.message.model.MessageDTO">
+  		INSERT INTO message (title, content, receiver_id, sender_id, file_name, ref, lev)
+  		VALUES (#{title}, #{content}, #{receiver_id}, #{sender_id},
   		<choose>
 			<when test="file_name == null">
-				, NULL
+				NULL
 			</when>
 			<otherwise>
-				, #{file_name}
+				#{file_name}
 			</otherwise>
 		</choose>
   		, #{ref}, #{lev})
-  	</select>
+  	</insert>
   	
   	<select id="selectMessage" resultType="com.cbo.message.model.MessageDTO">
   		SELECT message.*,

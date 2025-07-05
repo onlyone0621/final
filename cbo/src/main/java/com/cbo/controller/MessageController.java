@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttribute;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.cbo.constant.MemberConst;
@@ -144,16 +145,21 @@ public class MessageController {
 		}
 		
 		model.addAttribute("membersByDept", membersByDept);
-		
-		dto.setTitle("RE: " + dto.getTitle());
-		dto.setContent("------ Original Message ------\n" + dto.getContent());
+		if (dto.getTitle() != null)
+			dto.setTitle("RE: " + dto.getTitle());
+		if (dto.getContent() != null)
+			dto.setContent("------ Original Message ------\n" + dto.getContent());
 		model.addAttribute("originalMessage", dto);
 		return "message/sendMessages";
 	}
 	
 	@PostMapping("sendMessages")
-	public ModelAndView sendMessages(MessageDTO dto, List<Integer> receiverIds) {
+	public ModelAndView sendMessages(MessageDTO dto,
+			@RequestParam MultipartFile attatchment,
+			@RequestParam List<Integer> receiverIds,
+			@SessionAttribute(MemberConst.USER_KEY) MemberDTO userInfo) {
 		boolean isSent = false; 
+		dto.setSender_id(userInfo.getId());
 		try {
 			isSent = messageService.sendMessages(dto, receiverIds);
 		} catch (Exception e) {
@@ -208,6 +214,18 @@ public class MessageController {
 	public int markAsRead(@RequestBody List<Integer> selectedIds) {
 		try {
 			return messageService.markAsRead(selectedIds);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return -1;
+	}
+	
+	@ResponseBody
+	@PostMapping("markAsUnread")
+	public int markAsUnread(@RequestBody List<Integer> selectedIds) {
+		try {
+			return messageService.markAsUnread(selectedIds);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

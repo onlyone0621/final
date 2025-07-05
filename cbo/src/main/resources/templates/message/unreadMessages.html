@@ -23,13 +23,30 @@
 		>
 			<thead>
 				<tr>
-					<th scope="col"><input type="checkbox"></th>
+					<th scope="col"><input type="checkbox" id="checkAll"></th>
 					<th scope="col" colspan="3" class="p-0">
 						<ul
 							class="nav nav-tabs"
 						>
 							<li class="nav-item">
-								<button type="button" class="nav-link" id="markAsRead">읽음</button>
+								<div class="dropdown open">
+									<button
+										class="nav-link dropdown-toggle"
+										type="button"
+										id="triggerId"
+										data-bs-toggle="dropdown"
+										aria-haspopup="true"
+										aria-expanded="false"
+									>
+										읽음/안 읽음
+									</button>
+									<div class="dropdown-menu" aria-labelledby="triggerId">
+										<button type="button" class="dropdown-item" id="markAsRead">읽음</button>
+										<button type="button" class="dropdown-item" id="markAsUnread">
+											안 읽음
+										</button>
+									</div>
+								</div>
 							</li>
 							<li class="nav-item disabled">
 								<button type="button" class="nav-link" id="deleteMessages">삭제</button>
@@ -38,7 +55,7 @@
 					</th>
 				</tr>
 			</thead>
-			<tbody>
+			<tbody id="tableBody">
 				<tr th:if="${#lists.isEmpty(unreadMessages)}">
 					<td colspan="4">메시지가 없습니다</td>
 				</tr>

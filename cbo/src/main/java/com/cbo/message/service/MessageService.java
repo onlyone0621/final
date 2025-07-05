@@ -17,5 +17,6 @@ public interface MessageService {
 	MessageDTO getMessageContent(int id) throws Exception;
 	
 	int markAsRead(List<Integer> selectedIds) throws Exception;
+	int markAsUnread(List<Integer> selectedIds) throws Exception;
 	int deleteMessages(List<Integer> selectedIds) throws Exception;
 }

@@ -72,6 +72,7 @@ public class MessageServiceImple implements MessageService {
 	public Map<String, List<OrganDTO>> getMembers() throws Exception {
 		// TODO Auto-generated method stub
 		List<OrganDTO> memberList = mapper.selectMembers();
+
 		Map<String, List<OrganDTO>> membersByDept = memberList.stream()
 				.collect(Collectors.groupingBy(OrganDTO :: getDept_name,
 						LinkedHashMap :: new,
@@ -126,6 +127,15 @@ public class MessageServiceImple implements MessageService {
 	public int markAsRead(List<Integer> selectedIds) throws Exception {
 		Map<String, Object> map = new HashMap<>();
 		map.put("status", MessageConst.READ);
+		map.put("selectedIds", selectedIds);
+		return mapper.updateReadStatus(map);
+	}
+
+	@Override
+	public int markAsUnread(List<Integer> selectedIds) throws Exception {
+		// TODO Auto-generated method stub
+		Map<String, Object> map = new HashMap<>();
+		map.put("status", MessageConst.NOT_READ);
 		map.put("selectedIds", selectedIds);
 		return mapper.updateReadStatus(map);
 	}

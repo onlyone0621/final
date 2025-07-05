@@ -6,9 +6,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>메시지 내용 보기</title>
-<script>
-
+<script th:inline="javascript">
+	const messageId = /*[[${messageContent.id}]]*/ 0;
 </script>
+<script th:src="@{/js/message/message-content.js}" defer></script>
 </head>
 <body>
 <div layout:fragment="content">
@@ -22,7 +23,7 @@
 					<button type="submit" class="nav-link active">
 						답장
 					</button>
-					<button type="button" class="nav-link" formaction="deleteMessages" formmethod="post">삭제</button>
+					<button type="button" class="nav-link" id="deleteMessage">삭제</button>
 				</nav>
 			</div>
 

@@ -1,4 +1,6 @@
 const memberListModal = document.querySelector('#memberListModal');
+
+// Uncheck all checkboxes and fold accordion when modal is closed
 memberListModal.addEventListener('hide.bs.modal', function () {
     const accordionButtons = memberListModal.querySelectorAll('button.accordion-button')
 
@@ -16,7 +18,7 @@ memberListModal.addEventListener('hide.bs.modal', function () {
     }
 });
 
-
+// Pass selected member as receiver from modal to side tab's list
 const receiversList = document.querySelector('#receiversList');
 document.querySelector('#confirmReceivers').addEventListener('click', function () {
     const selectedCheckboxes = memberListModal.querySelectorAll('input[type="checkbox"][name="receiverIds"]:checked');
@@ -49,4 +51,13 @@ document.querySelector('#confirmReceivers').addEventListener('click', function (
         // Close modal
         bootstrap.Modal.getInstance(memberListModal)?.hide();
     })
+});
+
+// Validate form
+document.querySelector('form').addEventListener('submit', function (evt) {
+    const receiverIds = document.querySelectorAll('input[type="hidden"][name="receiverIds"]')
+    if (receiverIds.length === 0){
+        window.alert('받는 사람을 선택하세요');
+        evt.preventDefault();
+    }
 });
