@@ -35,8 +35,8 @@
 			<div class="mb-3 row">
 				<label for="sender" class="col-sm-2 col-form-label">보낸 사람</label>
 				<div class="col-sm-10">
-					<input type="text" readonly class="form-control-plaintext" id="sender" th:value="|*{sender_dept} *{sender} *{sender_grade}|">
-					<input type="hidden" name="receiver_id" th:value="${sender_id}">
+					<input type="text" readonly class="form-control-plaintext" id="sender" name="receiver" th:value="|*{sender_dept} *{sender} *{sender_grade}|">
+					<input type="hidden" name="receiver_id" th:value="*{sender_id}">
 				</div>
 			</div>
 			<div class="mb-3 row">

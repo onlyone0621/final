@@ -133,7 +133,7 @@ public class MessageController {
 	}
 	
 	@GetMapping("sendMessages")
-	public String sendMessagesForm(Model model) {
+	public String sendMessagesForm(MessageDTO dto, Model model) {
 		Map<String, List<OrganDTO>> membersByDept = null;
 		
 		try {
@@ -144,6 +144,10 @@ public class MessageController {
 		}
 		
 		model.addAttribute("membersByDept", membersByDept);
+		
+		dto.setTitle("RE: " + dto.getTitle());
+		dto.setContent("------ Original Message ------\n" + dto.getContent());
+		model.addAttribute("originalMessage", dto);
 		return "message/sendMessages";
 	}
 	

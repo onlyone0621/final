@@ -33,19 +33,19 @@
 				<div class="row mb-3">
 					<label for="title" class="col-sm-2 col-form-label">제목</label>
 					<div class="col-sm-10">
-						<input type="text" class="form-control" id="title">
+						<input type="text" class="form-control" id="title" name="title" th:value="${originalMessage.title}">
 					</div>
   				</div>
 				<div class="row mb-3">
 					<label for="attatchment" class="col-sm-2 col-form-label">첨부 파일</label>
 					<div class="col-sm-10">
-						<input type="file" class="form-control" id="attatchment">
+						<input type="file" class="form-control" id="attatchment" name="attatchment">
 					</div>
   				</div>
 
 				<div class="mb-3">
-					<label for="content" class="form-label"></label>
-					<textarea class="form-control h-100 overflow-y-scroll" name="content" id="content" th:value="${variable_name}" rows="14"></textarea>
+					<label for="content" class="form-label">내용</label>
+					<textarea class="form-control h-100 overflow-y-scroll" name="content" id="content" th:text="${originalMessage.content}" rows="14"></textarea>
 				</div>
 				
 			</div>
@@ -79,9 +79,11 @@
 							aria-labelledby="receivers-tab"
 						>
 							<ul class="list-group list-group-flush" id="receiversList">
-								
+								<li class="list-group-item" th:text="${originalMessage.receiver}"></li>
 							</ul>
-							<div id="hiddenInputs"></div>
+							<div id="hiddenInputs">
+								<input type="hidden" name="receiverIds" th:value="${originalMessage.receiver_id}">
+							</div>
 						</div>
 					</div>
 				</div>
