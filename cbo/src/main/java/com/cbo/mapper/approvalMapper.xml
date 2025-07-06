@@ -132,7 +132,13 @@
 	</select>
 	
 	<select id="selectApprovers">
-		SELECT member.name AS member_name, dept.name AS dept_name, grade.name AS grade_name, approval_line.status, approval_line.process_date
+		SELECT 
+			member.name AS member_name,
+			NVL(member.profile_image, 'defaultProfileImage.jpg') AS profile_image,
+		 	dept.name AS dept_name,
+		  	grade.name AS grade_name,
+		   	approval_line.status,
+		    approval_line.process_date
 		FROM approval_line 
 		    JOIN member ON approval_line.member_id = member.id 
 		    JOIN dept ON member.dept_id = dept.id 
@@ -148,7 +154,13 @@
 	</select>
 	
 	<select id="selectReviewers">
-		SELECT member.name AS member_name, dept.name AS dept_name, grade.name AS grade_name, approval_line.status, approval_line.process_date
+		SELECT 
+			member.name AS member_name,
+			NVL(member.profile_image, 'defaultProfileImage.jpg') AS profile_image,
+		 	dept.name AS dept_name,
+		  	grade.name AS grade_name,
+		   	approval_line.status,
+		    approval_line.process_date
 		FROM approval_line 
 		    JOIN member ON approval_line.member_id = member.id 
 		    JOIN dept ON member.dept_id = dept.id 
@@ -165,7 +177,11 @@
 	</select>
 	
 	<select id="selectMembers" resultType="com.cbo.member.model.OrganDTO">
-  		SELECT member.id AS member_id, member.name AS member_name, dept.name AS dept_name, grade.name AS grade_name, member.profile_image
+  		SELECT member.id AS member_id,
+  		 	member.name AS member_name,
+  		  	dept.name AS dept_name,
+  		   	grade.name AS grade_name,
+  		    NVL(member.profile_image, 'defaultProfileImage.jpg') AS profile_image
 		FROM member
 		    JOIN dept ON member.dept_id = dept.id
 		    JOIN grade ON member.grade_id = grade.id 
@@ -204,12 +220,10 @@
 	</insert>
 	
 	<!-- Approve or Reject -->
-	<update id="updateStatusToApproved" parameterType="map">
-		UPDATE approval_line SET status = '결재 완료' WHERE doc_id = #{doc_id} AND member_id = #{member_id}
-	</update>
-	
-	<update id="updateStatusToRejected" parameterType="map">
-		UPDATE approval_line SET status = '반려' WHERE doc_id = #{doc_id} AND member_id = #{member_id}
+	<update id="updateStatus" parameterType="map">
+		UPDATE approval_line 
+		SET status = #{status} 
+		WHERE doc_id = #{doc_id} AND member_id = #{member_id}
 	</update>
 	
   </mapper>

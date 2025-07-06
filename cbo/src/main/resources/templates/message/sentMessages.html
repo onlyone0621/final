@@ -10,6 +10,7 @@
 	const curPage = /*[[${curPage}]]*/ 1;
 	const pageName = /*[[${pageName}]]*/ '';
 </script>
+<script th:src="@{/js/message/message-list.js}" defer></script>
 </head>
 <body>
 <div layout:fragment="content">
@@ -22,7 +23,7 @@
 		>
 			<thead>
 				<tr>
-					<th scope="col"><input type="checkbox"></th>
+					<th scope="col"><input type="checkbox" id="checkAll"></th>
 					<th scope="col" colspan="3" class="p-0">
 						<ul
 							class="nav nav-tabs"
@@ -34,7 +35,7 @@
 					</th>
 				</tr>
 			</thead>
-			<tbody>
+			<tbody id="tableBody" th:fragment="tableBody">
 				<tr th:if="${#lists.isEmpty(sentMessages)}">
 					<td colspan="4">메시지가 없습니다</td>
 				</tr>
