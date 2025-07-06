@@ -13,6 +13,7 @@ public class ApprovalLineDTO {
 	private int doc_id;
 	private int member_id;
 	private String member_name;
+	private String profile_image;
 	private String dept_name;
 	private String grade_name;
 	private String status;

@@ -33,6 +33,6 @@ public interface ApprovalService {
 	boolean submitDraft(DocDTO dto, List<Integer> approversId, List<Integer> reviewersId) throws Exception;
 	
 	// Approve or Reject
-	int approve(int docId, int memberId, String status) throws Exception;
-	int reject(int docId, int memberId, String status) throws Exception;
+	int approve(int docId, int memberId) throws Exception;
+	int reject(int docId, int memberId) throws Exception;
 }

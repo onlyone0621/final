@@ -151,15 +151,15 @@ public class ApprovalController {
 	@PostMapping("submitDraft")
 	public ModelAndView submitDraft(DocDTO dto,
 			@RequestParam MultipartFile attatchment,
-			@RequestParam List<Integer> approversId,
-			@RequestParam List<Integer> reviewersId,
+			@RequestParam List<Integer> approverIds,
+			@RequestParam List<Integer> reviewerIds,
 			@SessionAttribute(MemberConst.USER_KEY) MemberDTO userInfo) {
 		
 		dto.setMember_id(userInfo.getId());
 		
 		boolean res = false;
 		try {
-			res = approvalService.submitDraft(dto, approversId, reviewersId);
+			res = approvalService.submitDraft(dto, approverIds, reviewerIds);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -196,10 +196,11 @@ public class ApprovalController {
 	}
 	
 	@PostMapping("/approve")
-	public ModelAndView approve(@SessionAttribute(MemberConst.USER_KEY) MemberDTO userInfo, @RequestParam int docId) {
+	public ModelAndView approve(@SessionAttribute(MemberConst.USER_KEY) MemberDTO userInfo,
+			@RequestParam int docId) {
 		int res = 0;
 		try {
-			res = approvalService.approve(docId, userInfo.getId(), ApprovalConst.APPROVED);
+			res = approvalService.approve(docId, userInfo.getId());
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -213,10 +214,11 @@ public class ApprovalController {
 	}
 	
 	@PostMapping("/reject")
-	public ModelAndView reject(@SessionAttribute(MemberConst.USER_KEY) MemberDTO userInfo, @RequestParam int docId) {
+	public ModelAndView reject(@SessionAttribute(MemberConst.USER_KEY) MemberDTO userInfo,
+			@RequestParam int docId) {
 		int res = 0;
 		try {
-			res = approvalService.reject(docId, userInfo.getId(), ApprovalConst.REJECTED);
+			res = approvalService.reject(docId, userInfo.getId());
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

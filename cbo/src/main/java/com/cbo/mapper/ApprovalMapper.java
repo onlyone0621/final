@@ -34,6 +34,5 @@ public interface ApprovalMapper {
 	int insertDoc(DocDTO dto) throws Exception;
 	int insertApprovalLines(ApprovalLineDTO dto) throws Exception;
 	
-	int updateStatusToApproved(Map<String, Object> map) throws Exception;
-	int updateStatusToRejected(Map<String, Object> map) throws Exception;
+	int updateStatus(Map<String, Object> map) throws Exception;
 }

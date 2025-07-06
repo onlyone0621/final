@@ -137,7 +137,7 @@
                         >
                             <div class="accordion-body" th:each="member : ${deptGroup.value}" th:object="${member}" th:data-dept="${deptGroup.key}">
                                 <input type="checkbox" class="form-check-input" name="receiverIds" th:id="${#ids.seq(#ids.prev('dept') + '-')}" th:value="*{member_id}">
-								<img th:src="@{/profileImage/{img}(img=*{profile_image})}" alt="profile_image" width="100" height="100" class="rounded-circle">
+								<img th:src="@{/profileImage/{img}(img=*{profile_image})}" alt="profile_image" width="25" height="25" class="rounded-circle mx-1">
 								<label class="form-label" th:for="${#ids.prev(#ids.prev('dept') + '-')}" th:text="|*{member_name} *{grade_name}|"></label>
                             </div>
                         </div>

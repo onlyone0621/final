@@ -1,8 +1,8 @@
-const approvalLinesModal = document.querySelector('#memberListModal');
+const memberListModal = document.querySelector('#memberListModal');
 
 // Uncheck all checkboxes and fold accordion when modal is closed
-approvalLinesModal.addEventListener('hide.bs.modal', function () {
-    const accordionButtons = approvalLinesModal.querySelectorAll('button.accordion-button')
+memberListModal.addEventListener('hide.bs.modal', function () {
+    const accordionButtons = memberListModal.querySelectorAll('button.accordion-button')
 
     accordionButtons.forEach(button => {
         button.classList.add('collapsed');
@@ -10,21 +10,20 @@ approvalLinesModal.addEventListener('hide.bs.modal', function () {
         document.querySelector(button.dataset.bsTarget).classList.remove('show');
     });
 
-    const checkboxes = approvalLinesModal.querySelectorAll('input[type="checkbox"][name="receiverIds"]');
+    const checkboxes = memberListModal.querySelectorAll('input[type="checkbox"][name="receiverIds"]');
     checkboxes.forEach(cb => cb.checked = false);
 
-    if (approvalLinesModal.contains(document.activeElement)) {
+    if (memberListModal.contains(document.activeElement)) {
         document.activeElement.blur();
     }
 });
 
 // Pass selected member as receiver from modal to side tab's list
-const receiversList = document.querySelector('#receiversList');
 document.querySelector('#confirmReceivers').addEventListener('click', function () {
-    const selectedCheckboxes = approvalLinesModal.querySelectorAll('input[type="checkbox"][name="receiverIds"]:checked');
+    const selectedCheckboxes = memberListModal.querySelectorAll('input[type="checkbox"][name="receiverIds"]:checked');
     
     const receiversList = document.querySelector('#receiversList');
-    const hiddenInputs = document.querySelector('#hiddenInputs')
+    const hiddenInputs = document.querySelector('#hiddenInputs');
 
     // Clear list
     receiversList.innerHTML = '';
@@ -33,12 +32,21 @@ document.querySelector('#confirmReceivers').addEventListener('click', function (
     selectedCheckboxes.forEach(cb => {
         const label = document.querySelector(`label[for=${cb.id}]`);
         const nameAndGrade = label ? label.textContent : '알 수 없음';
-        const deptName = cb.closest('div[class="accordion-body"]').dataset.dept || '알 수 없음'
+
+        const accordionBody = cb.closest('div.accordion-body');
+        const deptName = accordionBody?.dataset.dept || '알 수 없음'
+        const img = accordionBody.querySelector(`img[alt="profile_image"]`);
 
         // Append list items
         const li = document.createElement('li');
         li.classList.add('list-group-item');
-        li.textContent = `${deptName} ${nameAndGrade}`;
+        if (img) {
+            const clonedImg = img.cloneNode();
+            li.appendChild(clonedImg);
+        }
+        const span = document.createElement('span');
+        span.textContent = `${deptName} ${nameAndGrade}`;
+        li.appendChild(span);
         receiversList.appendChild(li);
 
         // Append hidden inputs
@@ -49,8 +57,8 @@ document.querySelector('#confirmReceivers').addEventListener('click', function (
         hiddenInputs.appendChild(input);
 
         // Close modal
-        bootstrap.Modal.getInstance(approvalLinesModal)?.hide();
-    })
+        bootstrap.Modal.getInstance(memberListModal)?.hide();
+    });
 });
 
 // Validate form
