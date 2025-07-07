@@ -22,7 +22,7 @@
       background-color: #fbf9fd;
       padding: 30px 20px;
       border-right: 1px solid #ddd;
-      border-radius: 0 30px 30px 0;
+      
     }
 
     .sidebar h4 {
@@ -59,7 +59,7 @@ ul li a {
     }
 
     form {
-      max-width: 600px;
+      max-width: 500px;
       margin: 0 auto;
       padding: 30px;
       background-color: #fffafa;
@@ -76,7 +76,20 @@ ul li a {
       font-weight: bold;
       margin-bottom: 5px;
     }
-
+	#adrNum{
+		width: 45%;	
+	}
+	#addrBtn{
+		margin-left: 50px;
+		width: 45%;
+	}
+	
+	.addr-div{
+		display: flex;
+		margin-bottom: 15px;
+		
+	}
+	
     input[type="text"], select {
       width: 100%;
       padding: 10px;
@@ -187,8 +200,10 @@ function previewProfileImage(event) {
 
         <div class="form-group">
           <label>주소</label>
-          <input type="text" id="adrNum" name="adrNum" placeholder="우편번호" readonly>
-          <input type="button" value="주소찾기" onclick="findAddr()">
+          	<div class="addr-div">
+          		<input type="text" id="adrNum" name="adrNum" placeholder="우편번호" readonly>
+          		<input type="button" id="addrBtn" value="주소찾기" onclick="findAddr()">
+          	</div>
           <input type="text" id="address" name="address" th:value="${member.address}">
         </div>
 

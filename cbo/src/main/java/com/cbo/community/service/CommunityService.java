@@ -54,20 +54,38 @@ public interface CommunityService {
 	//실제 파일 삭제할려고 imageid갖고옴
 	public ImageDTO selectImageById(int imageId) throws Exception;
 	
-	//댓글달기
-	public int insertReply(ReplyDTO rdto) throws Exception;
+//	//댓글달기
+//	public int insertReply(ReplyDTO rdto) throws Exception;
+//	
+//	//댓글 수정
+//	public int updateReply(ReplyDTO rdto) throws Exception;
+//	
+//	//댓글 삭제
+//	public int deleteReply(int replyId) throws Exception;
+//	
+//	//댓글 읽기 (postid가져옴)
+//	public List<ReplyDTO> selectReplyByPostId(int postId) throws Exception;
+//
+//	//순번 밀기
+//	public int updateReplySunbun(Map<String, Object> map) throws Exception;
 	
-	//댓글 수정
-	public int updateReply(ReplyDTO rdto) throws Exception;
 	
-	//댓글 삭제
-	public int deleteReply(int replyId) throws Exception;
-	
-	//댓글 읽기 (postid가져옴)
-	public List<ReplyDTO> selectReplyByPostId(int postId) throws Exception;
+	 // 댓글 작성
+    public int insertReply(ReplyDTO dto) throws Exception;
 
-	//순번 밀기
-	public int updateReplySunbun(Map<String, Object> map) throws Exception;
+    // 답글 작성 (부모 댓글 id 필요)
+    int insertChildReply(ReplyDTO dto, int parentId) throws Exception;
+
+    // 댓글/답글 수정
+    int updateReply(ReplyDTO dto) throws Exception;
+
+    // 댓글/답글 삭제
+    int deleteReply(int replyId) throws Exception;
+
+    // 댓글/답글 목록 조회 (postId로 조회)
+    List<Map<String, Object>> selectReplyByPostId(int postId) throws Exception;
+	
+	
 	
 	//게시판 정보 수정 - 해당 커뮤니티 게시판목록, 운영자 이름 불러오기
 	public List<Map<String, Object>> boardListWithMaster(int cId) throws Exception;
@@ -168,4 +186,11 @@ public interface CommunityService {
 	public void leaveCommunity(int cId, int memberId) throws Exception;
 	
 	
+	////////////////////////////////////////////////////
+	//커뮤니티 가입 목록
+	public List<Map<String, Object>> communityMainJoin(int memberId) throws Exception;
+	
+	
+	// 사이드바 커뮤니티 가입한 목록들 이름
+	public List<Map<String, Object>> joinList(int userId) throws Exception;
 }

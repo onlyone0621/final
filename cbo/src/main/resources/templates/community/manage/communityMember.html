@@ -1,298 +1,169 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org"
-	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-	layout:decorate="layouts/mainLayout">
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="layouts/mainLayout">
 <head>
-<meta charset="UTF-8">
-<title>멤버 관리</title>
-<style>
-.container {
-	display: flex;
-	min-height: 100vh;
-}
-
-.sidebar {
-	width: 220px;
-	background-color: #fbf9fd;
-	padding: 20px;
-	border-right: 1px solid #ddd;
-}
-
-.sidebar h4 {
-	font-size: 18px;
-	margin-bottom: 10px;
-}
-
-.sidebar ul {
-	list-style: none;
-	padding-left: 0;
-	font-size: 14px;
-}
-
-.sidebar ul li {
-	margin-bottom: 8px;
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-}
-
-.sidebar ul li a {
-	text-decoration: none;
-	color: #6a1b9a;
-	font-weight: bold;
-}
-
-.settings-btn {
-	font-size: 16px;
-	color: #999;
-	margin-left: 5px;
-	text-decoration: none;
-}
-
-.add-board {
-	display: block;
-	margin-top: 10px;
-	font-size: 14px;
-	color: #d81b60;
-	font-weight: bold;
-	text-decoration: none;
-}
-
-.main {
-	flex-grow: 1;
-	padding: 20px;
-}
-
-.tabs {
-	border-bottom: 1px solid #ddd;
-	margin-bottom: 20px;
-}
-
-.tab {
-	display: inline-block;
-	margin-right: 15px;
-	padding-bottom: 5px;
-	font-weight: bold;
-	color: #666;
-	text-decoration: none;
-	border-bottom: 2px solid transparent;
-}
-
-.tab.active {
-	color: #d81b60;
-	border-bottom: 2px solid #d81b60;
-}
-
-.status-switch {
-	margin-bottom: 10px;
-	font-size: 14px;
-}
-
-table {
-	width: 100%;
-	border-collapse: collapse;
-	margin-top: 10px;
-}
-
-th, td {
-	border: 1px solid #ddd;
-	padding: 6px;
-	text-align: center;
-	font-size: 14px;
-}
-
-th {
-	background: #f3e5f5;
-}
-
-.btn {
-	padding: 5px 10px;
-	margin: 5px 2px;
-	border: none;
-	border-radius: 4px;
-	cursor: pointer;
-	font-size: 13px;
-}
-
-.btn-approve {
-	background-color: #c5e1a5;
-}
-
-.btn-reject {
-	background-color: #ef9a9a;
-}
-
-.btn-remove {
-	background-color: #b0bec5;
-}
-</style>
+    <meta charset="UTF-8">
+    <title>멤버 관리</title>
+    <style>
+        .container { display: flex; min-height: 100vh; }
+        .sidebar { width: 220px; background-color: #fbf9fd; padding: 20px; border-right: 1px solid #ddd; }
+        .main { flex: 1; padding: 20px; }
+        .tabs { border-bottom: 1px solid #ddd; margin-bottom: 20px; }
+        .tab { display: inline-block; margin-right: 15px; padding-bottom: 5px; font-weight: bold; color: #666; border-bottom: 2px solid transparent; text-decoration: none; }
+        .tab.active { color: #d81b60; border-bottom: 2px solid #d81b60; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { border: 1px solid #ddd; padding: 6px; text-align: center; font-size: 14px; }
+        th { background: #f3e5f5; }
+        .btn { padding: 5px 10px; border: none; border-radius: 4px; cursor: pointer; font-size: 13px; }
+        .btn-approve { background-color: #c5e1a5; }
+        .btn-reject { background-color: #ef9a9a; }
+        .btn-remove { background-color: #b0bec5; }
+    </style>
 
 <script>
-	/**
-	 * checkAll(mainCheck)
-	 * - 메인 체크박스 클릭 시 모든 멤버 체크박스를 메인 체크 상태와 같게 맞춤
-	 */
-	function checkAll(mainCheck) {
-		var checkboxes = document.querySelectorAll('.memberCheck');
-		for (var i = 0; i < checkboxes.length; i++) {
-			checkboxes[i].checked = mainCheck.checked;
-		}
-	}
+    /**
+     * checkAll(mainCheck)
+     * - 메인 체크박스를 클릭하면, 멤버 체크박스 전체를 mainCheck 상태와 일치시킴
+     * - mainCheck: 메인 체크박스 (true = 전체 체크, false = 전체 해제)
+     */
+    function checkAll(mainCheck) {
+        var checkboxes = document.querySelectorAll('.memberCheck');
+        for (var i = 0; i < checkboxes.length; i++) {
+            checkboxes[i].checked = mainCheck.checked;
+        }
+    }
 
-	/**
-	 * memberAction(action)
-	 * - 승인 / 거절 / 탈퇴 버튼 클릭 시 실행됨
-	 * - 선택된 멤버들마다 form을 만들어 POST 요청을 보냄
-	 * - action: 'approve', 'reject', 'remove' 값 중 하나
-	 */
-	function memberAction(action) {
-		var checkboxes = document.querySelectorAll('.memberCheck');
-		var selected = [];
+    /**
+     * memberAction(action)
+     * - 멤버 승인, 거절, 탈퇴 요청을 보낼 때 사용
+     * - 선택된 멤버마다 form을 만들어 POST 전송
+     * - action: 'approve', 'reject', 'remove' 중 하나
+     */
+    function memberAction(action) {
+        var checkboxes = document.querySelectorAll('.memberCheck');
+        var selected = [];
 
-		// 선택된 멤버만 배열에 담기
-		for (var i = 0; i < checkboxes.length; i++) {
-			if (checkboxes[i].checked) {
-				selected.push(checkboxes[i]);
-			}
-		}
+        // 선택된 멤버만 selected 배열에 추가
+        for (var i = 0; i < checkboxes.length; i++) {
+            if (checkboxes[i].checked) {
+                selected.push(checkboxes[i]);
+            }
+        }
 
-		// 선택된 멤버 없으면 경고
-		if (selected.length === 0) {
-			alert('선택된 멤버가 없습니다.');
-			return;
-		}
+        // 아무것도 선택 안 했으면 경고 후 종료
+        if (selected.length === 0) {
+            alert('선택된 멤버가 없습니다.');
+            return;
+        }
 
-		// action에 따라 안내 메시지 생성
-		var msg = '';
-		if (action === 'approve') {
-			msg = '선택하신 회원의 가입을 승인하시겠습니까?\n(총 ' + selected.length + '명)';
-		} else if (action === 'reject') {
-			msg = '선택하신 회원의 가입을 거부하시겠습니까?\n(총 ' + selected.length + '명)';
-		} else if (action === 'remove') {
-			msg = '선택하신 회원을 탈퇴시키겠습니까?\n(총 ' + selected.length + '명)';
-		}
+        // action에 따라 사용자에게 확인 메시지 작성
+        var msg = '';
+        if (action === 'approve') {
+            msg = '선택하신 회원의 가입을 승인하시겠습니까?\n(총 ' + selected.length + '명)';
+        } else if (action === 'reject') {
+            msg = '선택하신 회원의 가입을 거부하시겠습니까?\n(총 ' + selected.length + '명)';
+        } else if (action === 'remove') {
+            msg = '선택하신 회원을 탈퇴시키겠습니까?\n(총 ' + selected.length + '명)';
+        }
 
-		// 사용자 확인 (확인 누르면 진행, 취소 누르면 종료)
-		if (!confirm(msg)) {
-			return;
-		}
+        // 사용자에게 확인창 (취소 누르면 종료)
+        if (!confirm(msg)) {
+            return;
+        }
 
-		// URL 경로 (query string 제거)
-		var basePath = location.pathname.split('?')[0];
-		// 예: /community/1/member
+        // 현재 URL 경로에서 query string 제거 (ex: ?status=pending 같은거 제거)
+        var basePath = location.pathname.split('?')[0]; 
+        // ex: /community/1/member
 
-		// 선택된 멤버마다 form 생성 → POST 전송
-		for (var j = 0; j < selected.length; j++) {
-			var form = document.createElement('form');
-			form.method = 'post';
-			form.action = basePath + '/' + selected[j].value + '/' + action;
-			// 예: /community/1/member/55/approve
+        // 선택된 멤버마다 form 생성 후 POST 전송
+        for (var j = 0; j < selected.length; j++) {
+            var form = document.createElement('form');
+            form.method = 'post';
+            form.action = basePath + '/' + selected[j].value + '/' + action;
+            // ex: /community/1/member/3/approve
 
-			// form을 body에 붙이고 바로 submit
-			document.body.appendChild(form);
+            document.body.appendChild(form);
 
-			// 디버그용: 경로 출력
-			console.log('👉 form action = ' + form.action);
+            // 디버그용: 전송 URL 출력
+            console.log('👉 form action = ' + form.action);
 
-			// 전송
-			form.submit();
-		}
-	}
+            form.submit();
+        }
+    }
 </script>
+
 
 
 </head>
 <body>
-	<div layout:fragment="content">
-		<div class="container">
+<div layout:fragment="content">
+    <div class="container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <h4 th:text="${communityInfo.name} ?: '커뮤니티'">커뮤니티</h4>
+            <ul th:each="bdto : ${sidebarBoardList}">
+                <li>
+                    <a th:href="@{/community/{cId}/board/{boardId}(cId=${cId}, boardId=${bdto.id})}">[[${bdto.name}]]</a>
+                </li>
+            </ul>
+            <a th:href="@{/community/{cId}/board/create(cId=${cId})}">+ 게시판 추가</a>
+        </div>
 
-			<div class="sidebar">
-				<h4 th:text="${communityInfo.name} ?: '커뮤니티'">커뮤니티</h4>
-				<ul th:if="${#lists.isEmpty(sidebarBoardList)}">
-					<li>게시판이 없습니다.</li>
-				</ul>
-				<ul th:each="bdto : ${sidebarBoardList}">
-					<li><a
-						th:href="@{/community/{cId}/board/{boardId}(cId=${cId}, boardId=${bdto.id})}">
-							[[${bdto.name}]] </a> <a
-						th:href="@{/community/{cId}/board/{boardId}/update(cId=${cId}, boardId=${bdto.id})}"
-						class="settings-btn">⚙</a></li>
-				</ul>
-				<a class="add-board"
-					th:href="@{/community/{cId}/board/create(cId=${cId})}">+ 게시판 추가</a>
-			</div>
+        <!-- Main -->
+        <div class="main">
+            <div class="tabs">
+                <a class="tab" th:href="@{/community/{cId}/update(cId=${cId})}">정보</a>
+                <a class="tab" th:href="@{/community/{cId}/boardDelete(cId=${cId})}">게시판</a>
+                <a class="tab active" th:href="@{/community/{cId}/member(cId=${cId})}">멤버</a>
+                <a class="tab" th:href="@{/community/{cId}/close(cId=${cId})}">폐쇄</a>
+            </div>
 
+            <div>
+                <label><input type="radio" name="status" th:checked="${status == 'active'}" onclick="location.href='?status=active'"> 가입멤버</label>
+                <label><input type="radio" name="status" th:checked="${status == 'pending'}" onclick="location.href='?status=pending'"> 가입 승인 대기</label>
+            </div>
 
-			<!-- ---------------------------------------------------------------------- -->
+            <div>
+                <button th:if="${status == 'active'}" class="btn btn-remove" onclick="memberAction('remove')">탈퇴</button>
+                <div th:if="${status == 'pending'}">
+                    <button class="btn btn-approve" onclick="memberAction('approve')">승인</button>
+                    <button class="btn btn-reject" onclick="memberAction('reject')">거절</button>
+                </div>
+            </div>
 
-			<div class="main">
-				<div class="tabs">
-					<a class="tab" th:href="@{/community/{cId}/update(cId=${cId})}">정보</a>
-					<a class="tab"
-						th:href="@{/community/{cId}/boardDelete(cId=${cId})}">게시판</a> <a
-						class="tab active"
-						th:href="@{/community/{cId}/member(cId=${cId})}">멤버</a> <a
-						class="tab" th:href="@{/community/{cId}/close(cId=${cId})}">폐쇄</a>
-				</div>
-
-				<div class="status-switch">
-					<!--  탈퇴 -->
-					<label> <input type="radio" name="status"
-						th:checked="${status == 'active'}"
-						onclick="location.href='?status=active'"> 가입멤버
-					</label> <label> <!--  승인/거절 --> <input type="radio" name="status"
-						th:checked="${status == 'pending'}"
-						onclick="location.href='?status=pending'"> 가입 승인 대기
-					</label>
-				</div>
-
-				<div>
-					<button th:if="${status == 'active'}" class="btn btn-remove"
-						onclick="memberAction('remove')">탈퇴</button>
-					<span th:if="${status == 'active' and #lists.isEmpty(members)}">운영자는
-						탈퇴할 수 없습니다.</span> <span
-						th:if="${status == 'pending' and #lists.isEmpty(members)}">승인
-						대기중인 멤버가 없습니다.</span>
-					<div th:if="${status == 'pending' and !#lists.isEmpty(members)}">
-						<button class="btn btn-approve" onclick="memberAction('approve')">승인</button>
-						<button class="btn btn-reject" onclick="memberAction('reject')">거절</button>
-					</div>
-				</div>
-
-				<table>
-					<thead>
-						<tr>
-							<th><input type="checkbox" onclick="checkAll(this)"></th>
-							<th>이름</th>
-							<th>소속</th>
-							<th>이메일</th>
-							<th>가입일</th>
-							<th>게시글</th>
-						</tr>
-					</thead>
-
-					<tbody>
-						<tr th:each="m : ${members}">
-							<td><input type="checkbox" class="memberCheck"
-								th:if="${m['ROLE'] != 'master'}" th:value="${m['ID']}">
-								<span th:if="${m['ROLE'] == 'master'}">👑</span></td>
-							<td th:text="${m['NAME']} ?: 'N/A'">N/A</td>
-							<td th:text="${m['DEPT_NAME']} ?: 'N/A'">N/A</td>
-							<td th:text="${m['EMAIL']} ?: 'N/A'">N/A</td>
-							<td
-								th:text="${#dates.format(m['JOIN_DATE'], 'yyyy-MM-dd')} ?: 'N/A'">N/A</td>
-							<td th:text="${m['POST_COUNT'] ?: 0}">0</td>
-
-						</tr>
-						<tr th:if="${#lists.isEmpty(members)}">
-							<td colspan="6">멤버가 없습니다.</td>
-						</tr>
-					</tbody>
-				</table>
-
-			</div>
-		</div>
-	</div>
-
+            <table>
+                <thead>
+                <tr>
+                    <th><input type="checkbox" onclick="checkAll(this)"></th>
+                    <th>이름</th>
+                    <th>이메일</th>
+                    <th>부서</th>
+                    <th>가입일</th>
+                    <th>역할</th>
+                    <th>게시글 수</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="m : ${members}">
+                    <td>
+                        <input type="checkbox" class="memberCheck" th:if="${m['ROLE'] != 'master'}" th:value="${m['ID']}">
+                        <span th:if="${m['ROLE'] == 'master'}">👑</span>
+                    </td>
+                    <td th:text="${m['NAME']} ?: 'N/A'">N/A</td>
+                    <td th:text="${m['EMAIL']} ?: 'N/A'">N/A</td>
+                    <td th:text="${m['DEPT_NAME']} ?: 'N/A'">N/A</td>
+                    <td th:text="${#dates.format(m['JOIN_DATE'], 'yyyy-MM-dd')} ?: 'N/A'">N/A</td>
+                    <td th:text="${m['ROLE']} ?: 'N/A'">N/A</td>
+                    <td th:text="${m['POST_COUNT'] ?: 0}">0</td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(members)}">
+                    <td colspan="7">멤버가 없습니다.</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
 </body>
 </html>

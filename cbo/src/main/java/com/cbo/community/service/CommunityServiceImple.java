@@ -1,8 +1,10 @@
 package com.cbo.community.service;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -176,42 +178,93 @@ public class CommunityServiceImple implements CommunityService {
 		ImageDTO idto = mapper.selectImageById(imageId);
 		return idto;
 	}
+//
+////댓글 달기
+//	@Override
+//	public int insertReply(ReplyDTO rdto) throws Exception {
+//		int result = mapper.insertReply(rdto);
+//		return result;
+//	}
+//
+////댓글 수정
+//	@Override
+//	public int updateReply(ReplyDTO rdto) throws Exception {
+//		int result = mapper.updateReply(rdto);
+//		return result;
+//	}
+//
+////댓글 삭제
+//	@Override
+//	public int deleteReply(int replyId) throws Exception {
+//		int result = mapper.deleteReply(replyId);
+//		return result;
+//	}
+//
+////댓글 목록
+//	@Override
+//	public List<ReplyDTO> selectReplyByPostId(int postId) throws Exception {
+//		List<ReplyDTO> replyLists = mapper.selectReplyByPostId(postId);
+//		return replyLists;
+//	}
+//
+////순번 밀기
+//	@Override
+//	public int updateReplySunbun(Map<String, Object> map) throws Exception {
+//		int result = mapper.updateReplySunbun(map);
+//		return result;
+//
+//	}
+	
+	
+	  // 댓글 작성
+    @Override
+    public int insertReply(ReplyDTO dto) throws Exception {
+        // 댓글 insert (id + 기본 ref = 0)
+        int result = mapper.insertReply(dto);
+        // insert 후 ref = id 로 업데이트
+        mapper.updateReplyRef(dto.getId());
+        return result;
+    }
 
-//댓글 달기
-	@Override
-	public int insertReply(ReplyDTO rdto) throws Exception {
-		int result = mapper.insertReply(rdto);
-		return result;
-	}
+    // 답글 작성
+    @Override
+    public int insertChildReply(ReplyDTO dto, int parentId) throws Exception {
+        // 부모 댓글 정보 조회
+        ReplyDTO parent = mapper.selectReplyById(parentId);
+        // sunbun 밀기 (답글 위치 확보)
+        Map<String, Object> map = new HashMap<>();
+        map.put("ref", parent.getRef());
+        map.put("sunbun", parent.getSunbun() + 1);
+        mapper.updateReplySunbun(map);
 
-//댓글 수정
-	@Override
-	public int updateReply(ReplyDTO rdto) throws Exception {
-		int result = mapper.updateReply(rdto);
-		return result;
-	}
+        // 답글 ref, lev, sunbun 세팅
+        dto.setRef(parent.getRef());
+        dto.setLev(parent.getLev() + 1);
+        dto.setSunbun(parent.getSunbun() + 1);
 
-//댓글 삭제
-	@Override
-	public int deleteReply(int replyId) throws Exception {
-		int result = mapper.deleteReply(replyId);
-		return result;
-	}
+        return mapper.insertReply(dto);
+    }
 
-//댓글 목록
-	@Override
-	public List<ReplyDTO> selectReplyByPostId(int postId) throws Exception {
-		List<ReplyDTO> replyLists = mapper.selectReplyByPostId(postId);
-		return replyLists;
-	}
+    // 댓글/답글 수정
+    @Override
+    public int updateReply(ReplyDTO dto) throws Exception {
+        return mapper.updateReply(dto);
+    }
 
-//순번 밀기
-	@Override
-	public int updateReplySunbun(Map<String, Object> map) throws Exception {
-		int result = mapper.updateReplySunbun(map);
-		return result;
+    // 댓글/답글 삭제
+    @Override
+    public int deleteReply(int id) throws Exception {
+        return mapper.deleteReply(id);
+    }
 
-	}
+    // 댓글/답글 목록 조회
+    @Override
+    public List<Map<String, Object>> selectReplyByPostId(int postId) throws Exception {
+        return mapper.selectReplyByPostId(postId);
+    }
+
+	
+	
 
 //해당 커뮤니티 게시판 관리 - 게시판목록, 운영자 이름 불러오기
 	@Override
@@ -258,17 +311,19 @@ public class CommunityServiceImple implements CommunityService {
 
 //////// 권한 부여
 
-// 가입된 멤버 리스트 가져오기 
+	
+	// 가입되어있는 master,submaster,user 목록 구분용 가져오기
 	@Override
 	public List<Map<String, Object>> joinMemberList(int cId) throws Exception {
-		return mapper.selectMembersByRoles(cId,
-				List.of(CommunityConst.MASTER, CommunityConst.SUBMASTER, CommunityConst.USER));
+	    // mapper의 joinMemberList 호출 → master, submaster, user 가져오는 쿼리
+	    return mapper.joinMemberList(cId);
 	}
 
-//가입 승인 (가입대기 → user)
+	//가입 대기에 해당하는 회원 정보들 가져오기
 	@Override
 	public List<Map<String, Object>> pendingMemberList(int cId) throws Exception {
-		return mapper.selectMembersByRoles(cId, List.of("가입대기"));
+	    // mapper의 pendingMemberList 호출 → 가입대기만 가져옴
+	    return mapper.pendingMemberList(cId, List.of(CommunityConst.PENDING));
 	}
 
 //가입 승인 (가입대기 → user)
@@ -404,19 +459,45 @@ public class CommunityServiceImple implements CommunityService {
 	    return mapper.selectCommunityMainAll(memberId);
 	}
 	
+	
+	// 커뮤니티 가입 신청
 	@Override
 	public void requestJoin(int cId, int memberId) throws Exception {
-	    Map<String, Object> map = Map.of("cId", cId, "memberId", memberId);
-	    mapper.requestJoin(map);
-	}
+	    int exists = mapper.checkExistCommunityMember(cId, memberId);  //가입 신청 전 기존 멤버 존재 여부 확인
 
+	    if (exists == 0) {
+	        int result = mapper.requestJoin(cId, memberId);
+	        if (result == 0) throw new Exception("가입 신청 insert 실패"); // 가입 신청
+	       
+	    } else {
+	        int result = mapper.updateToPending(cId, memberId);
+	       
+	        if (result == 0) throw new Exception("가입 신청 update 실패"); //가입 신청 전 기존 멤버 상태 pending으로 변경
+	    }
+	}
+	
+
+
+	//커뮤니티 멤버 탈퇴 본인이 (탈퇴)
 	@Override
 	public void leaveCommunity(int cId, int memberId) throws Exception {
 	    Map<String, Object> map = Map.of("cId", cId, "memberId", memberId);
 	    mapper.leaveCommunity(map);
 	}
 	
+	/////////////////////////////////////////////////////////
 	
+	//커뮤니티 가입 목록 
+	@Override
+	public List<Map<String, Object>> communityMainJoin(int memberId) throws Exception {
+	    return mapper.communityMainJoin(memberId);
+	}
+	
+	// 사이드바 커뮤니티 가입한 목록들 이름
+	@Override
+	public List<Map<String, Object>> joinList(int userId) throws Exception {
+		return mapper.joinList(userId);
+	}
 	
 	
 }
