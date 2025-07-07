@@ -121,7 +121,7 @@ public class MessengerController {
 	
 	@ResponseBody
 	@GetMapping("memberInvite")
-	public List<InviteeDTO> memberInvite(@RequestParam("room_id")int room_id){
+	public List<InviteeDTO> memberInviteForm(@RequestParam("room_id")int room_id){
 		List<InviteeDTO> lists = null;
 		try {
 			lists = service.getInvitee(room_id);
