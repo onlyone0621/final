@@ -13,14 +13,14 @@ public interface ApprovalMapper {
 	List<Map<String, Object>> selectFormatNames() throws Exception;
 	
 	// Doc list
-	List<DocViewDTO> selectApprovalDocs(int id) throws Exception;
-	List<DocViewDTO> selectReferenceDocs(int id) throws Exception;
-	List<DocViewDTO> selectDraftDocs(int id) throws Exception;
+	List<DocViewDTO> selectApprovalDocs(Map<String, Object> map) throws Exception;
+	List<DocViewDTO> selectReferenceDocs(Map<String, Object> map) throws Exception;
+	List<DocViewDTO> selectDraftDocs(Map<String, Object> map) throws Exception;
 	
 	// Todo doc list
-	List<DocViewDTO> selectPendingApprovalDocs(int id) throws Exception;
-	List<DocViewDTO> selectPendingReferenceDocs(int id) throws Exception;
-	List<DocViewDTO> selectScheduledApprovalDocs(int id) throws Exception;
+	List<DocViewDTO> selectPendingApprovalDocs(Map<String, Object> map) throws Exception;
+	List<DocViewDTO> selectPendingReferenceDocs(Map<String, Object> map) throws Exception;
+	List<DocViewDTO> selectScheduledApprovalDocs(Map<String, Object> map) throws Exception;
 	
 	// Get doc content and its approval lines
 	Map<String, Object> selectDoc(int id) throws Exception;

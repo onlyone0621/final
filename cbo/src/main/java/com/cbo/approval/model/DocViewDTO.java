@@ -19,4 +19,5 @@ public class DocViewDTO {
 	private int member_id;
 	private String writer;
 	private String status;
+	private int max_rows;
 }

@@ -24,9 +24,16 @@ public class CalendarServiceImple implements CalendarService {
 	}
 	
 	@Override
-	public List<CalendarDTO> selectList() throws Exception {
+	public int insertTime(CalendarDTO dto) throws Exception {
+		int result = mapper.insertTime(dto);
 		
-		List<CalendarDTO> list = mapper.selectList();
+		return result;
+	}
+	
+	@Override
+	public List<CalendarDTO> selectList(int id) throws Exception {
+		
+		List<CalendarDTO> list = mapper.selectList(id);
 		
 		return list;
 		
@@ -47,8 +54,25 @@ public class CalendarServiceImple implements CalendarService {
 	}
 	
 	@Override
-	public int saveWork(List<CalendarDTO> dto) throws Exception {
-		int count = mapper.saveWork(dto);
-		return count;
+	public int saveWork(List<CalendarDTO> list) throws Exception {
+	    int result = 0;
+	    for (CalendarDTO dto : list) {
+	        result += mapper.saveWork(dto); // 각 update의 결과를 합산
+	    }
+	    return result; // 전체 성공한 update 개수 반환
 	}
+	
+	@Override
+	public int findDept(String saveid) throws Exception {
+		int result = mapper.findDept(saveid);
+		return result;
+	}
+	
+	@Override
+	public int findId(String saveid) throws Exception {
+		int result = mapper.findId(saveid);
+		return result;
+	}
+	
+
 }

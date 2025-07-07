@@ -13,14 +13,14 @@ public interface ApprovalService {
 	List<Map<String, Object>> getFormatNames() throws Exception;
 	
 	// Doc list
-	List<DocViewDTO> getApprovalDocs(int id) throws Exception;
-	List<DocViewDTO> getReferenceDocs(int id) throws Exception;
-	List<DocViewDTO> getDraftDocs(int id) throws Exception;
+	List<DocViewDTO> getApprovalDocs(int id, int curPage) throws Exception;
+	List<DocViewDTO> getReferenceDocs(int id, int curPage) throws Exception;
+	List<DocViewDTO> getDraftDocs(int id, int curPage) throws Exception;
 	
 	// Todo doc list
-	List<DocViewDTO> getPendingApprovalDocs(int id) throws Exception;
-	List<DocViewDTO> getPendingReferenceDocs(int id) throws Exception;
-	List<DocViewDTO> getScheduledApprovalDocs(int id) throws Exception;
+	List<DocViewDTO> getPendingApprovalDocs(int id, int curPage) throws Exception;
+	List<DocViewDTO> getPendingReferenceDocs(int id, int curPage) throws Exception;
+	List<DocViewDTO> getScheduledApprovalDocs(int id, int curPage) throws Exception;
 	
 	// Get doc's content and approval lines
 	Map<String, Object> getDocContent(int id) throws Exception;

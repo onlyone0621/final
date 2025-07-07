@@ -1,15 +1,128 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
   
   <mapper namespace="com.cbo.mapper.AddrMapper">
   
-  <select id="addrList" resultType="com.cbo.addr.model.AddrDTO">
-  	select * from addr
+  <select id="addrList" resultType="com.cbo.addr.model.AddrListDTO">
+  	SELECT a.*,
+       (
+         SELECT LISTAGG(g.name, ',') WITHIN GROUP (ORDER BY g.name)
+         FROM addr_group ag
+         JOIN groups g ON ag.groups_id = g.id
+         WHERE ag.addr_id = a.id
+       ) AS groupNames
+  FROM addr a
+  WHERE a.member_id = #{id}
+ORDER BY a.id ASC
   </select>
   
+  <select id="personalList" resultType="com.cbo.addr.model.AddrDTO">
+  	select distinct name,id from groups where division = 0 and member_id = #{id} order by id asc
+  </select>
   
+  <select id="deptList" resultType="com.cbo.addr.model.AddrDTO">
+  	select distinct name from groups where division = 1  
+  </select>  
   
+  <select id="userDept" resultType="String">
+  	select name from dept where id = (select dept_id from member where user_id = #{saveid})  
+  </select>
   
+  <insert id="addPersonalAddr" parameterType="String">
+  	insert into groups values(sq_groups_id.nextval,#{id},#{name},0)
+  </insert>
+  
+  <insert id="addDeptAddr" parameterType="String">
+  	insert into groups values(sq_groups_id.nextval,#{id},#{name},1)
+  </insert>
+    
+<select id="groupAddrList" resultType="com.cbo.addr.model.AddrListDTO">
+SELECT a.*,
+       (
+         SELECT LISTAGG(g.name, ',') WITHIN GROUP (ORDER BY g.name)
+         FROM addr_group ag
+         JOIN groups g ON ag.groups_id = g.id
+         WHERE ag.addr_id = a.id
+       ) AS groupNames
+  FROM addr a
+WHERE EXISTS (
+    SELECT 1
+      FROM addr_group ag2
+      WHERE ag2.addr_id = a.id
+        AND ag2.groups_id = #{groupid}
+)
+ORDER BY a.id ASC
+</select>
+    <select id="findUserId">
+    	select id from member where user_id = #{saveid}
+    </select>
+    
+    <insert id="insertPersonalAlladdr" parameterType="com.cbo.addr.model.AddrDTO">
+    	insert into addr values(sq_addr_id.nextval,#{member_id},#{dto.name},#{dto.nickname},#{dto.company},#{dto.dept},#{dto.grade},#{dto.tel},#{dto.companytel},#{dto.email},#{dto.description},sysdate)
+    </insert>
+    
+<insert id="quickAddAddr" parameterType="com.cbo.addr.model.AddrDTO">
+    <selectKey keyProperty="id" resultType="int" order="BEFORE">
+        SELECT sq_addr_id.NEXTVAL FROM dual
+    </selectKey>
+    insert into addr
+    (id,member_id, name, nickname, tel, email, create_date)
+    values(#{id},#{member_id}, null, #{nickname}, #{tel}, #{email}, sysdate)
+</insert>
+
+	
+<delete id="deleteAddr" parameterType="map">
+    DELETE FROM addr
+    WHERE id IN
+    <foreach collection="ids" item="id" open="(" separator="," close=")">
+        #{id}
+    </foreach>
+</delete>
+
+<insert id="quickGroupAddAddr">
+	insert into addr_group values(#{addr_id},#{groups_id})
+</insert>
+
+<select id="findGroupId" resultType="int">
+	select id from groups where name = #{groupName}
+</select>
+
+<select id="countUser" resultType="int">
+	SELECT COUNT(*) FROM addr_group WHERE groups_id = #{groupId}
+</select>
+
+<select id="countAllUser" resultType="int">
+	SELECT COUNT(*) FROM addr
+</select>
+
+<insert id="addAddrGroup" parameterType="int">
+	insert into addr_group values(#{addrId},#{groupid})
+</insert>
+
+<delete id="deleteGroup">
+	DELETE FROM groups WHERE id = #{groupId}	
+</delete>
+
+<update id="renameGroup">
+  UPDATE groups
+  SET name = #{newGroupName}
+  WHERE id = #{groupId}
+</update>
+
+<select id="deptAllList" resultType="com.cbo.addr.model.AddrListDTO">
+    SELECT m.id,
+           m.name AS nickname,
+           m.email,
+           m.tel,
+           d.name AS dept,
+           g.name AS grade
+      FROM member m
+      LEFT JOIN dept d ON m.dept_id = d.id
+      LEFT JOIN grade g ON m.grade_id = g.id
+     WHERE d.name = #{dept}
+     ORDER BY m.name ASC
+</select>
+
   </mapper>

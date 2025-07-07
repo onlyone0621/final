@@ -5,10 +5,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,6 +22,8 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.cbo.calendar.model.CalendarDTO;
 import com.cbo.calendar.service.CalendarService;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 @Controller
 public class CalendarController {
@@ -42,6 +47,8 @@ public class CalendarController {
 		return "schedule/calendarWorkReg";
 	}
 	
+	
+	
 	/*
 	 * @RequestMapping("/workReg") public ModelAndView workReg(CalendarDTO dto) {
 	 * 
@@ -54,18 +61,80 @@ public class CalendarController {
 	 * return mav; }
 	 */
 	
-	@PostMapping("/api/calendar/add")
+	@PostMapping("/api/calendar/addAllDay")
 	@ResponseBody
-	public Map<String, Object> addEvent(CalendarDTO dto) {
+	public Map<String, Object> addAllDay(HttpServletRequest request, @CookieValue(value = "saveid", required = false) String saveid) {
+	    CalendarDTO dto = new CalendarDTO();
+	    dto.setTitle(request.getParameter("title"));
+	    dto.setContent(request.getParameter("content"));
+	    dto.setAllday(1);
+
+	    // 날짜만 받음
+	    String startDateStr = request.getParameter("start_date");
+	    String endDateStr = request.getParameter("end_date");
+	    LocalDate startDate = LocalDate.parse(startDateStr);
+	    LocalDate endDate = LocalDate.parse(endDateStr);
+
+	    dto.setStart_date(startDate);
+	    dto.setEnd_date(endDate);
+	    dto.setStart_time(startDate.atStartOfDay());
+	    dto.setEnd_time(endDate.atStartOfDay());
+
+	    // member_id, dept_id 세팅
+	    
+
 	    Map<String, Object> result = new HashMap<>();
 	    try {
-	        int count = service.insertWork(dto); 
+	    	int dept = service.findDept(saveid);
+		    int id = service.findId(saveid);
+		    dto.setMember_id(id);
+		    dto.setDept_id(dept);
+		    
+	        int count = service.insertWork(dto);
 	        result.put("success", count > 0);
 	    } catch (Exception e) {
+	        e.printStackTrace();
 	        result.put("success", false);
 	    }
 	    return result;
 	}
+
+	@PostMapping("/api/calendar/addTime")
+	@ResponseBody
+	public Map<String, Object> addTime(HttpServletRequest request, @CookieValue(value = "saveid", required = false) String saveid) {
+	    CalendarDTO dto = new CalendarDTO();
+	    dto.setTitle(request.getParameter("title"));
+	    dto.setContent(request.getParameter("content"));
+	    dto.setAllday(0);
+
+	    // 날짜+시간 받음
+	    String startTimeStr = request.getParameter("start_time");
+	    String endTimeStr = request.getParameter("end_time");
+	    LocalDateTime startTime = LocalDateTime.parse(startTimeStr);
+	    LocalDateTime endTime = LocalDateTime.parse(endTimeStr);
+
+	    dto.setStart_time(startTime);
+	    dto.setEnd_time(endTime);
+
+	    // member_id, dept_id 세팅
+
+
+	    Map<String, Object> result = new HashMap<>();
+	    try {
+		    int dept = service.findDept(saveid);
+		    int id = service.findId(saveid);
+		    dto.setMember_id(id);
+		    dto.setDept_id(dept);
+	        int count = service.insertTime(dto);
+	        result.put("success", count > 0);
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        result.put("success", false);
+	    }
+	    return result;
+	}
+
+
 	
 	@PostMapping("/api/calendar/deleteWork")
 	@ResponseBody
@@ -115,47 +184,50 @@ public class CalendarController {
 	}
 	
 	
+	
+
 	@GetMapping("/api/calendar/events")
-	@ResponseBody //json으로 받음
-    public List<Map<String, Object>> getEvents() {
-		
-		List<CalendarDTO> list = null;
-		try {
-			list = service.selectList();
-			
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		
-		List<Map<String, Object>> events = new ArrayList<>();
+	@ResponseBody
+	public List<Map<String, Object>> getEvents(@CookieValue(value = "saveid", required = false) String saveid) {
+	    List<CalendarDTO> list = null;
+	    int id = 0;
+	    try {
+	    	id = service.findId(saveid);
+	        list = service.selectList(id);
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
+	    
+	    System.out.println(id);
 
-		for(int i = 0; i<list.size(); i++) {
+	    List<Map<String, Object>> events = new ArrayList<>();
+	    DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+	    DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
 
-		Map<String, Object> event = new HashMap<>();
-		if(list.get(i).getEnd_time()!=null&&!(list.get(i).getEnd_time().equals(""))) {
-		event.put("id", list.get(i).getId());
-		event.put("title", list.get(i).getTitle());
-		event.put("start", list.get(i).getStart_time());
-		event.put("end", list.get(i).getEnd_time());
-		if(list.get(i).getContent()!=null&&!(list.get(i).getContent().equals(""))) {
-		event.put("content",list.get(i).getContent());
-		}
-		events.add(event);
-		}else {
-		event.put("id", list.get(i).getId());
-		event.put("title", list.get(i).getTitle());
-		event.put("start", list.get(i).getStart_time());
-		if(list.get(i).getContent()!=null&&!(list.get(i).getContent().equals(""))) {
-		event.put("content",list.get(i).getContent());
-		}
-		}
+	    for (CalendarDTO dto : list) {
+	        Map<String, Object> event = new HashMap<>();
+	        event.put("id", dto.getId());
+	        event.put("title", dto.getTitle());
 
-		}
+	        boolean isAllDay = dto.getAllday() == 1;
+	        if (isAllDay) {
+	            // 종일 일정: 날짜만
+	            event.put("start", dto.getStart_time().format(dateFormatter));
+	            if (dto.getEnd_time() != null) event.put("end", dto.getEnd_time().format(dateFormatter));
+	            event.put("allDay", true);
+	        } else {
+	            // 시간 일정: 날짜+시간
+	            event.put("start", dto.getStart_time().format(dateTimeFormatter));
+	            if (dto.getEnd_time() != null) event.put("end", dto.getEnd_time().format(dateTimeFormatter));
+	            event.put("allDay", false);
+	        }
+	        event.put("content", dto.getContent());
+	        events.add(event);
+	    }
 
-		return events;
-		}
+	    return events;
+	}
+
 	
 	@RequestMapping("/calendarOptionView")
 	public String CalendarOptionView(@RequestParam("start_time") String start_date

@@ -13,28 +13,36 @@
 		<div class="d-flex flex-column gap-3 w-75">
 			<!-- Title and format's name -->
 			<div class="container-fluid">
-				<span class="navbar-text fs-1" th:text="${docContent.title}"></span>
-				<span class="navbar-text fs-2" th:text="${docContent.format_name}"></span>
+				<span class="navbar-text fs-1 me-4" th:text="${docContent.title}"></span>
+				<span class="navbar-text fs-5" th:text="${docContent.format_name}"></span>
 			</div>
 		
 			<!-- Button toolbar -->
-			<div>
-				<nav
-					class="nav nav-pills flex-row"
-				>
-					<form>
-						<input type="hidden" name="docId" th:value="${docContent.id}">
-						<button type="submit" class="nav-link btn btn-outline-success" formaction="approve" formmethod="post">결재</button>
-						<button type="submit" class="nav-link btn btn-outline-danger" formaction="reject" formmethod="post">반려</button>
-					</form>	
-				</nav>
+			<div th:if="${approvalEnabled} == 1">
+                <form>
+                    <nav
+                        class="nav nav-pills flex-row"
+                    >
+                        
+                            <input type="hidden" name="docId" th:value="${docContent.id}">
+                            <button type="submit" class="nav-link btn btn-outline-success" formaction="approve" formmethod="post">결재</button>
+                            <button type="submit" class="nav-link btn btn-outline-danger" formaction="reject" formmethod="post">반려</button>
+                    </nav>
+                </form>	
 			</div>
 
-			<div class="mb-3 w-75 align-self-center">
-			</div>
+
 
 			<!-- Doc content -->
 			<div id="draft" th:utext="${docContent.content}" class="align-self-center w-100"></div>
+
+			<div class="mb-3 row">
+				<span class="col-sm-2">첨부 파일</span>
+				<div class="col-sm-10">
+                    <div th:if="${#strings.isEmpty(docContent['file_name'])}">첨부파일 없음</div>
+					<a th:unless="${#strings.isEmpty(docContent['file_name'])}" th:text="${docContent.file_name}" th:href="@{approvalAttatchmentDownload(fileName=${docContent.file_name})}"></a>
+				</div>
+			</div>
 
 		</div>
 			
@@ -95,10 +103,13 @@
                         aria-labelledby="approversTab"
                     >
                         <ul class="list-group list-group-flush">
-							<li class="list-group-item" th:each="approver : ${approvers}" th:object="${approver}" th:text="|*{dept_name} *{member_name} *{grade_name} *{status} *{process_date}|">
-								<img th:src="@{/profileImage/{img}(img=*{profile_image})}" alt="profile_image" width="25" height="25" class="rounded-circle mx-1">
-								<span th:text="|*{dept_name} *{member_name} *{grade_name}|"></span><br>
-								<span th:text="${*{status}} + ' ' + (*{process_date} ?: '')"></span>
+							<li class="list-group-item" th:each="approver : ${approvers}" th:object="${approver}">
+                                <div class="">
+
+                                </div>
+								<img th:src="@{/profileImage/{img}(img=*{profile_image})}" alt="profile_image" width="30" height="30" class="rounded-circle mx-1 float-start">
+								<span th:text="|*{dept_name} *{member_name} *{grade_name}|" class="fs-5"></span><br>
+								<span th:text="*{status} + (*{process_date} ? ' | ' + *{process_date} : '')" style="font-size: 13px;"></span>
 							</li>
 						</ul>
                     </div>
@@ -109,10 +120,11 @@
                         aria-labelledby="reviewersTab"
                     >
                         <ul class="list-group list-group-flush">
+                            <li class="list-group-item text-center" th:if="${#lists.isEmpty(reviewers)}">참조자 없음</li>
 							<li class="list-group-item" th:each="reviewer : ${reviewers}" th:object="${reviewer}">
-								<img th:src="@{/profileImage/{img}(img=*{profile_image})}" alt="profile_image" width="25" height="25" class="rounded-circle mx-1">
-								<span th:text="|*{dept_name} *{member_name} *{grade_name}|"></span><br>
-								<span th:text="${*{status}} + ' ' + (*{process_date} ?: '')"></span>
+								<img th:src="@{/profileImage/{img}(img=*{profile_image})}" alt="profile_image" width="30" height="30" class="rounded-circle mx-1 float-start">
+								<span th:text="|*{dept_name} *{member_name} *{grade_name}|" class="fs-5"></span><br>
+								<span th:text="*{status} + (*{process_date} ? ' | ' + *{process_date} : '')" style="font-size: 13px;"></span>
 							</li>
 						</ul>
                     </div>
@@ -123,9 +135,11 @@
                         aria-labelledby="docInfoTab"
                     >
                         	<ul class="list-group list-group-flush" th:object="${docContent}">
-								<li class="list-group-item" th:text="|기안자: *{writer}|"></li>
+								<li class="list-group-item" th:text="|문서 번호: *{id}|"></li>
+                                <li class="list-group-item" th:text="|기안자: *{writer}|"></li>
+                                <li class="list-group-item" th:text="|기안 부서: *{dept_name}|"></li>
 								<li class="list-group-item" th:text="|기안일: *{write_date}|"></li>
-								<li class="list-group-item" th:text="|보존 연한: *{retention}|"></li>
+								<li class="list-group-item" th:text="|보존 연한: *{retention}년|"></li>
 							</ul>
                     </div>
                 </div>

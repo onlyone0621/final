@@ -14,7 +14,7 @@
 		class="table-responsive"
 	>
 		<table
-			class="table table-primary"
+			class="table table-primary text-center"
 		>
 			<thead>
 				<tr>
@@ -39,6 +39,9 @@
 					<td scope="row"><a th:text="*{title}" th:href="@{docContent(id=*{id})}"></a></td>
 					<td scope="row" th:text="*{writer}"></td>
 					<td scope="row" th:text="*{status}"></td>
+				</tr>
+				<tr>
+					<td colspan="7" th:utext="${pageBar}"></td>
 				</tr>
 			</tbody>
 		</table>
