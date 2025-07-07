@@ -1,10 +1,13 @@
 package com.cbo.controller;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
 
 import org.springframework.stereotype.Controller;
+import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -24,10 +27,13 @@ import com.cbo.member.model.OrganDTO;
 
 @Controller
 public class ApprovalController {
+
+    private final IndexController indexController;
 	private final ApprovalService approvalService;
 	
-	public ApprovalController(ApprovalService approvalService) {
+	public ApprovalController(ApprovalService approvalService, IndexController indexController) {
 		this.approvalService = approvalService;
+		this.indexController = indexController;
 	}
 	
 	@ModelAttribute("formats")
@@ -151,11 +157,27 @@ public class ApprovalController {
 	@PostMapping("submitDraft")
 	public ModelAndView submitDraft(DocDTO dto,
 			@RequestParam MultipartFile attatchment,
-			@RequestParam List<Integer> approverIds,
-			@RequestParam List<Integer> reviewerIds,
+			@RequestParam(required = false) List<Integer> approverIds,
+			@RequestParam(required = false) List<Integer> reviewerIds,
 			@SessionAttribute(MemberConst.USER_KEY) MemberDTO userInfo) {
 		
 		dto.setMember_id(userInfo.getId());
+		
+		// Save attatchment file
+		if (!attatchment.isEmpty()) {
+			File dir = new File(ApprovalConst.SAVE_PATH);
+			if (!dir.exists()) {
+	            dir.mkdirs();
+	        }
+	        File image = new File(dir, attatchment.getOriginalFilename());
+	        try {
+				FileCopyUtils.copy(attatchment.getBytes(), image);
+				dto.setFile_name(attatchment.getOriginalFilename());
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 		
 		boolean res = false;
 		try {
@@ -231,4 +253,12 @@ public class ApprovalController {
 		return mav;
 	}
 	
+	@GetMapping("/fileDown")
+	public ModelAndView fileDown(String fileName) {
+		File f = new File(ApprovalConst.SAVE_PATH + fileName);
+		
+		ModelAndView mav = new ModelAndView("downloadView");
+		mav.addObject("fileDown", f);
+		return mav;
+	}
 }

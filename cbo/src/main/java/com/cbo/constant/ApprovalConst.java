@@ -9,4 +9,6 @@ public class ApprovalConst {
 	
 	public static final int ROWS = 10;
 	public static final int PAGES = 5;
+	
+	public static final String SAVE_PATH = "C:/upload/approval/";
 }

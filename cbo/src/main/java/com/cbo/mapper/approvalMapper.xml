@@ -116,6 +116,7 @@
 		<result property="id" column="id"/>
 		<result property="title" column="title"/>
 		<result property="writer" column="writer"/>
+		<result property="dept_name" column="dept_name"/>
 		<result property="write_date" column="write_date"/>
 		<result property="format_name" column="format_name"/>
 		<result property="content" column="content" jdbcType="CLOB" javaType="java.lang.String"/>
@@ -124,11 +125,21 @@
 	</resultMap>
 	
 	<select id="selectDoc" resultMap="docResult">
-		SELECT doc.id, doc.title, member.name AS writer, doc.write_date, format.name AS format_name, doc.content, doc.retention, doc.file_name
-		FROM doc 
-		    JOIN member ON doc.member_id = member.id
-		    JOIN format ON doc.format_id = format.id
-		WHERE doc.id = #{id}
+	SELECT
+		doc.id,
+		doc.title,
+		member.name AS writer,
+		dept.name AS dept_name,
+		TO_CHAR(doc.write_date, 'YYYY-MM-DD') AS write_date,
+		format.name AS format_name,
+		doc.content,
+		doc.retention,
+		doc.file_name
+	FROM doc
+	JOIN member ON doc.member_id = member.id
+	JOIN dept ON member.dept_id = dept.id
+	JOIN format ON doc.format_id = format.id
+	WHERE doc.id = #{id}
 	</select>
 	
 	<select id="selectApprovers">

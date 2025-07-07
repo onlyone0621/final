@@ -15,8 +15,8 @@ public class CboApplication {
 		SpringApplication.run(CboApplication.class, args);
 	}
 	
-	public void addResourceHandlers(ResourceHandlerRegistry registry) {
-		registry.addResourceHandler("/profileImage/**")
-			.addResourceLocations("file:///C:/upload/profileImage/");
-	}
+//	public void addResourceHandlers(ResourceHandlerRegistry registry) {
+//		registry.addResourceHandler("/profileImage/**")
+//			.addResourceLocations("file:///C:/upload/profileImage/");
+//	}
 }

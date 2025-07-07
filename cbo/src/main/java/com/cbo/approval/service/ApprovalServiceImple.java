@@ -137,16 +137,22 @@ public class ApprovalServiceImple implements ApprovalService {
 		}
 		
 		// Create list of approvers adding drafter, approvers, and reviewers
-		List<ApprovalLineDTO> entry = new ArrayList<>();
+		List<ApprovalLineDTO> entries = new ArrayList<>();
 		
-		entry.add(new ApprovalLineDTO(docId, dto.getMember_id(), null, null, null, null, ApprovalConst.DRAFT, null));
-		approversId.forEach(id -> entry.add(new ApprovalLineDTO(docId, id, null, null, null, null, ApprovalConst.PENDING, null)));
-		reviewersId.forEach(id -> entry.add(new ApprovalLineDTO(docId, id, null, null, null, null, ApprovalConst.REFERENCE, null)));
+		entries.add(new ApprovalLineDTO(docId, dto.getMember_id(), null, null, null, null, ApprovalConst.DRAFT, null));
+		if (approversId != null && approversId.size() > 0) {
+			approversId.forEach(id -> entries.add(new ApprovalLineDTO(docId, id, null, null, null, null, ApprovalConst.PENDING, null)));
+		}
+			
+		if (reviewersId != null && reviewersId.size() > 0) {
+			reviewersId.forEach(id -> entries.add(new ApprovalLineDTO(docId, id, null, null, null, null, ApprovalConst.REFERENCE, null)));
+		}
+			
 		
 		// Insert approval lines
-		for (ApprovalLineDTO elem : entry) {
-			if (mapper.insertApprovalLines(elem) != 1) {
-				throw new NotInsertedException("Approver was not inserted for member ID: " + elem.getMember_id());
+		for (ApprovalLineDTO entry : entries) {
+			if (mapper.insertApprovalLines(entry) != 1) {
+				throw new NotInsertedException("Approver was not inserted for member ID: " + entry.getMember_id());
 			}
 		}
 		
