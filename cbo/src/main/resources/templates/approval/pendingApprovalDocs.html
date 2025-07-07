@@ -36,7 +36,7 @@
 					<td scope="row" th:text="*{write_date}"></td>
 					<td scope="row" th:text="*{completion}"></td>
 					<td scope="row" th:text="*{format_name}"></td>
-					<td scope="row"><a th:text="*{title}" th:href="@{docContent(id=*{id})}"></a></td>
+					<td scope="row"><a th:text="*{title}" th:href="@{docContent(id=*{id}, approvalEnabled=1)}"></a></td>
 					<td scope="row" th:text="*{writer}"></td>
 					<td scope="row" th:text="*{status}"></td>
 				</tr>

@@ -196,7 +196,8 @@ public class ApprovalController {
 	}
 	
 	@GetMapping("/docContent")
-	public ModelAndView docContent(@RequestParam int id) {
+	public ModelAndView docContent(@RequestParam int id,
+			@RequestParam(defaultValue = "0") int approvalEnabled) {
 		Map<String, Object> docContent = null;
 		List<ApprovalLineDTO> approvers = null;
 		List<ApprovalLineDTO> reviewers = null;
@@ -214,6 +215,7 @@ public class ApprovalController {
 		mav.addObject("docContent", docContent);
 		mav.addObject("approvers", approvers);
 		mav.addObject("reviewers", reviewers);
+		mav.addObject("approvalEnabled", approvalEnabled);
 		return mav;
 	}
 	
