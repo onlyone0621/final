@@ -84,7 +84,7 @@
 								<li class="list-group-item" th:text="${originalMessage.receiver}"></li>
 							</ul>
 							<div id="hiddenInputs">
-								<input type="hidden" name="receiverIds" th:value="${originalMessage.receiver_id}">
+								<input type="hidden" name="receiverIds" th:if="${originalMessage.receiver_id != 0}" th:value="${originalMessage.receiver_id}">
 							</div>
 						</div>
 					</div>

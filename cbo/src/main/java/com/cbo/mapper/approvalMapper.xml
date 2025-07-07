@@ -16,99 +16,129 @@
   	</select>
   	
   	<!-- Get doc list -->
-  	<select id="selectApprovalDocs" resultType="com.cbo.approval.model.DocViewDTO">
-		SELECT * 
-		FROM doc_view
-		WHERE EXISTS (SELECT 1
-		                FROM APPROVAL_LINE
-		                WHERE approval_line.member_id != doc_view.member_id
-		                AND approval_line.doc_id = doc_view.id
-		                AND approval_line.member_id = #{id} 
-		                AND approval_line.status IN ('결재 완료', '반려'))
+  	<select id="selectApprovalDocs" parameterType="map" resultType="com.cbo.approval.model.DocViewDTO">
+		SELECT *
+		FROM (SELECT 
+		        doc_view.*,
+		        ROW_NUMBER() OVER (ORDER BY doc_view.id DESC) AS rn,
+		        COUNT(*) OVER() AS max_rows
+		        FROM doc_view
+		        WHERE EXISTS (SELECT 1
+		                    FROM APPROVAL_LINE
+		                    WHERE approval_line.member_id != doc_view.member_id
+		                    AND approval_line.doc_id = doc_view.id
+		                    AND approval_line.member_id = #{id} 
+		                    AND approval_line.status IN ('결재 완료', '반려')))
+		WHERE rn BETWEEN #{start} AND #{end}
   	</select>
   	
-  	<select id="selectReferenceDocs" parameterType="int" resultType="com.cbo.approval.model.DocViewDTO">
-  		SELECT * 
-		FROM doc_view
-		WHERE EXISTS (SELECT 1 
-		                FROM approval_line 
-		                WHERE approval_line.doc_id = doc_view.id 
-		                AND approval_line.member_id = #{id} 
-		                AND status = '참조')
+  	<select id="selectReferenceDocs" parameterType="map" resultType="com.cbo.approval.model.DocViewDTO">
+		SELECT *
+		FROM (SELECT 
+		            doc_view.*,
+		            ROW_NUMBER() OVER (ORDER BY doc_view.id DESC) AS rn,
+		            COUNT(*) OVER() AS max_rows
+		        FROM doc_view
+		        WHERE EXISTS (SELECT 1 
+		                        FROM approval_line 
+		                        WHERE approval_line.doc_id = doc_view.id 
+		                        AND approval_line.member_id = #{id}
+		                        AND status = '참조'))
+		WHERE rn BETWEEN #{start} AND #{end}
   	</select>
   	
-  	<select id="selectDraftDocs" parameterType="int" resultType="com.cbo.approval.model.DocViewDTO">
-  		SELECT * 
-		FROM doc_view
-		WHERE member_id = #{id}
+  	<select id="selectDraftDocs" parameterType="map" resultType="com.cbo.approval.model.DocViewDTO">
+  		SELECT *
+  		FROM (SELECT 
+		  			doc_view.*,
+		  			ROW_NUMBER() OVER(ORDER BY doc_view.id DESC) AS rn,
+		  			COUNT(*) OVER() AS max_rows
+				FROM doc_view
+				WHERE member_id = #{id})
+		WHERE rn BETWEEN #{start} AND #{end}
   	</select>
   	
   	<!-- Get todo doc list -->
-  	<select id="selectPendingApprovalDocs" parameterType="int" resultType="com.cbo.approval.model.DocViewDTO">
+  	<select id="selectPendingApprovalDocs" parameterType="map" resultType="com.cbo.approval.model.DocViewDTO">
   		WITH target_seq AS (
 	    	SELECT grade.seq
 	        FROM member
 	            JOIN grade ON member.grade_id = grade.id
 	        WHERE member.id = #{id}
 		)
-		SELECT * 
-		FROM doc_view
-		WHERE EXISTS (
-		    SELECT 1
-		    FROM APPROVAL_LINE 
-		    WHERE approval_line.doc_id = doc_view.id
-		    AND approval_line.member_id = #{id}
-		    AND approval_line.status = '결재 예정'
-		)
-		AND NOT EXISTS (
-		    SELECT 1 
-		    FROM approval_line 
-		        JOIN member ON approval_line.member_id = member.id 
-		        JOIN grade ON member.grade_id = grade.id
-		        JOIN target_seq ON 1=1
-		    WHERE approval_line.doc_id = doc_view.id 
-		    AND approval_line.status = '결재 예정'
-		    AND grade.seq > target_seq.seq 
-		)
+		SELECT *
+		FROM (SELECT 
+					doc_view.*,
+				  	ROW_NUMBER() OVER(ORDER BY doc_view.id DESC) AS rn,
+				  	COUNT(*) OVER() AS max_rows
+				FROM doc_view
+				WHERE EXISTS (
+				    SELECT 1
+				    FROM APPROVAL_LINE 
+				    WHERE approval_line.doc_id = doc_view.id
+				    AND approval_line.member_id = #{id}
+				    AND approval_line.status = '결재 예정'
+				)
+				AND NOT EXISTS (
+				    SELECT 1 
+				    FROM approval_line 
+				        JOIN member ON approval_line.member_id = member.id 
+				        JOIN grade ON member.grade_id = grade.id
+				        JOIN target_seq ON 1=1
+				    WHERE approval_line.doc_id = doc_view.id 
+				    AND approval_line.status = '결재 예정'
+				    AND grade.seq > target_seq.seq 
+				))
+		WHERE rn BETWEEN #{start} AND #{end}
   	</select>
   	
-  	<select id="selectPendingReferenceDocs" parameterType="int" resultType="com.cbo.approval.model.DocViewDTO">
-  		SELECT * 
-		FROM doc_view
-		WHERE EXISTS (SELECT 1 
-		                FROM approval_line 
-		                WHERE approval_line.doc_id = doc_view.id
-		                AND approval_line.member_id = #{id}
-		                AND approval_line.status = '참조')
-		AND doc_view.status = '진행 중'
+  	<select id="selectPendingReferenceDocs" parameterType="map" resultType="com.cbo.approval.model.DocViewDTO">
+  		SELECT *
+  		FROM (SELECT 
+		  			doc_view.*,
+					ROW_NUMBER() OVER(ORDER BY doc_view.id DESC) AS rn,
+					COUNT(*) OVER() AS max_rows 
+				FROM doc_view
+				WHERE EXISTS (SELECT 1 
+				                FROM approval_line 
+				                WHERE approval_line.doc_id = doc_view.id
+				                AND approval_line.member_id = #{id}
+				                AND approval_line.status = '참조')
+				AND doc_view.status = '진행 중')
+		WHERE rn BETWEEN #{start} AND #{end}
   	</select>
   	
-  	<select id="selectScheduledApprovalDocs" parameterType="int" resultType="com.cbo.approval.model.DocViewDTO">
+  	<select id="selectScheduledApprovalDocs" parameterType="map" resultType="com.cbo.approval.model.DocViewDTO">
   		WITH target_seq AS (
 		    SELECT grade.seq
 		        FROM member
 		            JOIN grade ON member.grade_id = grade.id
 		        WHERE member.id = #{id}
 		)
-		SELECT * 
-		FROM doc_view
-		WHERE EXISTS (
-		    SELECT 1
-		    FROM APPROVAL_LINE 
-		    WHERE approval_line.doc_id = doc_view.id
-		    AND approval_line.member_id = #{id}
-		    AND approval_line.status = '결재 예정'
-		)
-		AND EXISTS (
-		    SELECT 1 
-		    FROM approval_line 
-		        JOIN member ON approval_line.member_id = member.id 
-		        JOIN grade ON member.grade_id = grade.id
-		        JOIN target_seq ON 1=1
-		    WHERE approval_line.doc_id = doc_view.id 
-		    AND approval_line.status = '결재 예정'
-		    AND grade.seq > target_seq.seq 
-		)
+		SELECT *
+		FROM (SELECT 
+					doc_view.*,
+				  	ROW_NUMBER() OVER(ORDER BY doc_view.id DESC) AS rn,
+				  	COUNT(*) OVER() AS max_rows
+				FROM doc_view
+				WHERE EXISTS (
+				    SELECT 1
+				    FROM APPROVAL_LINE 
+				    WHERE approval_line.doc_id = doc_view.id
+				    AND approval_line.member_id = #{id}
+				    AND approval_line.status = '결재 예정'
+				)
+				AND EXISTS (
+				    SELECT 1 
+				    FROM approval_line 
+				        JOIN member ON approval_line.member_id = member.id 
+				        JOIN grade ON member.grade_id = grade.id
+				        JOIN target_seq ON 1=1
+				    WHERE approval_line.doc_id = doc_view.id 
+				    AND approval_line.status = '결재 예정'
+				    AND grade.seq > target_seq.seq 
+				))
+		WHERE rn BETWEEN #{start} AND #{end}
   	</select>
 	
 	<!-- Get content of doc and its approval lines -->
@@ -116,6 +146,7 @@
 		<result property="id" column="id"/>
 		<result property="title" column="title"/>
 		<result property="writer" column="writer"/>
+		<result property="dept_name" column="dept_name"/>
 		<result property="write_date" column="write_date"/>
 		<result property="format_name" column="format_name"/>
 		<result property="content" column="content" jdbcType="CLOB" javaType="java.lang.String"/>
@@ -124,11 +155,21 @@
 	</resultMap>
 	
 	<select id="selectDoc" resultMap="docResult">
-		SELECT doc.id, doc.title, member.name AS writer, doc.write_date, format.name AS format_name, doc.content, doc.retention, doc.file_name
-		FROM doc 
-		    JOIN member ON doc.member_id = member.id
-		    JOIN format ON doc.format_id = format.id
-		WHERE doc.id = #{id}
+	SELECT
+		doc.id,
+		doc.title,
+		member.name AS writer,
+		dept.name AS dept_name,
+		TO_CHAR(doc.write_date, 'YYYY-MM-DD') AS write_date,
+		format.name AS format_name,
+		doc.content,
+		doc.retention,
+		doc.file_name
+	FROM doc
+	JOIN member ON doc.member_id = member.id
+	JOIN dept ON member.dept_id = dept.id
+	JOIN format ON doc.format_id = format.id
+	WHERE doc.id = #{id}
 	</select>
 	
 	<select id="selectApprovers">
