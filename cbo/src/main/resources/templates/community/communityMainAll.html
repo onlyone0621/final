@@ -1,180 +1,157 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org"
-	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-	layout:decorate="layouts/mainLayout">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+              xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+              layout:decorate="layouts/mainLayout">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>가입 커뮤니티 목록</title>
-<script>
-	function listSetting() {
-
-		//var id = document.getElementById('id').value;
-		//location.href="communityUpdate?id="+id+"&board=";
-	}
-</script>
-<style>
-body {
-	margin: 0;
-	font-family: 'Arial', sans-serif;
-	color: #333;
-}
-
-.layout {
-	display: flex;
-	min-height: 100vh;
-}
-
-.sidebar {
-	width: 200px;
-	background-color: #fbf9fd;
-	padding: 20px;
-	box-sizing: border-box;
-	border-right: 1px solid #ddd; /* 오른쪽 경계선 */
-}
-
-.post-list li input[type="button"] {
-	margin-left: 10px;
-}
-
-.sidebar ul li {
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-}
-
-.sidebar h4 {
-	margin-bottom: 15px;
-	font-size: 18px;
-}
-
-.sidebar button {
-	width: 100%;
-	padding: 8px;
-	margin-bottom: 15px;
-	background-color: #eee;
-	border: 1px solid #ccc;
-	cursor: pointer;
-}
-
-.sidebar ul {
-	list-style: none;
-	padding-left: 0;
-	font-size: 14px;
-}
-
-.sidebar ul li {
-	margin-bottom: 8px;
-}
-
-.main-content { /** 중간정렬해줌*/
-	flex: 1;
-	padding: 20px;
-}
-
-.main-tabs {
-	display: flex; /**가운데 정랼*/
-	gap: 1rem;
-	margin-bottom: 20px;
-	border-bottom: 1px solid #ddd;
-}
-
-.tab {
-	padding: 8px 12px;
-	font-weight: bold;
-	color: #666;
-	cursor: pointer;
-}
-
-.tab.active {
-	color: #000;
-	border-bottom: 2px solid #f381a3;
-}
-/** 목록 꾸밈 0*/
-.post-list {
-	list-style: none;
-	padding-left: 0;
-}
-
-.post-list li {
-	padding: 8px 0;
-	border-bottom: 1px solid #eee;
-}
-</style>
+  <meta charset="UTF-8">
+  <title>전체 커뮤니티</title>
+  <style>
+    .container { display: flex; min-height: 100vh; }
+    .sidebar {
+      width: 220px;
+      background-color: #fbf9fd;
+      padding: 20px;
+      border-right: 1px solid #ddd;
+      box-sizing: border-box;
+    }
+    .sidebar h4 { font-size: 18px; margin-bottom: 10px; }
+    .sidebar ul { list-style: none; padding-left: 0; }
+    .sidebar ul li {
+      margin-bottom: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .sidebar ul li a { text-decoration: none; color: #6a1b9a; font-weight: bold; }
+    .sidebar a.create-btn {
+      display: block;
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 12px;
+      text-align: center;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      background: #f9f9f9;
+      text-decoration: none;
+      color: #333;
+    }
+    .main { flex-grow: 1; padding: 20px; }
+    .tabs {
+      display: flex;
+      gap: 1rem;
+      border-bottom: 1px solid #ddd;
+      margin-bottom: 20px;
+    }
+    .tab {
+      padding: 8px 12px;
+      font-weight: bold;
+      color: #666;
+      text-decoration: none;
+      border-bottom: 2px solid transparent;
+    }
+    .tab.active {
+      color: #d81b60;
+      border-bottom: 2px solid #d81b60;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #fff;
+      border-radius: 5px;
+      overflow: hidden;
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 10px;
+      text-align: center;
+      font-size: 14px;
+    }
+    th {
+      background-color: #f3e5f5;
+      color: #6a1b9a;
+    }
+    tr:hover {
+      background-color: #f9f9f9;
+    }
+    button {
+      padding: 6px 12px;
+      font-size: 13px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      background: #d81b60;
+      color: #fff;
+    }
+    button:hover {
+      background: #c2185b;
+    }
+  </style>
 </head>
 <body>
-	<div layout:fragment="content">
-		<div class="layout">
+<div layout:fragment="content">
+  <div class="container">
 
-			<div class="sidebar">
-				<h4>커뮤니티</h4>
-				<a th:href="@{/communityCreate}">
-					<button>커뮤니티 생성</button>
-				</a>
+    <!-- 사이드바 -->
+    <div class="sidebar">
+      <h4>커뮤니티</h4>
+      <a th:href="@{/communityCreate}" class="create-btn">커뮤니티 생성</a>
+      <ul th:if="${#lists.isEmpty(lists)}">
+        <li>생성된 커뮤니티가 없습니다.</li>
+      </ul>
+      <ul th:each="c : ${lists}">
+        <li>
+          <a th:href="@{/community/{id}(id=${c['ID']})}" th:text="${c['NAME']}">커뮤니티명</a>
+        </li>
+      </ul>
+    </div>
 
-				<ul th:if="${#lists.isEmpty(lists)}">
-					<li>생성된 커뮤니티가 없습니다.</li>
-				</ul>
-				<ul th:each="dto : ${lists}">
-					<li><a th:href="@{/community/{id}(id=${dto['ID']})}">[[${dto['NAME']}]]</a>
-						<input type="button"
-						th:onclick="|location.href='/community/${dto['ID']}/update'|"
-						value="설정"></li>
-				</ul>
-			</div>
+    <!-- 본문 -->
+    <div class="main">
+      <div class="tabs">
+        <a class="tab" th:href="@{/communityMainNewest}">최근글</a>
+        <a class="tab" th:href="@{/communityMainJoin}">가입 커뮤니티</a>
+        <a class="tab active" th:href="@{/communityMainAll}">전체 커뮤니티</a>
+      </div>
 
-			<!-- 사이드바 -->
+      <table>
+        <thead>
+          <tr>
+            <th>커뮤니티</th>
+            <th>회원수</th>
+            <th>마스터</th>
+            <th>가입상태</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr th:each="c : ${lists}">
+            <td th:text="${c['NAME']}">커뮤니티명</td>
+            <td th:text="${c['MEMBER_COUNT']}">0</td>
+            <td th:text="${c['MASTER_NAME']}">N/A</td>
+            <td>
+              <span th:if="${c['STATUS'] == '미가입'}">
+                <form th:action="@{/community/{id}/join(id=${c['ID']})}" method="post"
+                      onsubmit="return confirm('가입을 신청하시겠습니까?');">
+                  <button type="submit">가입</button>
+                </form>
+              </span>
+              <span th:if="${c['STATUS'] == '가입대기'}">가입 신청중</span>
+              <span th:if="${(c['STATUS'] == 'user' or c['STATUS'] == 'submaster')}">
+                <form th:action="@{/community/{id}/leave(id=${c['ID']})}" method="post"
+                      onsubmit="return confirm('정말 탈퇴하시겠습니까? 탈퇴하여도 이전에 작성하였던 게시물들은 유지됩니다.');">
+                  <button type="submit">탈퇴</button>
+                </form>
+              </span>
+              <span th:if="${c['STATUS'] == 'master'}">👑</span>
+            </td>
+          </tr>
+          <tr th:if="${#lists.isEmpty(lists)}">
+            <td colspan="4">등록된 커뮤니티가 없습니다.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
 
-
-			<div class="main-content">
-				<div class="main-tabs">
-					<div class="tab">
-						<a th:href="@{/communityMainNewest}">최근글</a>
-					</div>
-					<div class="tab">
-						<a th:href="@{/communityMainJoin}">가입 커뮤니티</a>
-					</div>
-					<div class="tab active">
-						<a th:href="@{/communityMainAll}">전체 커뮤니티</a>
-					</div>
-				</div>
-
-				<table>
-					<thead>
-						<tr>
-							<th>커뮤니티</th>
-							<th>회원수</th>
-							<th>마스터</th>
-							<th>가입상태</th>
-						</tr>
-					</thead>
-					<tbody>
-						<tr th:each="c : ${lists}">
-							<td th:text="${c['NAME']}">커뮤니티명</td>
-							<td th:text="${c['MEMBER_COUNT']}">0</td>
-							<td th:text="${c['MASTER_NAME']}">N/A</td>
-							<td><span th:if="${c['STATUS'] == '미가입'}">
-									<form th:action="@{/community/{id}/join(id=${c['ID']})}"
-										method="post" onsubmit="return confirm('가입을 신청하시겠습니까?');">
-										<button type="submit">가입</button>
-									</form>
-							</span> <span th:if="${c['STATUS'] == 'pending'}">가입 신청중</span> <span
-								th:if="${c['STATUS'] == 'user' || c['STATUS'] == 'submaster' || c['STATUS'] == 'master'}">
-									<form th:action="@{/community/{id}/leave(id=${c['ID']})}"
-										method="post"
-										onsubmit="return confirm('정말 탈퇴하시겠습니까? 탈퇴하여도 이전에 작성하였던 게시물들은 유지됩니다.');">
-										<button type="submit">탈퇴</button>
-									</form>
-							</span></td>
-						</tr>
-						<tr th:if="${#lists.isEmpty(lists)}">
-							<td colspan="4">등록된 커뮤니티가 없습니다.</td>
-						</tr>
-					</tbody>
-				</table>
-
-			</div>
-		</div>
-	</div>
+  </div>
+</div>
 </body>
 </html>

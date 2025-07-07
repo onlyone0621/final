@@ -60,117 +60,146 @@ public class CommunityController {
 
 	/// mainNewest 최신글 불러오기 5개
 	@GetMapping("/communityMainNewest")
-	public ModelAndView communityMainNewest() {
-
-		List<CommunityDTO> lists = null; // 커뮤니티 목록
+	public ModelAndView communityMainNewest(HttpSession session) {
 		List<Map<String, Object>> newestPosts = null; // 최신글 5개
+		List<Map<String, Object>> sideJoin = null; // 가입한 커뮤니티 목록
 
 		try {
-			lists = service.communityList();
+			// 로그인한 사용자 정보 가져오기
+			MemberDTO user = (MemberDTO) session.getAttribute(com.cbo.constant.MemberConst.USER_KEY);
+
+			// 가입한 커뮤니티 목록 가져오기
+			sideJoin = service.communityMainJoin(user.getId());
+
+			// 최신글 5개 가져오기
 			newestPosts = service.newestPosts();
-			// model.addAttribute("isMaster", true); // 예시
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-//	    System.out.println("newestPosts: " + newestPosts);
+
 		ModelAndView mav = new ModelAndView();
-		mav.addObject("lists", lists);
-		mav.addObject("newestPosts", newestPosts);
-		mav.setViewName("community/communityMainNewest");
-		System.out.println("newestPosts: " + newestPosts);
+		mav.addObject("sideJoin", sideJoin); // 가입한 커뮤니티 목록
+		mav.addObject("newestPosts", newestPosts); // 최신글 목록
+		mav.setViewName("community/communityMainNewest"); // 뷰 설정
+
 		return mav;
 	}
 
-	// 커뮤니티 가입 목록 URL이동
+	// 커뮤니티 가입 목록들
 	@GetMapping("/communityMainJoin")
-	public ModelAndView mainJoinList() {
+	public ModelAndView communityMainJoin(HttpSession session) {
 
-		List<CommunityDTO> lists = null;
-		try { // 커뮤니티 목록
+		ModelAndView mav = new ModelAndView();
 
-			lists = service.communityList();
+		try {
+			MemberDTO user = (MemberDTO) session.getAttribute(com.cbo.constant.MemberConst.USER_KEY);
+
+			if (user == null) {
+				mav.setViewName("redirect:/memberLogin");
+				return mav;
+			}
+
+			// user != null 이 보장됨
+			List<Map<String, Object>> joinList = service.joinList(user.getId());
+			mav.addObject("joinList", joinList);
+
+			List<Map<String, Object>> lists = service.communityMainJoin(user.getId());
+			mav.addObject("lists", lists);
+
+			mav.setViewName("community/communityMainJoin");
+			return mav;
 
 		} catch (Exception e) {
 			e.printStackTrace();
+			mav.setViewName("community/communityMsg");
+			mav.addObject("msg", "가입 커뮤니티 목록 로드 중 오류 발생");
+			mav.addObject("goUrl", "/communityMainNewest");
 		}
-		ModelAndView mav = new ModelAndView();
-		mav.addObject("lists", lists);
-		mav.setViewName("community/communityMainJoin");
+
 		return mav;
 	}
 
-	
-	
-	//role = 'pending' → 가입 신청
+	// role = 'pending' → 가입 신청
 
-	//role = 'user', 'submaster', 'master' → 가입
+	// role = 'user', 'submaster', 'master' → 가입
 
-	//값이 없으면 → 미가입
-	
+	// 값이 없으면 → 미가입
+
 	// 커뮤니티 전체 목록 조회 (로그인 상태에 따라 가입 상태 포함)
 	@GetMapping("/communityMainAll")
 	public ModelAndView communityMainAll(HttpSession session) {
-	    ModelAndView mav = new ModelAndView("community/communityMainAll");
+		ModelAndView mav = new ModelAndView("community/communityMainAll");
 
-	    // 로그인 체크
-	    MemberDTO user = (MemberDTO) session.getAttribute(MemberConst.USER_KEY);
-	    if (user == null) {
-	        mav.addObject("msg", "로그인이 필요합니다.");
-	        mav.addObject("goUrl", "/memberLogin");
-	        mav.setViewName("community/communityMsg");
-	        return mav;
-	    }
+		// 로그인 체크
+		MemberDTO user = (MemberDTO) session.getAttribute(MemberConst.USER_KEY);
+		if (user == null) {
+			mav.addObject("msg", "로그인이 필요합니다.");
+			mav.addObject("goUrl", "/memberLogin");
+			mav.setViewName("community/communityMsg");
+			return mav;
+		}
 
-	    try {
-	        int memberId = user.getId();
-	        // 가입 상태 포함 커뮤니티 전체 조회
-	        List<Map<String, Object>> lists = service.selectCommunityMainAll(memberId);
-	        mav.addObject("lists", lists);
-	    } catch (Exception e) {
-	        e.printStackTrace();
-	        mav.addObject("msg", "데이터 조회 중 오류가 발생했습니다.");
-	        mav.addObject("goUrl", "/");
-	        mav.setViewName("community/communityMsg");
-	    }
+		try {
+			int memberId = user.getId();
+			// 가입 상태 포함 커뮤니티 전체 조회
+			List<Map<String, Object>> lists = service.selectCommunityMainAll(memberId);
+			mav.addObject("lists", lists);
+		} catch (Exception e) {
+			e.printStackTrace();
+			mav.addObject("msg", "데이터 조회 중 오류가 발생했습니다.");
+			mav.addObject("goUrl", "/");
+			mav.setViewName("community/communityMsg");
+		}
 
-	    return mav;
+		return mav;
 	}
 
-	
-	
 	// ✅ 커뮤니티 가입 신청 처리
 	@PostMapping("/community/{cId}/join")
 	public String joinCommunity(@PathVariable int cId, HttpSession session) {
-	    try {
-	        MemberDTO user = (MemberDTO) session.getAttribute(MemberConst.USER_KEY);
-	        service.requestJoin(cId, user.getId());
-	    } catch (Exception e) {
-	        e.printStackTrace();  // 서버 콘솔에 에러 출력
-	        // 필요하면 아래처럼 에러 페이지로 리다이렉트 가능
-	        // return "redirect:/errorPage";
-	    }
+		MemberDTO user = (MemberDTO) session.getAttribute(MemberConst.USER_KEY);
+		if (user == null) {
+			return "redirect:/memberLogin";
+		}
 
-	    return "redirect:/communityMainAll";
+		try {
+			String status = service.getJoinStatus(cId, user.getId());
+			if ("가입대기".equals(status)) {
+				return "redirect:/communityMainAll";
+			}
+			service.requestJoin(cId, user.getId());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return "redirect:/communityMainAll";
 	}
-	
-	
-	// ✅ 커뮤니티 탈퇴 처리
+
 	// ✅ 커뮤니티 탈퇴 처리
 	@PostMapping("/community/{cId}/leave")
 	public String leaveCommunity(@PathVariable int cId, HttpSession session) {
-	    try {
-	        MemberDTO user = (MemberDTO) session.getAttribute(MemberConst.USER_KEY);
-	        service.leaveCommunity(cId, user.getId());
-	        
-	    } catch (Exception e) {
-	        e.printStackTrace();
-	        // return "redirect:/errorPage";
-	    }
+		try {
+			MemberDTO user = (MemberDTO) session.getAttribute(MemberConst.USER_KEY);
+			service.leaveCommunity(cId, user.getId());
 
-	    return "redirect:/communityMainAll";
+		} catch (Exception e) {
+			e.printStackTrace();
+			// return "redirect:/errorPage";
+		}
+
+		return "redirect:/communityMainAll";
 	}
-	
-	
+
+////////////////////////////////가입 상태 확인   //////////////////////////////////
+//개별 커뮤니티 접근 시 컨트롤러/서비스에서 권한 체크용
+	private boolean isApprovedMember(int cId, HttpSession session) throws Exception {
+		MemberDTO user = (MemberDTO) session.getAttribute(MemberConst.USER_KEY);
+		if (user == null)
+			return false;
+		String status = service.getJoinStatus(cId, user.getId());
+		return "user".equals(status) || "submaster".equals(status) || "master".equals(status);
+	}
+
 	////////////////////////////////////////
 	// 커뮤니티 manage 폴더 관리
 
@@ -235,16 +264,18 @@ public class CommunityController {
 
 		try {
 			// 현재 로그인 사용자
-			MemberDTO udto = (MemberDTO) session.getAttribute(MemberConst.USER_KEY);
+			  MemberDTO udto = (MemberDTO) session.getAttribute(MemberConst.USER_KEY);
 
-			if (udto != null) {
-				int memberId = udto.getId();
-				String userRole = service.getCommunityRole(cId, memberId);
-				mav.addObject("userRole", userRole);
-			} else {
-				// 로그인 안 된 경우 userRole = null
-				mav.addObject("userRole", null);
-			}
+		        if (udto != null) {
+		            int memberId = udto.getId();
+
+		            // 🔑 현재 사용자가 해당 커뮤니티에서 어떤 역할인지 조회 (master / submaster / user / null)
+		            String userRole = service.getCommunityRole(cId, memberId);
+		            mav.addObject("userRole", userRole);
+		        } else {
+		            // 🔑 로그인하지 않았으면 userRole = null
+		            mav.addObject("userRole", null);
+		        }
 
 			// 공통 데이터
 			List<BoardDTO> sidebarBoardLists = service.boardListByCommunityId(Map.of("cId", cId));
@@ -257,7 +288,7 @@ public class CommunityController {
 			mav.addObject("communityInfo", communityInfo);
 			mav.addObject("postLists", postLists);
 			mav.addObject("cId", cId);
-			System.out.println("sidebarMemberLists = " + sidebarMemberLists);
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -266,49 +297,6 @@ public class CommunityController {
 		return mav;
 	}
 
-	// 마스터 관리 페이지 (manage)
-	/////////////////////////////////////////////////////////////////
-//	// 커뮤니티 정보 수정 GET 
-//	@GetMapping("/community/{cId}")
-//	public ModelAndView getCommunityUpdate(@PathVariable int cId, HttpSession session) {
-//	    ModelAndView mav = new ModelAndView("community/manage/communityHome");
-//
-//	    try {
-//	        // 로그인 유저 정보
-//	        MemberDTO user = (MemberDTO) session.getAttribute(MemberConst.USER_KEY);
-//	        String userRole = (user != null) ? service.getCommunityRole(cId, user.getId()) : null;
-//
-//	        // 사이드바
-//	        List<BoardDTO> sidebarBoardLists = service.boardListByCommunityId(Map.of("cId", cId));
-//	        List<Map<String, Object>> sidebarMemberLists = service.sidebarMemberList(cId);
-//	        CommunityDTO communityInfo = service.communityInfoById(cId);
-//	        List<PostListDTO> postLists = service.selectPostListByCommunityId(cId);
-//
-//	        // ModelAndView에 하나하나 넣기
-//	        mav.addObject("userRole", userRole);
-//	        mav.addObject("sidebarBoardLists", sidebarBoardLists);
-//	        mav.addObject("sidebarMemberLists", sidebarMemberLists);
-//	        mav.addObject("communityInfo", communityInfo);
-//	        mav.addObject("postLists", postLists);
-//	        mav.addObject("cId", cId);
-//
-//	        // 디버깅용 로그
-//	        System.out.println("communityInfo = " + communityInfo);
-//	        System.out.println("sidebarBoardLists = " + sidebarBoardLists.size());
-//	        System.out.println("sidebarMemberLists = " + sidebarMemberLists.size());
-//	        System.out.println("postLists = " + postLists.size());
-//
-//	    } catch (Exception e) {
-//	        e.printStackTrace();
-//	        mav.setViewName("community/communityMsg");
-//	        mav.addObject("msg", "데이터 로드 중 오류");
-//	        mav.addObject("goUrl", "/communityList");
-//	    }
-//
-//	    return mav;
-//	}
-
-	
 	// 커뮤니티 수정
 	@GetMapping("/community/{cId}/update")
 	public ModelAndView communityUpdate(@PathVariable int cId, HttpSession session) throws Exception {
@@ -334,7 +322,7 @@ public class CommunityController {
 		return mav;
 	}
 
-	//커뮤니티 수정 기능
+	// 커뮤니티 수정 기능
 	@PostMapping("/community/{cId}/update")
 	@ResponseBody
 	public Map<String, Object> updateCommunity(@PathVariable int cId, @RequestBody Map<String, Object> body,
@@ -879,43 +867,63 @@ public class CommunityController {
 
 	///////////////////////////////////////////////////////////
 //가입 승인 !!
-	
-	// 게시판 홈 (board home) 게시글 list   
+
 	@GetMapping("/community/{cId}/board/{boardId}")
 	public ModelAndView postList(@PathVariable int cId, @PathVariable int boardId, HttpSession session) {
-		ModelAndView mav = new ModelAndView();
-		try {
-			
-			// 사이드바용 : 커뮤니티의 게시판 목록
-			Map<String, Object> map = new HashMap<>();
-			map.put("cId", cId);
-			List<BoardDTO> boardLists = service.boardListByCommunityId(map);
+	    ModelAndView mav = new ModelAndView();
+	    try {
+	        // 1. 게시판 목록 (사이드바용)
+	        Map<String, Object> map = new HashMap<>();
+	        map.put("cId", cId);
+	        List<BoardDTO> boardLists = service.boardListByCommunityId(map);
 
-			// 현재 게시판의 게시글 목록
-			List<PostDTO> postLists = service.postListByBoardId(boardId);
+	        // 2. 게시글 목록 (PostDTO 리스트)
+	        List<PostDTO> postLists = service.postListByBoardId(boardId);
 
-			// 게시판명 + 커뮤니티명 가져오기
-			Map<String, String> names = service.selectBoardAndCommunity(boardId);
+	        // 3. 멤버 정보 목록 (id, name 포함된 Map 리스트)
+	        List<Map<String, Object>> sidebarMemberLists = service.sidebarMemberList(cId);
 
-			
-//			if (!isApprovedMember(cId, session)) {
-//			return new ModelAndView("community/communityMsg").addObject("msg", "가입 승인된 회원만 접근 가능합니다.")
-//					.addObject("goUrl", "/communityMainAll");
- 
-			
-			// 필요한 데이터 뷰에 전달
-			mav.addObject("boardLists", boardLists);
-			mav.addObject("postLists", postLists);
-			mav.addObject("cId", cId);
-			mav.addObject("boardId", boardId);
-			mav.addObject("communityName", names.get("community_name"));
-			mav.addObject("boardName", names.get("board_name"));
+	        // 4. 게시글을 Map 형태로 변환해서 작성자 이름 추가
+	        List<Map<String, Object>> postViewList = new ArrayList<>();
+	        for (PostDTO post : postLists) {
+	            Map<String, Object> postMap = new HashMap<>();
+	            postMap.put("id", post.getId());
+	            postMap.put("title", post.getTitle());
+	            postMap.put("member_id", post.getMember_id());
+	            postMap.put("write_date", post.getWrite_date());
+	            postMap.put("view_num", post.getView_num());
+	            postMap.put("upvote", post.getUpvote());
 
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		mav.setViewName("community/board/postList");
-		return mav;
+	            // 작성자 이름 찾아서 추가
+	            String writer = "탈퇴한 사용자";
+	            for (Map<String, Object> m : sidebarMemberLists) {
+	                if (((Number) m.get("ID")).intValue() == post.getMember_id()) {
+	                    writer = (String) m.get("NAME");
+	                    break;
+	                }
+	            }
+	            postMap.put("postName", writer);
+	            postViewList.add(postMap);
+	        }
+
+	        // 5. 게시판명, 커뮤니티명
+	        Map<String, String> names = service.selectBoardAndCommunity(boardId);
+
+	        // 6. 뷰에 전달
+	        mav.addObject("boardLists", boardLists);
+	        mav.addObject("postLists", postViewList); // ← postDTO 말고 Map 리스트
+	        mav.addObject("sidebarMemberLists", sidebarMemberLists);
+	        mav.addObject("cId", cId);
+	        mav.addObject("boardId", boardId);
+	        mav.addObject("communityName", names.get("community_name"));
+	        mav.addObject("boardName", names.get("board_name"));
+
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
+
+	    mav.setViewName("community/board/postList");
+	    return mav;
 	}
 
 /////////////////////////////////////////////////////////////////////
@@ -1053,6 +1061,8 @@ public class CommunityController {
 		return mav;
 	}
 
+	
+	//좋아요
 	@PostMapping("/community/{cId}/board/{boardId}/post/{postId}/like")
 	@ResponseBody
 	public Map<String, Object> upvote(@PathVariable int postId) {
@@ -1196,97 +1206,230 @@ public class CommunityController {
 		return mav;
 	}
 
+//	// 댓글 등록
+//	@PostMapping("/community/{cId}/board/{boardId}/post/{postId}/reply")
+//	@ResponseBody
+//	public Map<String, Object> insertReply(@PathVariable int cId, @PathVariable int boardId, @PathVariable int postId,
+//			@RequestBody ReplyDTO rdto, HttpSession session) {
+//		Map<String, Object> result = new HashMap<>();
+//		try {
+//			MemberDTO user = (MemberDTO) session.getAttribute(com.cbo.constant.MemberConst.USER_KEY);
+//			if (user == null) {
+//				result.put("status", "fail");
+//				return result;
+//			}
+//			rdto.setBoard_post_id(postId);
+//			rdto.setMember_id(user.getId());
+//			service.insertReply(rdto);
+//			result.put("status", "success");
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//			result.put("status", "error");
+//		}
+//		return result;
+//	}
+//
+//	// 댓글 수정
+//	@PostMapping("/community/{cId}/board/{boardId}/post/{postId}/reply/{replyId}/edit")
+//	@ResponseBody
+//	public Map<String, Object> updateReply(@PathVariable int cId, @PathVariable int boardId, @PathVariable int postId,
+//			@PathVariable int replyId, @RequestBody ReplyDTO rdto, HttpSession session) {
+//		Map<String, Object> result = new HashMap<>();
+//		try {
+//			MemberDTO user = (MemberDTO) session.getAttribute(com.cbo.constant.MemberConst.USER_KEY);
+//			if (user == null) {
+//				result.put("status", "fail");
+//				return result;
+//			}
+//			rdto.setId(replyId);
+//			rdto.setMember_id(user.getId());
+//			int updated = service.updateReply(rdto);
+//			result.put("status", updated > 0 ? "success" : "fail");
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//			result.put("status", "error");
+//		}
+//		return result;
+//	}
+//
+//	// 댓글 삭제
+//	@PostMapping("/community/{cId}/board/{boardId}/post/{postId}/reply/{replyId}/delete")
+//	@ResponseBody
+//	public Map<String, Object> deleteReply(@PathVariable int cId, @PathVariable int boardId, @PathVariable int postId,
+//			@PathVariable int replyId, HttpSession session) {
+//		Map<String, Object> result = new HashMap<>();
+//		try {
+//			MemberDTO user = (MemberDTO) session.getAttribute(com.cbo.constant.MemberConst.USER_KEY);
+//			if (user == null) {
+//				result.put("status", "fail");
+//				return result;
+//			}
+//			int deleted = service.deleteReply(replyId);
+//			result.put("status", deleted > 0 ? "success" : "fail");
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//			result.put("status", "error");
+//		}
+//		return result;
+//	}
+//
+//	// 댓글 목록 조회
+//	@GetMapping("/community/{cId}/board/{boardId}/post/{postId}/replies")
+//	@ResponseBody
+//	public List<ReplyDTO> getReplies(@PathVariable int cId, @PathVariable int boardId, @PathVariable int postId) {
+//		try {
+//			https: // chatgpt.com/c/685e45dd-d3c4-8012-b7a5-1c65de1d31b2
+//			return service.selectReplyByPostId(postId);
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//			return new ArrayList<>();
+//		}
+//	}
+
+
+	
 	// 댓글 등록
 	@PostMapping("/community/{cId}/board/{boardId}/post/{postId}/reply")
 	@ResponseBody
-	public Map<String, Object> insertReply(@PathVariable int cId, @PathVariable int boardId, @PathVariable int postId,
-			@RequestBody ReplyDTO rdto, HttpSession session) {
-		Map<String, Object> result = new HashMap<>();
-		try {
-			MemberDTO user = (MemberDTO) session.getAttribute(com.cbo.constant.MemberConst.USER_KEY);
-			if (user == null) {
-				result.put("status", "fail");
-				return result;
-			}
-			rdto.setBoard_post_id(postId);
-			rdto.setMember_id(user.getId());
-			service.insertReply(rdto);
-			result.put("status", "success");
-		} catch (Exception e) {
-			e.printStackTrace();
-			result.put("status", "error");
-		}
-		return result;
+	public Map<String, Object> insertReply(
+	        @PathVariable int cId,
+	        @PathVariable int boardId,
+	        @PathVariable int postId,
+	        @RequestBody ReplyDTO rdto,
+	        HttpSession session) {
+	    
+	    Map<String, Object> result = new HashMap<>();
+	    try {
+	        MemberDTO user = (MemberDTO) session.getAttribute(com.cbo.constant.MemberConst.USER_KEY);
+	        if (user == null) {
+	            result.put("status", "fail");
+	            result.put("msg", "로그인 필요");
+	            return result;
+	        }
+	        rdto.setBoard_post_id(postId);
+	        rdto.setMember_id(user.getId());
+	        service.insertReply(rdto);
+	        result.put("status", "success");
+	        result.put("msg", "댓글이 등록되었습니다.");
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        result.put("status", "error");
+	        result.put("msg", "댓글 등록 중 오류 발생");
+	    }
+	    return result;
 	}
 
-	// 댓글 수정
+	// 답글 등록
+	@PostMapping("/community/{cId}/board/{boardId}/post/{postId}/reply/{parentId}/child")
+	@ResponseBody
+	public Map<String, Object> insertChildReply(
+	        @PathVariable int cId,
+	        @PathVariable int boardId,
+	        @PathVariable int postId,
+	        @PathVariable int parentId,
+	        @RequestBody ReplyDTO rdto,
+	        HttpSession session) {
+	    
+	    Map<String, Object> result = new HashMap<>();
+	    try {
+	        MemberDTO user = (MemberDTO) session.getAttribute(com.cbo.constant.MemberConst.USER_KEY);
+	        if (user == null) {
+	            result.put("status", "fail");
+	            result.put("msg", "로그인 필요");
+	            return result;
+	        }
+	        rdto.setBoard_post_id(postId);
+	        rdto.setMember_id(user.getId());
+	        service.insertChildReply(rdto, parentId);
+	        result.put("status", "success");
+	        result.put("msg", "답글이 등록되었습니다.");
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        result.put("status", "error");
+	        result.put("msg", "답글 등록 중 오류 발생");
+	    }
+	    return result;
+	}
+
+	// 댓글/답글 수정
 	@PostMapping("/community/{cId}/board/{boardId}/post/{postId}/reply/{replyId}/edit")
 	@ResponseBody
-	public Map<String, Object> updateReply(@PathVariable int cId, @PathVariable int boardId, @PathVariable int postId,
-			@PathVariable int replyId, @RequestBody ReplyDTO rdto, HttpSession session) {
-		Map<String, Object> result = new HashMap<>();
-		try {
-			MemberDTO user = (MemberDTO) session.getAttribute(com.cbo.constant.MemberConst.USER_KEY);
-			if (user == null) {
-				result.put("status", "fail");
-				return result;
-			}
-			rdto.setId(replyId);
-			rdto.setMember_id(user.getId());
-			int updated = service.updateReply(rdto);
-			result.put("status", updated > 0 ? "success" : "fail");
-		} catch (Exception e) {
-			e.printStackTrace();
-			result.put("status", "error");
-		}
-		return result;
+	public Map<String, Object> updateReply(
+	        @PathVariable int cId,
+	        @PathVariable int boardId,
+	        @PathVariable int postId,
+	        @PathVariable int replyId,
+	        @RequestBody ReplyDTO rdto,
+	        HttpSession session) {
+	    
+	    Map<String, Object> result = new HashMap<>();
+	    try {
+	        MemberDTO user = (MemberDTO) session.getAttribute(com.cbo.constant.MemberConst.USER_KEY);
+	        if (user == null) {
+	            result.put("status", "fail");
+	            result.put("msg", "로그인 필요");
+	            return result;
+	        }
+	        rdto.setId(replyId);
+	        rdto.setMember_id(user.getId());
+	        int updated = service.updateReply(rdto);
+	        result.put("status", updated > 0 ? "success" : "fail");
+	        result.put("msg", updated > 0 ? "수정되었습니다." : "수정 권한 없음");
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        result.put("status", "error");
+	        result.put("msg", "수정 중 오류 발생");
+	    }
+	    return result;
 	}
 
-	// 댓글 삭제
+	// 댓글/답글 삭제
 	@PostMapping("/community/{cId}/board/{boardId}/post/{postId}/reply/{replyId}/delete")
 	@ResponseBody
-	public Map<String, Object> deleteReply(@PathVariable int cId, @PathVariable int boardId, @PathVariable int postId,
-			@PathVariable int replyId, HttpSession session) {
-		Map<String, Object> result = new HashMap<>();
-		try {
-			MemberDTO user = (MemberDTO) session.getAttribute(com.cbo.constant.MemberConst.USER_KEY);
-			if (user == null) {
-				result.put("status", "fail");
-				return result;
-			}
-			int deleted = service.deleteReply(replyId);
-			result.put("status", deleted > 0 ? "success" : "fail");
-		} catch (Exception e) {
-			e.printStackTrace();
-			result.put("status", "error");
-		}
-		return result;
+	public Map<String, Object> deleteReply(
+	        @PathVariable int cId,
+	        @PathVariable int boardId,
+	        @PathVariable int postId,
+	        @PathVariable int replyId,
+	        HttpSession session) {
+	    
+	    Map<String, Object> result = new HashMap<>();
+	    try {
+	        MemberDTO user = (MemberDTO) session.getAttribute(com.cbo.constant.MemberConst.USER_KEY);
+	        if (user == null) {
+	            result.put("status", "fail");
+	            result.put("msg", "로그인 필요");
+	            return result;
+	        }
+	        int deleted = service.deleteReply(replyId);
+	        result.put("status", deleted > 0 ? "success" : "fail");
+	        result.put("msg", deleted > 0 ? "삭제되었습니다." : "삭제 권한 없음");
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        result.put("status", "error");
+	        result.put("msg", "삭제 중 오류 발생");
+	    }
+	    return result;
 	}
 
-	// 댓글 목록 조회
-	@GetMapping("/community/{cId}/board/{boardId}/post/{postId}/replies")
+	// 댓글/답글 목록 조회
+	@GetMapping("/community/{cId}/board/{boardId}/post/{postId}/replyList")
 	@ResponseBody
-	public List<ReplyDTO> getReplies(@PathVariable int cId, @PathVariable int boardId, @PathVariable int postId) {
-		try {
-			https: // chatgpt.com/c/685e45dd-d3c4-8012-b7a5-1c65de1d31b2
-			return service.selectReplyByPostId(postId);
-		} catch (Exception e) {
-			e.printStackTrace();
-			return new ArrayList<>();
-		}
+	public List<Map<String, Object>> getReplyList(
+	        @PathVariable int cId,
+	        @PathVariable int boardId,
+	        @PathVariable int postId) {
+	    try {
+	        return service.selectReplyByPostId(postId);
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        return new ArrayList<>();
+	    }
 	}
-
-////////////////////////////////가입 상태 확인   //////////////////////////////////
-	//개별 커뮤니티 접근 시 컨트롤러/서비스에서 권한 체크용
-	private boolean isApprovedMember(int cId, HttpSession session) throws Exception {
-		MemberDTO user = (MemberDTO) session.getAttribute(MemberConst.USER_KEY);
-		if (user == null)
-			return false;
-		String status = service.getJoinStatus(cId, user.getId());
-		return "user".equals(status) || "submaster".equals(status) || "master".equals(status);
-	}
-
 	
 	
+	
+	
+	///////////////////////////////////////////////////////////////////////////////
+
 }
-

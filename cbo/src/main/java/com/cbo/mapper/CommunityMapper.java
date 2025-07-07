@@ -74,20 +74,45 @@ public interface CommunityMapper {
 	// 이미지 본문보기
 	public ImageDTO selectImageById(int imageId) throws Exception;
 
-	// 댓글달기
-	public int insertReply(ReplyDTO rdto) throws Exception;
+//	// 댓글달기
+//	public int insertReply(ReplyDTO rdto) throws Exception;
+//
+//	// 댓글 수정
+//	public int updateReply(ReplyDTO rdto) throws Exception;
+//
+//	// 댓글 삭제
+//	public int deleteReply(int replyId) throws Exception;
+//
+//	// 댓글 읽기 (postid가져옴)
+//	public List<ReplyDTO> selectReplyByPostId(int postId) throws Exception;
+//
+//	// 순번 밁기
+//	public int updateReplySunbun(Map<String, Object> map) throws Exception;
+	
+	
 
-	// 댓글 수정
-	public int updateReply(ReplyDTO rdto) throws Exception;
+    // 댓글 1 댓글/답글 INSERT (댓글, 답글 공통)
+    public int insertReply(ReplyDTO dto) throws Exception;
 
-	// 댓글 삭제
-	public int deleteReply(int replyId) throws Exception;
+    // 댓글 2 :댓글 작성 후 ref = id 업데이트 (댓글 ref를 자기 id로 세팅)
+    public int updateReplyRef(int id) throws Exception;
 
-	// 댓글 읽기 (postid가져옴)
-	public List<ReplyDTO> selectReplyByPostId(int postId) throws Exception;
+    // 댓글 3 : 부모 댓글 정보 조회 (답글 작성 시 부모 ref, lev, sunbun 가져오기)
+    public ReplyDTO selectReplyById(int id) throws Exception;
 
-	// 순번 밁기
-	public int updateReplySunbun(Map<String, Object> map) throws Exception;
+    // 댓글 4 : 댓글/답글 수정 (본인 것만 수정 가능)
+    public int updateReply(ReplyDTO dto) throws Exception;
+
+    // 댓글 5 : 댓글/답글 삭제 (id 기준)
+    public int deleteReply(int id) throws Exception;
+
+    // 댓글 6 : 댓글/답글 목록 조회 (작성 순서 + 답글 순서 + 작성자 이름)
+    public List<Map<String, Object>> selectReplyByPostId(int postId) throws Exception;
+
+    // 댓글 7 : sunbun 밀기 (답글 삽입 시 순서 확보)
+    public int updateReplySunbun(Map<String, Object> map) throws Exception;
+	
+	
 
 	// 게시판 정보 수정 - 해당 커뮤니티 게시판목록, 운영자 이름 불러오기
 	public List<Map<String, Object>> boardListWithMaster(int cId) throws Exception;
@@ -150,11 +175,11 @@ public interface CommunityMapper {
 
 	///////////////////////////// 권한 부여  ////////
 
-
+	public List<Map<String, Object>> pendingMemberList(int cId) throws Exception; //  Map으로 변경
 
 	//마스터  : 6 가입 대기자 목록 조회 ) 
 // roles = role 목록 (예: ["user", "submaster"])
-	public List<Map<String, Object>> selectMembersByRoles(@Param("cId") int cId, @Param("list") List<String> roles)
+	public List<Map<String, Object>> pendingMemberList(@Param("cId") int cId, @Param("list") List<String> roles)
 			throws Exception;
 
 //  마스터  : 1,2 가입  승인(pending → user), 거절(pending → 거절) 
@@ -164,19 +189,41 @@ public interface CommunityMapper {
 //  마스터  : 3 멤버 삭제(강제 탈퇴) --> 
 	public void deleteCommunityMember(@Param("cId") int cId, @Param("memberId") int memberId) throws Exception;
 
+//  마스터 : 4 커뮤니티에 가입이 승인된 멤버(cm.role IN ('master', 'submaster', 'user'))
+	public List<Map<String, Object>> joinMemberList(@Param("cId") int cId) throws Exception;
+	
+	
 //  마스터  : 5 특정 멤버 role 가져옴 (탈퇴/권한 관리용) role 조회 selectMemberRole : removeMember에서 마스터인지 확인 -->
 	public String selectMemberRole(@Param("cId") int cId, @Param("memberId") int memberId) throws Exception;
 
 	// 사용자 1: 가입 상태 확인
-	public String getJoinStatus(@Param("cId") int cId, @Param("memberId") int memberId);
+	public String getJoinStatus(@Param("cId") int cId, @Param("memberId") int memberId) throws Exception;
 
 	// 사용자 2: 전체 커뮤니티 + 회원 가입 상태 조회
 	public List<Map<String, Object>> selectCommunityMainAll(int memberId) throws Exception;
 
 	// 사용자 3: 가입 신청
-	public int requestJoin(Map<String, Object> map) throws Exception;
+	public int requestJoin(@Param("cId") int cId, @Param("memberId") int memberId) throws Exception;
 
 	// 사용자 4 : 탈퇴
 	public int leaveCommunity(Map<String, Object> map) throws Exception;
+	
+	// 사용자 5: 가입 신청 전 기존 멤버 존재 여부 확인
+	public int checkExistCommunityMember(@Param("cId") int cId, @Param("memberId") int memberId) throws Exception;
 
+	// 사용자 6: 가입 신청 전 기존 멤버 상태 pending으로 변경
+	public int updateToPending(@Param("cId") int cId, @Param("memberId") int memberId) throws Exception;
+
+	
+	
+	//커뮤니티 가입된 목록
+	public List<Map<String, Object>> communityMainJoin(@Param("memberId") int memberId) throws Exception;
+	
+	
+	// 커뮤니티 가입한 목록들 이름
+	public List<Map<String, Object>> joinList(int userId) throws Exception;
+	
+	
+	
+	
 }

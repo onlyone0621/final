@@ -179,7 +179,9 @@ ORDER BY id ASC
 </select>
 
 
-<!--  댓글 닷ㄹ기 + 답글 -->
+
+
+<!-- 댓글 1:   댓글 + 답글 INSERT (댓글/답글 공통) -->
 <insert id="insertReply" parameterType="com.cbo.community.model.ReplyDTO">
   <selectKey keyProperty="id" resultType="int" order="BEFORE">
     SELECT sq_board_reply_id.NEXTVAL FROM dual
@@ -192,37 +194,55 @@ ORDER BY id ASC
   )
 </insert>
 
+<!-- 댓글 2:  댓글 작성 후 ref = id 업데이트 -->
+<update id="updateReplyRef" parameterType="int">
+  UPDATE board_reply
+  SET ref = #{id}
+  WHERE id = #{id}
+</update>
 
+<!-- 댓글 3:  답글 작성 시 부모 댓글 조회 -->
+<select id="selectReplyById" parameterType="int" resultType="com.cbo.community.model.ReplyDTO">
+  SELECT *
+  FROM board_reply
+  WHERE id = #{id}
+</select>
 
-
-<!-- 본인이 쓴 댓글만 수정 가능 -->
+<!-- 댓글 4:  댓글/답글 수정 -->
 <update id="updateReply" parameterType="com.cbo.community.model.ReplyDTO">
   UPDATE board_reply
   SET content = #{content}
   WHERE id = #{id} AND member_id = #{member_id}
 </update>
 
-<!-- id 기준 댓글 삭제 -->
+<!-- 댓글 5:  댓글/답글 삭제 -->
 <delete id="deleteReply" parameterType="int">
   DELETE FROM board_reply
   WHERE id = #{id}
 </delete>
 
-<!-- 댓글 목록 읽기-->
-<select id="selectReplyByPostId" parameterType="int" resultType="com.cbo.community.model.ReplyDTO">
-  SELECT *
-  FROM board_reply
-  WHERE board_post_id = #{postId}
-  ORDER BY ref ASC, sunbun ASC
+<!-- 댓글 6 : 댓글 목록 조회 (작성 순서 + 답글 순서 + 작성자 이름) -->
+<select id="selectReplyByPostId" parameterType="int" resultType="map">
+  SELECT 
+    r.*, 
+    NVL(m.name, '탈퇴한 회원') AS member_name
+  FROM board_reply r
+  LEFT JOIN member m ON r.member_id = m.id
+  WHERE r.board_post_id = #{postId}
+  ORDER BY r.ref ASC, r.sunbun ASC
 </select>
 
-<!-- sunbun 밀기 (답글 순서 확보) -->
+<!-- 댓글 7: sunbun 밀기 (답글 삽입 순서 확보) -->
 <update id="updateReplySunbun" parameterType="map">
   UPDATE board_reply
   SET sunbun = sunbun + 1
   WHERE ref = #{ref} AND sunbun >= #{sunbun}
- 
 </update>
+
+
+
+
+
 
 <!-- 해당 커뮤니티 게시판 목록 불러오기(게시판이름, 운영자,커뮤니티id -->
 <select id="boardListWithMaster" parameterType="int" resultType="map">
@@ -414,6 +434,29 @@ ORDER BY id ASC
 </select>
 
 
+<!-- 모든 멤버 상세보기(전체보기)  해야ㅚㅁ 전체보기 버튼 클리 ㄱ시 -->
+<select id="fullMemberList" resultType="map">
+  SELECT 
+    m.id,
+    m.name,
+    d.name AS dept_name,
+    g.name AS grade_name,
+    m.email,
+    cm.join_date,
+    NVL(bp.post_count, 0) AS post_count,
+    cm.role
+  FROM community_member cm
+  JOIN member m ON cm.member_id = m.id
+  LEFT JOIN dept d ON m.dept_id = d.id
+  LEFT JOIN grade g ON m.grade_id = g.id
+  LEFT JOIN (
+    SELECT member_id, COUNT(*) AS post_count
+    FROM board_post
+    GROUP BY member_id
+  ) bp ON m.id = bp.member_id
+  WHERE cm.community_id = #{cId}
+  ORDER BY cm.join_date DESC
+</select>
 
 
 
@@ -455,10 +498,8 @@ ORDER BY id ASC
 </select>
 
 
-
-
 <!--  마스터  : 6 가입 대기자 목록 조회 ) -->
-<select id="selectMembersByRoles" parameterType="map" resultType="map">
+<select id="pendingMemberList" parameterType="map" resultType="map">
 SELECT 
   m.id,                   
   m.user_id,              
@@ -489,6 +530,7 @@ WHERE cm.community_id = #{cId}
   </foreach>
 </select>
 
+
 <!-- 마스터  : 7 커뮤니티 역할 구분 사이드바용 (master, submaster, user 구분용) -->
 <select id="sidebarMemberList" resultType="map">
   SELECT 
@@ -513,30 +555,6 @@ WHERE cm.community_id = #{cId}
 
 
 
-<!--마스터  : 8  모든 멤버 상세보기(전체보기)  해야ㅚㅁ 전체보기 버튼 클리 ㄱ시 -->
-<select id="fullMemberList" resultType="map">
-  SELECT 
-    m.id,
-    m.name,
-    d.name AS dept_name,
-    g.name AS grade_name,
-    m.email,
-    cm.join_date,
-    NVL(bp.post_count, 0) AS post_count,
-    cm.role
-  FROM community_member cm
-  JOIN member m ON cm.member_id = m.id
-  LEFT JOIN dept d ON m.dept_id = d.id
-  LEFT JOIN grade g ON m.grade_id = g.id
-  LEFT JOIN (
-    SELECT member_id, COUNT(*) AS post_count
-    FROM board_post
-    GROUP BY member_id
-  ) bp ON m.id = bp.member_id
-  WHERE cm.community_id = #{cId}
-  ORDER BY cm.join_date DESC
-</select>
-
 
 
 
@@ -557,11 +575,10 @@ WHERE cm.community_id = #{cId}
 
 
 <!-- 사용자 : 2 가입 신청 -->
-<insert id="requestJoin" parameterType="map">
+<insert id="requestJoin">
   INSERT INTO community_member (community_id, member_id, role, join_date)
-  VALUES (#{cId}, #{memberId}, 'pending', SYSDATE)
+  VALUES (#{cId}, #{memberId}, '가입대기', SYSDATE)
 </insert>
-
 
 <!--  사용자 : 3 가입 신청 전 존재유무 -->
 <!-- 기존 존재 여부 확인 위 데이터가 있으면 count = 1 없으면 count = 0 -->
@@ -575,25 +592,52 @@ WHERE cm.community_id = #{cId}
 <!-- 기존 멤버를 pending 상태로 변경 --><!-- community_id=1, member_id=2, role=master 실행 시 데이터 ok role=pending 으로 바꿈  -->
 
 <!--  사용자 : 4 기존멤버 pending상태로 변경 -->
-<update id="updateToPending" parameterType="map">
+<update id="updateToPending">
   UPDATE community_member
-  SET role = 'pending'
+  SET role = '가입대기'
   WHERE community_id = #{cId} AND member_id = #{memberId}
 </update>
 
 
-<!-- 사용자 : 5 사용자 탈퇴 -->
-<delete id="leaveCommunity" parameterType="map">
+
+<!-- 사용자 : 5 사용자 탈퇴 값은 @Param으로 MyBatis가 처리 -->
+<delete id="leaveCommunity">
   DELETE FROM community_member 
   WHERE community_id = #{cId} AND member_id = #{memberId}
 </delete>
 
 
+<!-- 커뮤니티 가입된 목록 -->
+<select id="communityMainJoin" parameterType="int" resultType="map">
+SELECT 
+    c.id AS ID,
+    c.name AS NAME,
+    (SELECT COUNT(*) 
+     FROM community_member cm 
+     WHERE cm.community_id = c.id) AS MEMBER_COUNT,
+    (SELECT COUNT(*)
+     FROM board_post bp 
+     JOIN community_board cb ON bp.board_id = cb.id 
+     WHERE cb.community_id = c.id) AS POST_COUNT,
+    (SELECT m.name 
+     FROM community_member cm 
+     JOIN member m ON cm.member_id = m.id 
+     WHERE cm.community_id = c.id AND cm.role = 'master') AS MASTER_NAME
+FROM community c
+JOIN community_member my_cm ON c.id = my_cm.community_id
+WHERE my_cm.member_id = #{memberId}
+</select>
 
 
-
-
-
+<!-- 사이드바 가입된 커뮤니티 목록 이름 가져오기 -->
+<select id="joinList" resultType="map">
+    SELECT c.id AS ID,
+           c.name AS NAME
+    FROM community c
+    JOIN community_member cm ON c.id = cm.community_id
+    WHERE cm.member_id = #{userId}
+      AND cm.role IN ('user', 'submaster', 'master')
+</select>
 
  </mapper>
  

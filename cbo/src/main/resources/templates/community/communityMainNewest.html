@@ -88,17 +88,20 @@
     <div class="sidebar">
       <h4>커뮤니티</h4>
 
+
+
+
       <a th:href="@{/communityCreate}" class="create-btn">커뮤니티 생성</a>
 
-      <ul th:if="${#lists.isEmpty(lists)}">
+      <ul th:if="${#lists.isEmpty(sideJoin)}">
         <li>생성된 커뮤니티가 없습니다.</li>
       </ul>
-      <ul th:each="dto : ${lists}">
-        <li>
-          <a th:href="@{/community/{id}(id=${dto.id})}" class="name-link">[[${dto.name}]]</a>
-          <a th:href="@{/community/{id}/update(id=${dto.id})}" class="settings-btn">⚙</a>
-        </li>
-      </ul>
+     <ul th:each="dto : ${sideJoin}">
+  <li>
+    <a th:href="@{/community/{id}(id=${dto['ID']})}" th:text="${dto['NAME']}" class="name-link">커뮤니티명</a>
+    <a th:href="@{/community/{id}/update(id=${dto['ID']})}" class="settings-btn">⚙</a>
+  </li>
+</ul>
     </div>
 
     <!-- 메인 -->
