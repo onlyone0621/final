@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="layouts/adminLayout">
+<head>
+<meta charset="UTF-8">
+<title>회원 삭제</title>
+<style>
+body {
+	font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+	margin: 0;
+	padding: 0;
+	background-color: #fff;
+}
+
+.main-div {
+	display: flex;
+	min-height: 100vh;
+}
+
+.sidebar {
+	width: 230px;
+	background-color: #f7f3fa; /* 연보라+흰 느낌 */
+	padding: 30px 20px;
+	border-right: 1px solid #ddd;
+	border-radius: 0 30px 30px 0;
+}
+
+.sidebar h4 {
+	text-align: center;
+	font-size: 22px;
+	margin-bottom: 20px;
+}
+
+ul {
+	list-style: none;
+	padding: 0;
+}
+
+ul li {
+	margin-bottom: 10px;
+}
+
+ul li a {
+	text-decoration: none;
+	color: #8e44ad; /* 부드러운 보라 */
+	font-weight: bold;
+}
+
+.content {
+	flex: 1;
+	display: flex;
+	justify-content: center;
+	align-items: flex-start;
+	padding: 30px;
+}
+
+.table-wrapper {
+	width: 100%;
+	max-width: 800px;
+	background-color: #fef6f9; /* 연하고 부드러운 분홍빛 */
+	padding: 30px;
+	border-radius: 12px;
+	box-shadow: 0 0 15px rgba(0,0,0,0.05);
+}
+
+h2 {
+	text-align: center;
+	font-size: 26px;
+	color: #d6336c; /* 화사한 레드핑크 */
+	margin-bottom: 20px;
+}
+
+table {
+	width: 100%;
+	border-collapse: collapse;
+	font-size: 17px;
+	background-color: #fff;
+}
+
+th, td {
+	border: 1px solid #eee;
+	padding: 12px;
+	text-align: center;
+}
+
+th {
+	background-color: #ffebee; /* 더 밝은 연핑크 */
+	color: #c2185b;
+	font-size: 18px;
+}
+
+tr:nth-child(even) {
+	background-color: #fdf9fb;
+}
+
+tr:nth-child(odd) {
+	background-color: #fffafa;
+}
+
+input[type="submit"] {
+	background-color: #f8bbd0; /* 산뜻한 핑크 */
+	color: #fff;
+	padding: 12px 25px;
+	border: none;
+	border-radius: 8px;
+	cursor: pointer;
+	display: block;
+	margin: 20px auto;
+	font-size: 16px;
+	transition: background-color 0.3s;
+}
+
+input[type="submit"]:hover {
+	background-color: #f48fb1; /* 조금 진한 핑크 */
+}
+</style>
+</head>
+
+<body>
+	<div layout:fragment="content">
+		<div class="main-div">
+			<div class="sidebar">
+				<h4>관리자 메뉴</h4>
+				<ul>
+					<li><a th:href="@{/admin/memberAllList}">회원 목록</a></li>
+					<li><a th:href="@{/admin/memberAllList}">회원 수정</a></li>
+					<li><a th:href="@{/admin/memberDeleteList}">회원 삭제</a></li>
+				</ul>
+			</div>
+
+			<div class="content">
+				<div class="table-wrapper">
+					<h2>회원 삭제</h2>
+					<form th:action="@{/admin/memberDeleteList}" method="post">
+						<table>
+							<thead>
+								<tr>
+									<th>선택</th>
+									<th>ID</th>
+									<th>이름</th>
+									<th>연락처</th>
+									<th>부서</th>
+									<th>직급</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr th:each="m : ${members}">
+									<td><input type="checkbox" name="mid" th:value="${m.id}"></td>
+									<td th:text="${m.id}">1</td>
+									<td th:text="${m.name}">홍길동</td>
+									<td th:text="${m.tel}">010-0000-0000</td>
+									<td th:text="${m.dept_name}">부서</td>
+									<td th:text="${m.grade_name}">직급</td>
+								</tr>
+								<tr th:if="${#lists.isEmpty(members)}">
+									<td colspan="6">회원 정보가 없습니다.</td>
+								</tr>
+							</tbody>
+						</table>
+						<input type="submit" value="선택 회원 삭제">
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

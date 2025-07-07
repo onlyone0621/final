@@ -196,7 +196,7 @@
             <tr th:each="board : ${boardLists}">
               <td><input type="checkbox" name="boardIds" th:value="${board['BOARD_ID']}"></td>
               <td th:text="${board['BOARD_NAME']}"></td>
-              <td th:text="${board['MASTER_NAME']} ?: '운영자 없음'"></td>
+              <td th:text="${board['MASTER_NAME']} ?: '박주연'"></td>
               <td>
                 <a th:href="@{/community/{cId}/board/{boardId}/update(cId=${cId}, boardId=${board['BOARD_ID']})}">
                   <input type="button" value="설정">

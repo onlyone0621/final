@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="layouts/adminLayout">
+<head>
+  <meta charset="UTF-8">
+  <title>회원 정보 수정 (관리자)</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #fff;
+    }
+
+    .main-div {
+      display: flex;
+    }
+
+    .sidebar {
+      width: 230px;
+      background-color: #fbf9fd;
+      padding: 30px 20px;
+      border-right: 1px solid #ddd;
+      border-radius: 0 30px 30px 0;
+    }
+
+    .sidebar h4 {
+      text-align: center;
+      font-size: 22px;
+      margin-bottom: 20px;
+    }
+
+    ul {
+	list-style: none;
+	padding: 0;
+}
+
+ul li {
+	margin-bottom: 10px;
+}
+
+ul li a {
+	text-decoration: none;
+	color: #6a1b9a;
+	font-weight: bold;
+}
+
+    .content {
+      flex: 1;
+      padding: 30px;
+    }
+
+    .content h2 {
+      font-size: 26px;
+      font-weight: bold;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    form {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 30px;
+      background-color: #fffafa;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    form .form-group {
+      margin-bottom: 15px;
+    }
+
+    label {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+
+    input[type="text"], select {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 14px;
+    }
+
+    input[type="file"] {
+      margin-top: 5px;
+    }
+
+    .profile-img {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      display: block;
+      margin: 0 auto 10px auto;
+    }
+
+    input[type="submit"], input[type="button"] {
+      background-color: #FFC6C6;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 16px;
+      width: 100%;
+    }
+
+    input[type="submit"]:hover, input[type="button"]:hover {
+      background-color: #FFA2A2;
+    }
+  </style>
+  
+<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+<script>
+function findAddr(){
+  var fm = document.adminMemberUpdate;
+  new daum.Postcode({
+    oncomplete: function(data) {
+      fm.adrNum.value = data.zonecode;
+      fm.address.value = data.address;
+    }
+  }).open();
+}
+function previewProfileImage(event) {
+  const file = event.target.files[0];
+  if (file) {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      document.getElementById('profilePreview').src = e.target.result;
+    }
+    reader.readAsDataURL(file);
+  }
+}
+</script>
+</head>
+<body>
+<div layout:fragment="content">
+  <div class="main-div">
+    <div class="sidebar">
+      <h4>관리자 메뉴</h4>
+      <ul>
+        <li><a th:href="@{/admin/memberAllList}">회원 목록</a></li>
+        <li><a th:href="@{/admin/memberAllList}">회원 수정</a></li>
+        <li><a th:href="@{/admin/memberDeleteList}">회원 삭제</a></li>
+      </ul>
+    </div>
+
+    <div class="content">
+      <h2>회원 정보 수정</h2>
+      <form name="adminMemberUpdate" action="/adminMemberUpdate" method="post" enctype="multipart/form-data">
+        <input type="hidden" name="id" th:value="${member.id}">
+        <input type="hidden" name="user_id" th:value="${member.user_id}">
+        <input type="hidden" name="email" th:value="${member.email}">
+
+        <div class="form-group">
+          <label>프로필 사진</label>
+          <img id="profilePreview" th:src="@{'/profileImage/' + ${member.profile_image}}" class="profile-img">
+          <input type="file" id="profileImage" name="profileImage" onchange="previewProfileImage(event)">
+        </div>
+
+        <div class="form-group">
+          <label>이름</label>
+          <input type="text" name="name" th:value="${member.name}">
+        </div>
+
+        <div class="form-group">
+          <label>부서</label>
+          <select name="dept_id">
+            <option th:each="d : ${deptList}" th:value="${d.id}" th:text="${d.name}" th:selected="${d.id} == ${member.dept_id}"></option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>직급</label>
+          <select name="grade_id">
+            <option th:each="g : ${gradeList}" th:value="${g.id}" th:text="${g.name}" th:selected="${g.id} == ${member.grade_id}"></option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>연락처</label>
+          <input type="text" name="tel" th:value="${member.tel}">
+        </div>
+
+        <div class="form-group">
+          <label>주소</label>
+          <input type="text" id="adrNum" name="adrNum" placeholder="우편번호" readonly>
+          <input type="button" value="주소찾기" onclick="findAddr()">
+          <input type="text" id="address" name="address" th:value="${member.address}">
+        </div>
+
+        <div class="form-group">
+          <input type="submit" value="정보수정">
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

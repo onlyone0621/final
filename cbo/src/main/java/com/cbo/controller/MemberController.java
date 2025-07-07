@@ -71,6 +71,7 @@ public class MemberController {
 			}else {
 				if(getPwd.equals(pwd)) {
 			        session.setAttribute(com.cbo.constant.MemberConst.USER_KEY, dto);
+			        session.setAttribute("admin_id", dto.getId());
 			        if(saveid==false) {
 			        	Cookie ck = new Cookie("saveid", getId);
 						ck.setMaxAge(0);

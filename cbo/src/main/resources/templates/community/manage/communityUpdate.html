@@ -1,171 +1,218 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org"
-              xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-              layout:decorate="layouts/mainLayout">
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="layouts/mainLayout">
 <head>
   <meta charset="UTF-8">
   <title>커뮤니티 정보 수정</title>
   <style>
-    .container {
-      display: flex;
-      min-height: 100vh;
-    }
-
-    .sidebar {
-      width: 220px;
-      background-color: #fbf9fd;
-      padding: 20px;
-      border-right: 1px solid #ddd;
-    }
-
-    .sidebar h4 {
-      font-size: 18px;
-      margin-bottom: 10px;
-    }
-
-    .sidebar ul {
-      list-style: none;
-      padding-left: 0;
-      font-size: 14px;
-    }
-
-    .sidebar ul li {
-      margin-bottom: 8px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .sidebar ul li a {
-      text-decoration: none;
-      color: #6a1b9a;
-      font-weight: bold;
-    }
-
-    .settings-btn {
-      font-size: 16px;
-      color: #999;
-      margin-left: 5px;
-      text-decoration: none;
-    }
-
-    .add-board {
-      display: block;
-      margin-top: 10px;
-      font-size: 14px;
-      color: #d81b60;
-      font-weight: bold;
-      text-decoration: none;
-    }
-
-    .main {
-      flex-grow: 1;
-      padding: 20px;
-    }
-
-    .tabs {
-      border-bottom: 1px solid #ddd;
-      margin-bottom: 20px;
-    }
-
-    .tab {
+    .container { display: flex; min-height: 100vh; }
+    .sidebar { width: 220px; background-color: #fbf9fd; padding: 20px; border-right: 1px solid #ddd; }
+    .main { flex-grow: 1; padding: 20px; }
+    .tab { display: inline-block; margin-right: 15px; font-weight: bold; color: #666; text-decoration: none; }
+    .tab.active { color: #d81b60; border-bottom: 2px solid #d81b60; }
+    form { max-width: 600px; }
+    form label { display: block; margin-top: 12px; font-weight: bold; }
+    form input[type="text"], form textarea { width: 100%; padding: 6px; box-sizing: border-box; margin-top: 4px; }
+    form textarea { min-height: 80px; }
+    .master-section, .submaster-section { margin-top: 12px; }
+    .submaster-list span {
       display: inline-block;
-      margin-right: 15px;
-      padding-bottom: 5px;
-      font-weight: bold;
-      color: #666;
-      text-decoration: none;
-      border-bottom: 2px solid transparent;
-    }
-
-    .tab.active {
-      color: #d81b60;
-      border-bottom: 2px solid #d81b60;
-    }
-
-    form {
-      margin-top: 20px;
-    }
-
-    form label {
-      display: block;
-      margin-bottom: 5px;
-      font-weight: bold;
-    }
-
-    form input[type="text"],
-    form textarea {
-      width: 100%;
-      padding: 6px;
-      margin-bottom: 10px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-    }
-
-    form input[type="submit"],
-    form input[type="reset"] {
-      padding: 8px 16px;
-      border: none;
-      border-radius: 4px;
+      background: #fde4ec;  /* 연한 벚꽃색 */
+      padding: 3px 6px;
+      margin: 2px;
+      border-radius: 6px;
       cursor: pointer;
     }
-
-    form input[type="submit"] {
-      background-color: #f8bbd0;
+    .link-text {
       color: #333;
+      text-decoration: none;
+      cursor: pointer;
     }
-
-    form input[type="submit"]:hover {
-      background-color: #f48fb1;
+    .link-text:hover {
+      text-decoration: underline;
     }
-
-    form input[type="reset"] {
-      background-color: #fce4ec;
-      color: #333;
-    }
-
-    form input[type="reset"]:hover {
-      background-color: #f8bbd0;
-    }
+.form-buttons input {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.form-buttons input[type="submit"] {
+  background: #f8bbd0;
+}
+.form-buttons input[type="submit"]:hover {
+  background: #f48fb1;
+}
+.form-buttons input[type="reset"] {
+  background: #fce4ec;
+}
+.form-buttons input[type="reset"]:hover {
+  background: #f8bbd0;
+}
   </style>
+
+ <script th:inline="javascript">
+    const cId = [[${cId}]];
+
+    window.openCentered = function(url, name, width, height) {
+      const left = (screen.width / 2) - (width / 2);
+      const top = (screen.height / 2) - (height / 2);
+      window.open(url, name, `width=${width},height=${height},left=${left},top=${top}`);
+    };
+
+    window.openMasterPopup = function() {
+      window.openCentered('/community/' + cId + '/masterSelect', 'masterSelect', 600, 400);
+    };
+
+    window.openSubMasterPopup = function() {
+      window.openCentered('/community/' + cId + '/subMasterSelect', 'subMasterSelect', 600, 400);
+    };
+
+    window.setMaster = function(id, name) {
+      document.getElementById('masterId').value = id;
+      document.getElementById('masterName').textContent = name;
+    };
+
+    window.setSubMasters = function(ids, names) {
+      const masterId = document.getElementById('masterId').value;
+      const list = document.getElementById('subMasterList');
+      list.innerHTML = '';
+
+      ids.forEach((id, idx) => {
+        if (id == masterId) {
+          alert(names[idx] + '은(는) 이미 마스터입니다.');
+          return;
+        }
+        if (document.querySelector(`[data-id="${id}"]`)) {
+          alert(names[idx] + '은(는) 이미 부마스터입니다.');
+          return;
+        }
+
+        const span = document.createElement('span');
+        span.textContent = names[idx] + ' ❌';
+        span.className = 'submaster-badge';
+        span.dataset.id = id;
+        span.onclick = function() { removeSubMaster(span); };
+        list.appendChild(span);
+      });
+    };
+
+    window.removeSubMaster = function(span) {
+      span.remove();
+    };
+
+    window.saveCommunity = function() {
+      const name = document.getElementById('name').value;
+      const description = document.getElementById('description').value;
+      const masterIdValue = document.getElementById('masterId').value;
+      const masterId = masterIdValue ? parseInt(masterIdValue) : null;
+      const subMasterIds = Array.from(document.querySelectorAll('#subMasterList .submaster-badge'))
+                                .map(el => parseInt(el.dataset.id));
+
+      fetch('/community/' + cId + '/update', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: name,
+          description: description,
+          masterId: masterId,
+          subMasterIds: subMasterIds
+        })
+      })
+      .then(res => res.json())
+      .then(data => {
+        alert(data.msg || '커뮤니티 정보가 수정되었습니다.');
+        if (data.status === 'success') {
+          location.href = '/communityMainCommunityNewset';
+        }
+      })
+      .catch(err => {
+        alert('저장 중 오류가 발생했습니다.');
+      });
+    };
+  </script>
+
 </head>
+
 <body>
 <div layout:fragment="content">
   <div class="container">
     <div class="sidebar">
-      <h4 th:text="${communityInfo.name} ?: '커뮤니티'">커뮤니티</h4>
-      <ul th:if="${#lists.isEmpty(sidebarBoardList)}">
-        <li>게시판이 없습니다.</li>
-      </ul>
-      <ul th:each="bdto : ${sidebarBoardList}">
+      <h4 th:text="${communityInfo.name}">커뮤니티</h4>
+      <ul th:each="bdto : ${sidebarBoardLists}">
         <li>
-          <a th:href="@{/community/{cId}/board/{boardId}(cId=${cId}, boardId=${bdto.id})}">
-            [[${bdto.name}]]
-          </a>
-          <a th:href="@{/community/{cId}/board/{boardId}/update(cId=${cId}, boardId=${bdto.id})}" class="settings-btn">⚙</a>
+          <a th:href="@{/community/{cId}/board/{boardId}(cId=${cId}, boardId=${bdto.id})}">[[${bdto.name}]]</a>
         </li>
       </ul>
-      <a class="add-board" th:href="@{/community/{cId}/board/create(cId=${cId})}">+ 게시판 추가</a>
+      <hr>
+      <h4>멤버</h4>
+      <ul th:each="m : ${sidebarMemberLists}">
+        <li>
+          <span th:text="|${m['GRADE_NAME']} ${m['NAME']}|"></span>
+          <span th:if="${m['ROLE'] == 'master'}">👑</span>
+          <span th:if="${m['ROLE'] == 'submaster'}">🛡️</span>
+        </li>
+      </ul>
     </div>
 
     <div class="main">
       <div class="tabs">
         <a class="tab active" th:href="@{/community/{cId}/update(cId=${cId})}">정보</a>
         <a class="tab" th:href="@{/community/{cId}/boardDelete(cId=${cId})}">게시판</a>
-       	<a class="tab" th:href="@{/community/{cId}/member(cId=${cId})}">멤버</a>
+        <a class="tab" th:href="@{/community/{cId}/member(cId=${cId})}">멤버</a>
         <a class="tab" th:href="@{/community/{cId}/close(cId=${cId})}">폐쇄</a>
       </div>
 
-      <form th:action="@{/community/{cId}/update(cId=${cId})}" method="post">
-        <label>이름</label>
-        <input type="text" name="name" th:value="${communityInfo.name}" required>
+<form onsubmit="saveCommunity(); return false;">
+  <!-- 이름 -->
+  <label>이름</label>
+  <input type="text" id="name" th:value="${communityInfo.name}" required>
 
-        <label>소개</label>
-        <textarea name="description" required th:text="${communityInfo.description}"></textarea>
+  <!-- 소개 -->
+  <label>소개</label>
+  <textarea id="description" required>[[${communityInfo.description}]]</textarea>
 
-        <input type="submit" value="저장">
-        <input type="reset" value="취소">
-      </form>
+  <!-- 마스터 -->
+<div class="master-section">
+  <label>마스터</label>
+  <span id="masterName" th:text="${currentMaster['NAME']}">마스터 이름</span>
+  <input type="hidden" id="masterId" th:value="${currentMaster['MEMBER_ID']}">
+  
+ <a th:if="${role == 'master'}"
+   href="javascript:void(0)" 
+   class="link-action" 
+   onclick="openMasterPopup()">+ 마스터 변경</a>
+</div>
+
+<div class="submaster-section">
+  <label>부마스터</label>
+  <div class="submaster-container">
+   <!-- 부마스터 삭제도 마스터만 가능 -->
+<div id="subMasterList" class="submaster-list">
+    <span th:each="sm : ${currentSubMasters}"
+          th:text="${sm['NAME']} + ' ❌'"
+          th:data-id="${sm['ID']}"
+          class="submaster-badge"
+          th:onclick="${role == 'master'} ? 'removeSubMaster(this)' : null">부마스터</span>
+</div>
+    
+    <a th:if="${role == 'master'}"
+   href="javascript:void(0)" 
+   class="link-action" 
+   onclick="openSubMasterPopup()">+ 부마스터 추가</a>
+  </div>
+  
+  <input type="hidden" id="subMasterIds" th:value="${subMasterIds}" />
+</div>
+
+<br>
+  <!-- 저장/취소 -->
+ <div class="form-buttons">
+  <input type="submit" value="저장">
+  <input type="reset" value="취소">
+</div>
+</form>
     </div>
   </div>
 </div>

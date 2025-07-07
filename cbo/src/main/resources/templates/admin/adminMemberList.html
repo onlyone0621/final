@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="layouts/adminLayout">
+<head>
+<meta charset="UTF-8">
+<title>회원 목록</title>
+<style>
+body {
+	font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+	margin: 0;
+	padding: 0;
+	background-color: #fff;
+}
+
+.main-div {
+	display: flex;
+	min-height: 100vh;
+}
+
+.sidebar {
+	width: 230px;
+	background-color: #f7f3fa;
+	padding: 30px 20px;
+	border-right: 1px solid #ddd;
+	border-radius: 0 30px 30px 0;
+}
+
+.sidebar h4 {
+	text-align: center;
+	font-size: 22px;
+	margin-bottom: 20px;
+}
+
+ul {
+	list-style: none;
+	padding: 0;
+}
+
+ul li {
+	margin-bottom: 10px;
+}
+
+ul li a {
+	text-decoration: none;
+	color: #8e44ad;
+	font-weight: bold;
+}
+
+.content {
+	flex: 1;
+	display: flex;
+	justify-content: center;
+	padding: 30px;
+}
+
+.table-wrapper {
+	width: 100%;
+	max-width: 1100px;
+	background-color: #fef6f9;
+	padding: 30px;
+	border-radius: 12px;
+	box-shadow: 0 0 15px rgba(0,0,0,0.05);
+}
+
+h2 {
+	text-align: center;
+	font-size: 26px;
+	color: #d6336c;
+	margin-bottom: 20px;
+}
+
+table {
+	width: 100%;
+	border-collapse: collapse;
+	font-size: 16px;
+	background-color: #fff;
+}
+
+thead {
+	background-color: #ffebee;
+}
+
+th, td {
+	border: 1px solid #eee;
+	padding: 10px 12px;
+	text-align: center;
+}
+
+th {
+	color: #c2185b;
+	font-size: 17px;
+}
+
+tr:nth-child(even) {
+	background-color: #fdf9fb;
+}
+
+tr:nth-child(odd) {
+	background-color: #fffafa;
+}
+
+td a {
+	text-decoration: none;
+	color: #8e44ad;
+	font-weight: bold;
+}
+
+.paging {
+	margin-top: 20px;
+	text-align: center;
+}
+
+.paging a {
+	margin: 0 5px;
+	text-decoration: none;
+	color: #6a1b9a;
+}
+
+.paging a.active {
+	font-weight: bold;
+	color: #d81b60;
+}
+</style>
+</head>
+<body>
+	<div layout:fragment="content">
+		<div class="main-div">
+			<div class="sidebar">
+				<h4>관리자 메뉴</h4>
+				<ul>
+					<li><a th:href="@{/admin/memberAllList}">회원 목록</a></li>
+					<li><a th:href="@{/admin/memberAllList}">회원 수정</a></li>
+					<li><a th:href="@{/admin/memberDeleteList}">회원 삭제</a></li>
+				</ul>
+			</div>
+
+			<div class="content">
+				<div class="table-wrapper">
+					<h2>회원 목록</h2>
+					<table>
+						<thead>
+							<tr>
+								<th>번호</th>
+								<th>아이디</th>
+								<th>이름</th>
+								<th>이메일</th>
+								<th>연락처</th>
+								<th>부서</th>
+								<th>직급</th>
+								<th>관리</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr th:each="member, stat : ${members}">
+								<td th:text="${(cp - 1) * 10 + stat.index + 1}">1</td>
+								<td th:text="${member.user_id}">user1</td>
+								<td th:text="${member.name}">홍길동</td>
+								<td th:text="${member.email}">hong@example.com</td>
+								<td th:text="${member.tel}">010-0000-0000</td>
+								<td th:text="${member.dept_name}">개발부</td>
+								<td th:text="${member.grade_name}">대리</td>
+								<td><a th:href="@{/admin/memberUpdate/{user_id}(user_id=${member.user_id})}">수정</a></td>
+							</tr>
+							<tr th:if="${#lists.isEmpty(members)}">
+								<td colspan="8">회원 정보가 없습니다.</td>
+							</tr>
+						</tbody>
+					</table>
+
+					<div class="paging">
+						<span th:utext="${pageStr}"></span>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

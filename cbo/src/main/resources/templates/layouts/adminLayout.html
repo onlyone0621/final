@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+              xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+  <meta charset="UTF-8">
+  <title>관리자 페이지</title>
+  <link rel="stylesheet" th:href="@{/css/admin.css}">
+</head>
+<body>
+  <!-- HEADER -->
+  <div th:replace="~{fragments/adminHeader :: defaultAdminHeader}"></div>
+
+  <!-- MAIN CONTENT -->
+  <div class="container">
+    <div layout:fragment="content"></div>
+  </div>
+
+  <!-- FOOTER -->
+  <div th:replace="~{fragments/adminFooter :: defaultFooter}"></div>
+</body>
+</html>
