@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+				xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+				layout:decorate="layouts/messageLayout">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>보낸 메시지함</title>
+<script th:inline="javascript">
+	const curPage = /*[[${curPage}]]*/ 1;
+	const pageName = /*[[${pageName}]]*/ '';
+</script>
+<script th:src="@{/js/message/message-list.js}" defer></script>
+</head>
+<body>
+<div layout:fragment="content">
+	<h1>보낸 메시지함</h1>
+	<div
+		class="table-responsive"
+	>
+		<table
+			class="table table-primary text-center"
+		>
+			<thead>
+				<tr>
+					<th scope="col"><input type="checkbox" id="checkAll"></th>
+					<th scope="col" colspan="3" class="p-0">
+						<ul
+							class="nav nav-tabs"
+						>
+							<li class="nav-item">
+								<button type="button" class="nav-link" id="deleteMessages">삭제</a>
+							</li>
+						</ul>
+					</th>
+				</tr>
+			</thead>
+			<tbody id="tableBody" th:fragment="tableBody">
+				<tr th:if="${#lists.isEmpty(sentMessages)}">
+					<td colspan="4">메시지가 없습니다</td>
+				</tr>
+				<tr class="" th:each="sentMessage : ${sentMessages}" th:object="${sentMessage}">
+					<td scope="row"><input type="checkbox" name="selectedIds" th:value="*{id}"></td>
+					<td scope="row" th:text="*{receiver}"></td>
+					<td scope="row"><a class="text-decoration-none" th:text="*{title}" th:href="@{messageContent(id=*{id})}"></td>
+					<td scope="row" th:text="*{write_date}"></td>
+				</tr>
+				<tr>
+					<td colspan="4" th:utext="${pageBar}"></td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+</div>
+</body>
+</html>

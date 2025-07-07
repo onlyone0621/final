@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>마스터 선택</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      background-color: #fbf9fd;
+      margin: 0;
+      padding: 20px;
+    }
+
+    h3 {
+      color: #d81b60;
+      margin-bottom: 20px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #fff;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    th, td {
+      padding: 12px 8px;
+      text-align: center;
+      border-bottom: 1px solid #ddd;
+    }
+
+    th {
+      background-color: #f8bbd0;
+      color: #fff;
+    }
+
+    tr:hover {
+      background-color: #fce4ec;
+    }
+
+    .select-btn {
+      padding: 6px 12px;
+      background-color: #f8bbd0;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .select-btn:disabled {
+      background-color: #ddd;
+      cursor: not-allowed;
+    }
+
+    .select-btn:hover:not(:disabled) {
+      background-color: #f48fb1;
+    }
+  </style>
+</head>
+<body>
+
+<h3>마스터 선택</h3>
+
+<table>
+  <tr>
+    <th>선택</th>
+    <th>이름</th>
+    <th>부서</th>
+    <th>직급</th>
+  </tr>
+  <tr th:each="m : ${members}">
+    <td>
+      <button type="button"
+              class="select-btn"
+              th:data-id="${m['ID']}"
+              th:data-name="${m['NAME']}"
+              th:disabled="${m['ROLE']} == 'submaster'"
+              onclick="selectMaster(this)">선택</button>
+    </td>
+    <td th:text="${m['NAME']}">이름</td>
+    <td th:text="${m['DEPT_NAME']}">부서</td>
+    <td th:text="${m['GRADE_NAME']}">직급</td>
+  </tr>
+</table>
+
+<script>
+function selectMaster(btn) {
+  const id = btn.dataset.id;
+  const name = btn.dataset.name;
+  window.opener.setMaster(id, name);
+  window.close();
+}
+</script>
+
+</body>
+</html>

@@ -51,4 +51,5 @@ aside {
 
 .content {
     flex: 5;
+    padding: 24px;
 }

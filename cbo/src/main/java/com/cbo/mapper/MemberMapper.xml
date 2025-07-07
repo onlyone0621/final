@@ -4,7 +4,21 @@
   "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.cbo.mapper.MemberMapper">
 	<select id="selectMember" resultType="com.cbo.member.model.MemberDTO" parameterType="String">
-		select * from member where user_id = #{user_id}
+		SELECT member.id,
+		    member.user_id,
+		    member.name,
+		    member.email,
+		    member.address,
+		    member.tel,
+		    member.join_date,
+		    member.dept_id,
+		    member.profile_image,
+		    dept.name AS dept_name,
+		    grade.name AS grade_name
+		FROM member
+		    JOIN dept ON dept.id = member.dept_id
+		    JOIN grade ON grade.id = member.grade_id
+		WHERE member.user_id = #{user_id}
 	</select>
 	<select id="selectMemberId" resultType="String" parameterType="String">
 		select user_id from member where user_id=#{user_id}

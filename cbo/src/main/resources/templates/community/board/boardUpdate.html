@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="layouts/mainLayout">
+<head>
+  <meta charset="UTF-8">
+  <title>게시판 수정</title>
+  <style>
+    .container {
+      display: flex;
+      min-height: 100vh;
+    }
+    .sidebar {
+      width: 220px;
+      background-color: #fbf9fd;
+      padding: 20px;
+      border-right: 1px solid #ddd;
+    }
+    .sidebar h4 {
+      font-size: 18px;
+      margin: 0;
+    }
+    .sidebar ul {
+      list-style: none;
+      padding-left: 0;
+      font-size: 14px;
+      margin-top: 10px;
+    }
+    .sidebar ul li {
+      margin-bottom: 6px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .sidebar ul li a {
+      text-decoration: none;
+      color: #6a1b9a;
+      font-weight: bold;
+    }
+    .write-btn {
+      display: block;
+      padding: 6px 10px;
+      background-color: #f8bbd0;
+      color: #333;
+      text-decoration: none;
+      border-radius: 4px;
+      font-size: 12px;
+      margin: 10px 0;
+      text-align: center;
+    }
+    .write-btn:hover {
+      background-color: #f48fb1;
+    }
+    .add-board-link {
+      font-size: 12px;
+      color: #666;
+      text-decoration: none;
+      display: inline-block;
+      margin-top: 8px;
+    }
+    .add-board-link:hover {
+      color: #6a1b9a;
+      font-weight: bold;
+    }
+    .main {
+      flex-grow: 1;
+      padding: 20px;
+    }
+    .alert {
+      padding: 10px;
+      border-radius: 4px;
+      margin-bottom: 10px;
+    }
+    .alert-success {
+      background-color: #e1f5fe;
+      color: #0277bd;
+    }
+    .alert-error {
+      background-color: #ffebee;
+      color: #c62828;
+    }
+    form input[type="text"], form textarea {
+      width: 100%;
+      padding: 6px;
+      margin-bottom: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    form input[type="submit"] {
+      padding: 6px 12px;
+      background-color: #f8bbd0;
+      border: none;
+      border-radius: 4px;
+      color: #333;
+      cursor: pointer;
+    }
+    form input[type="submit"]:hover {
+      background-color: #f48fb1;
+    }
+  </style>
+</head>
+<body>
+<div layout:fragment="content">
+  <div class="container">
+
+    <!-- 사이드바 -->
+    <div class="sidebar">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+        <h4 th:text="${communityName ?: '커뮤니티'}">커뮤니티</h4>
+        <a th:href="@{/community/{cId}/update(cId=${cId})}" style="font-size: 16px;">⚙</a>
+      </div>
+
+      <a th:href="@{/community/{cId}/board/{boardId}/write(cId=${cId}, boardId=${boardId})}" class="write-btn">글쓰기</a>
+
+      <ul th:if="${#lists.isEmpty(sidebarBoardList)}">
+        <li>게시판이 없습니다.</li>
+      </ul>
+      <ul th:each="bdto : ${sidebarBoardList}">
+        <li>
+          <a th:href="@{/community/{cId}/board/{boardId}(cId=${cId}, boardId=${bdto.id})}"
+             th:text="${bdto.name}"></a>
+          <a th:href="@{/community/{cId}/board/{boardId}/update(cId=${cId}, boardId=${bdto.id})}">⚙</a>
+        </li>
+      </ul>
+
+      <a th:href="@{/community/{cId}/board/create(cId=${cId})}" class="add-board-link">+ 게시판 추가</a>
+    </div>
+
+    <!-- 메인 -->
+    <div class="main">
+      <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
+      <div th:if="${errorMessage}" class="alert alert-error" th:text="${errorMessage}"></div>
+
+      <form th:action="@{/community/{cId}/board/{boardId}/update(cId=${cId}, boardId=${boardId})}" method="post">
+        <label>게시판 이름</label>
+        <input type="text" name="name" th:value="${board.name}" required>
+
+        <label>게시판 설명</label>
+        <textarea name="description" required th:text="${board.description}"></textarea>
+
+        <input type="submit" value="저장">
+      </form>
+    </div>
+
+  </div>
+</div>
+</body>
+</html>

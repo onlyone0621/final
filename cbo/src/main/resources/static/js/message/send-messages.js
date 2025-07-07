@@ -1,0 +1,71 @@
+const memberListModal = document.querySelector('#memberListModal');
+
+// Uncheck all checkboxes and fold accordion when modal is closed
+memberListModal.addEventListener('hide.bs.modal', function () {
+    const accordionButtons = memberListModal.querySelectorAll('button.accordion-button')
+
+    accordionButtons.forEach(button => {
+        button.classList.add('collapsed');
+        button.setAttribute('aria-expanded', 'false');
+        document.querySelector(button.dataset.bsTarget).classList.remove('show');
+    });
+
+    const checkboxes = memberListModal.querySelectorAll('input[type="checkbox"][name="receiverIds"]');
+    checkboxes.forEach(cb => cb.checked = false);
+
+    if (memberListModal.contains(document.activeElement)) {
+        document.activeElement.blur();
+    }
+});
+
+// Pass selected member as receiver from modal to side tab's list
+document.querySelector('#confirmReceivers').addEventListener('click', function () {
+    const selectedCheckboxes = memberListModal.querySelectorAll('input[type="checkbox"][name="receiverIds"]:checked');
+    
+    const receiversList = document.querySelector('#receiversList');
+    const hiddenInputs = document.querySelector('#hiddenInputs');
+
+    // Clear list
+    receiversList.innerHTML = '';
+    hiddenInputs.innerHTML = '';
+
+    selectedCheckboxes.forEach(cb => {
+        const label = document.querySelector(`label[for=${cb.id}]`);
+        const nameAndGrade = label ? label.textContent : '알 수 없음';
+
+        const accordionBody = cb.closest('div.accordion-body');
+        const deptName = accordionBody?.dataset.dept || '알 수 없음'
+        const img = accordionBody.querySelector(`img[alt="profile_image"]`);
+
+        // Append list items
+        const li = document.createElement('li');
+        li.classList.add('list-group-item');
+        if (img) {
+            const clonedImg = img.cloneNode();
+            li.appendChild(clonedImg);
+        }
+        const span = document.createElement('span');
+        span.textContent = `${deptName} ${nameAndGrade}`;
+        li.appendChild(span);
+        receiversList.appendChild(li);
+
+        // Append hidden inputs
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = 'receiverIds';
+        input.value = cb.value;
+        hiddenInputs.appendChild(input);
+
+        // Close modal
+        bootstrap.Modal.getInstance(memberListModal)?.hide();
+    });
+});
+
+// Validate form
+document.querySelector('form').addEventListener('submit', function (evt) {
+    const receiverIds = document.querySelectorAll('input[type="hidden"][name="receiverIds"]')
+    if (receiverIds.length === 0){
+        window.alert('받는 사람을 선택하세요');
+        evt.preventDefault();
+    }
+});

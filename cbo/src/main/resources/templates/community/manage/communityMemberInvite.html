@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="layouts/mainLayout">
+<head>
+  <meta charset="UTF-8">
+  <title>멤버 초대</title>
+  <style>
+    .container {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    .sidebar {
+      width: 200px;
+      background: #fbf9fd;
+      padding: 20px;
+      border-right: 1px solid #ddd;
+    }
+
+    .sidebar h4 {
+      font-size: 18px;
+      margin-bottom: 10px;
+    }
+
+    .sidebar ul {
+      list-style: none;
+      padding: 0;
+      font-size: 14px;
+    }
+
+    .sidebar ul li {
+      margin-bottom: 6px;
+    }
+
+    .sidebar ul li span {
+      display: inline;
+    }
+
+    .sidebar a.link-action {
+      display: inline-block;
+      font-size: 12px;
+      color: #d81b60;
+      font-weight: bold;
+      text-decoration: none;
+      margin-bottom: 5px;
+    }
+
+    .sidebar a.link-action:hover {
+      text-decoration: underline;
+    }
+
+    .main {
+      flex-grow: 1;
+      padding: 20px;
+    }
+
+    button {
+      background: #f48fb1;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 8px 16px;
+      font-size: 14px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.2s ease;
+      margin-right: 8px;
+    }
+
+    button:hover {
+      background: #f06292;
+    }
+
+    button:active {
+      background: #ec407a;
+    }
+
+    #selectedMembers div {
+      margin: 4px 0;
+    }
+  </style>
+
+  <script>
+    const selectedMembers = [];
+
+    function openInvitePopup(cId) {
+      window.open('/community/' + cId + '/inviteList', 'invitePopup', 'width=600,height=400');
+    }
+
+    function addSelectedMember(id, name, grade) {
+      if (selectedMembers.find(m => m.id === id)) {
+        alert("이미 선택된 멤버입니다.");
+        return;
+      }
+
+      selectedMembers.push({ id, name, grade });
+
+      const container = document.getElementById('selectedMembers');
+      const div = document.createElement('div');
+      div.setAttribute('data-id', id);
+      div.textContent = grade + ' ' + name + ' ';
+
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.textContent = 'X';
+      btn.style.background = '#ccc';
+      btn.style.color = '#333';
+      btn.style.padding = '2px 6px';
+      btn.style.fontSize = '12px';
+      btn.style.marginLeft = '6px';
+      btn.style.borderRadius = '4px';
+      btn.onclick = function () {
+        container.removeChild(div);
+        const index = selectedMembers.findIndex(m => m.id === id);
+        if (index !== -1) selectedMembers.splice(index, 1);
+      };
+
+      div.appendChild(btn);
+      container.appendChild(div);
+    }
+
+    function sendInvites(cId) {
+      if (selectedMembers.length === 0) {
+        alert("선택된 멤버가 없습니다.");
+        return;
+      }
+
+      const ids = selectedMembers.map(m => m.id);
+      const xhr = new XMLHttpRequest();
+      xhr.open("POST", "/community/" + cId + "/invite", true);
+      xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+      xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4) {
+          if (xhr.status === 200) {
+            const response = JSON.parse(xhr.responseText);
+            alert(response.msg);
+            if (response.status === 'success') {
+              location.reload();
+            }
+          } else {
+            alert("초대 중 오류가 발생했습니다.");
+          }
+        }
+      };
+      xhr.send(JSON.stringify({ memberIds: ids }));
+    }
+  </script>
+</head>
+<body>
+  <div layout:fragment="content">
+    <div class="container">
+      <div class="sidebar">
+        <h4 th:text="${communityInfo != null ? communityInfo.name : '커뮤니티'}">커뮤니티</h4>
+
+        <!-- 게시판 목록 -->
+        <ul th:if="${#lists.isEmpty(sidebarBoardLists)}">
+          <li>게시판 없음</li>
+        </ul>
+        <ul th:each="bdto : ${sidebarBoardLists}">
+          <li>
+            <a th:href="@{/community/{cId}/board/{boardId}(cId=${cId}, boardId=${bdto.id})}">
+              [[${bdto.name}]]
+            </a>
+          </li>
+        </ul>
+
+        <th:block th:if="${userRole == 'master' or userRole == 'submaster'}">
+          <a th:href="@{/community/{cId}/board/create(cId=${cId})}" class="link-action">+ 게시판 추가</a>
+        </th:block>
+
+        <hr>
+
+        <h4>멤버</h4>
+        <ul th:if="${#lists.isEmpty(sidebarMemberLists)}">
+          <li>등록된 멤버 없음</li>
+        </ul>
+        <ul th:each="m : ${sidebarMemberLists}">
+          <li>
+            <span th:text="|${m['GRADE_NAME'] != null ? m['GRADE_NAME'] : '직급없음'} ${m['NAME']}|"></span>
+            <span th:if="${m['ROLE'] == 'master'}">👑 마스터</span>
+            <span th:if="${m['ROLE'] == 'submaster'}">🛡️ 부마스터</span>
+          </li>
+        </ul>
+
+        <th:block th:if="${userRole == 'master' or userRole == 'submaster'}">
+          <a th:href="@{/community/{cId}/invite(cId=${cId})}" class="link-action">+ 초대하기</a>
+        </th:block>
+      </div>
+
+      <div class="main">
+        <h3>멤버 초대</h3>
+        <div id="selectedMembers"></div>
+        <button type="button" th:onclick="'openInvitePopup(' + ${cId} + ')'">추가</button>
+        <button type="button" th:onclick="'sendInvites(' + ${cId} + ')'">초대하기</button>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

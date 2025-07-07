@@ -1,15 +1,24 @@
 package com.cbo.approval.service;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.cbo.approval.model.ApprovalLineDTO;
 import com.cbo.approval.model.DocDTO;
 import com.cbo.approval.model.DocViewDTO;
 import com.cbo.approval.model.FormatDTO;
+import com.cbo.constant.ApprovalConst;
 import com.cbo.mapper.ApprovalMapper;
+import com.cbo.member.model.OrganDTO;
 
 @Service
 public class ApprovalServiceImple implements ApprovalService {
@@ -98,16 +107,70 @@ public class ApprovalServiceImple implements ApprovalService {
 
 
 	@Override
-	public List<Map<String, Object>> getMembers() throws Exception {
+	public Map<String, List<OrganDTO>> getMembers() throws Exception {
 		// TODO Auto-generated method stub
-		return mapper.selectMembers();
+		List<OrganDTO> members = mapper.selectMembers();
+		
+		// Process members list grouping by dept 
+		return members.stream()
+				.collect(Collectors.groupingBy(OrganDTO :: getDept_name,
+						LinkedHashMap :: new,
+						Collectors.toList()));
+	}
+
+	@Override
+	@Transactional
+	public boolean submitDraft(DocDTO dto, List<Integer> approversId, List<Integer> reviewersId) throws Exception {
+		class NotInsertedException extends RuntimeException {
+			NotInsertedException(String message) {
+				super(message);
+			}
+		}
+
+		// Get id to be inserted in doc table
+		int docId = mapper.selectDocId();
+		dto.setId(docId);
+		
+		// Insert doc
+		if (mapper.insertDoc(dto) != 1) {
+			throw new NotInsertedException("Doc was not inserted");
+		}
+		
+		// Create list of approvers adding drafter, approvers, and reviewers
+		List<ApprovalLineDTO> entry = new ArrayList<>();
+		
+		entry.add(new ApprovalLineDTO(docId, dto.getMember_id(), null, null, null, null, ApprovalConst.DRAFT, null));
+		approversId.forEach(id -> entry.add(new ApprovalLineDTO(docId, id, null, null, null, null, ApprovalConst.PENDING, null)));
+		reviewersId.forEach(id -> entry.add(new ApprovalLineDTO(docId, id, null, null, null, null, ApprovalConst.REFERENCE, null)));
+		
+		// Insert approval lines
+		for (ApprovalLineDTO elem : entry) {
+			if (mapper.insertApprovalLines(elem) != 1) {
+				throw new NotInsertedException("Approver was not inserted for member ID: " + elem.getMember_id());
+			}
+		}
+		
+		return true;
 	}
 
 
 	@Override
-	public int insertTemplate(FormatDTO dto) throws Exception {
-		// TODO Auto-generated method stub
-		return mapper.insertTemplate(dto);
+	public int approve(int docId, int memberId) throws Exception {
+		Map<String, Object> map = new HashMap<>();
+		map.put("doc_id", docId);
+		map.put("member_id", memberId);
+		map.put("status", ApprovalConst.APPROVED);
+		return mapper.updateStatus(map);
+	}
+
+
+	@Override
+	public int reject(int docId, int memberId) throws Exception {
+		Map<String, Object> map = new HashMap<>();
+		map.put("doc_id", docId);
+		map.put("member_id", memberId);
+		map.put("status", ApprovalConst.REJECTED);
+		return mapper.updateStatus(map);
 	}
 
 }

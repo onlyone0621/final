@@ -1,81 +1,139 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org"
-				xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="layouts/mainLayout">
 <head>
   <meta charset="UTF-8">
   <title>커뮤니티 개설</title>
   <style>
+    .layout {
+      display: flex;
+      min-height: 100vh;
+    }
     .sidebar {
-      width: 200px;
+      width: 220px;
       background-color: #fbf9fd;
       padding: 20px;
-      box-sizing: border-box;
       border-right: 1px solid #ddd;
+      box-sizing: border-box;
     }
-
     .sidebar h4 {
-      margin-bottom: 15px;
       font-size: 18px;
+      margin-bottom: 10px;
     }
-
-    .sidebar button {
-      width: 100%;
-      padding: 8px;
+    .sidebar a.create-link {
+      display: inline-block;
       margin-bottom: 15px;
+      padding: 10px 20px;
+      background-color: #f8bbd0;
+      color: #333;
+      text-decoration: none;
+      border-radius: 4px;
+      font-weight: bold;
+      text-align: center;
     }
-
+    .sidebar a.create-link:hover {
+      background-color: #f48fb1;
+    }
     .sidebar ul {
       list-style: none;
       padding-left: 0;
       font-size: 14px;
     }
-
     .sidebar ul li {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
       margin-bottom: 8px;
     }
-
-    .container {
-      display: flex;
+    .sidebar ul li a.name-link {
+      text-decoration: none;
+      color: #6a1b9a;
+      font-weight: bold;
+    }
+    .sidebar ul li a.settings-icon {
+      text-decoration: none;
+      font-size: 16px;
+      color: #999;
     }
 
-    .main {
+    .main-content {
+      flex: 1;
       padding: 20px;
-      flex-grow: 1;
+    }
+    form {
+      max-width: 500px;
+    }
+    form label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+    form input[type="text"],
+    form textarea {
+      width: 100%;
+      padding: 8px 10px;
+      margin-bottom: 12px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+    form textarea {
+      height: 100px;
+      resize: vertical;
+    }
+    form input[type="submit"],
+    form input[type="reset"] {
+      padding: 10px 20px;
+      font-size: 14px;
+      border: none;
+      border-radius: 4px;
+      background-color: #f8bbd0;
+      color: #333;
+      cursor: pointer;
+      margin-right: 8px;
+    }
+    form input[type="submit"]:hover,
+    form input[type="reset"]:hover {
+      background-color: #f48fb1;
     }
   </style>
 </head>
 <body>
+<div layout:fragment="content">
+  <div class="layout">
+    <div class="sidebar">
+      <h4>커뮤니티</h4>
+      <a th:href="@{/communityCreate}" class="create-link">커뮤니티 생성</a>
 
-<div class="container">
-  <div class="sidebar">
-    <h4>커뮤니티</h4>
-    <button>커뮤니티 생성</button>
-    <ul>
-      <li>가입 커뮤니티 1</li>
-      <li>가입 커뮤니티 2</li>
-      <li>가입 커뮤니티 3</li>
-    </ul>
-  </div>
+      <ul th:if="${#lists.isEmpty(lists)}">
+        <li>생성된 커뮤니티가 없습니다.</li>
+      </ul>
+      <ul th:each="cdto : ${lists}">
+        <li>
+          <a th:href="@{/community/{id}(id=${cdto.id})}" class="name-link">[[${cdto.name}]]</a>
+          <a th:href="@{/community/{id}/update(id=${cdto.id})}" class="settings-icon">⚙</a>
+        </li>
+      </ul>
+    </div>
 
+    <div class="main-content">
+      <h2>커뮤니티 개설</h2>
+      <form th:action="@{/communityCreate}" method="post">
+        <label for="name">커뮤니티 명</label>
+        <input type="text" name="name" id="name" placeholder="2자 이상 60자 이하 입력"
+               required minlength="2" maxlength="60">
 
-  <div class="main">
-    <h2>커뮤니티 개설</h2>
-<form name="communityCreate" action="communityCreate" method="post">
-  <ul>
-    <li>커뮤니티 명 : 
-      <input type="text" name="name" placeholder="2자 이상 60자 이하를 입력">
-    </li>
-    <li>소개 : 
-      <input type="text" name="description">
-    </li>
-  </ul>
-  <div>
-    <input type="submit" value="확인">
-    <input type="reset" value="취소">
-  </div>
-</form>
+        <label for="description">소개</label>
+        <textarea name="description" id="description" required
+                  placeholder="커뮤니티를 간단히 소개해주세요 (최대 300자)"
+                  maxlength="300"></textarea>
+
+        <input type="submit" value="확인">
+        <input type="reset" value="취소">
+      </form>
+    </div>
   </div>
 </div>
-
 </body>
 </html>

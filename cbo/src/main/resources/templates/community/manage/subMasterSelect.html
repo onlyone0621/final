@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>부마스터 선택</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      background-color: #fbf9fd;
+      margin: 0;
+      padding: 20px;
+    }
+
+    h3 {
+      color: #d81b60;
+      margin-bottom: 20px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #fff;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    th, td {
+      padding: 12px 8px;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+    }
+
+    th {
+      background-color: #f8bbd0;
+      color: #fff;
+    }
+
+    tr:hover {
+      background-color: #fce4ec;
+    }
+
+    input[type="checkbox"] {
+      transform: scale(1.4);
+      cursor: pointer;
+    }
+
+    .button-container {
+      margin-top: 20px;
+      text-align: center;
+    }
+
+    .confirm-btn {
+      padding: 10px 20px;
+      background-color: #f8bbd0;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    .confirm-btn:hover {
+      background-color: #f48fb1;
+    }
+  </style>
+</head>
+<body>
+
+<h3>부마스터 선택</h3>
+
+<table>
+  <tr>
+    <th>선택</th>
+    <th>이름</th>
+    <th>부서</th>
+    <th>직급</th>
+  </tr>
+  <tr th:each="m : ${members}">
+    <td>
+      <input type="checkbox" name="submasterChk"
+             th:value="${m['ID']}"
+             th:data-name="${m['NAME']}"
+             th:disabled="${m['ROLE']} == 'master' or ${m['ROLE']} == 'submaster'">
+    </td>
+    <td th:text="${m['NAME']}">홍길동</td>
+    <td th:text="${m['DEPT_NAME']}">개발팀</td>
+    <td th:text="${m['GRADE_NAME']}">대리</td>
+  </tr>
+</table>
+
+<div class="button-container">
+  <button class="confirm-btn" onclick="submitSubmasters()">확인</button>
+</div>
+
+<script>
+function submitSubmasters() {
+  const ids = [];
+  const names = [];
+  document.querySelectorAll('input[name="submasterChk"]:checked').forEach(el => {
+    ids.push(el.value);
+    names.push(el.dataset.name);
+  });
+  window.opener.setSubMasters(ids, names);
+  window.close();
+}
+</script>
+
+</body>
+</html>

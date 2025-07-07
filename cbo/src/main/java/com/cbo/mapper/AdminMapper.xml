@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.cbo.mapper.AdminMapper">
+
+ <!-- 상세 목록 (10개씩 페이징) -->
+<select id="selectMemberDetailList" resultType="com.cbo.member.model.MemberDTO">
+<![CDATA[
+SELECT * FROM (
+  SELECT a.*, ROWNUM rnum
+  FROM (
+    SELECT m.id, m.user_id, m.name, m.email, m.tel,
+           d.name AS dept_name,
+           g.name AS grade_name
+    FROM member m
+    LEFT JOIN dept d ON m.dept_id = d.id
+    LEFT JOIN grade g ON m.grade_id = g.id
+    ORDER BY m.join_date DESC, m.id
+  ) a
+  WHERE ROWNUM <= #{end}
+)
+WHERE rnum >= #{start}
+]]>
+</select>
+
+
+
+<!-- 전체 회원수 조회 전용 -->
+
+    <select id="memberTotalCount" resultType="int">
+        <![CDATA[
+        SELECT COUNT(*) FROM member
+        ]]>
+    </select>
+
+  
+<!-- (수정용) 회원 정보 조회 -->
+<select id="selectMember" parameterType="String" resultType="com.cbo.member.model.MemberDTO">
+  SELECT 
+    id, user_id, name, tel, email, address, dept_id, grade_id, profile_image
+  FROM member
+  WHERE user_id = #{user_id}
+</select>
+
+<!-- 부서 목록 -->
+<select id="selectDept" resultType="com.cbo.dept.model.DeptDTO">
+  SELECT id, name FROM dept ORDER BY id ASC
+</select>
+
+<!-- 직급 목록 -->
+<select id="selectGrade" resultType="com.cbo.grade.model.GradeDTO">
+  SELECT id, name FROM grade ORDER BY id ASC
+</select>
+
+<!-- 회원 정보 수정 -->
+<update id="updateMemberInfo" parameterType="com.cbo.member.model.MemberDTO">
+  UPDATE member
+  SET 
+    name = #{name},
+    tel = #{tel},
+    email = #{email},
+    address = #{address},
+    dept_id = #{dept_id},
+    grade_id = #{grade_id},
+    profile_image = 
+      <if test="profile_image != null">
+        #{profile_image, jdbcType=VARCHAR}
+      </if>
+      <if test="profile_image == null">
+        profile_image
+      </if>
+  WHERE id = #{id}
+</update>
+
+<!-- 삭제용 간단 목록 -->
+<select id="basicMemberList" resultType="com.cbo.member.model.MemberDTO">
+  SELECT 
+    m.id,
+    m.name,
+    m.tel,
+    m.dept_id,
+    d.name AS dept_name,
+    m.grade_id,
+    g.name AS grade_name
+  FROM member m
+  LEFT JOIN dept d ON m.dept_id = d.id
+  LEFT JOIN grade g ON m.grade_id = g.id
+  ORDER BY m.id ASC
+</select>
+
+ <!-- 회원 삭제 --> 
+<delete id="DeleteMembers" parameterType="list">
+  DELETE FROM member WHERE id IN 
+  <foreach collection="mid" item="id" separator="," open="(" close=")">
+    #{id}
+  </foreach>
+</delete>
+
+</mapper>

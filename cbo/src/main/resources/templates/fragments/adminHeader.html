@@ -1,0 +1,16 @@
+<header class="admin-header" th:fragment="defaultAdminHeader">
+  <div class="logo">
+    <a th:href="@{/admin/memberAllList}">관리자 홈</a>
+  </div>
+  <ul class="admin-links">
+    <li><a th:href="@{/admin/memberAllList}">회원 목록</a></li>
+    <li><a th:href="@{/admin/memberAllList}">회원 수정</a></li>
+     <li><a th:href="@{/admin/memberDeleteList}">회원 삭제</a></li>
+   <li><a href="/myCalendar">유저 홈</a></li>
+    
+  </ul>
+  <div class="admin-user">
+    <span th:if="${session.udto != null}" th:text="|${session.udto.name} 님 (관리자)|">관리자</span>
+    <a th:href="@{/memberLogout}">로그아웃</a>
+  </div>
+</header>
