@@ -1,10 +1,13 @@
 package com.cbo.controller;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -158,16 +161,32 @@ public class MessageController {
 			@RequestParam MultipartFile attatchment,
 			@RequestParam List<Integer> receiverIds,
 			@SessionAttribute(MemberConst.USER_KEY) MemberDTO userInfo) {
-		boolean isSent = false; 
+		boolean res = false; 
 		dto.setSender_id(userInfo.getId());
+		
+		if (!attatchment.isEmpty()) {
+			File dir = new File(MessageConst.SAVE_PATH);
+			if (!dir.exists()) {
+				dir.mkdir();
+			}
+			File file = new File(MessageConst.SAVE_PATH, attatchment.getOriginalFilename());
+			try {
+				FileCopyUtils.copy(attatchment.getBytes(), file);
+				dto.setFile_name(attatchment.getOriginalFilename());
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+
 		try {
-			isSent = messageService.sendMessages(dto, receiverIds);
+			res = messageService.sendMessages(dto, receiverIds);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
-		String msg = isSent ? "메시지 전송 성공" : "메시지 전송 실패";
+		String msg = res ? "메시지 전송 성공" : "메시지 전송 실패";
 		ModelAndView mav = new ModelAndView("message/messageMsg");
 		mav.addObject("msg", msg);
 		mav.addObject("dest", "receivedMessages");
@@ -231,5 +250,14 @@ public class MessageController {
 			e.printStackTrace();
 		}
 		return -1;
+	}
+	
+	@GetMapping("messageAttatchmentDownload")
+	public ModelAndView fileDown(String fileName) {
+		File f = new File(MessageConst.SAVE_PATH + fileName);
+		
+		ModelAndView mav = new ModelAndView("downloadView");
+		mav.addObject("fileDown", f);
+		return mav;
 	}
 }

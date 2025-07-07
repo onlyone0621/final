@@ -94,6 +94,7 @@ public class MessageServiceImple implements MessageService {
 		
 		for (int id : receiverIds) {
 			dto.setReceiver_id(id);
+
 			if (mapper.insertMessages(dto) != 1) 
 				throw new NotInsertedException("Message not inserted");
 		}

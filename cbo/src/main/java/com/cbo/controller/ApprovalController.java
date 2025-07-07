@@ -24,16 +24,15 @@ import com.cbo.constant.ApprovalConst;
 import com.cbo.constant.MemberConst;
 import com.cbo.member.model.MemberDTO;
 import com.cbo.member.model.OrganDTO;
+import com.cbo.pagination.Pagination;
 
 @Controller
 public class ApprovalController {
 
-    private final IndexController indexController;
 	private final ApprovalService approvalService;
 	
-	public ApprovalController(ApprovalService approvalService, IndexController indexController) {
+	public ApprovalController(ApprovalService approvalService) {
 		this.approvalService = approvalService;
-		this.indexController = indexController;
 	}
 	
 	@ModelAttribute("formats")
@@ -53,86 +52,122 @@ public class ApprovalController {
 	}
 	
 	@GetMapping("/pendingApprovalDocs")
-	public ModelAndView pendingApprovalDocs(@SessionAttribute(MemberConst.USER_KEY) MemberDTO userInfo) {
+	public ModelAndView pendingApprovalDocs(@RequestParam(defaultValue = "1") int curPage,
+			@SessionAttribute(MemberConst.USER_KEY) MemberDTO userInfo) {
 		List<DocViewDTO> res = null;
 		try {
-			res = approvalService.getPendingApprovalDocs(userInfo.getId());
+			res = approvalService.getPendingApprovalDocs(userInfo.getId(), curPage);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
+		int maxRows = res != null && res.size() > 0 ? res.get(0).getMax_rows() : 1;
+		String pageBar = Pagination.makePaging("pendingApprovalDocs", maxRows, ApprovalConst.ROWS, ApprovalConst.PAGES, curPage);
+		
 		ModelAndView mav = new ModelAndView("approval/pendingApprovalDocs");
 		mav.addObject("pendingApprovalDocs", res);
+		mav.addObject("pageBar", pageBar);
 		return mav;
 	}
 	
 	@GetMapping("/pendingReferenceDocs")
-	public ModelAndView pendingReferenceDocs(@SessionAttribute(MemberConst.USER_KEY) MemberDTO userInfo) {
+	public ModelAndView pendingReferenceDocs(@RequestParam(defaultValue = "1") int curPage,
+			@SessionAttribute(MemberConst.USER_KEY) MemberDTO userInfo) {
 		List<DocViewDTO> res = null;
 		try {
-			res = approvalService.getPendingReferenceDocs(userInfo.getId());
+			res = approvalService.getPendingReferenceDocs(userInfo.getId(), curPage);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
+		int maxRows = res != null && res.size() > 0 ? res.get(0).getMax_rows() : 1;
+		String pageBar = Pagination.makePaging("pendingReferenceDocs", maxRows, ApprovalConst.ROWS, ApprovalConst.PAGES, curPage);
+		
 		ModelAndView mav = new ModelAndView("approval/pendingReferenceDocs");
 		mav.addObject("pendingReferenceDocs", res);
+		mav.addObject("pageBar", pageBar);
 		return mav;
 	}
 	
 	@GetMapping("/scheduledApprovalDocs")
-	public ModelAndView scheduledApprovalDocs(@SessionAttribute(MemberConst.USER_KEY) MemberDTO userInfo) {
+	public ModelAndView scheduledApprovalDocs(@RequestParam(defaultValue = "1") int curPage,
+			@SessionAttribute(MemberConst.USER_KEY) MemberDTO userInfo) {
 		List<DocViewDTO> res = null;
 		try {
-			res = approvalService.getScheduledApprovalDocs(userInfo.getId());
+			res = approvalService.getScheduledApprovalDocs(userInfo.getId(), curPage);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
+		int maxRows = res != null && res.size() > 0 ? res.get(0).getMax_rows() : 1;
+		String pageBar = Pagination.makePaging("scheduledApprovalDocs", maxRows, ApprovalConst.ROWS, ApprovalConst.PAGES, curPage);
+		
 		ModelAndView mav = new ModelAndView("approval/scheduledApprovalDocs");
 		mav.addObject("scheduledApprovalDocs", res);
+		mav.addObject("pageBar", pageBar);
 		return mav;
 	}
 	
 	@GetMapping("/approvalDocs")
-	public ModelAndView approvalDocs(@SessionAttribute(MemberConst.USER_KEY) MemberDTO userInfo) {
+	public ModelAndView approvalDocs(@RequestParam(defaultValue = "1") int curPage,
+			@SessionAttribute(MemberConst.USER_KEY) MemberDTO userInfo) {
 		List<DocViewDTO> res = null;
 		try {
-			res = approvalService.getApprovalDocs(userInfo.getId());
+			res = approvalService.getApprovalDocs(userInfo.getId(), curPage);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
+		int maxRows = res != null && res.size() > 0 ? res.get(0).getMax_rows() : 1;
+		String pageBar = Pagination.makePaging("approvalDocs", maxRows, ApprovalConst.ROWS, ApprovalConst.PAGES, curPage);
+		
 		ModelAndView mav = new ModelAndView("approval/approvalDocs");
 		mav.addObject("approvalDocs", res);
+		mav.addObject("pageBar", pageBar);
 		return mav;
 	}
 	
 	@GetMapping("/referenceDocs")
-	public ModelAndView referenceDocs(@SessionAttribute(MemberConst.USER_KEY) MemberDTO userInfo) {
+	public ModelAndView referenceDocs(@RequestParam(defaultValue = "1") int curPage,
+			@SessionAttribute(MemberConst.USER_KEY) MemberDTO userInfo) {
 		List<DocViewDTO> res = null;
 		try {
-			res = approvalService.getReferenceDocs(userInfo.getId());
+			res = approvalService.getReferenceDocs(userInfo.getId(), curPage);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
+		int maxRows = res != null && res.size() > 0 ? res.get(0).getMax_rows() : 1;
+		String pageBar = Pagination.makePaging("referenceDocs", maxRows, ApprovalConst.ROWS, ApprovalConst.PAGES, curPage);
+		
 		ModelAndView mav = new ModelAndView("approval/referenceDocs");
 		mav.addObject("referenceDocs", res);
+		mav.addObject("pageBar", pageBar);
 		return mav;
 	}
 	
 	@GetMapping("/draftDocs")
-	public ModelAndView draftDocs(@SessionAttribute(MemberConst.USER_KEY) MemberDTO userInfo) {
+	public ModelAndView draftDocs(@RequestParam(defaultValue = "1") int curPage,
+			@SessionAttribute(MemberConst.USER_KEY) MemberDTO userInfo) {
 		List<DocViewDTO> res = null;
 		try {
-			res = approvalService.getDraftDocs(userInfo.getId());
+			res = approvalService.getDraftDocs(userInfo.getId(), curPage);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
+		int maxRows = res != null && res.size() > 0 ? res.get(0).getMax_rows() : 1;
+		String pageBar = Pagination.makePaging("draftDocs", maxRows, ApprovalConst.ROWS, ApprovalConst.PAGES, curPage);
+		
 		ModelAndView mav = new ModelAndView("approval/draftDocs");
 		mav.addObject("draftDocs", res);
+		mav.addObject("pageBar", pageBar);
 		return mav;
 	}
 	
@@ -169,9 +204,9 @@ public class ApprovalController {
 			if (!dir.exists()) {
 	            dir.mkdirs();
 	        }
-	        File image = new File(dir, attatchment.getOriginalFilename());
+	        File file = new File(dir, attatchment.getOriginalFilename());
 	        try {
-				FileCopyUtils.copy(attatchment.getBytes(), image);
+				FileCopyUtils.copy(attatchment.getBytes(), file);
 				dto.setFile_name(attatchment.getOriginalFilename());
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
@@ -255,7 +290,7 @@ public class ApprovalController {
 		return mav;
 	}
 	
-	@GetMapping("/fileDown")
+	@GetMapping("/approvalAttatchmentDownload")
 	public ModelAndView fileDown(String fileName) {
 		File f = new File(ApprovalConst.SAVE_PATH + fileName);
 		

@@ -49,7 +49,10 @@
 			<div class="mb-3 row">
 				<span class="col-sm-2">첨부파일</span>
 				<div class="col-sm-10">
-					<span class="placeholder-wave col-3 placeholder-lg"><a class="text-decoration-none" href="#" th:unless="${#strings.isEmpty(messageContent.file_name)}" th:text="*{file_name}">첨부파일</a></span>
+					<span class="placeholder-wave col-3 placeholder-lg" th:if="${#strings.isEmpty(messageContent.file_name)}">첨부파일 없음</span>
+					<span class="placeholder-wave col-3 placeholder-lg" th:unless="${#strings.isEmpty(messageContent.file_name)}">
+						<a th:href="@{messageAttatchmentDownload(fileName=*{file_name})}" th:text="*{file_name}"></a>
+					</span>
 				</div>
 			</div>
 			

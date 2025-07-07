@@ -37,44 +37,81 @@ public class ApprovalServiceImple implements ApprovalService {
 	}
 
 	@Override
-	public List<DocViewDTO> getApprovalDocs(int id) throws Exception {
-		// TODO Auto-generated method stub
-		return mapper.selectApprovalDocs(id);
+	public List<DocViewDTO> getApprovalDocs(int id, int curPage) throws Exception {
+		Map<String, Object> map = new HashMap<>();
+		map.put("id", id);
+		
+		int start = (curPage - 1) * ApprovalConst.ROWS + 1;
+		int end = curPage * ApprovalConst.ROWS;
+		map.put("start", start);
+		map.put("end", end);
+		
+		return mapper.selectApprovalDocs(map);
 	}
 
 
 	@Override
-	public List<DocViewDTO> getReferenceDocs(int id) throws Exception {
-		// TODO Auto-generated method stub
-		return mapper.selectReferenceDocs(id);
+	public List<DocViewDTO> getReferenceDocs(int id, int curPage) throws Exception {
+		Map<String, Object> map = new HashMap<>();
+		map.put("id", id);
+		
+		int start = (curPage - 1) * ApprovalConst.ROWS + 1;
+		int end = curPage * ApprovalConst.ROWS;
+		map.put("start", start);
+		map.put("end", end);
+		return mapper.selectReferenceDocs(map);
 	}
 
 
 	@Override
-	public List<DocViewDTO> getDraftDocs(int id) throws Exception {
-		// TODO Auto-generated method stub
-		return mapper.selectDraftDocs(id);
+	public List<DocViewDTO> getDraftDocs(int id, int curPage) throws Exception {
+		Map<String, Object> map = new HashMap<>();
+		map.put("id", id);
+		
+		int start = (curPage - 1) * ApprovalConst.ROWS + 1;
+		int end = curPage * ApprovalConst.ROWS;
+		map.put("start", start);
+		map.put("end", end);
+		return mapper.selectDraftDocs(map);
 	}
 
 
 	@Override
-	public List<DocViewDTO> getPendingApprovalDocs(int id) throws Exception {
-		// TODO Auto-generated method stub
-		return mapper.selectPendingApprovalDocs(id);
+	public List<DocViewDTO> getPendingApprovalDocs(int id, int curPage) throws Exception {
+		Map<String, Object> map = new HashMap<>();
+		map.put("id", id);
+		
+		int start = (curPage - 1) * ApprovalConst.ROWS + 1;
+		int end = curPage * ApprovalConst.ROWS;
+		map.put("start", start);
+		map.put("end", end);
+		return mapper.selectPendingApprovalDocs(map);
 	}
 
 
 	@Override
-	public List<DocViewDTO> getPendingReferenceDocs(int id) throws Exception {
-		// TODO Auto-generated method stub
-		return mapper.selectPendingReferenceDocs(id);
+	public List<DocViewDTO> getPendingReferenceDocs(int id, int curPage) throws Exception {
+		Map<String, Object> map = new HashMap<>();
+		map.put("id", id);
+		
+		int start = (curPage - 1) * ApprovalConst.ROWS + 1;
+		int end = curPage * ApprovalConst.ROWS;
+		map.put("start", start);
+		map.put("end", end);
+		return mapper.selectPendingReferenceDocs(map);
 	}
 
 
 	@Override
-	public List<DocViewDTO> getScheduledApprovalDocs(int id) throws Exception {
-		// TODO Auto-generated method stub
-		return mapper.selectScheduledApprovalDocs(id);
+	public List<DocViewDTO> getScheduledApprovalDocs(int id, int curPage) throws Exception {
+		Map<String, Object> map = new HashMap<>();
+		map.put("id", id);
+		
+		int start = (curPage - 1) * ApprovalConst.ROWS + 1;
+		int end = curPage * ApprovalConst.ROWS;
+		map.put("start", start);
+		map.put("end", end);
+		return mapper.selectScheduledApprovalDocs(map);
 	}
 
 

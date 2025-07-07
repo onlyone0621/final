@@ -485,7 +485,7 @@ VALUES (sq_format_id.NEXTVAL, '기안문', '<div style="font-family: Arial, sans
   <tr>
     <th style="border: 1px solid #000; padding: 8px; background-color: #ccc; text-align: left;">제목</th>
     <td style="border: 1px solid #000; padding: 8px;">
-      <input type="text" id="title" style="width: 100%; box-sizing: border-box;">
+      <input type="text" id="title" required style="width: 100%; box-sizing: border-box;">
     </td>
   </tr>
   <tr>
@@ -529,7 +529,7 @@ VALUES (sq_format_id.NEXTVAL, '진료비 지원 신청서', '   <div style="font
   <tr>
     <th style="border: 1px solid #000; padding: 5px; background-color: #ccc;">제목</th>
     <td style="border: 1px solid #000; padding: 5px;">
-      <input type="text" id="title" style="width: 100%; box-sizing: border-box;">
+      <input type="text" id="title" required style="width: 100%; box-sizing: border-box;">
     </td>
   </tr>
   <tr>
@@ -605,7 +605,7 @@ VALUES (sq_format_id.NEXTVAL, '휴가 신청서', '    <div style="font-family: 
       제목
     </th>
     <td style="border: 1px solid #000; padding: 8px;">
-      <input type="text" id="title" style="width: 100%; box-sizing: border-box;">
+      <input type="text" id="title" required style="width: 100%; box-sizing: border-box;">
     </td>
   </tr>
 </table>
@@ -761,7 +761,7 @@ VALUES (2, 14, '결재 완료', TO_DATE('2025-06-13', 'YYYY-MM-DD')); -- 차장
 INSERT INTO approval_line (doc_id, member_id, status, process_date)
 VALUES (2, 9, '반려', TO_DATE('2025-06-14', 'YYYY-MM-DD'));       -- 부장
 
--- 참조자
+-- 참조자 
 INSERT INTO approval_line (doc_id, member_id, status, process_date)
 VALUES (2, 11, '참조', TO_DATE('2025-06-10', 'YYYY-MM-DD'));
 
