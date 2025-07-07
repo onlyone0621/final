@@ -10,19 +10,24 @@
     <nav class="header">
         <div class="logo"><a href="/">Header Logo</a></div>
         <ul class="header-links">
-            <li><a href="myCalendar">일정관리</a></li>
-            <li><a href="receivedMessages">메시지</a></li>
-            <li><a href="addrMain">주소록</a></li>
-            <li><a href="approvalMain">전자결재</a></li>
+            <li><a href="/myCalendar">일정관리</a></li>
+            <li><a href="/receivedMessages">메시지</a></li>
+            <li><a href="/addrMain">주소록</a></li>
+            <li><a href="/approvalMain">전자결재</a></li>
             <li><a href="#">자료실</a></li>
             <li><a href="/communityMainNewest">커뮤니티</a></li>
-            <li><a href="messengerMain">메신저</a></li>
+            <li><a href="/messengerMain">메신저</a></li>
+            <li th:if="${adminId == 1}">
+  				<a href="/admin/memberAllList">관리자</a>
+			</li>
+       
+            
         </ul>
         <div class="header-a">
-            <a href="memberInfoUpdate">
+            <a href="/memberInfoUpdate">
             	<label th:if="${session.udto != null}" th:text="${session.udto.name}"></label>
         		<label th:unless="${session.udto != null}">사용자</label> 님
-            </a> | <a href="memberLogout">로그아웃</a>
+            </a> | <a href="/memberLogout">로그아웃</a>
         </div>
     </nav>
 </header>

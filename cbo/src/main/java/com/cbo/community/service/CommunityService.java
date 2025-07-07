@@ -13,7 +13,10 @@ import com.cbo.member.model.MemberDTO;
 
 public interface CommunityService {
 
+	//커뮤니티 생성
 	public int insertCommunity(CommunityDTO dto) throws Exception;
+	public int insertCommunityMaster(int community_id, int member_id) throws Exception; // (커뮤니티 생성자 = 마스터 생성은  serviceImple에서만)
+	
 	public int deleteCommunity(int id) throws Exception;
 	public List<CommunityDTO> communityList() throws Exception;
 	public int insertBoard(BoardDTO dto) throws Exception;
@@ -86,12 +89,11 @@ public interface CommunityService {
 
 	///// 권한 부여 
 
- // 가입된 멤버 리스트 가져오기
-    public List<Map<String, Object>> joinMemberList(int cId) throws Exception; 
 
+    // 가입된 멤버 리스트 가져오기
+    public List<Map<String, Object>> joinMemberList(int cId) throws Exception;   //  Map으로 변경 MemberDTO → Map 으로 변경 (post_count 표시 위함)
     // 가입 대기 멤버 리스트 가져오기
-    public List<Map<String, Object>> pendingMemberList(int cId) throws Exception;
-
+    public List<Map<String, Object>> pendingMemberList(int cId) throws Exception; //  Map으로 변경
     
     // 가입 승인 (가입대기 → user)
     public void approveMember(int cId, int memberId) throws Exception; 
@@ -103,7 +105,67 @@ public interface CommunityService {
     public void removeMember(int cId, int memberId) throws Exception; 
 
     // 권한 변경 (예: submaster ↔ user)
-    public void changeRole(int cId, int memberId, String role) ;
+    public void changeRole(int cId, int memberId, String role) throws Exception ;
+    
+    //마스터 조회
+    public String selectMemberRole(int cId, int memberId) throws Exception;
+    //////////////////////////
+    
+ 	//////////////// 멤버 초대 main ///////////////
+ 	
+ 	
+ // 사이드바 멤버 목록(이름, 직책, 역할(마스터))
+ 	public List<Map<String, Object>> sidebarMemberList(int cId) throws Exception;
+ 		
+ 	//모든 멤버 상세정보 full 정보 (사이드바 전체보기 버튼 클릭 시 보임 )
+ 	public List<Map<String, Object>> fullMemberList(int cId) throws Exception;
+    
+	// 초대할 멤버 목록 조회(role=null이면 미가입 상태)
+	public List<Map<String, Object>>selectMemberInviteList(int cId) throws Exception;
+	
+	//현재 커뮤니티에서 현재 사용자의 역할 알기(마스터, 부마스터만 멤버초대 할 수 있도록 + 멤버추가버튼도 둘만 볼 숭 있음)
+	public String getCommunityRole(int cId, int memberId) throws Exception;
+
+	// 초대 할 때 이미 멤버인지 확인 ((초대 버튼 누를 때 중복 초대 방지) )
+	public int checkInviteAlreadyMember(int cId, int memberId) throws Exception;;
+	
+	//멤버 초대하기 (insert커뮤니티 가입 )
+	public void insertInviteMember(int cId, int memberId, String role) throws Exception;
+	
+	
+	///////////////////////마스터, 부마스터 지정(변경)/////////////////////
+
+	//가입된 멤버 전체 목록(커뮤니티 정보 수정) -	community_member + member + 부서 + 직급 JOIN, role별 정렬
+	public List<Map<String, Object>> selectJoinAllMembers(int cId) throws Exception;
+	
+	//현재 마스터 조회
+	public Map<String, Object> selectCurrentMaster(int cId) throws Exception;
+	
+	//현재 부마스터 목록 조회
+	public List<Map<String, Object>> selectCurrentSubmasters(int cId) throws Exception;
+	
+	//마스터 변경 - 지정 id는 master, 나머지는 user 처리
+	public void updateMasterRole(int cId, int newMasterId) throws Exception;
+	
+	//부마스터 지정 - 부마스터 role로 업데이트
+	public void assignSubmaster(int cId, int memberId) throws Exception;
+	
+	//부마스터 해제 - user role로 업데이트
+	public void removeSubmaster(int cId, int memberId) throws Exception;
+	
+	//////////////////// 가입 /가입 대기 탈퇴 //////////////////////////////////
+	
+	// 가입 상태 확인
+	public String getJoinStatus(int cId, int memberId) throws Exception;
+	
+	//모든 커뮤니티 조회
+	public List<Map<String, Object>> selectCommunityMainAll(int memberId) throws Exception;
+		
+	//커뮤니티 가입 신청
+	public void requestJoin(int cId, int memberId) throws Exception;
+	
+	// 커뮤니티 탈퇴
+	public void leaveCommunity(int cId, int memberId) throws Exception;
 	
 	
 }
