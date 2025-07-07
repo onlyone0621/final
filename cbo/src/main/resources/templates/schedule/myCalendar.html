@@ -7,6 +7,9 @@
 
 <title>캘린더</title>
 <style>
+a {
+  text-decoration: none;
+}
 .fc-col-header-cell-cushion, .fc-daygrid-day-number {
     text-decoration: none;
 }
@@ -57,7 +60,57 @@
   margin: 0;
   letter-spacing: 0.5px;
   font-family: 'Segoe UI', 'Apple SD Gothic Neo', Arial, sans-serif;
+  
+  /* 사이드바 메뉴 간격 조정 */
+.sidebar .list-group {
+    margin-top: 0;
 }
+
+.sidebar .list-group-item {
+    margin-bottom: 15px; /* 항목 간 아래쪽 간격 */
+    border: none;
+    background: transparent;
+    padding: 0;
+}
+
+/* 개인캘린더, 부서캘린더 메뉴에 호버 효과 적용 */
+.sidebar .list-group-item a {
+    position: relative;
+    display: block;
+    color: #333;
+    text-decoration: none;
+    padding: 12px 18px;
+    border-radius: 6px;
+    transition: color 0.3s;
+    z-index: 1;
+}
+
+.sidebar .list-group-item a::before {
+    content: "";
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    bottom: 0;
+    left: 0;
+    background-color: #ffc0b8; /* 메인색1과 어울리는 연한 핑크 */
+    z-index: -1;
+    border-radius: 6px;
+    transform: scale(0);
+    transition: transform 0.3s;
+}
+
+.sidebar .list-group-item a:hover::before,
+.sidebar .list-group-item a:focus::before {
+    transform: scale(1);
+}
+
+.sidebar .list-group-item a:hover,
+.sidebar .list-group-item a:focus {
+    color: #fff;
+}
+  
+}
+
 </style>
 <script
 	src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.17/index.global.min.js'></script>
@@ -72,7 +125,7 @@ function deleteWork(){
 	fetch('/api/calendar/deleteWork',
 			{
 				method:'POST',
-				body:formData
+				body:formData 
 			})
 			.then (res => res.json())
 			.then (result =>{
@@ -118,28 +171,49 @@ function updateWork(){
 	}
 	
 function insertWork() {
+    const isAllDay = document.getElementById('allDay').checked;
     const form = document.getElementById('editEventForm');
-    const formData = new FormData(form); // 폼의 모든 input 값을 자동으로 묶음
+    const formData = new FormData(form);
 
-    
-    
+    if (isAllDay) {
+        // 종일: date만
+        const start = document.getElementById('start_time').value;
+        const end = document.getElementById('end_time').value;
+        formData.set('start_time', start);
+        formData.set('end_time', end);
+        formData.set('allday', 1);
+    } else {
+        // 시간: date + time 조합
+        const startDate = document.getElementById('start_time_date').value;
+        const startTime = document.getElementById('start_time_time').value;
+        const endDate = document.getElementById('end_time_date').value;
+        const endTime = document.getElementById('end_time_time').value;
+        const start = startDate + 'T' + startTime + ':00';
+        const end = endDate + 'T' + endTime + ':00';
+        formData.set('start_time', start);
+        formData.set('end_time', end);
+        formData.set('allday', 0);
+    }
+
     fetch('/api/calendar/add', {
         method: 'POST',
-        body: formData  
+        body: formData
     })
     .then(res => res.json())
     .then(result => {
         if(result.success) {
-        	var eventModalEl = document.getElementById('eventModal');
+            var eventModalEl = document.getElementById('eventModal');
             var modalInstance = bootstrap.Modal.getInstance(eventModalEl);
             if (!modalInstance) {
                 modalInstance = new bootstrap.Modal(eventModalEl);
             }
             modalInstance.hide();
-   			 		window.refreshCalendar();
-        }			
+            window.refreshCalendar();
+        }
     });
 }
+
+
 
 function saveWork(event){
 
@@ -162,33 +236,22 @@ function saveWork(event){
 
 function checking() {
     var checked = document.getElementById('allDay').checked;
-
-    // 시작일
+    
     if (checked) {
         document.getElementById('start_time').style.display = '';
-        document.getElementById('start_time_date').style.display = 'none';
-        document.getElementById('start_time').setAttribute('name', 'start_time');
-        document.getElementById('start_time_date').removeAttribute('name');
+        document.getElementById('end_time').style.display = '';
+        document.getElementById('start_time_group').style.display = 'none';
+        document.getElementById('end_time_group').style.display = 'none';
     } else {
         document.getElementById('start_time').style.display = 'none';
-        document.getElementById('start_time_date').style.display = '';
-        document.getElementById('start_time_date').setAttribute('name', 'start_time');
-        document.getElementById('start_time').removeAttribute('name');
-    }
-
-    // 종료일
-    if (checked) {
-        document.getElementById('end_time').style.display = '';
-        document.getElementById('end_time_date').style.display = 'none';
-        document.getElementById('end_time').setAttribute('name', 'end_time');
-        document.getElementById('end_time_date').removeAttribute('name');
-    } else {
         document.getElementById('end_time').style.display = 'none';
-        document.getElementById('end_time_date').style.display = '';
-        document.getElementById('end_time_date').setAttribute('name', 'end_time');
-        document.getElementById('end_time').removeAttribute('name');
+        document.getElementById('start_time_group').style.display = '';
+        document.getElementById('end_time_group').style.display = '';
     }
 }
+
+
+
 
 </script>
 <script>
@@ -212,7 +275,7 @@ function refreshCalendar() {
 
 			initialView : 'dayGridMonth', //달력 양식
 			selectable : true, //날짜 칸 선택 가능 여부
-			height : 550, //높이 설정
+			height : 600, //높이 설정
 			locale : 'ko', //언어 지정
 			editable : true, //이벤트 수정 가능 여부
 			dayMaxEventRows : true, // 이벤트 최대 갯수 설정 및 팝오버 띄우기
@@ -228,28 +291,26 @@ function refreshCalendar() {
 				  myCustomButton: {
 				    text: '저장',
 				    click: function() {
-
-						const events = calendar.getEvents().map(ev =>{
-						id: ev.id
-						start_time: ev.startStr
-						end_time: ev.endStr
-						})
-						
-						fetch("/api/calendar/saveWork",{
-							method:'POST',
-							header:{
-								'Content-Type':'application/json'		
-							},
-							body: JSON.stringify(events)
-						})
-						.then(res => res.json())
-						.then(result =>{
-							if(result>0) alert('성공');
-							else alert('실패');
-						})
+				      const events = calendar.getEvents().map(ev => ({
+				        id: ev.id,
+				        start_time: ev.startStr,
+				        end_time: ev.endStr
+				      }));
+				      console.log(events);
+				      fetch("/api/calendar/saveWork", {
+				        method: 'POST',
+				        headers: {
+				          'Content-Type': 'application/json'
+				        },
+				        body: JSON.stringify(events)
+				      })
+				      .then(res => res.json())
+				      .then(result => {
+				      });
 				    }
 				  }
 				},
+			
 			
 			headerToolbar: {
 				  left: 'prev,next today',
@@ -268,44 +329,53 @@ function refreshCalendar() {
     			//window.open('calendarWorkReg?start_date=' + info.dateStr,'popup','width=500 height=500');
 			 },
 			 select: function(info) {
+				    // 날짜만 (input type="date") - 반드시 yyyy-MM-dd 형식만!
+				    document.getElementById('start_time').value = info.startStr.slice(0, 10);
+				    document.getElementById('end_time').value = info.endStr ? info.endStr.slice(0, 10) : "";
 
-					var label1 = document.getElementById("eventModalLabel1");
-					var label2 = document.getElementById("eventModalLabel2");
-					var btn1 = document.getElementById("edit_btn1");
-			        var btn2 = document.getElementById("edit_btn2");
-			        var btn3 = document.getElementById("edit_btn3");
-			        
-			        btn1.style.display = "none";
-			        btn2.style.display = "none";
-			        btn3.style.display = "none";
-			        label1.style.display = "none";
-			        label2.style.display = "none";
-			        
+				    // 시간 이벤트용 (date + time)
+				    document.getElementById('start_time_date').value = info.startStr.slice(0, 10);
+				    document.getElementById('start_time_time').value = info.startStr.length > 10 ? info.startStr.slice(11, 16) : "00:00";
+				    document.getElementById('end_time_date').value = info.endStr ? info.endStr.slice(0, 10) : "";
+				    document.getElementById('end_time_time').value = info.endStr && info.endStr.length > 10 ? info.endStr.slice(11, 16) : "00:00";
+
+				    // 모달 관련 label, 버튼 초기화
+				    var label1 = document.getElementById("eventModalLabel1");
+				    var label2 = document.getElementById("eventModalLabel2");
+				    var btn1 = document.getElementById("edit_btn1");
+				    var btn2 = document.getElementById("edit_btn2");
+				    var btn3 = document.getElementById("edit_btn3");
+
+				    btn1.style.display = "none";
+				    btn2.style.display = "none";
+				    btn3.style.display = "none";
+				    label1.style.display = "none";
+				    label2.style.display = "none";
+
+				    // 날짜 범위 계산 (종일 이벤트 등)
 				    var endStr = info.endStr;
-				    
 				    let date = new Date(endStr);
 				    date.setDate(date.getDate() - 1);
-				   
 				    let yyyy = date.getFullYear();
 				    let mm = String(date.getMonth() + 1).padStart(2, '0');
 				    let dd = String(date.getDate()).padStart(2, '0');
-				    
 				    endStr = `${yyyy}-${mm}-${dd}`;
-				   
-				  //  alert('selected ' + info.startStr + ' to ' + endStr);
 
-				    	var myModal = new bootstrap.Modal(document.getElementById('eventModal'));
-				        myModal.show();
-					    
-				        document.getElementById("title").value = '';
-				        document.getElementById("content").value = '';
-				        document.getElementById("start_time").value = info.startStr;
-				        document.getElementById("end_time").value = endStr;
-				        
-				        btn3.style.display = "block";
-				        label2.style.display = "block";
-				   // window.open('calendarWorkReg?start_time=' + info.startStr + '&end_time=' + endStr, 'createPopup', 'width=500,height=500');
-				    },
+				    // 모달 오픈 및 값 초기화
+				    var myModal = new bootstrap.Modal(document.getElementById('eventModal'));
+				    myModal.show();
+
+				    document.getElementById("title").value = '';
+				    document.getElementById("content").value = '';
+				    document.getElementById("start_time").value = info.startStr.slice(0, 10);
+				    document.getElementById("start_time_date").value = info.startStr.slice(0, 10);
+				    document.getElementById("end_time").value = endStr;
+				    document.getElementById("end_time_date").value = endStr;
+
+				    btn3.style.display = "block";
+				    label2.style.display = "block";
+				},
+
 			    eventClick: function(info) { //이벤트 클릭시
 
 			    	var label1 = document.getElementById("eventModalLabel1");
@@ -337,7 +407,9 @@ function refreshCalendar() {
 				        document.getElementById("title").value = event.title;
 				        document.getElementById("content").value = event.extendedProps.content;
 				        document.getElementById("start_time").value = event.startStr;
+				        document.getElementById("start_time_date").value = event.startStr;
 				        document.getElementById("end_time").value = endStr;
+				        document.getElementById("end_time_date").value = info.endStr;
 				        
 				        btn1.style.display = "block";
 				        btn2.style.display = "block";
@@ -357,6 +429,73 @@ function refreshCalendar() {
 	});
 	
 	
+	function checking() {
+	    var checked = document.getElementById('allDay').checked;
+	    document.getElementById('allDayInputs').style.display = checked ? '' : 'none';
+	    document.getElementById('timeInputs').style.display = checked ? 'none' : '';
+	}
+	
+	//등록
+	function registerByType() {
+	    const isAllDay = document.getElementById('allDay').checked;
+	    if (isAllDay) {
+	        registerAllDay();
+	    } else {
+	        registerTime();
+	    }
+	}
+
+	// 종일 이벤트 등록 함수
+	function registerAllDay() {
+	    const formData = new FormData();
+	    formData.append("title", document.getElementById('title').value);
+	    formData.append("content", document.getElementById('content').value);
+	    formData.append("start_date", document.getElementById('start_time').value);
+	    formData.append("end_date", document.getElementById('end_time').value);
+	    formData.append("allday", 1);
+
+	    fetch("/api/calendar/addAllDay", {
+	        method: "POST",
+	        body: formData
+	    })
+	    .then(res => res.json())
+	    .then(result => {
+	        if(result.success) {
+	            alert("종일 등록 성공!");
+	            window.refreshCalendar();
+	            bootstrap.Modal.getInstance(document.getElementById('eventModal')).hide();
+	        } else {
+	            alert("등록 실패!");
+	        }
+	    });
+	}
+
+	// 시간 이벤트 등록 함수
+	function registerTime() {
+	    const start = document.getElementById('start_time_date').value + "T" + document.getElementById('start_time_time').value + ":00";
+	    const end = document.getElementById('end_time_date').value + "T" + document.getElementById('end_time_time').value + ":00";
+	    const formData = new FormData();
+	    formData.append("title", document.getElementById('title').value);
+	    formData.append("content", document.getElementById('content').value);
+	    formData.append("start_time", start);
+	    formData.append("end_time", end);
+	    formData.append("allday", 0);
+
+	    fetch("/api/calendar/addTime", {
+	        method: "POST",
+	        body: formData
+	    })
+	    .then(res => res.json())
+	    .then(result => {
+	        if(result.success) {
+	            alert("시간 등록 성공!");
+	            window.refreshCalendar();
+	            bootstrap.Modal.getInstance(document.getElementById('eventModal')).hide();
+	        } else {
+	            alert("등록 실패!");
+	        }
+	    });
+	}
 </script>
 
 </head>
@@ -383,52 +522,54 @@ function refreshCalendar() {
                   <label for="firstComment">일정 내용</label>
                   <input type="text" class="form-control"  name="content" id="content">
                </div>
-               <div class="form-group">
-                 <label for="start_time" class="form-label">시작일</label>
-                 <input type="date" name="start_time"  id="start_time" class="form-control" th:value = "${start_time}">
-                 <input type="datetime-local" step="1800" name="start_time"  id="start_time_date" class="form-control" style="display:none">
+               <div id="allDayInputs">
+                <label for="start_time">시작일</label>
+				  <input type="date" name="start_date" id="start_time" class="form-control">
+				  <label for="end_time">종료일</label>
+				  <input type="date" name="end_date" id="end_time" class="form-control">
+				</div>
+				<!-- 시간 이벤트용 -->
+				<div id="timeInputs" style="display:none">
+				<label for="start_time_date">시작일</label><br>
+				  <input type="date" id="start_time_date" class="form-control" style="width:60%;display:inline-block">
+				  <input type="time" id="start_time_time" class="form-control" style="width:38%;display:inline-block">
+				  <label for="end_time_date">종료일</label><br>
+				  <input type="date" id="end_time_date" class="form-control" style="width:60%;display:inline-block">
+				  <input type="time" id="end_time_time" class="form-control" style="width:38%;display:inline-block">
+				</div>
 
-               </div>
-               <div>
-                  <label for="end_time" class="form-label">종료일</label>
-                  <input type="date" name="end_time"  id="end_time" class="form-control" th:value = "${end_time}">
-                  <input type="datetime-local" step="1800" name="end_time"  id="end_time_date" class="form-control"  style="display:none">
-
-               </div>
                <div class="modal-footer">               
                    종일<input type="checkbox" class="btn btn-primary" id="allDay" onchange="checking(this);" checked>
                   <button type="button" class="btn btn-primary" id="edit_btn1" onclick = "updateWork()" style="display: none">수정</button>
                   <button type="button" class="btn btn-primary" id="edit_btn2" onclick = "deleteWork()" style="display: none">삭제</button>
-                  <button type="button" class="btn btn-primary" id="edit_btn3" onclick = "insertWork()" style="display: none">등록</button>
+                  <button type="button" class="btn btn-primary" id="edit_btn3" onclick = "registerByType()" style="display: none">등록</button>
                </div>
             </form>
          </div>
       </div>
    </div>
 </div>
-<div class="calendar-header">
-  <h3>일정관리</h3>
-</div>
+
+
 <div class="container-fluid">
   <div class="row">
-<div class="col-md-3">
-<!-- 사이드 바 메뉴-->
-  <!-- 패널 타이틀1 -->
-<div class="panel panel-info">
-    <div class="panel-heading">
-      <h3 class="panel-title">일정 관리</h3>
-    </div>
-    <!-- 사이드바 메뉴목록1 -->
+<nav class="col-md-2 d-none d-md-block bg-light sidebar" style="min-height:100vh;">
+  <div class="sidebar-sticky pt-4">
+    <h4 style="margin-bottom: 40px;">일정관리</h4>
     <ul class="list-group">
-      <li class="list-group-item" style="width:15;"><a href="#">개인 캘린더</a></li>
-      <li class="list-group-item"><a href="#">부서 캘린더</a></li>
+
+
     </ul>
+  </div>
+</nav>
+    <main class="col-md-10 ml-sm-auto px-4">
+      <div class="calendar-header">
+        <h3>일정관리</h3>
+      </div>
+      <div id="calendar"></div>
+    </main>
+  </div>
 </div>
 </div>
-<div class = "col-md-7" id = 'calendar'>
-</div>
-</div>
-</div>
-	</div>
 </body>
 </html>

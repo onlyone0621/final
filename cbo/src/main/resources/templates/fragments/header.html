@@ -24,10 +24,10 @@
             
         </ul>
         <div class="header-a">
-            <a href="memberInfoUpdate">
+            <a href="/memberInfoUpdate">
 			    <span th:if="${session.udto != null}" th:text="${session.udto.name}"></span>
 			    <span th:unless="${session.udto != null}">사용자</span> 님
-			</a> | <a href="memberLogout">로그아웃</a> master
+			</a> | <a href="/memberLogout">로그아웃</a> master
         </div>
     </nav>
 </header>

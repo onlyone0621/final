@@ -9,7 +9,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Setter
 @Getter
-public class AddrDTO {
+public class AddrListDTO {
 	private int id;
 	private int member_id;
 	private String name;
@@ -21,4 +21,5 @@ public class AddrDTO {
 	private String tel;
 	private String email;
 	private String description;
+	private String groupNames;
 }
