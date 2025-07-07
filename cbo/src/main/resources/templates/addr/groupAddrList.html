@@ -49,8 +49,7 @@ function addGroupFetch() {
     	newA.style = 'text-decoration:none; color:black;';
 
     	newSpan.className = 'sidebar-contact-count';
-    	newSpan.textContent = '2'; // AJAX 응답에서 받은 연락처 수
-
+    	newSpan.textContent = data.countUser !== undefined ? data.countUser : 0;
     	newDiv.appendChild(newA);
     	newDiv.appendChild(newSpan);
     	groupList.appendChild(newDiv);
@@ -64,12 +63,54 @@ function toggleQuickForm() {
     form.style.display = (form.style.display === 'none' || form.style.display === '') ? 'block' : 'none';
 }
 function submitQuickForm() {
+    var form = document.getElementById('quickGroupAddForm');
+    var formData = new FormData(form);
+    fetch('/quickGroupAddrAdd', {
+        method: 'POST',
+        body: formData
+    })
+    .then(res => res.json())
+    .then(result => {
+        document.getElementById('quickForm').style.display = 'none';
+        window.location.reload();
 
-	fetch('')
-	
-    // 폼 리셋 및 숨김 처리
-    document.getElementById('quickForm').style.display = 'none';
-    return false; // 실제 등록 로직에 따라 return 값 조정
+        // 성공 시 폼 초기화 등 추가
+    })
+}
+
+
+
+//전체 선택/해제 기능
+function check() {
+ const checkAll = document.getElementById('checkAll');
+ const checkboxes = document.querySelectorAll('.user-check');
+ checkboxes.forEach(cb => cb.checked = checkAll.checked);
+}
+
+//삭제 기능 (체크된 것만)
+function deleteChecked() {
+ const checked = document.querySelectorAll('.user-check:checked');
+ const ids = Array.from(checked).map(cb => cb.value);
+
+ if (ids.length === 0) {
+     alert('삭제할 항목을 선택하세요.');
+     return;
+ }
+
+ fetch('/addr/delete', {
+     method: 'POST',
+     headers: {
+         'Content-Type': 'application/json'
+     },
+     body: JSON.stringify({ ids: ids })
+ })
+ .then(res => res.json())
+ .then(result => {
+     window.location.reload();
+ })
+ .catch(err => {
+     alert('삭제 중 오류가 발생했습니다.');
+ });
 }
 </script>
 <meta charset="UTF-8">
@@ -149,7 +190,7 @@ function submitQuickForm() {
                 <div class="sidebar-sticky pt-4">
                     <!-- 개인 주소록 -->
                     <div class="sidebar-section">
-                    <button class="btn btn-outline-primary w-100 mb-3" onclick="location.href='/insertAddr'">
+                    <button class="btn btn-outline-primary w-100 mb-3" onclick="location.href='/goInsertPage'">
 					    연락처 추가
 					</button>
                         <div class="sidebar-section-title">
@@ -165,7 +206,7 @@ function submitQuickForm() {
                                 <!-- 그룹명 반복 출력 -->
                                 <div th:each="group : ${personalLists}">
                                     <a th:href="@{'/groupAddrList/' + ${group.name}}" th:text="${group.name}" style="text-decoration:none; color:black;"></a>
-                                    <span class="sidebar-contact-count" >2</span>
+                                    <span class="sidebar-contact-count" th:text="${groupUserCountMap[group.name]}" >0</span>
                                 </div>
                             </div>
                             <div class="sidebar-group-list">
@@ -175,7 +216,7 @@ function submitQuickForm() {
 							    <button type="button" class="btn btn-primary btn-sm mt-2" onclick="addGroupFetch()">확인</button>
 							    <button type="button" class="btn btn-secondary btn-sm mt-2" onclick="hideAddGroupInput()">취소</button>
 							</div>
-                            <div class="sidebar-add-btn" onclick="showAddGroupInput()">+ 연락처 주소록 추가</div>
+                            <div class="sidebar-add-btn" onclick="showAddGroupInput()">+ 개인 주소록 추가</div>
                             
                             
                         </div>
@@ -187,18 +228,16 @@ function submitQuickForm() {
                             <span data-bs-toggle="collapse" href="#deptCollapse" role="button" aria-expanded="true" aria-controls="deptCollapse" style="cursor:pointer;">
                                 부서 주소록
                             </span>
-                            <i class="bi bi-gear ms-auto"></i>
                         </div>
                         <div class="collapse show" id="deptCollapse">
                         <div class="sidebar-group-name" th:text="${dept}"></div>
                             <div class="sidebar-group-list">
                                 <!-- 부서 그룹 반복 -->
-                                    <a href="addrMain" class="sidebar-link" style="display:inline-block;">전체 주소록</a>
+                                    <a href="/deptAddr" class="sidebar-link" style="display:inline-block;">전체 주소록</a>
                                 	<div th:each="dept : ${deptLists}">
                                             <span th:text="${dept.name}">안녕</span>
                                 </div>
                             </div>
-                            <div class="sidebar-add-btn">+ 연락처 주소록 추가</div>
                         </div>
                     </div>
                 </div>
@@ -211,7 +250,7 @@ function submitQuickForm() {
         <span style="font-size:2rem; font-weight:600;" th:text=${groupName}>전체 주소록</span>
         <span style="color:#888; font-size:1rem; margin-left:8px;">
             in개인주소록
-            <span th:text="'(총 ' + ${totalCount} + '건)'">(총 25건)</span>
+            <span th:text="'(총 ' + ${countUser} + '건)'">(총 25건)</span>
         </span>
     </div>
     <div class="mt-2">
@@ -221,49 +260,56 @@ function submitQuickForm() {
         <button type="button" class="btn btn-link px-2" style="font-weight:500; color:#222;">
             <i class="bi bi-people"></i> 그룹지정
         </button>
-        <button type="button" class="btn btn-link px-2" style="font-weight:500; color:#222;">
+        <button type="button" class="btn btn-link px-2" style="font-weight:500; color:#222;" onclick="deleteChecked();">
             <i class="bi bi-trash"></i> 삭제
-        </button>
-                <div id="quickForm" style="display:none; margin-top:12px;">
-    <form class="d-flex align-items-center gap-2" onsubmit="return submitQuickForm();">
-        <input type="text" class="form-control" style="max-width:160px;" placeholder="이름(표시명)" name="name" required>
+            </button>
+     <div style="display:none; margin-top:12px;" id = "quickForm">
+    <form class="d-flex align-items-center gap-2" id="quickGroupAddForm">
+    	<input type="hidden" name="groupId" th:value="${groupId}">
+        <input type="text" class="form-control" style="max-width:160px;" placeholder="이름(표시명)" name="nickname" required>
         <input type="email" class="form-control" style="max-width:180px;" placeholder="이메일" name="email" required>
-        <input type="tel" class="form-control" style="max-width:140px;" placeholder="휴대폰" name="phone" required>
-        <button type="submit" class="btn btn-outline-primary">+</button>
-        <button type="button" class="btn btn-link" style="color:#666;" onclick="alert('상세정보 폼 구현 필요!')">상세정보 추가</button>
+        <input type="tel" class="form-control" style="max-width:140px;" placeholder="휴대폰" name="tel" required>
+        <button type="button" class="btn btn-outline-primary" onclick="submitQuickForm();">+</button>
+       <!-- <button type="button" class="btn btn-link" style="color:#666;" onclick="alert('상세정보 폼 구현 필요!')">상세정보 추가</button> -->
     </form>
 		</div>
     </div>
 </div>
                 
-                <table class="table table-hover mt-4">
-                    <thead>
-                        <tr>
-                            <th scope="col">#</th>
-                            <th scope="col">이름(표시명)</th>
-                            <th scope="col">휴대폰</th>
-                            <th scope="col">이메일</th>
-                            <th scope="col">회사</th>
-                            <th scope="col">회사전화</th>
-                            <th scope="col">그룹</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr th:if="${#lists.isEmpty(groupAddrLists)}">
-                            <td colspan="7" align="center">등록된 사원이 없습니다</td>
-                        </tr>
-                        <tr th:each="dto:${groupAddrLists}">
-                            <td th:text="${dto.id}"></td>
-                            <td th:text="${dto.nickname}"></td>
-                            <td th:text="${dto.tel}"></td>
-                            <td th:text="${dto.email}"></td>
-                            <td th:text="${dto.company}"></td>
-                            <td th:text="${dto.companytel}"></td>
-                            <td></td>
-                            <td></td>
-                        </tr>
-                    </tbody>
-                </table>
+                 <form id="checkForm">
+        <table class="table table-hover mt-4">
+            <thead>
+                <tr>
+                    <th scope="col">
+                        <input type="checkbox" class="checkAll" id="checkAll" onclick="check();">
+                    </th>
+                    <th scope="col">이름(표시명)</th>
+                    <th scope="col">휴대폰</th>
+                    <th scope="col">이메일</th>
+                    <th scope="col">회사</th>
+                    <th scope="col">회사전화</th>
+                    <th scope="col">그룹</th>
+                </tr>
+            </thead>
+            <tbody id="datarows">
+                <tr th:if="${#lists.isEmpty(groupAddrLists)}">
+                    <td colspan="8" align="center">등록된 사원이 없습니다</td>
+                </tr>
+                <tr th:each="dto:${groupAddrLists}">
+                    <td>
+                        <input type="checkbox" class="user-check" th:value="${dto.id}" th:name="ids" th:id="${dto.id}">
+                    </td>
+                    <td th:text="${dto.nickname}"></td>
+                    <td th:text="${dto.tel}"></td>
+                    <td th:text="${dto.email}"></td>
+                    <td th:text="${dto.company}"></td>
+                    <td th:text="${dto.companytel}"></td>
+                    <td th:text="${dto.groupNames}"></td>
+                    <td></td>
+                </tr>
+            </tbody>
+        </table>
+    </form>
             </div>
         </div>
     </div>

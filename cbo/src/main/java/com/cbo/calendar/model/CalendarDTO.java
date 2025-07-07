@@ -1,5 +1,6 @@
 package com.cbo.calendar.model;
 import java.sql.*;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import lombok.AllArgsConstructor;
@@ -19,6 +20,8 @@ public class CalendarDTO {
 	private String content;
 	private LocalDateTime start_time;
 	private LocalDateTime end_time;
+	private LocalDate start_date;
+    private LocalDate end_date;
 	private Date create_date;
 	private int allday;
 }

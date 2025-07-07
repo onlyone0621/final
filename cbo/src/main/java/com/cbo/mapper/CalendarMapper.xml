@@ -6,9 +6,46 @@
   <mapper namespace="com.cbo.mapper.CalendarMapper">
   
   
-  <insert id="insertWork" parameterType="com.cbo.calendar.model.CalendarDTO">
-  insert into calendar values(sq_calendar_id.nextval,0,0,#{title},#{content},#{start_time},#{end_time}+1,sysdate)
-  </insert>
+ <insert id="insertWork" parameterType="com.cbo.calendar.model.CalendarDTO">
+  insert into calendar (
+    id, member_id, dept_id, title, content, start_time, end_time, create_date, allday
+  ) values (
+    sq_calendar_id.nextval,
+    #{member_id},
+    #{dept_id},
+    #{title},
+    #{content},
+    #{start_time},
+    #{end_time},
+    sysdate,
+    1
+    
+  )
+</insert>
+
+ <insert id="insertTime" parameterType="com.cbo.calendar.model.CalendarDTO">
+  insert into calendar (
+    id, member_id, dept_id, title, content, start_time, end_time, create_date, allday
+  ) values (
+    sq_calendar_id.nextval,
+    #{member_id},
+    #{dept_id},
+    #{title},
+    #{content},
+    #{start_time},
+    #{end_time},
+    sysdate,
+    0
+    
+  )
+</insert>
+<select id="findId" resultType="int">
+	select id from member where user_id = #{saveid}
+</select>
+
+<select id="findDept" resultType="int">
+	select dept_id from member where user_id = #{saveid}
+</select>
   
   
   <resultMap id="calendarMap" type="com.cbo.calendar.model.CalendarDTO">
@@ -20,7 +57,7 @@
 </resultMap>
 
   <select id="selectList" resultMap="calendarMap">
-  select * from calendar 
+  select * from calendar where member_id = #{id}
   </select>
   
   <delete id="deleteWork" parameterType="com.cbo.calendar.model.CalendarDTO">

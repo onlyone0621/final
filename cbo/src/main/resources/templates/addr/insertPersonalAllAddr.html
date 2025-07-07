@@ -52,7 +52,6 @@ function toggleQuickForm() {
     form.style.display = (form.style.display === 'none' || form.style.display === '') ? 'block' : 'none';
 }
 function submitQuickForm() {
-    // 실제 등록 로직 구현 (AJAX 등)
     alert('등록되었습니다!');
     // 폼 리셋 및 숨김 처리
     document.getElementById('quickForm').style.display = 'none';
@@ -137,7 +136,7 @@ function submitQuickForm() {
                 <div class="sidebar-sticky pt-4">
                     <!-- 개인 주소록 -->
                     <div class="sidebar-section">
-                    <button class="btn btn-outline-primary w-100 mb-3" onclick="location.href='/insertAddr'">
+                    <button class="btn btn-outline-primary w-100 mb-3" onclick="location.href='/goInsertPage'">
 					    연락처 추가
 					</button>
                         <div class="sidebar-section-title">
@@ -151,11 +150,11 @@ function submitQuickForm() {
                             
                             <div class="sidebar-group-list">
                                 <!-- 그룹명 반복 출력 -->
-                                <div th:each="group : ${personalLists}">
-                                    <a th:href="@{'/groupAddrList/' + ${group.name}}" th:text="${group.name}" style="text-decoration:none; color:black;"></a>
-
-                                    <span class="sidebar-contact-count" >2</span>
-                                </div>
+                                
+								    <div th:each="group : ${personalLists}">
+								        <a th:href="@{'/groupAddrList/' + ${group.name}}" th:text="${group.name}" style="text-decoration:none; color:black;"></a>
+								        <span class="sidebar-contact-count" th:text="${groupUserCountMap[group.name]}">0</span>
+								    </div>
                             </div>
                             <div class="sidebar-group-list">
                             </div>
@@ -164,7 +163,7 @@ function submitQuickForm() {
 							    <button type="button" class="btn btn-primary btn-sm mt-2" onclick="addGroupFetch()">확인</button>
 							    <button type="button" class="btn btn-secondary btn-sm mt-2" onclick="hideAddGroupInput()">취소</button>
 							</div>
-                            <div class="sidebar-add-btn" onclick="showAddGroupInput()">+ 연락처 주소록 추가</div>
+                            <div class="sidebar-add-btn" onclick="showAddGroupInput()">+ 개인 주소록 추가</div>
                             
                             
                         </div>
@@ -176,60 +175,81 @@ function submitQuickForm() {
                             <span data-bs-toggle="collapse" href="#deptCollapse" role="button" aria-expanded="true" aria-controls="deptCollapse" style="cursor:pointer;">
                                 부서 주소록
                             </span>
-                            <i class="bi bi-gear ms-auto"></i>
                         </div>
                         <div class="collapse show" id="deptCollapse">
                         <div class="sidebar-group-name" th:text="${dept}"></div>
                             <div class="sidebar-group-list">
                                 <!-- 부서 그룹 반복 -->
-                                    <a href="addrMain" class="sidebar-link" style="display:inline-block;">전체 주소록</a>
+                                    <a href="/deptAddr" class="sidebar-link" style="display:inline-block;">전체 주소록</a>
                                 	<div th:each="dept : ${deptLists}">
                                             <span th:text="${dept.name}">안녕</span>
                                 </div>
                             </div>
-                            <div class="sidebar-add-btn">+ 연락처 주소록 추가</div>
                         </div>
                     </div>
                 </div>
             </nav>
-            <!-- Main content -->
-            <div class="col-md-10 ms-sm-auto px-4">
-                <div class="mb-3" style="border-bottom:1px solid #eee; padding-bottom:12px;">
-    <div>
-        <span style="font-size:2rem; font-weight:600;" >전체 주소록</span>
-        <span style="color:#888; font-size:1rem; margin-left:8px;">
-            in개인주소록
-            <span th:text="'(총 ' + ${totalCount} + '건)'">(총 25건)</span>
-        </span>
-    </div>
-    <div class="mt-2">
-        <button type="button" class="btn btn-link px-2" style="font-weight:500; color:#222;" onclick="toggleQuickForm()">
-    <i class="bi bi-plus-lg"></i> 빠른 등록
-</button>
-
-        <button type="button" class="btn btn-link px-2" style="font-weight:500; color:#222;">
-            <i class="bi bi-people"></i> 그룹지정
-        </button>
-        <button type="button" class="btn btn-link px-2" style="font-weight:500; color:#222;">
-            <i class="bi bi-trash"></i> 삭제
-        </button>
-        
-        <div id="quickForm" style="display:none; margin-top:12px;">
-    <form class="d-flex align-items-center gap-2" onsubmit="return submitQuickForm();">
-        <input type="text" class="form-control" style="max-width:160px;" placeholder="이름(표시명)" name="name" required>
-        <input type="email" class="form-control" style="max-width:180px;" placeholder="이메일" name="email" required>
-        <input type="tel" class="form-control" style="max-width:140px;" placeholder="휴대폰" name="phone" required>
-        <button type="submit" class="btn btn-outline-primary">+</button>
-        <button type="button" class="btn btn-link" style="color:#666;" onclick="alert('상세정보 폼 구현 필요!')">상세정보 추가</button>
+<div class="col-md-10">
+  <div class="container py-4">
+    <h3>연락처 추가</h3>
+    <form th:action="@{/insertAddr}" method="post" style="max-width:500px;">
+  
+      <div class="mb-3">
+        <label for="name" class="form-label">이름</label>
+        <input type="text" class="form-control" id="name" name="name" required>
+      </div>
+      <div class="mb-3">
+        <label for="nickname" class="form-label">이름(표시명)</label>
+        <input type="text" class="form-control" id="nickname" name="nickname" required>
+      </div>
+      <div class="mb-3">
+        <label for="company" class="form-label">회사</label>
+        <input type="text" class="form-control" id="company" name="company">
+      </div>
+      <div class="mb-3">
+        <label for="department" class="form-label">부서</label>
+        <input type="text" class="form-control" id="dept" name="dept">
+      </div>
+      <div class="mb-3">
+        <label for="position" class="form-label">직위</label>
+        <input type="text" class="form-control" id="grade" name="grade">
+      </div>
+      <div class="mb-3">
+        <label for="email" class="form-label">이메일</label>
+        <input type="email" class="form-control" id="email" name="email">
+      </div>
+      <div class="mb-3">
+        <label for="mobile" class="form-label">휴대폰</label>
+        <input type="text" class="form-control" id="tel" name="tel">
+      </div>
+      <div class="mb-3">
+        <label for="phone" class="form-label">유선전화</label>
+        <input type="text" class="form-control" id="companytel" name="companytel">
+      </div>
+      <div class="mb-3">
+        <label for="memo" class="form-label">메모</label>
+        <input type="text" class="form-control" id="description" name="description">
+      </div>
+<!--       <div class="mb-3">
+        <label for="groupSelect" class="form-label">연락처 그룹</label>
+        <select class="form-select" id="groupSelect" name="groupSelect">
+          <option value="">기본 연락처 선택</option>
+          <option th:each="group : ${personalLists}" th:value="${group.name}" th:text="${group.name}"></option>
+        </select>
+      </div> -->
+      <div class="mb-3 text-end">
+        <button type="reset" class="btn btn-secondary">재입력</button>
+        <button type="submit" class="btn btn-primary">등록</button>
+        <button type="button" class="btn btn-outline-secondary" onclick="history.back()">취소</button>
+      </div>
     </form>
+  </div>
 </div>
-    </div>
-</div>
-            //본문
+
             </div>
         </div>
     </div>
-</div>
+
 
 
 </body>
