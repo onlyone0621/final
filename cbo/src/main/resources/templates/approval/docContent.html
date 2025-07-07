@@ -22,28 +22,20 @@
 				<nav
 					class="nav nav-pills flex-row"
 				>
-					<button class="nav-link active"
-						>결재 요청</button
-					>
-					<a class="nav-link" href="javascript:window.history.back();">취소</a>
+					<form>
+						<input type="hidden" name="docId" th:value="${docContent.id}">
+						<button type="submit" class="nav-link btn btn-outline-success" formaction="approve" formmethod="post">결재</button>
+						<button type="submit" class="nav-link btn btn-outline-danger" formaction="reject" formmethod="post">반려</button>
+					</form>	
 				</nav>
+			</div>
+
+			<div class="mb-3 w-75 align-self-center">
 			</div>
 
 			<!-- Doc content -->
 			<div id="draft" th:utext="${docContent.content}" class="align-self-center w-100"></div>
 
-			<!-- File input -->
-			<div class="mb-3 w-75 align-self-center">
-				<!-- <label for="file_name" class="form-label">파일 첨부</label>
-				<input
-					type="file"
-					class="form-control"
-					name="attatchment"
-					id="file_name"
-					aria-describedby="helpId"
-				/>
-				<small id="helpId" class="form-text text-muted">10MB 까지만 첨부 가능</small> -->
-			</div>
 		</div>
 			
 			<!-- Right sidebar -->
@@ -53,26 +45,40 @@
                     <li class="nav-item" role="presentation">
                         <button
                             class="nav-link active"
-                            id="approval-lines-tab"
+                            id="approversTab"
                             data-bs-toggle="tab"
-                            data-bs-target="#approval-lines"
+                            data-bs-target="#approvers"
                             type="button"
                             role="tab"
-                            aria-controls="approval-lines"
+                            aria-controls="approvers"
                             aria-selected="true"
                         >
-                            결재선
+                            결재자
+                        </button>
+                    </li>
+					<li class="nav-item" role="presentation">
+                        <button
+                            class="nav-link"
+                            id="reviewersTab"
+                            data-bs-toggle="tab"
+                            data-bs-target="#reviewers"
+                            type="button"
+                            role="tab"
+                            aria-controls="reviewers"
+                            aria-selected="false"
+                        >
+                            참조자
                         </button>
                     </li>
                     <li class="nav-item" role="presentation">
                         <button
                             class="nav-link"
-                            id="doc-info-tab"
+                            id="docInfoTab"
                             data-bs-toggle="tab"
-                            data-bs-target="#doc-info"
+                            data-bs-target="#docInfo"
                             type="button"
                             role="tab"
-                            aria-controls="doc-info"
+                            aria-controls="docInfo"
                             aria-selected="false"
                         >
                             문서 정보
@@ -84,44 +90,48 @@
                 <div class="tab-content">
                     <div
                         class="tab-pane active"
-                        id="approval-lines"
+                        id="approvers"
                         role="tabpanel"
-                        aria-labelledby="approval-lines-tab"
+                        aria-labelledby="approversTab"
                     >
                         <ul class="list-group list-group-flush">
-							<li class="list-group-item" th:each="approver : ${approvers}" th:object="${approver}" th:text="|*{dept_name} *{member_name} *{grade_name} *{status} *{process_date}|"></li>
+							<li class="list-group-item" th:each="approver : ${approvers}" th:object="${approver}" th:text="|*{dept_name} *{member_name} *{grade_name} *{status} *{process_date}|">
+								<img th:src="@{/profileImage/{img}(img=*{profile_image})}" alt="profile_image" width="25" height="25" class="rounded-circle mx-1">
+								<span th:text="|*{dept_name} *{member_name} *{grade_name}|"></span><br>
+								<span th:text="${*{status}} + ' ' + (*{process_date} ?: '')"></span>
+							</li>
+						</ul>
+                    </div>
+					<div
+                        class="tab-pane"
+                        id="reviewers"
+                        role="tabpanel"
+                        aria-labelledby="reviewersTab"
+                    >
+                        <ul class="list-group list-group-flush">
+							<li class="list-group-item" th:each="reviewer : ${reviewers}" th:object="${reviewer}">
+								<img th:src="@{/profileImage/{img}(img=*{profile_image})}" alt="profile_image" width="25" height="25" class="rounded-circle mx-1">
+								<span th:text="|*{dept_name} *{member_name} *{grade_name}|"></span><br>
+								<span th:text="${*{status}} + ' ' + (*{process_date} ?: '')"></span>
+							</li>
 						</ul>
                     </div>
                     <div
                         class="tab-pane"
-                        id="doc-info"
+                        id="docInfo"
                         role="tabpanel"
-                        aria-labelledby="doc-info-tab"
+                        aria-labelledby="docInfoTab"
                     >
                         	<ul class="list-group list-group-flush" th:object="${docContent}">
-								<li class="list-group-item" th:text="*{writer}"></li>
-								<li class="list-group-item" th:text="*{write_date}"></li>
-								<li class="list-group-item" th:text="*{retention}"></li>
+								<li class="list-group-item" th:text="|기안자: *{writer}|"></li>
+								<li class="list-group-item" th:text="|기안일: *{write_date}|"></li>
+								<li class="list-group-item" th:text="|보존 연한: *{retention}|"></li>
 							</ul>
                     </div>
                 </div>
             </div>
-
 	</div>
-	<!-- <h1 th:text="${docContent.title}"></h1>
-	<span th:text="${docContent.format_name}"></span>
-	<div th:text="${docContent.content}"></div>
-	<ul class="list-group list-group-flush">
-		<li class="list-group-item" th:each="approver : ${approvers}" th:object="${approver}" th:text="|*{dept_name} *{member_name} *{grade_name} *{status} *{process_date}|"></li>
-	</ul>
-	<ul class="list-group list-group-flush">
-		<li class="list-group-item" th:each="reviewer : ${reviewers}" th:object="${reviewer}" th:text="|*{dept_name} *{member_name} *{grade_name} *{status} *{process_date}|"></li>
-	</ul>
-	<ul class="list-group list-group-flush" th:object="${docContent}">
-		<li class="list-group-item" th:text="*{writer}"></li>
-		<li class="list-group-item" th:text="*{write_date}"></li>
-		<li class="list-group-item" th:text="*{retention}"></li>
-	</ul> -->
+
 </div>
 </body>
 </html>

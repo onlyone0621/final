@@ -1,12 +1,10 @@
 package com.cbo.controller;
 
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
+
 
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,7 +16,6 @@ import org.springframework.web.servlet.ModelAndView;
 import com.cbo.approval.model.ApprovalLineDTO;
 import com.cbo.approval.model.DocDTO;
 import com.cbo.approval.model.DocViewDTO;
-import com.cbo.approval.model.FormatDTO;
 import com.cbo.approval.service.ApprovalService;
 import com.cbo.constant.ApprovalConst;
 import com.cbo.constant.MemberConst;
@@ -154,15 +151,15 @@ public class ApprovalController {
 	@PostMapping("submitDraft")
 	public ModelAndView submitDraft(DocDTO dto,
 			@RequestParam MultipartFile attatchment,
-			@RequestParam List<Integer> approversId,
-			@RequestParam List<Integer> reviewersId,
+			@RequestParam List<Integer> approverIds,
+			@RequestParam List<Integer> reviewerIds,
 			@SessionAttribute(MemberConst.USER_KEY) MemberDTO userInfo) {
 		
 		dto.setMember_id(userInfo.getId());
 		
 		boolean res = false;
 		try {
-			res = approvalService.submitDraft(dto, approversId, reviewersId);
+			res = approvalService.submitDraft(dto, approverIds, reviewerIds);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -199,10 +196,11 @@ public class ApprovalController {
 	}
 	
 	@PostMapping("/approve")
-	public ModelAndView approve(@SessionAttribute(MemberConst.USER_KEY) MemberDTO userInfo, @RequestParam int docId) {
+	public ModelAndView approve(@SessionAttribute(MemberConst.USER_KEY) MemberDTO userInfo,
+			@RequestParam int docId) {
 		int res = 0;
 		try {
-			res = approvalService.approve(docId, userInfo.getId(), ApprovalConst.APPROVED);
+			res = approvalService.approve(docId, userInfo.getId());
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -216,10 +214,11 @@ public class ApprovalController {
 	}
 	
 	@PostMapping("/reject")
-	public ModelAndView reject(@SessionAttribute(MemberConst.USER_KEY) MemberDTO userInfo, @RequestParam int docId) {
+	public ModelAndView reject(@SessionAttribute(MemberConst.USER_KEY) MemberDTO userInfo,
+			@RequestParam int docId) {
 		int res = 0;
 		try {
-			res = approvalService.reject(docId, userInfo.getId(), ApprovalConst.REJECTED);
+			res = approvalService.reject(docId, userInfo.getId());
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

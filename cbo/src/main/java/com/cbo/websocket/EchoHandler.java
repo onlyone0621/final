@@ -10,6 +10,9 @@ import com.cbo.member.model.MemberDTO;
 import com.cbo.messenger.model.ChatMessageDTO;
 import com.cbo.messenger.service.ChatMessageService;
 import com.cbo.messenger.service.ChatMessageServiceImple;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -45,22 +48,42 @@ public class EchoHandler extends TextWebSocketHandler {
 	//메세지 작성 및 전달
 	@Override
 	protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
-		String room_id_s = getRoomId(session);
-		int room_id = Integer.parseInt(room_id_s);
-        MemberDTO dto = getMember(session);
-        String content = message.getPayload();
+	    String room_id_s = getRoomId(session);
+	    int room_id = Integer.parseInt(room_id_s);
+	    MemberDTO dto = getMember(session);
+	    
+	    String rawPayload = message.getPayload();
+	    if (dto == null || room_id_s == null || rawPayload == null || rawPayload.trim().isEmpty()) return;
 
-        if (dto == null || room_id_s == null || content == null || content == "") return;
-        
-        String totalMessage;
-        if(content.equals(dto.getName()+"님이 퇴장하셨습니다.")) {
-        	totalMessage = content;
-        }else {
-        	totalMessage = dto.getName() + " : " + content;
-        	ChatMessageDTO cdto = new ChatMessageDTO(0, room_id, dto.getId(), null , content);
-            service.addMessage(cdto);
-        }
-        broadcastToRoom(room_id_s, totalMessage);
+	    ObjectMapper mapper = new ObjectMapper();
+	    JsonNode jsonNode = mapper.readTree(rawPayload);
+	    
+	    String type = jsonNode.get("type").asText();
+	    String content = jsonNode.get("content").asText();
+
+	    if (type == null || content == null) return;
+
+	    ChatMessageDTO cdto = null;
+
+	    if ("system".equals(type)) {
+	        // 시스템 메시지 저장
+	        cdto = new ChatMessageDTO(0, room_id, dto.getId(), null, content, "system");
+	        service.addMessage(cdto);
+	    } else {
+	        // 일반 메시지
+	        cdto = new ChatMessageDTO(0, room_id, dto.getId(), null, content, "user");
+	        service.addMessage(cdto);
+	    }
+	 // 전송할 메시지를 객체 형태로 구성
+	    ObjectNode sendMessage = mapper.createObjectNode();
+	    sendMessage.put("type", type);
+	    sendMessage.put("user", dto.getName()); // sender name
+	    sendMessage.put("content", content);
+	    sendMessage.put("room_id", room_id);
+
+	    // JSON 문자열로 변환
+	    String jsonMessage = mapper.writeValueAsString(sendMessage);
+	    broadcastToRoom(room_id_s, jsonMessage);
 	}
 	
 	//퇴장

@@ -1,12 +1,12 @@
 package com.cbo.approval.service;
 
 import java.util.List;
+
 import java.util.Map;
 
 import com.cbo.approval.model.ApprovalLineDTO;
 import com.cbo.approval.model.DocDTO;
 import com.cbo.approval.model.DocViewDTO;
-import com.cbo.approval.model.FormatDTO;
 import com.cbo.member.model.OrganDTO;
 
 public interface ApprovalService {
@@ -33,6 +33,6 @@ public interface ApprovalService {
 	boolean submitDraft(DocDTO dto, List<Integer> approversId, List<Integer> reviewersId) throws Exception;
 	
 	// Approve or Reject
-	int approve(int docId, int memberId, String status) throws Exception;
-	int reject(int docId, int memberId, String status) throws Exception;
+	int approve(int docId, int memberId) throws Exception;
+	int reject(int docId, int memberId) throws Exception;
 }

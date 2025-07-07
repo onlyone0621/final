@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import com.cbo.mapper.MessengerMapper;
 import com.cbo.member.model.ChatMemberDTO;
 import com.cbo.member.model.InviteeDTO;
+import com.cbo.member.model.OrganDTO;
 import com.cbo.messenger.model.*;
 
 @Service
@@ -24,8 +25,8 @@ public class ChatMessageServiceImple implements ChatMessageService {
 	}
 	
 	@Override
-	public List<MessageListDTO> getMessageList(int room_id) throws Exception {
-		List<MessageListDTO> list = mapper.selectMessage(room_id);
+	public List<MessageListDTO> getMessageList(Map map) throws Exception {
+		List<MessageListDTO> list = mapper.selectMessage(map);
 		return list;
 	}
 	
@@ -64,5 +65,16 @@ public class ChatMessageServiceImple implements ChatMessageService {
 		int result = mapper.deleteChatMember(dto);
 		return result;
 	}
-
+	
+	@Override
+	public List<OrganDTO> getMembers(int id) throws Exception {
+		List<OrganDTO> list = mapper.selectMembers(id);
+		return list;
+	}
+	
+	@Override
+	public Integer findPrivateRoom(int member1_id, int member2_id) throws Exception {
+		Integer result = mapper.selectPrivateRoom(member1_id, member2_id);
+		return result;
+	}
 }

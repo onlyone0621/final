@@ -139,9 +139,9 @@ public class ApprovalServiceImple implements ApprovalService {
 		// Create list of approvers adding drafter, approvers, and reviewers
 		List<ApprovalLineDTO> entry = new ArrayList<>();
 		
-		entry.add(new ApprovalLineDTO(docId, dto.getMember_id(), null, null, null, ApprovalConst.DRAFT, null));
-		approversId.forEach(id -> entry.add(new ApprovalLineDTO(docId, id, null, null, null, ApprovalConst.PENDING, null)));
-		reviewersId.forEach(id -> entry.add(new ApprovalLineDTO(docId, id, null, null, null, ApprovalConst.REFERENCE, null)));
+		entry.add(new ApprovalLineDTO(docId, dto.getMember_id(), null, null, null, null, ApprovalConst.DRAFT, null));
+		approversId.forEach(id -> entry.add(new ApprovalLineDTO(docId, id, null, null, null, null, ApprovalConst.PENDING, null)));
+		reviewersId.forEach(id -> entry.add(new ApprovalLineDTO(docId, id, null, null, null, null, ApprovalConst.REFERENCE, null)));
 		
 		// Insert approval lines
 		for (ApprovalLineDTO elem : entry) {
@@ -155,22 +155,22 @@ public class ApprovalServiceImple implements ApprovalService {
 
 
 	@Override
-	public int approve(int docId, int memberId, String status) throws Exception {
+	public int approve(int docId, int memberId) throws Exception {
 		Map<String, Object> map = new HashMap<>();
 		map.put("doc_id", docId);
 		map.put("member_id", memberId);
-		map.put("status", status);
-		return mapper.updateStatusToApproved(map);
+		map.put("status", ApprovalConst.APPROVED);
+		return mapper.updateStatus(map);
 	}
 
 
 	@Override
-	public int reject(int docId, int memberId, String status) throws Exception {
+	public int reject(int docId, int memberId) throws Exception {
 		Map<String, Object> map = new HashMap<>();
 		map.put("doc_id", docId);
 		map.put("member_id", memberId);
-		map.put("status", status);
-		return mapper.updateStatusToRejected(map);
+		map.put("status", ApprovalConst.REJECTED);
+		return mapper.updateStatus(map);
 	}
 
 }
