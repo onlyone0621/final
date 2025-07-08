@@ -161,7 +161,17 @@ body {
 .post-buttons button:hover {
 	background-color: #f0f0f0;
 }
+.reply-child {
+  margin-left: 30px;
+  background-color: #fff5f7;
+  border-left: 3px solid #ffc0cb;
+  padding-left: 10px;
+}
+
 </style>
+<script>
+
+</script>
 </head>
 <body>
 <div layout:fragment="content">
@@ -217,13 +227,16 @@ body {
 			<hr>
 
 			<div id="replySection"
-				th:attr="data-cid=${cId},data-boardid=${boardId},data-postid=${post.id},data-userid=${session.udto.id}">
-				<h4>댓글</h4>
-				<textarea id="replyContent" placeholder="댓글을 입력하세요" style="width: 100%;"></textarea><br>
-				<button type="button" onclick="writeReply()">댓글 등록</button>
-				<div id="replyList"></div>
-			</div>
+     th:attr="data-cid=${cId},data-boardid=${boardId},data-postid=${post.id},data-userid=${session.udto.id}">
+  <h4>댓글</h4>
 
+  <!-- 댓글 작성 -->
+  <textarea id="replyContent" placeholder="댓글을 입력하세요" style="width: 100%;"></textarea><br>
+  <button type="button" onclick="writeReply()">댓글 등록</button>
+
+  <!-- 댓글 목록 (JS로 동적 생성) -->
+  <div id="replyList"></div>
+</div>
 			<script src="/js/community/reply.js"></script>
 		</div>
 	</div>

@@ -6,6 +6,32 @@
   <meta charset="UTF-8">
   <title>커뮤니티 정보 수정</title>
   <style>
+
+  .sidebar ul {
+    list-style-type: none;  /* ● 점 제거 */
+    padding-left: 0;
+    margin: 0;
+  }
+
+  .sidebar ul li {
+    font-size: 14px;        /* 살짝 작은 글씨 */
+    color: #555;            /* 부드러운 회색 텍스트 */
+    margin-bottom: 6px;
+    padding: 2px 4px;
+  }
+
+  .sidebar ul li a {
+    text-decoration: none;
+    color: #6a1b9a;         /* 보라 계열 링크 색상 */
+    font-weight: 500;
+  }
+
+  .sidebar ul li a:hover {
+    color: #9c27b0;         /* hover 시 더 진한 보라 */
+    text-decoration: underline;
+  }
+
+  
     .container { display: flex; min-height: 100vh; }
     .sidebar { width: 220px; background-color: #fbf9fd; padding: 20px; border-right: 1px solid #ddd; }
     .main { flex-grow: 1; padding: 20px; }
@@ -139,22 +165,22 @@
 <div layout:fragment="content">
   <div class="container">
     <div class="sidebar">
-      <h4 th:text="${communityInfo.name}">커뮤니티</h4>
-      <ul th:each="bdto : ${sidebarBoardLists}">
-        <li>
-          <a th:href="@{/community/{cId}/board/{boardId}(cId=${cId}, boardId=${bdto.id})}">[[${bdto.name}]]</a>
-        </li>
-      </ul>
-      <hr>
-      <h4>멤버</h4>
-      <ul th:each="m : ${sidebarMemberLists}">
-        <li>
-          <span th:text="|${m['GRADE_NAME']} ${m['NAME']}|"></span>
-          <span th:if="${m['ROLE'] == 'master'}">👑</span>
-          <span th:if="${m['ROLE'] == 'submaster'}">🛡️</span>
-        </li>
-      </ul>
-    </div>
+  <h4 th:text="${communityInfo.name}">커뮤니티</h4>
+  <ul>
+    <li th:each="bdto : ${sidebarBoardLists}">
+      <a th:href="@{/community/{cId}/board/{boardId}(cId=${cId}, boardId=${bdto.id})}">[[${bdto.name}]]</a>
+    </li>
+  </ul>
+  <hr>
+  <h4>멤버</h4>
+  <ul>
+    <li th:each="m : ${sidebarMemberLists}">
+      <span th:text="|${m['GRADE_NAME']} ${m['NAME']}|"></span>
+      <span th:if="${m['ROLE'] == 'master'}">👑</span>
+      <span th:if="${m['ROLE'] == 'submaster'}">🛡️</span>
+    </li>
+  </ul>
+</div>
 
     <div class="main">
       <div class="tabs">

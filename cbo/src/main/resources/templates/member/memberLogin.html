@@ -4,185 +4,195 @@
 <meta charset="UTF-8">
 <title>로그인</title>
 <style>
-    body {
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        background-color: #FFD8D8;
-        margin: 0;
-        padding: 0;
-    }
+body {
+	font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+	background-color: #FFD8D8;
+	margin: 0;
+	padding: 0;
+}
 
-    form {
-        width: 400px;
-        height: 420px;
-        margin: 12% auto;
-        padding: 20px;
-        background-color: white;
-        border-radius: 10px;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    }
+form {
+	width: 400px;
+	height: 420px;
+	margin: 12% auto;
+	padding: 20px;
+	background-color: white;
+	border-radius: 10px;
+	box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
 
-    form div {
-        margin-bottom: 10px;
-    }
+form div {
+	margin-bottom: 10px;
+}
 
+input[type="text"], input[type="password"] {
+	width: 76%;
+	padding: 10px;
+	border: 1px solid #ccc;
+	border-radius: 6px;
+	font-size: 18px;
+}
 
-    input[type="text"],
-    input[type="password"]{
-        width: 76%;
-        padding: 10px;
-        border: 1px solid #ccc;
-        border-radius: 6px;
-        font-size: 18px;
-    }
-    
+input[type="button"], input[type="submit"] {
+	width: 80%;
+	padding: 10px 15px;
+	background-color: #FFC6C6;
+	color: white;
+	border: none;
+	border-radius: 6px;
+	cursor: pointer;
+	font-size: 18px;
+	margin-top: 5px;
+	margin-left: 5px;
+}
 
-    input[type="button"],
-    input[type="submit"] {
-    	width: 80%;
-        padding: 10px 15px;
-        background-color: #FFC6C6;
-        color: white;
-        border: none;
-        border-radius: 6px;
-        cursor: pointer;
-        font-size: 18px;
-        margin-top: 5px;
-        margin-left: 5px;
-    }
+input[type="button"]:hover, input[type="submit"]:hover {
+	background-color: #FFA2A2;
+}
 
-    input[type="button"]:hover,
-    input[type="submit"]:hover {
-        background-color: #FFA2A2;
-    }
-    
-    .form-div {
-    	text-align: center;
-    }
-    
-    .saveId-div{
-    	text-align: right;
-    }
-    .logo-label{
-    	text-align: center;
-    	width: 100px;
-    	height: 50px;
-    	font-size: 70px;
-    }
-    .find-div{
-    	text-align: left;
-    	text-decoration: none;
-    	color: black;
-    }
-	.fs-div{
-		display: flex;
-		justify-content: space-around;
-	}
-	a{
-		text-decoration: none;
-		color: black;
-	}
-	.result-div{
-		font-size: 12px;
-		text-align: left;
-		margin-left: 40px;
-		color: red;
-		
-	}
+.form-div {
+	text-align: center;
+}
+
+.saveId-div {
+	text-align: right;
+}
+
+.logo-label {
+	font-size: 80px;
+	font-weight: 900;
+	color:  #FFC6C6;
+	text-align: center;
+	margin: 0;
+	letter-spacing: 4px;
+}
+
+.find-div {
+	text-align: left;
+	text-decoration: none;
+	color: black;
+}
+
+.fs-div {
+	display: flex;
+	justify-content: space-around;
+}
+
+a {
+	text-decoration: none;
+	color: black;
+}
+
+.result-div {
+	font-size: 12px;
+	text-align: left;
+	margin-left: 40px;
+	color: red;
+}
 </style>
 <script>
-document.addEventListener("keyup", function(event){
-	if (event.keyCode === 13){
-		document.getElementById("loginBtn").click();
-	}
-});
+	document.addEventListener("keyup", function(event) {
+		if (event.keyCode === 13) {
+			document.getElementById("loginBtn").click();
+		}
+	});
 
-var XHR=null;
-function getXHR(){
-	if(window.ActioveXObject){
-		return new ActiveXObject("Msxml2.XMLHTTP");
-	}else if(window.XMLHttpRequest){
-		return new XMLHttpRequest();
-	}else{
-		return null;
-	}
-}
-
-function sendRequest(url,params,callback,method){
-	XHR = getXHR();
-	var newMethod = method ? method : 'GET';//1차 유효성 검사
-	//2차 유효성 검사
-	if(newMethod!='GET' && newMethod!='POST'){
-		newMethod = 'GET';
-	}
-	//3차 유효성 검사
-	var newParams = (params==null||params=='') ? null : params;
-	if(newMethod=='GET' && newParams!=null){
-		url = url + '?' + newParams;
-	}
-	XHR.onreadystatechange=callback;
-	XHR.open(newMethod, url, true);
-	XHR.setRequestHeader('Context-Type','application/x-www-form-urlencoded');
-	XHR.send(newParams);
-}
-function login() {
-	var userId = document.getElementById("user_id").value;
-	var userPwd = document.getElementById("pwd").value;
-	var idSave = document.getElementById("saveid").checked;
-	var resultLabel = document.getElementById("loginResult");
-	if(userId=="" || userPwd==""){
-		resultLabel.innerHTML = "로그인 정보를 입력해주세요.";
-	}else{
-		params = 'user_id='+userId+'&pwd='+userPwd+'&saveid='+idSave;
-	    sendRequest('login',params,loginResult,'GET');
-	}
-}
-function loginResult(){
-	if(XHR.readyState==4){
-		if(XHR.status==200){
-			var resultLabel = document.getElementById("loginResult");
-			var data = XHR.responseText;
-			if(data == 'success'){
-				location.href="main";
-			}else{
-				resultLabel.innerHTML = "로그인에 실패하였습니다. 아이디 또는 비밀번호를 확인해 주세요."
-			}
-
+	var XHR = null;
+	function getXHR() {
+		if (window.ActioveXObject) {
+			return new ActiveXObject("Msxml2.XMLHTTP");
+		} else if (window.XMLHttpRequest) {
+			return new XMLHttpRequest();
+		} else {
+			return null;
 		}
 	}
-}
 
-function goMemberJoin(){
-	location.href="memberJoin";
-}
+	function sendRequest(url, params, callback, method) {
+		XHR = getXHR();
+		var newMethod = method ? method : 'GET';//1차 유효성 검사
+		//2차 유효성 검사
+		if (newMethod != 'GET' && newMethod != 'POST') {
+			newMethod = 'GET';
+		}
+		//3차 유효성 검사
+		var newParams = (params == null || params == '') ? null : params;
+		if (newMethod == 'GET' && newParams != null) {
+			url = url + '?' + newParams;
+		}
+		XHR.onreadystatechange = callback;
+		XHR.open(newMethod, url, true);
+		XHR.setRequestHeader('Context-Type',
+				'application/x-www-form-urlencoded');
+		XHR.send(newParams);
+	}
+	function login() {
+		var userId = document.getElementById("user_id").value;
+		var userPwd = document.getElementById("pwd").value;
+		var idSave = document.getElementById("saveid").checked;
+		var resultLabel = document.getElementById("loginResult");
+		if (userId == "" || userPwd == "") {
+			resultLabel.innerHTML = "로그인 정보를 입력해주세요.";
+		} else {
+			params = 'user_id=' + userId + '&pwd=' + userPwd + '&saveid='
+					+ idSave;
+			sendRequest('login', params, loginResult, 'GET');
+		}
+	}
+	function loginResult() {
+		if (XHR.readyState == 4) {
+			if (XHR.status == 200) {
+				var resultLabel = document.getElementById("loginResult");
+				var data = XHR.responseText;
+				if (data == 'success') {
+					location.href = "main";
+				} else {
+					resultLabel.innerHTML = "로그인에 실패하였습니다. 아이디 또는 비밀번호를 확인해 주세요."
+				}
+
+			}
+		}
+	}
+
+	function goMemberJoin() {
+		location.href = "memberJoin";
+	}
 </script>
 </head>
 <body>
-<form name="memberLogin" action="memberLogin" method="post">
-	<div class="form-div">
-		<div>
-			<label class="logo-label">LOGO</label>
+	<form name="memberLogin" action="memberLogin" method="post">
+		<div class="form-div">
+			<div>
+				<label class="logo-label">CBO</label>
+			</div>
+			<div>
+				<input type="text" id="user_id" name="user_id" placeholder="ID"
+					th:value="${saveid}">
+			</div>
+
+			<div>
+				<input type="password" id='pwd' name="pwd" placeholder="Password">
+			</div>
+			<div class="result-div">
+				<label id="loginResult"></label>
+			</div>
+			<div class="fs-div">
+				<div class="find-div">
+					<label><a href="memberIdFind" class="idFind">ID 찾기</a> | <a
+						href="memberPwdFind">비밀번호 찾기</a></label>
+				</div>
+				<div class="saveId-div">
+					<input type="checkbox" id="saveid" name="saveid"
+						th:checked="${saveid != ''}">아이디 저장
+				</div>
+			</div>
+			<div>
+				<input type="button" value="로그인" id="loginBtn" onclick="login()">
+			</div>
+			<div>
+				<input type="button" value="회원가입" onclick="goMemberJoin()">
+			</div>
 		</div>
-	    <div>
-	        <input type="text" id="user_id" name="user_id" placeholder="ID" th:value="${saveid}">
-	    </div>
-	
-	    <div>
-	        <input type="password" id='pwd' name="pwd" placeholder="Password">
-	    </div>
-	    <div class="result-div">
-	        <label id="loginResult"></label>
-	    </div>
-	    <div class="fs-div">
-	    	<div class="find-div"><label><a href="memberIdFind" class="idFind">ID 찾기</a>  |  <a href="memberPwdFind">비밀번호 찾기</a></label></div>
-	    	<div class="saveId-div"><input type="checkbox" id="saveid" name="saveid" th:checked="${saveid != ''}">아이디 저장</div>
-	    </div>
-	    <div>
-	        <input type="button" value="로그인" id="loginBtn" onclick="login()">
-	    </div>
-	    <div>
-	        <input type="button" value="회원가입" onclick="goMemberJoin()">
-	    </div>
-	</div>
-</form>
+	</form>
 </body>
 </html>

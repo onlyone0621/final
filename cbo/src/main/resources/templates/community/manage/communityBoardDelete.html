@@ -93,42 +93,65 @@
       font-weight: bold;
     }
 
-    form input[type="text"],
-    form textarea {
+    table {
       width: 100%;
-      padding: 6px;
-      margin-bottom: 10px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
+      border-collapse: collapse;
+      margin-top: 10px;
+      font-size: 14px;
     }
 
-    form input[type="submit"],
-    form input[type="reset"] {
-      padding: 8px 16px;
+    thead th {
+      background-color: #f8f8f8;
+      padding: 10px;
+      text-align: left;
+      border-bottom: 1px solid #ccc;
+    }
+
+    tbody td {
+      padding: 10px;
+      border-bottom: 1px solid #eee;
+    }
+
+    tbody tr:hover {
+      background-color: #fafafa;
+    }
+
+    td input[type="button"] {
+      background-color: #e1bee7;
+      color: #333;
       border: none;
+      padding: 6px 10px;
       border-radius: 4px;
+      cursor: pointer;
+      font-size: 13px;
+    }
+
+    td input[type="button"]:hover {
+      background-color: #ce93d8;
+    }
+
+    #deleteBtn,
+    .add-btn {
+      background-color: #f48fb1;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      margin-right: 10px;
+      font-size: 14px;
+      border-radius: 6px;
       cursor: pointer;
     }
 
-    form input[type="submit"] {
-      background-color: #f8bbd0;
-      color: #333;
+    #deleteBtn:hover,
+    .add-btn:hover {
+      background-color: #ec407a;
     }
 
-    form input[type="submit"]:hover {
-      background-color: #f48fb1;
-    }
-
-    form input[type="reset"] {
-      background-color: #fce4ec;
-      color: #333;
-    }
-
-    form input[type="reset"]:hover {
-      background-color: #f8bbd0;
+    .form-actions {
+      margin-top: 20px;
     }
   </style>
-  
+
   <script>
     document.addEventListener("DOMContentLoaded", function() {
       var selectAll = document.getElementById('selectAll');
@@ -153,6 +176,7 @@
     });
   </script>
 </head>
+
 <body>
 <div layout:fragment="content">
   <div class="container">
@@ -176,9 +200,10 @@
       <div class="tabs">
         <a class="tab" th:href="@{/community/{cId}/update(cId=${cId})}">정보</a>
         <a class="tab active" th:href="@{/community/{cId}/boardDelete(cId=${cId})}">게시판</a>
-       	<a class="tab" th:href="@{/community/{cId}/member(cId=${cId})}">멤버</a>
+        <a class="tab" th:href="@{/community/{cId}/member(cId=${cId})}">멤버</a>
         <a class="tab" th:href="@{/community/{cId}/close(cId=${cId})}">폐쇄</a>
       </div>
+
       <form id="deleteForm" th:action="@{'/community/' + ${cId} + '/boardDelete'}" method="post">
         <table>
           <thead>
@@ -205,11 +230,13 @@
             </tr>
           </tbody>
         </table>
-        <br>
-        <button type="button" id="deleteBtn">삭제</button>
-        <a th:href="@{/community/{cId}/board/create(cId=${cId})}">
-          <button type="button">추가</button>
-        </a>
+
+        <div class="form-actions">
+          <button type="button" id="deleteBtn">삭제</button>
+          <a th:href="@{/community/{cId}/board/create(cId=${cId})}">
+            <button type="button" class="add-btn">추가</button>
+          </a>
+        </div>
       </form>
     </div>
   </div>
