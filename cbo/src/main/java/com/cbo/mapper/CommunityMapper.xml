@@ -657,6 +657,41 @@ WHERE my_cm.member_id = #{memberId}
       AND cm.role IN ('user', 'submaster', 'master')
 </select>
 
+
+<!-- 사용자: 로그인한 사용자의 커뮤니티 목록 + 역할까지 가져오기 -->
+<select id="communityMainJoinWithRole" parameterType="int" resultType="map">
+SELECT 
+    c.id AS ID,
+    c.name AS NAME,
+    cm.role AS ROLE,  <!-- ✅ 역할 가져옴 -->
+    (SELECT COUNT(*) 
+     FROM community_member cm2 
+     WHERE cm2.community_id = c.id) AS MEMBER_COUNT,
+    (SELECT COUNT(*)
+     FROM board_post bp 
+     JOIN community_board cb ON bp.board_id = cb.id 
+     WHERE cb.community_id = c.id) AS POST_COUNT,
+    (SELECT m.name 
+     FROM community_member cm3 
+     JOIN member m ON cm3.member_id = m.id 
+     WHERE cm3.community_id = c.id AND cm3.role = 'master') AS MASTER_NAME
+FROM community c
+JOIN community_member cm ON c.id = cm.community_id
+WHERE cm.member_id = #{memberId}
+</select>
+
+
+<!-- 커뮤니티 가입된 사람만 접근 가능하도록 -->
+<select id="isApprovedMember" resultType="int">
+ SELECT COUNT(*)
+FROM community_member
+WHERE community_id = #{cId}
+  AND member_id = #{memberId}
+  AND role IN ('master', 'submaster', 'user')
+</select>
+
+
+
  </mapper>
  
  

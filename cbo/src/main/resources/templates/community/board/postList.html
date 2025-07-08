@@ -1,192 +1,251 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org"
-              xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-              layout:decorate="layouts/mainLayout">
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="layouts/mainLayout">
 <head>
-  <meta charset="UTF-8">
-  <title>게시글 목록</title>
- <style>
-  html, body {
-    height: 100%;
-    margin: 0;
-  }
+<meta charset="UTF-8">
+<title>게시글 목록</title>
+<style>
+html, body {
+	height: 100%;
+	margin: 0;
+}
 
-  body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  }
+body {
+	font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
 
-  /* 💥 핵심 수정: 본문 컨테이너가 화면 높이 다 채우게 */
-  .container {
-    display: flex;
-    min-height: calc(100vh - 140px); /* 헤더(60px) + 푸터(80px) 가정 */
-  }
+/* 💥 핵심 수정: 본문 컨테이너가 화면 높이 다 채우게 */
+.container {
+	display: flex;
+	min-height: calc(100vh - 140px); /* 헤더(60px) + 푸터(80px) 가정 */
+}
 
-  .sidebar {
-    width: 200px;
-    background-color: #fbf9fd;
-    padding: 20px;
-    box-sizing: border-box;
-    border-right: 1px solid #ddd;
-    display: flex;
-    flex-direction: column;
-  }
+.sidebar {
+	width: 200px;
+	background-color: #fbf9fd;
+	padding: 16px;
+	box-sizing: border-box;
+	border-right: 1px solid #ddd;
+	display: flex;
+	flex-direction: column;
+	font-size: 14px;
+}
 
-  .sidebar ul {
-    list-style: none;
-    padding-left: 0;
-    margin-top: 10px;
-  }
+.sidebar h4,
+.sidebar h5 {
+	font-size: 15px;
+	margin: 12px 0 6px 0; /* ✅ 위아래 간격 축소 */
+}
 
-  .sidebar ul li {
-    margin-bottom: 10px;
-    padding: 6px 8px;
-    border-radius: 5px;
-    transition: background-color 0.2s ease;
-  }
+.sidebar select {
+	margin-bottom: 10px;
+}
 
-  .sidebar ul li:hover {
-    background-color: #f0f0f0;
-    cursor: pointer;
-  }
+.sidebar ul {
+	list-style: none;
+	padding-left: 0;
+	margin: 4px 0 10px 0; /* ✅ 리스트와 섹션 간 간격 축소 */
+}
 
-  .sidebar a {
-    text-decoration: none;
-    color: #333;
-    font-size: 14px;
-  }
+.sidebar ul li {
+	margin-bottom: 5px;
+	font-size: 13.5px;
+	padding: 3px 5px;
+}
 
-  .sidebar button {
-    padding: 6px 10px;
-    border: 1px solid #ccc;
-    background-color: white;
-    border-radius: 4px;
-    cursor: pointer;
-    margin-bottom: 15px;
-    font-size: 14px;
-  }
+.sidebar ul li:hover {
+	background-color: #f0f0f0;
+	cursor: pointer;
+	border-radius: 5px;
+}
 
-  .sidebar button:hover {
-    background-color: #f0f0f0;
-  }
+.sidebar a {
+	text-decoration: none;
+	color: #333;
+	font-size: 14px;
+}
 
-  .main {
-    flex-grow: 1;
-    padding: 30px;
-  }
+.sidebar button {
+	padding: 6px 10px;
+	border: 1px solid #ccc;
+	background-color: white;
+	border-radius: 4px;
+	cursor: pointer;
+	margin: 6px 0 10px 0;  /* ✅ 버튼 위아래 간격 줄임 */
+	font-size: 13px;
+	font-weight: bold;
+}
 
-  h4 {
-    margin-bottom: 10px;
-  }
+.sidebar button:hover {
+	background-color: #f0f0f0;
+}
 
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
-  }
+a.link-action {
+	display: inline-block;
+	font-size: 12px;
+	color: #d81b60;
+	font-weight: bold;
+	text-decoration: none;
+	margin-top: 4px;
+}
 
-  table, th, td {
-    border: 1px solid #ddd;
-  }
+a.link-action:hover {
+	text-decoration: underline;
+}
 
-  th, td {
-    padding: 10px;
-    text-align: center;
-  }
+.main {
+	flex-grow: 1;
+	padding: 30px;
+}
 
-  th {
-    background-color: #f2f2f2;
-  }
+h4 {
+	margin-bottom: 10px;
+}
 
-  ul.info-list {
-    list-style: none;
-    padding-left: 0;
-    margin-top: 10px;
-    margin-bottom: 20px;
-  }
+table {
+	width: 100%;
+	border-collapse: collapse;
+	margin-top: 20px;
+}
 
-  ul.info-list li {
-    margin-bottom: 5px;
-    font-size: 14px;
-  }
-  
+table, th, td {
+	border: 1px solid #ddd;
+}
+
+th, td {
+	padding: 10px;
+	text-align: center;
+}
+
+th {
+	background-color: #f2f2f2;
+}
+
+ul.info-list {
+	list-style: none;
+	padding-left: 0;
+	margin-top: 10px;
+	margin-bottom: 20px;
+}
+
+ul.info-list li {
+	margin-bottom: 5px;
+	font-size: 14px;
+}
+
+.styled-select {
+	width: 170px;
+	padding: 8px 12px;
+	font-size: 10px;
+	color: #333;
+	background-color: #fff0f5; /* 연한 분홍 배경 */
+	border: 1px solid #dca7d8; /* 연보라 테두리 */
+	border-radius: 8px;
+	outline: none;
+	font-weight: bold;
+}
 </style>
+
+<script>
+	function moveCommunity() {
+		const url = document.getElementById("communitySelect").value;
+		if (url) {
+			window.location.href = url;
+		}
+	}
+</script>
+
 </head>
 <body>
-<div layout:fragment="content">
-  <div class="container">
-    <div class="sidebar">
-      <h3>[[${communityName}]]</h3>
-      <a th:href="@{'/community/' + ${cId} + '/board/' + ${boardId} + '/write'}">
-        <button type="button">글쓰기</button>
-      </a>
-      <ul>
-        <li th:each="bdto : ${boardLists}">
-          <a th:href="@{/community/{cId}/board/{boardId}(cId=${cId}, boardId=${bdto.id})}">[[${bdto.name}]]</a>
-        </li>
-      </ul>
-
-<!-- + 게시판 추가 (마스터, 부마스터만) -->
-<th:block th:if="${userRole == 'master' or userRole == 'submaster'}">
-  <a th:href="@{/community/{cId}/board/create(cId=${cId})}" class="link-action">+ 게시판 추가</a>
-</th:block>
+	<div layout:fragment="content">
+		<div class="container">
+			<div class="sidebar">
 
 
-<!-- 멤버 목록 -->
-<h5 style="margin-top: 20px;">가입 멤버</h5>
-<ul>
-  <li th:each="m : ${sidebarMemberLists}">
-    <span th:text="${m['NAME']}"></span>
-    <span th:if="${m['ROLE'] == 'master'}">👑 마스터</span>
-    <span th:if="${m['ROLE'] == 'submaster'}">🛡️ 부마스터</span>
-  </li>
-</ul>
+				<!-- 커뮤니티 목록 셀렉트박스 -->
+				<select id="communitySelect" onchange="moveCommunity()"
+					class="styled-select">
+					<option value="">-- 커뮤니티 선택 --</option>
+					<option th:each="c : ${joinList}"
+						th:value="@{/community/{id}(id=${c.ID})}" th:text="${c.NAME}">
+					</option>
+				</select>
+				<h4 th:text="${communityInfo != null ? communityInfo.name : '커뮤니티'}">커뮤니티</h4>
+				<h3>[[${communityName}]]</h3>
+				<a
+					th:href="@{'/community/' + ${cId} + '/board/' + ${boardId} + '/write'}">
+					<button type="button">글쓰기</button>
+				</a>
+				<ul>
+					<li th:each="bdto : ${boardLists}"><a
+						th:href="@{/community/{cId}/board/{boardId}(cId=${cId}, boardId=${bdto.id})}">
+							[[${bdto.name}]] </a></li>
+				</ul>
 
-<!-- + 초대하기 (마스터, 부마스터만) -->
-<th:block th:if="${userRole == 'master' or userRole == 'submaster'}">
-  <a th:href="@{/community/{cId}/invite(cId=${cId})}" class="link-action">+ 초대하기</a>
-</th:block>
-     
-    </div>
+				<!-- + 게시판 추가 (마스터, 부마스터만) -->
+				<th:block th:if="${userRole == 'master' or userRole == 'submaster'}">
+					<a th:href="@{/community/{cId}/board/create(cId=${cId})}"
+						class="link-action">+ 게시판 추가</a>
+				</th:block>
 
-    <div class="main">
-      <h4>게시판: [[${boardName}]]</h4>
 
-      <ul class="info-list">
-        <li>운영자 : 박주연</li>
-        <li>게시판 주소 : /community/[[${cId}]]/board/[[${boardId}]]</li>
-      </ul>
+				<!-- 멤버 목록 -->
+				<h5 style="margin-top: 20px;">가입 멤버</h5>
+				<ul>
+					<li th:each="m : ${sidebarMemberLists}"><span
+						th:text="${m['NAME']}"></span> <span
+						th:if="${m['ROLE'] == 'master'}">👑 마스터</span> <span
+						th:if="${m['ROLE'] == 'submaster'}">🛡️ 부마스터</span></li>
+				</ul>
 
-      <form name="postListForm">
-        <table>
-          <thead>
-            <tr>
-              <th>번호</th>
-              <th>제목</th>
-              <th>작성자</th>
-              <th>작성일</th>
-              <th>조회</th>
-              <th>좋아요</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr th:if="${#lists.isEmpty(postLists)}">
-              <td colspan="6" style="text-align:center;">게시글이 아직 없습니다.</td>
-            </tr>
-            <tr th:each="post, stat : ${postLists}">
-              <td th:text="${stat.count}">1</td>
-              <td>
-                <a th:href="@{'/community/' + ${cId} + '/board/' + ${boardId} + '/post/' + ${post.id}}">[[${post.title}]]</a>
-              </td>
-              <td th:text="${post.postName}">작성자</td>
-              <td th:text="${#dates.format(post.write_date, 'yyyy-MM-dd')}">작성일</td>
-              <td th:text="${post.view_num}">조회</td>
-              <td th:text="${post.upvote != null ? post.upvote : 0}">0</td>
-            </tr>
-          </tbody>
-        </table>
-      </form>
-    </div>
-  </div>
-</div>
+				<!-- + 초대하기 (마스터, 부마스터만) -->
+				<th:block th:if="${userRole == 'master' or userRole == 'submaster'}">
+					<a th:href="@{/community/{cId}/invite(cId=${cId})}"
+						class="link-action">+ 초대하기</a>
+				</th:block>
+
+			</div>
+
+			<div class="main">
+				<h4 th:text="'게시판 : ' + ${bName}">게시판명</h4>
+				<p th:text="'운영자: ' + ${masterName['NAME']}">운영자</p>
+				<ul class="info-list">
+
+					<li>게시판 주소 : /community/[[${cId}]]/board/[[${boardId}]]</li>
+				</ul>
+
+				<form name="postListForm">
+					<table>
+						<thead>
+							<tr>
+								<th>번호</th>
+								<th>제목</th>
+								<th>작성자</th>
+								<th>작성일</th>
+								<th>조회</th>
+								<th>좋아요</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr th:if="${#lists.isEmpty(postLists)}">
+								<td colspan="6" style="text-align: center;">게시글이 아직 없습니다.</td>
+							</tr>
+							<tr th:each="post, stat : ${postLists}">
+								<td th:text="${stat.count}">1</td>
+								<td><a
+									th:href="@{'/community/' + ${cId} + '/board/' + ${boardId} + '/post/' + ${post.id}}">[[${post.title}]]</a>
+								</td>
+								<td th:text="${post.postName}">작성자</td>
+								<td th:text="${#dates.format(post.write_date, 'yyyy-MM-dd')}">작성일</td>
+								<td th:text="${post.view_num}">조회</td>
+								<td th:text="${post.upvote != null ? post.upvote : 0}">0</td>
+							</tr>
+						</tbody>
+					</table>
+				</form>
+			</div>
+		</div>
+	</div>
 </body>
 </html>
