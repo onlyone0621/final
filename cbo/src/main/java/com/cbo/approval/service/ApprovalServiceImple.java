@@ -8,7 +8,11 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import com.cbo.messenger.service.ChatMessageServiceImple;
 
+import org.springframework.cache.Cache;
+import org.springframework.cache.CacheManager;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,18 +26,36 @@ import com.cbo.member.model.OrganDTO;
 
 @Service
 public class ApprovalServiceImple implements ApprovalService {
-	
+
+    private final ChatMessageServiceImple chatMessageServiceImple;
+	private final CacheManager cacheManager;
 	private final ApprovalMapper mapper;
 	
-	public ApprovalServiceImple(ApprovalMapper mapper) {
+	public ApprovalServiceImple(ApprovalMapper mapper,
+			ChatMessageServiceImple chatMessageServiceImple,
+			CacheManager cacheManager) {
 		this.mapper = mapper;
+		this.chatMessageServiceImple = chatMessageServiceImple;
+		this.cacheManager = cacheManager;
 	}
 
-	
 	@Override
+	@Cacheable("formats")
 	public List<Map<String, Object>> getFormatNames() throws Exception {
-		// TODO Auto-generated method stub
-		return mapper.selectFormatNames();
+		List<Map<String, Object>> formats = mapper.selectFormatNames();
+		
+		Cache cache = cacheManager.getCache("formatById");
+		
+		if (cache != null) {
+			for (Map<String, Object> row : formats) {
+				Integer id = (Integer)row.get("id");
+				if (id != null) {
+					cache.put(id, row);
+				}
+			}
+		}
+		
+		return formats;
 	}
 
 	@Override
