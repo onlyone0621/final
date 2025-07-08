@@ -499,5 +499,16 @@ public class CommunityServiceImple implements CommunityService {
 		return mapper.joinList(userId);
 	}
 	
+	//로그인한 사용자의 커뮤니티 + 역할 정보 조회
+	 @Override
+	    public List<Map<String, Object>> communityMainJoinWithRole(int memberId) throws Exception {
+	        return mapper.communityMainJoinWithRole(memberId);
+	    }
+	
+	 // 가입 승인된 멤버인지 확인
+	   @Override
+	    public boolean isApprovedMember(int cId, int memberId) throws Exception {
+	        return mapper.isApprovedMember(cId, memberId) > 0;
+	    }
 	
 }

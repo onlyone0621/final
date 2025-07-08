@@ -9,6 +9,7 @@
 body {
 	background-color: #fff3f7;
 }
+
 .container {
 	display: flex;
 }
@@ -16,24 +17,81 @@ body {
 .sidebar {
 	width: 200px;
 	background-color: #fbf9fd;
-	padding: 20px;
+	padding: 14px;
 	box-sizing: border-box;
 	border-right: 1px solid #ddd;
+	display: flex;
+	flex-direction: column;
+	font-size: 13.5px;
+	line-height: 1.4;
 }
 
-.sidebar h4 {
-	font-size: 18px;
-	margin-bottom: 15px;
+/* 제목 간격 간소화 */
+.sidebar h4,
+.sidebar h5 {
+	font-size: 14px;
+	margin: 10px 0 6px 0;
 }
 
+/* 셀렉트 박스 하단 여백 */
+.sidebar select {
+	margin-bottom: 8px;
+}
+
+/* 리스트 간 여백 최소화 */
 .sidebar ul {
 	list-style: none;
 	padding-left: 0;
-	font-size: 14px;
+	margin: 2px 0 8px 0;
 }
 
 .sidebar ul li {
-	margin-bottom: 10px;
+	margin-bottom: 4px;
+	padding: 2px 5px;
+	font-size: 13px;
+	border-radius: 4px;
+}
+
+.sidebar ul li:hover {
+	background-color: #f0f0f0;
+	cursor: pointer;
+}
+
+/* 일반 링크 */
+.sidebar a {
+	text-decoration: none;
+	color: #333;
+	font-size: 13.5px;
+}
+
+/* 버튼 */
+.sidebar button {
+	padding: 5px 10px;
+	border: 1px solid #ccc;
+	background-color: white;
+	border-radius: 4px;
+	cursor: pointer;
+	margin: 5px 0 8px 0;
+	font-size: 13px;
+	font-weight: bold;
+}
+
+.sidebar button:hover {
+	background-color: #f0f0f0;
+}
+
+/* + 게시판 추가, + 초대하기 등 링크 */
+a.link-action {
+	display: inline-block;
+	font-size: 12.5px;
+	color: #d81b60;
+	font-weight: bold;
+	text-decoration: none;
+	margin-top: 2px;
+}
+
+a.link-action:hover {
+	text-decoration: underline;
 }
 
 .main {
@@ -141,8 +199,7 @@ body {
 	gap: 10px;
 }
 
-.post-buttons a,
-.post-buttons form {
+.post-buttons a, .post-buttons form {
 	display: inline-block;
 }
 
@@ -161,85 +218,200 @@ body {
 .post-buttons button:hover {
 	background-color: #f0f0f0;
 }
+
 .reply-child {
-  margin-left: 30px;
-  background-color: #fff5f7;
-  border-left: 3px solid #ffc0cb;
-  padding-left: 10px;
+	margin-left: 30px;
+	background-color: #fff5f7;
+	border-left: 3px solid #ffc0cb;
+	padding-left: 10px;
+}
+
+
+
+.styled-select {
+	width: 170px;
+	padding: 8px 12px;
+	font-size: 10px;
+	color: #333;
+	background-color: #fff0f5; /* 연한 분홍 배경 */
+	border: 1px solid #dca7d8; /* 연보라 테두리 */
+	border-radius: 8px;
+	outline: none;
+	font-weight: bold;
+}
+
+
+button.reply-btn {
+  padding: 6px 10px;
+  border: 1px solid #ccc;
+  background-color: #fff0f5;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: bold;
+  color: #333;
+  margin-top: 6px;
+}
+
+button.reply-btn:hover {
+  background-color: #f0f0f0;
+}
+
+button.like-btn {
+  padding: 6px 10px;
+  border: 1px solid #ccc;
+  background-color:  #fff0f5;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: bold;
+  color: #333;
+  margin-top: 6px;
+}
+
+button.like-btn:hover {
+  background-color: #f0f0f0;
+}
+
+.wide-button {
+  padding: 8px 1px;              /* 좌우 넓게 */
+  min-width: 120px;               /* 최소 너비 확보 */
+  font-size: 14px;
+  font-weight: bold;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background-color: white;
+  cursor: pointer;
+}
+
+.wide-button:hover {
+  background-color: #f0f0f0;
 }
 
 </style>
-<script>
 
+<script>
+	function moveCommunity() {
+		const url = document.getElementById("communitySelect").value;
+		if (url) {
+			window.location.href = url;
+		}
+	}
 </script>
 </head>
 <body>
-<div layout:fragment="content">
-	<div class="container">
-		<div class="sidebar">
-			<a th:href="@{'/community/' + ${cId} + '/board/' + ${boardId} + '/write'}">
-				<button type="button">글쓰기</button>
-			</a>
-			<h4>게시판</h4>
-			<ul>
-				<li th:each="b : ${boardList}">
-					<a th:href="@{'/community/' + ${cId} + '/board/' + ${b.id}}" th:text="${b.name}">게시판이름</a>
-				</li>
-			</ul>
-		</div>
+	<div layout:fragment="content">
+		<div class="container">
+			<div class="sidebar">
 
-		<div class="main">
-			<div>
-				<span>운영자: 박주연</span><br>
-				<span>게시판 주소: /community/[[${cId}]]/board/[[${boardId}]]/post/[[${post.id}]]</span><br>
-				<span>조회수: <span th:text="${post.view_num}">0</span></span><br>
-				<!-- 좋아요 버튼 -->
-<button type="button" onclick="likePost()">❤️ 좋아요</button>
-<span>좋아요 수: <span id="upvoteCount" th:text="${post.upvote != null ? post.upvote : 0}">0</span></span>
+				<!-- 커뮤니티 선택 셀렉트박스 -->
+				<select id="communitySelect" onchange="moveCommunity()"
+					class="styled-select">
+					<option value="">-- 커뮤니티 선택 --</option>
+					<option th:each="c : ${joinList}"
+						th:value="@{/community/{id}(id=${c.ID})}" th:text="${c.NAME}">
+					</option>
+				</select>
 
-			</div>
+				<h4 th:text="${communityInfo != null ? communityInfo.name : '커뮤니티'}">커뮤니티</h4>
 
-			<hr>
+				<h2 th:text="${boardName}"></h2>
 
-			<div class="post-header">
-				<h2 th:text="${post.title}">제목</h2>
-			</div>
-			<div class="post-content" th:utext="${post.content}">내용</div>
 
-			<div class="post-images" th:if="${imageList != null}">
-				<div th:each="img : ${imageList}">
-					<img th:src="@{'/postImages/' + ${img.saved_name}}" th:alt="${img.original_name}">
-				</div>
-			</div>
 
-			<div class="post-buttons">
-				<a th:href="@{'/community/' + ${cId} + '/board/' + ${boardId} + '/post/' + ${post.id} + '/edit'}">
-					<button type="button">게시글 수정</button>
+				<a
+					th:href="@{'/community/' + ${cId} + '/board/' + ${boardId} + '/write'}">
+					<button type="button" class="wide-button">글쓰기</button>
 				</a>
-				<form name="deletePost"
-					  th:action="@{'/community/' + ${cId} + '/board/' + ${boardId} + '/post/' + ${post.id} + '/delete'}"
-					  method="post"
-					  onsubmit="return confirm('정말 삭제하시겠습니까?');">
-					<button type="submit">게시글 삭제</button>
-				</form>
+
+				<ul>
+					<li th:each="b : ${boardList}"><a
+						th:href="@{'/community/' + ${cId} + '/board/' + ${b.id}}"
+						th:text="${b.name}">게시판이름</a></li>
+				</ul>
+
+
+				<!-- 멤버 목록 -->
+				<h5 style="margin-top: 20px;">가입 멤버</h5>
+				<ul>
+					<li th:each="m : ${sidebarMemberLists}"><span
+						th:text="${m['NAME']}"></span> <span
+						th:if="${m['ROLE'] == 'master'}">👑 마스터</span> <span
+						th:if="${m['ROLE'] == 'submaster'}">🛡️ 부마스터</span></li>
+				</ul>
+
+
 			</div>
 
-			<hr>
 
-			<div id="replySection"
-     th:attr="data-cid=${cId},data-boardid=${boardId},data-postid=${post.id},data-userid=${session.udto.id}">
-  <h4>댓글</h4>
 
-  <!-- 댓글 작성 -->
-  <textarea id="replyContent" placeholder="댓글을 입력하세요" style="width: 100%;"></textarea><br>
-  <button type="button" onclick="writeReply()">댓글 등록</button>
 
-  <!-- 댓글 목록 (JS로 동적 생성) -->
-  <div id="replyList"></div>
-</div>
-			<script src="/js/community/reply.js"></script>
+			<!-- + 초대하기 (마스터, 부마스터만) -->
+			<th:block th:if="${userRole == 'master' or userRole == 'submaster'}">
+				<a th:href="@{/community/{cId}/invite(cId=${cId})}"
+					class="link-action">+ 초대하기</a>
+			</th:block>
+
+
+
+			<div class="main">
+				<div>
+					<h4 th:text="'게시판 : ' + ${bName}">게시판명</h4>
+					<p th:text="'운영자: ' + ${masterName['NAME']}">운영자</p>
+					<span>게시판 주소:
+						/community/[[${cId}]]/board/[[${boardId}]]/post/[[${post.id}]]</span><br>
+					<span>조회수: <span th:text="${post.view_num}">0</span></span><br>
+					<!-- 좋아요 버튼 -->
+					<button type="button" onclick="likePost()" class="like-btn">❤️ 좋아요</button>
+					<span>좋아요 수: <span id="upvoteCount"
+						th:text="${post.upvote != null ? post.upvote : 0}">0</span></span>
+
+				</div>
+
+				<hr>
+
+				<div class="post-header">
+					<h2 th:text="${post.title}">제목</h2>
+				</div>
+				<div class="post-content" th:utext="${post.content}">내용</div>
+
+				<div class="post-images" th:if="${imageList != null}">
+					<div th:each="img : ${imageList}">
+						<img th:src="@{'/postImages/' + ${img.saved_name}}"
+							th:alt="${img.original_name}">
+					</div>
+				</div>
+
+				<div class="post-buttons">
+					<a
+						th:href="@{'/community/' + ${cId} + '/board/' + ${boardId} + '/post/' + ${post.id} + '/edit'}">
+						<button type="button">게시글 수정</button>
+					</a>
+					<form name="deletePost"
+						th:action="@{'/community/' + ${cId} + '/board/' + ${boardId} + '/post/' + ${post.id} + '/delete'}"
+						method="post" onsubmit="return confirm('정말 삭제하시겠습니까?');">
+						<button type="submit">게시글 삭제</button>
+					</form>
+				</div>
+
+				<hr>
+
+				<div id="replySection"
+					th:attr="data-cid=${cId},data-boardid=${boardId},data-postid=${post.id},data-userid=${session.udto.id}">
+					<h4>댓글</h4>
+
+					<!-- 댓글 작성 -->
+					<textarea id="replyContent" placeholder="댓글을 입력하세요"
+						style="width: 100%;"></textarea>
+					<br>
+					<button type="button" onclick="writeReply()" class="reply-btn">댓글 등록</button>
+
+					<!-- 댓글 목록 (JS로 동적 생성) -->
+					<div id="replyList"></div>
+				</div>
+				<script src="/js/community/reply.js"></script>
+			</div>
 		</div>
 	</div>
-</div>
 </body>
 </html>

@@ -3,6 +3,8 @@ package com.cbo.community.service;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.ibatis.annotations.Param;
+
 import com.cbo.community.model.BoardDTO;
 import com.cbo.community.model.CommunityDTO;
 import com.cbo.community.model.ImageDTO;
@@ -54,22 +56,7 @@ public interface CommunityService {
 	//실제 파일 삭제할려고 imageid갖고옴
 	public ImageDTO selectImageById(int imageId) throws Exception;
 	
-//	//댓글달기
-//	public int insertReply(ReplyDTO rdto) throws Exception;
-//	
-//	//댓글 수정
-//	public int updateReply(ReplyDTO rdto) throws Exception;
-//	
-//	//댓글 삭제
-//	public int deleteReply(int replyId) throws Exception;
-//	
-//	//댓글 읽기 (postid가져옴)
-//	public List<ReplyDTO> selectReplyByPostId(int postId) throws Exception;
-//
-//	//순번 밀기
-//	public int updateReplySunbun(Map<String, Object> map) throws Exception;
-	
-	
+
 	 // 댓글 작성
     public int insertReply(ReplyDTO dto) throws Exception;
 
@@ -193,4 +180,12 @@ public interface CommunityService {
 	
 	// 사이드바 커뮤니티 가입한 목록들 이름
 	public List<Map<String, Object>> joinList(int userId) throws Exception;
+	
+	
+	// 로그인한 사용자의 커뮤니티 + 역할 정보 조회
+    public List<Map<String, Object>> communityMainJoinWithRole(int memberId) throws Exception;
+	
+    
+    // 가입 승인된 멤버인지 확인
+    public boolean isApprovedMember(int cId, int memberId) throws Exception;
 }
