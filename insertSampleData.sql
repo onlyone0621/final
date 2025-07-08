@@ -361,7 +361,7 @@ VALUES (
   TO_DATE('2025-06-20', 'YYYY-MM-DD'),
   '안 읽음',
   NULL,
-  1,
+  sq_message_ref.NEXTVAL,
   0
 );
 
@@ -400,7 +400,7 @@ INSERT INTO message VALUES (
   TO_DATE('2025-06-23', 'YYYY-MM-DD'),
   '안 읽음',
   NULL,
-  2,
+  sq_message_ref.NEXTVAL,
   0
 );
 
@@ -426,7 +426,7 @@ INSERT INTO message VALUES (
   TO_DATE('2025-06-25', 'YYYY-MM-DD'),
   '안 읽음',
   NULL,
-  3,
+  sq_message_ref.NEXTVAL,
   0
 );
 
@@ -439,7 +439,7 @@ INSERT INTO message VALUES (
   TO_DATE('2025-06-26', 'YYYY-MM-DD'),
   '안 읽음',
   NULL,
-  4,
+  sq_message_ref.NEXTVAL,
   0
 );
 
@@ -452,7 +452,7 @@ INSERT INTO message VALUES (
   TO_DATE('2025-06-27', 'YYYY-MM-DD'),
   '읽음',
   NULL,
-  5,
+  sq_message_ref.NEXTVAL,
   0
 );
 
@@ -491,7 +491,7 @@ INSERT INTO message VALUES (
   TO_DATE('2025-06-19', 'YYYY-MM-DD'),
   '안 읽음',
   NULL,
-  6,
+  sq_message_ref.NEXTVAL,
   0
 );
 
@@ -517,7 +517,7 @@ INSERT INTO message VALUES (
   TO_DATE('2025-06-17', 'YYYY-MM-DD'),
   '안 읽음',
   NULL,
-  7,
+  sq_message_ref.NEXTVAL,
   0
 );
 
@@ -543,7 +543,7 @@ INSERT INTO message VALUES (
   TO_DATE('2025-06-15', 'YYYY-MM-DD'),
   '안 읽음',
   NULL,
-  8,
+  sq_message_ref.NEXTVAL,
   0
 );
 
@@ -556,7 +556,7 @@ INSERT INTO message VALUES (
   TO_DATE('2025-06-14', 'YYYY-MM-DD'),
   '안 읽음',
   NULL,
-  9,
+  sq_message_ref.NEXTVAL,
   0
 );
 
@@ -582,7 +582,7 @@ INSERT INTO message VALUES (
   TO_DATE('2025-06-12', 'YYYY-MM-DD'),
   '안 읽음',
   NULL,
-  10,
+  sq_message_ref.NEXTVAL,
   0
 );
 
@@ -611,6 +611,252 @@ INSERT INTO message VALUES (
   10,
   2
 );
+
+-- 원글 11 (2025-06-29)
+INSERT INTO message (id, title, content, receiver_id, sender_id, write_date, is_read, file_name, ref, lev)
+VALUES (
+  sq_message_id.NEXTVAL,
+  '회의 일정 확인 요청',
+  '7월 초 회의 일정 확인 부탁드립니다.',
+  2, 1,
+  TO_DATE('2025-06-29', 'YYYY-MM-DD'),
+  '안 읽음',
+  NULL,
+  sq_message_ref.NEXTVAL,
+  0
+);
+
+-- 답글 11-1 (2025-06-30)
+INSERT INTO message VALUES (
+  sq_message_id.NEXTVAL,
+  'RE: 회의 일정 확인 요청',
+  '7월 3일 오전으로 괜찮을까요?',
+  1, 2,
+  TO_DATE('2025-06-30', 'YYYY-MM-DD'),
+  '읽음',
+  NULL,
+  11,
+  1
+);
+
+-- 답글 11-2 (2025-07-01)
+INSERT INTO message VALUES (
+  sq_message_id.NEXTVAL,
+  'RE: RE: 회의 일정 확인 요청',
+  '네 그날 오전 10시로 하겠습니다.',
+  2, 1,
+  TO_DATE('2025-07-01', 'YYYY-MM-DD'),
+  '읽음',
+  NULL,
+  11,
+  2
+);
+
+-- 원글 12 (2025-06-28)
+INSERT INTO message VALUES (
+  sq_message_id.NEXTVAL,
+  '업무 분장 관련 문의',
+  '담당 업무 관련해서 조정이 필요한 것 같습니다.',
+  3, 1,
+  TO_DATE('2025-06-28', 'YYYY-MM-DD'),
+  '안 읽음',
+  NULL,
+  sq_message_ref.NEXTVAL,
+  0
+);
+
+-- 답글 12-1 (2025-06-29)
+INSERT INTO message VALUES (
+  sq_message_id.NEXTVAL,
+  'RE: 업무 분장 관련 문의',
+  '어떤 부분이 조정이 필요한지요?',
+  1, 3,
+  TO_DATE('2025-06-29', 'YYYY-MM-DD'),
+  '읽음',
+  NULL,
+  12,
+  1
+);
+
+-- 답글 12-2 (2025-06-30)
+INSERT INTO message VALUES (
+  sq_message_id.NEXTVAL,
+  'RE: RE: 업무 분장 관련 문의',
+  '2팀의 업무 범위와 중복되는 부분이 있습니다.',
+  3, 1,
+  TO_DATE('2025-06-30', 'YYYY-MM-DD'),
+  '읽음',
+  NULL,
+  12,
+  2
+);
+
+-- 원글 13 (2025-06-27)
+INSERT INTO message VALUES (
+  sq_message_id.NEXTVAL,
+  '근무표 수정 요청',
+  '7월 첫째주 근무표에 수정 요청드립니다.',
+  1, 2,
+  TO_DATE('2025-06-27', 'YYYY-MM-DD'),
+  '안 읽음',
+  NULL,
+  sq_message_ref.NEXTVAL,
+  0
+);
+
+-- 답글 13-1 (2025-06-28)
+INSERT INTO message VALUES (
+  sq_message_id.NEXTVAL,
+  'RE: 근무표 수정 요청',
+  '어떤 부분을 수정해드리면 될까요?',
+  2, 1,
+  TO_DATE('2025-06-28', 'YYYY-MM-DD'),
+  '읽음',
+  NULL,
+  13,
+  1
+);
+
+-- 답글 13-2 (2025-06-29)
+INSERT INTO message VALUES (
+  sq_message_id.NEXTVAL,
+  'RE: RE: 근무표 수정 요청',
+  '수정 요청 내용은 메일로 드렸습니다.',
+  1, 2,
+  TO_DATE('2025-06-29', 'YYYY-MM-DD'),
+  '읽음',
+  NULL,
+  13,
+  2
+);
+
+-- 원글 14
+INSERT INTO message (
+  id, title, content, receiver_id, sender_id, write_date,
+  is_read, file_name, ref, lev
+)
+VALUES (
+  sq_message_id.NEXTVAL,
+  '회의자료 요청',
+  '금요일 회의자료 공유 부탁드립니다.',
+  2, 1,
+  TO_DATE('2025-06-30', 'YYYY-MM-DD'),
+  '안 읽음',
+  NULL,
+  sq_message_ref.NEXTVAL,
+  0
+);
+
+-- 답글 14-1
+INSERT INTO message (
+  id, title, content, receiver_id, sender_id, write_date,
+  is_read, file_name, ref, lev
+)
+VALUES (
+  sq_message_id.NEXTVAL,
+  'RE: 회의자료 요청',
+  '자료 금일 오후까지 전달드리겠습니다.',
+  1, 2,
+  TO_DATE('2025-07-01', 'YYYY-MM-DD'),
+  '읽음',
+  NULL,
+  14,
+  1
+);
+
+-- 답글 14-2
+INSERT INTO message (
+  id, title, content, receiver_id, sender_id, write_date,
+  is_read, file_name, ref, lev
+)
+VALUES (
+  sq_message_id.NEXTVAL,
+  'RE: RE: 회의자료 요청',
+  '확인했습니다. 감사합니다.',
+  2, 1,
+  TO_DATE('2025-07-02', 'YYYY-MM-DD'),
+  '읽음',
+  NULL,
+  14,
+  2
+);
+
+
+-- 원글 15
+INSERT INTO message (
+  id, title, content, receiver_id, sender_id, write_date,
+  is_read, file_name, ref, lev
+)
+VALUES (
+  sq_message_id.NEXTVAL,
+  '출장 보고서 제출 요청',
+  '출장 후 보고서 제출 부탁드립니다.',
+  3, 1,
+  TO_DATE('2025-07-02', 'YYYY-MM-DD'),
+  '안 읽음',
+  NULL,
+  sq_message_ref.NEXTVAL,
+  0
+);
+
+-- 답글 15-1
+INSERT INTO message VALUES (
+  sq_message_id.NEXTVAL,
+  'RE: 출장 보고서 제출 요청',
+  '내일 오전까지 제출하겠습니다.',
+  1, 3,
+  TO_DATE('2025-07-03', 'YYYY-MM-DD'),
+  '읽음',
+  NULL,
+  15,
+  1
+);
+
+
+-- 원글 16
+INSERT INTO message (
+  id, title, content, receiver_id, sender_id, write_date,
+  is_read, file_name, ref, lev
+)
+VALUES (
+  sq_message_id.NEXTVAL,
+  '서버 점검 일정 안내',
+  '서버 점검이 7월 5일 01시부터 예정되어 있습니다.',
+  1, 3,
+  TO_DATE('2025-07-01', 'YYYY-MM-DD'),
+  '안 읽음',
+  NULL,
+  sq_message_ref.NEXTVAL,
+  0
+);
+
+-- 답글 16-1
+INSERT INTO message VALUES (
+  sq_message_id.NEXTVAL,
+  'RE: 서버 점검 일정 안내',
+  '알겠습니다. 점검 전 백업 완료하겠습니다.',
+  3, 1,
+  TO_DATE('2025-07-01', 'YYYY-MM-DD'),
+  '읽음',
+  NULL,
+  16,
+  1
+);
+
+-- 답글 16-2
+INSERT INTO message VALUES (
+  sq_message_id.NEXTVAL,
+  'RE: RE: 서버 점검 일정 안내',
+  '감사합니다.',
+  1, 3,
+  TO_DATE('2025-07-02', 'YYYY-MM-DD'),
+  '읽음',
+  NULL,
+  16,
+  2
+);
+
+
 
 
 -- Chatroom
@@ -1177,3 +1423,4 @@ INSERT INTO board_post (id, board_id, member_id, title, content, write_date, vie
 (sq_board_post_id.NEXTVAL, 6, 4, '야외 촬영 팁', '야외 촬영 노하우 공유합니다.', TO_DATE('2025-06-20', 'YYYY-MM-DD'), 85, 9);
 INSERT INTO board_post (id, board_id, member_id, title, content, write_date, view_num, upvote) VALUES 
 (sq_board_post_id.NEXTVAL, 6, 5, '조명 사용법', '조명 사용법에 대해 설명합니다.', TO_DATE('2025-06-21', 'YYYY-MM-DD'), 80, 8);
+

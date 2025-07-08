@@ -226,7 +226,7 @@ public class ApprovalController {
 		
 		ModelAndView mav = new ModelAndView("approval/approvalMsg");
 		mav.addObject("msg", msg);
-		mav.addObject("dest", "approvalMain");
+		mav.addObject("dest", "pendingApprovalDocs");
 		return mav;
 	}
 	
@@ -268,7 +268,7 @@ public class ApprovalController {
 		String msg = res > 0 ? "결재 성공" : "결재 실패";
 		ModelAndView mav = new ModelAndView("approval/approvalMsg");
 		mav.addObject("msg", msg);
-		mav.addObject("dest", "approvalMain");
+		mav.addObject("dest", "pendingApprovalDocs");
 		return mav;
 	}
 	
@@ -286,7 +286,7 @@ public class ApprovalController {
 		String msg = res > 0 ? "반려 성공" : "반려 실패";
 		ModelAndView mav = new ModelAndView("approval/approvalMsg");
 		mav.addObject("msg", msg);
-		mav.addObject("dest", "approvalMain");
+		mav.addObject("dest", "pendingApprovalDocs");
 		return mav;
 	}
 	
