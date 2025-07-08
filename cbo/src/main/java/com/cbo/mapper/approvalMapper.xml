@@ -263,7 +263,7 @@
 	<!-- Approve or Reject -->
 	<update id="updateStatus" parameterType="map">
 		UPDATE approval_line 
-		SET status = #{status} 
+		SET status = #{status}, process_date = SYSDATE 
 		WHERE doc_id = #{doc_id} AND member_id = #{member_id}
 	</update>
 	
