@@ -4,11 +4,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
+import com.cbo.addr.service.AddrServiceImple;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -23,13 +24,83 @@ import com.cbo.addr.service.AddrService;
 @Controller
 public class AddrController {
 
+    private final AddrServiceImple addrServiceImple;
+
 	@Autowired
 	private AddrService service;
 
-	@GetMapping("/addrModify") //변경
-	public String updateAddr() {
+    AddrController(AddrServiceImple addrServiceImple) {
+        this.addrServiceImple = addrServiceImple;
+    }
 
-		return "addr/addrModify";
+	@PostMapping("modifyAddr")
+	public ModelAndView updateAddr(@ModelAttribute AddrDTO addr,@CookieValue(value = "saveid", required = false) String saveid ) {
+		
+			
+			try {
+				int id = service.findUserId(saveid);
+				int result = service.replaceAddr(addr);
+				
+				System.out.println(id);
+				System.out.println(result);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		   
+			ModelAndView mav = new ModelAndView();
+			
+			mav.setViewName("redirect:/addrMain");
+		    return mav;
+		}
+		
+		
+	
+	@GetMapping("/addrModifyPage") //변경
+	public ModelAndView updateAddrPage(@RequestParam("id")int userid,
+			AddrDTO dto, @CookieValue(value = "saveid", required = false) String saveid) {
+
+		  List<AddrListDTO> addrLists = null;
+		    List<AddrDTO> personalLists = null;
+		    List<AddrDTO> deptLists = null;
+		    String dept = null;
+		    int id = 0;
+		    AddrDTO addr = null;
+		    // 그룹별 인원수 맵
+		    Map<String, Integer> groupUserCountMap = new HashMap<>();
+
+		    try {
+		    	 addr = service.updateAddr(userid);
+		        id = service.findUserId(saveid); // 접속해있는 유저 고유 아이디 
+
+		        addrLists = service.addrList(id); // 전체 주소록
+		        personalLists = service.personalList(id); // 개인 주소록 그룹
+		        deptLists = service.deptList(saveid); // 부서 주소록 그룹
+		        dept = service.userDept(saveid); // 부서 이름
+
+		        // 그룹별 인원수 계산 (예시: personalLists의 groupName 기준)
+		        if (personalLists != null) {
+		            for (AddrDTO group : personalLists) {
+		            	int gid = service.findGroupId(group.getName());
+		                int cnt = service.countUser(gid);
+		                groupUserCountMap.put(group.getName(), cnt);
+		                
+		            }
+		        }
+		        System.out.println(addr.getName());
+		    } catch (Exception e) {
+		        e.printStackTrace();
+		    }
+
+		    ModelAndView mav = new ModelAndView();
+		    mav.addObject("addr", addr);
+		    mav.addObject("addrLists", addrLists);
+		    mav.addObject("personalLists", personalLists);
+		    mav.addObject("deptLists", deptLists);
+		    mav.addObject("dept", dept);
+		    mav.addObject("groupUserCountMap", groupUserCountMap); // 추가!
+		    mav.setViewName("addr/addrModify");
+		    return mav;
 	}
 	
 	@GetMapping("/addrMain") //메인(전체)
@@ -56,6 +127,11 @@ public class AddrController {
 	                groupUserCountMap.put(group.getName(), cnt);
 	            }
 	        }
+	        
+	        for (AddrDTO group : personalLists) {
+	            System.out.println("group.id=" + group.getId() + ", group.name=" + group.getName());
+	        }
+	        
 	    } catch (Exception e) {
 	        e.printStackTrace();
 	    }
@@ -236,6 +312,7 @@ public class AddrController {
 	            	int gid = service.findGroupId(group.getName());
 	                int cnt = service.countUser(gid);
 	                groupUserCountMap.put(group.getName(), cnt);
+	                
 	            }
 	        }
 
