@@ -10,7 +10,6 @@ drop table format;
 drop table chat_message;
 drop table chatroom_user;
 drop table chatroom;
-drop table drive;
 drop table message;
 drop table calendar;
 drop table addr_group;
@@ -25,7 +24,6 @@ drop sequence sq_member_id;
 drop sequence sq_message_id;
 drop sequence sq_grade_id;
 drop sequence sq_dept_id;
-drop sequence sq_drive_id;
 drop sequence sq_chatroom_id;
 drop sequence sq_chat_message_id;
 drop sequence sq_addr_id;
@@ -46,7 +44,6 @@ create sequence sq_member_id nocache;
 create sequence sq_message_id nocache;
 create sequence sq_grade_id nocache;
 create sequence sq_dept_id nocache;
-create sequence sq_drive_id nocache;
 create sequence sq_chatroom_id nocache;
 create sequence sq_chat_message_id nocache;
 create sequence sq_addr_id nocache;
@@ -113,17 +110,6 @@ create table message(
     foreign key (receiver_id) references member(id) ON DELETE SET NULL,
     foreign key (sender_id) references member(id) ON DELETE SET NULL 
     
-);
-
-create table drive(
-
-    id number(10) primary key,
-    member_id number(10),
-    uploader varchar2(100) not null,
-    upload_date date DEFAULT SYSDATE NOT NULL,
-    path varchar2(500) not null,
-    foreign key (member_id) references member(id) ON DELETE CASCADE 
-
 );
 
 create table chatroom(
