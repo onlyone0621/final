@@ -1,15 +1,12 @@
 package com.cbo.message.service;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import com.cbo.messenger.service.ChatMessageServiceImple;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import com.cbo.constant.MessageConst;
 import com.cbo.mapper.MessageMapper;
 import com.cbo.member.model.OrganDTO;
@@ -18,12 +15,10 @@ import com.cbo.message.model.MessageDTO;
 @Service
 public class MessageServiceImple implements MessageService {
 
-    private final ChatMessageServiceImple chatMessageServiceImple;
 	private final MessageMapper mapper;
 	
-	public MessageServiceImple(MessageMapper mapper, ChatMessageServiceImple chatMessageServiceImple) {
+	public MessageServiceImple(MessageMapper mapper) {
 		this.mapper = mapper;
-		this.chatMessageServiceImple = chatMessageServiceImple;
 	}
 
 	@Override
