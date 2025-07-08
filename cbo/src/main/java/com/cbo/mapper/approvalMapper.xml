@@ -11,7 +11,7 @@
   	</resultMap>
   	
   	<select id="selectFormatNames" resultMap="formatResult">
-  		SELECT id, name 
+  		SELECT *
   		FROM format
   	</select>
   	
