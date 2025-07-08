@@ -1,5 +1,6 @@
 package com.cbo.approval.service;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -48,7 +49,8 @@ public class ApprovalServiceImple implements ApprovalService {
 		
 		if (cache != null) {
 			for (Map<String, Object> row : formats) {
-				Integer id = (Integer)row.get("id");
+				BigDecimal idDecimal = (BigDecimal)row.get("id");
+				Integer id = idDecimal.intValueExact();
 				if (id != null) {
 					cache.put(id, row);
 				}
