@@ -22,8 +22,10 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.cbo.calendar.model.CalendarDTO;
 import com.cbo.calendar.service.CalendarService;
+import com.cbo.member.model.MemberDTO;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 
 @Controller
 public class CalendarController {
@@ -63,7 +65,7 @@ public class CalendarController {
 	
 	@PostMapping("/api/calendar/addAllDay")
 	@ResponseBody
-	public Map<String, Object> addAllDay(HttpServletRequest request, @CookieValue(value = "saveid", required = false) String saveid) {
+	public Map<String, Object> addAllDay(HttpServletRequest request, HttpSession session ) {
 	    CalendarDTO dto = new CalendarDTO();
 	    dto.setTitle(request.getParameter("title"));
 	    dto.setContent(request.getParameter("content"));
@@ -84,6 +86,8 @@ public class CalendarController {
 	    
 
 	    Map<String, Object> result = new HashMap<>();
+	    MemberDTO udto = (MemberDTO) session.getAttribute(com.cbo.constant.MemberConst.USER_KEY);
+	    String saveid = udto.getUser_id();
 	    try {
 	    	int dept = service.findDept(saveid);
 		    int id = service.findId(saveid);
@@ -101,7 +105,7 @@ public class CalendarController {
 
 	@PostMapping("/api/calendar/addTime")
 	@ResponseBody
-	public Map<String, Object> addTime(HttpServletRequest request, @CookieValue(value = "saveid", required = false) String saveid) {
+	public Map<String, Object> addTime(HttpServletRequest request, HttpSession session) {
 	    CalendarDTO dto = new CalendarDTO();
 	    dto.setTitle(request.getParameter("title"));
 	    dto.setContent(request.getParameter("content"));
@@ -117,7 +121,8 @@ public class CalendarController {
 	    dto.setEnd_time(endTime);
 
 	    // member_id, dept_id 세팅
-
+	    MemberDTO udto = (MemberDTO) session.getAttribute(com.cbo.constant.MemberConst.USER_KEY);
+	    String saveid = udto.getUser_id();
 
 	    Map<String, Object> result = new HashMap<>();
 	    try {
@@ -188,9 +193,11 @@ public class CalendarController {
 
 	@GetMapping("/api/calendar/events")
 	@ResponseBody
-	public List<Map<String, Object>> getEvents(@CookieValue(value = "saveid", required = false) String saveid) {
+	public List<Map<String, Object>> getEvents(HttpSession session) {
 	    List<CalendarDTO> list = null;
 	    int id = 0;
+	    MemberDTO udto = (MemberDTO) session.getAttribute(com.cbo.constant.MemberConst.USER_KEY);
+	    String saveid = udto.getUser_id();
 	    try {
 	    	id = service.findId(saveid);
 	        list = service.selectList(id);
@@ -212,8 +219,11 @@ public class CalendarController {
 	        boolean isAllDay = dto.getAllday() == 1;
 	        if (isAllDay) {
 	            // 종일 일정: 날짜만
-	            event.put("start", dto.getStart_time().format(dateFormatter));
-	            if (dto.getEnd_time() != null) event.put("end", dto.getEnd_time().format(dateFormatter));
+	        	event.put("start", dto.getStart_time().format(dateFormatter));
+	        	 if (dto.getEnd_time() != null) {
+	        	        LocalDate endPlusOne = dto.getEnd_time().toLocalDate().plusDays(1);
+	        	        event.put("end", endPlusOne.format(dateFormatter));
+	        	    }
 	            event.put("allDay", true);
 	        } else {
 	            // 시간 일정: 날짜+시간
