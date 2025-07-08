@@ -19,7 +19,7 @@ ORDER BY a.id ASC
   </select>
   
   <select id="personalList" resultType="com.cbo.addr.model.AddrDTO">
-  	select distinct name,id from groups where division = 0 and member_id = #{id} order by id asc
+  	select distinct id,name from groups where division = 0 and member_id = #{id} order by id asc
   </select>
   
   <select id="deptList" resultType="com.cbo.addr.model.AddrDTO">
@@ -30,7 +30,7 @@ ORDER BY a.id ASC
   	select name from dept where id = (select dept_id from member where user_id = #{saveid})  
   </select>
   
-  <insert id="addPersonalAddr" parameterType="String">
+  <insert id="addPersonalAddr" parameterType="map">
   	insert into groups values(sq_groups_id.nextval,#{id},#{name},0)
   </insert>
   
@@ -122,7 +122,25 @@ ORDER BY a.id ASC
       LEFT JOIN dept d ON m.dept_id = d.id
       LEFT JOIN grade g ON m.grade_id = g.id
      WHERE d.name = #{dept}
-     ORDER BY m.name ASC
+     ORDER BY g.id ASC
 </select>
 
+<select id = "updateAddr" resultType = "com.cbo.addr.model.AddrDTO">
+	select * from addr where id = #{id}
+</select>
+
+<update id="replaceAddr" parameterType="com.cbo.addr.model.AddrDTO">
+    UPDATE addr
+    SET
+        name        = #{name},
+        nickname    = #{nickname},
+        company     = #{company},
+        dept        = #{dept},
+        grade       = #{grade},
+        email       = #{email},
+        tel         = #{tel},
+        companytel  = #{companytel},
+        description = #{description}
+    WHERE id = #{id}
+</update>
   </mapper>

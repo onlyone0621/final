@@ -482,12 +482,30 @@ ORDER BY id ASC
 
 
 <!-- 마스터  : 4 가입된 멤버 조회 (user, submaster, master) -->
+
 <select id="joinMemberList" parameterType="int" resultType="map">
-  SELECT m.id, m.name, m.email, cm.join_date 
+  SELECT 
+    m.id,
+    m.name,
+    m.email,
+    cm.join_date,
+    d.name AS DEPT_NAME,
+    cm.role,
+    (
+      SELECT COUNT(*)
+      FROM board_post bp
+      JOIN community_board cb ON bp.board_id = cb.id
+      WHERE bp.member_id = m.id
+        AND cb.community_id = #{cId}
+    ) AS POST_COUNT
   FROM community_member cm
   JOIN member m ON cm.member_id = m.id
-  WHERE cm.community_id = #{cId} AND cm.role IN ('user', 'submaster', 'master')
+  LEFT JOIN dept d ON m.dept_id = d.id
+  WHERE cm.community_id = #{cId}
+    AND cm.role IN ('user', 'submaster', 'master')
 </select>
+
+
 
 <!-- 마스터  : 5 특정 멤버 role 가져옴 (탈퇴/권한 관리용) role 조회 selectMemberRole : removeMember에서 마스터인지 확인 -->
 <select id="selectMemberRole" parameterType="map" resultType="string">

@@ -133,4 +133,15 @@ public class AddrServiceImple implements AddrService {
 		List<AddrListDTO> deptAddrLists = mapper.deptAllList(dept);
 		return deptAddrLists;
 	}
+	
+	@Override
+	public AddrDTO updateAddr(int id) throws Exception {
+		AddrDTO dto = mapper.updateAddr(id);
+		return dto;
+	}
+	@Override
+	public int replaceAddr(AddrDTO dto) throws Exception {
+		int result = mapper.replaceAddr(dto);
+		return result;
+	}
 }

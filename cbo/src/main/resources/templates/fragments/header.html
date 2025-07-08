@@ -4,17 +4,26 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Document</title>
+<style>
+.logo {
+	font-size: 100px;
+	font-weight: 900;
+	color:  #FFC6C6;
+	text-align: center;
+	margin: 0;
+	letter-spacing: 4px;
+}
+</style>
 </head>
 <body>
 <header th:fragment="defaultHeader">
     <nav class="header">
-        <div class="logo"><a href="/">Header Logo</a></div>
-        <ul class="header-links">
+        <div class="logo"><a href="/">CBO</a></div>
+        <ul class="header-links"> 
             <li><a href="/myCalendar">일정관리</a></li>
             <li><a href="/receivedMessages">메시지</a></li>
             <li><a href="/addrMain">주소록</a></li>
             <li><a href="/pendingApprovalDocs">전자결재</a></li>
-            <li><a href="#">자료실</a></li>
             <li><a href="/communityMainNewest">커뮤니티</a></li>
             <li><a href="/messengerMain">메신저</a></li>
             <li th:if="${adminId == 1}">
