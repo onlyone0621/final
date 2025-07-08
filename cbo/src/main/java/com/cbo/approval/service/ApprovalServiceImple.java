@@ -163,7 +163,6 @@ public class ApprovalServiceImple implements ApprovalService {
 	@Override
 	@Cacheable(value = "formatById", key = "#id")
 	public Map<String, Object> getFormat(int id) throws Exception {
-		System.out.println("Fetched from db");
 		return mapper.selectFormat(id);
 	}
 
