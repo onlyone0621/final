@@ -27,4 +27,6 @@ public interface AddrMapper {
 	public int addAddrGroup(int addrId,int groupid)throws Exception;
 	public int deleteGroup(int groupid)throws Exception;
 	public int renameGroup(int groupId,String newGroupName)throws Exception;
+	public AddrDTO updateAddr(int id)throws Exception;
+	public int replaceAddr(AddrDTO dto)throws Exception;
 }
