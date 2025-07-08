@@ -7,7 +7,52 @@
     <title>멤버 관리</title>
     <style>
         .container { display: flex; min-height: 100vh; }
-        .sidebar { width: 220px; background-color: #fbf9fd; padding: 20px; border-right: 1px solid #ddd; }
+
+        /* ✅ 사이드바 */
+        .sidebar {
+          width: 220px;
+          background-color: #fbf9fd;
+          padding: 20px;
+          border-right: 1px solid #ddd;
+        }
+
+        .sidebar h4 {
+          font-size: 18px;
+          margin-bottom: 10px;
+        }
+
+        .sidebar ul {
+          list-style: none;
+          padding-left: 0;
+          font-size: 14px;
+          margin: 0;
+        }
+
+        .sidebar ul li {
+          margin-bottom: 8px;
+        }
+
+        .sidebar ul li a {
+          text-decoration: none;
+          color: #6a1b9a;
+          font-weight: bold;
+        }
+
+        .sidebar ul li a:hover {
+          color: #9c27b0;
+          text-decoration: underline;
+        }
+
+        .sidebar .add-board {
+          display: block;
+          margin-top: 10px;
+          font-size: 14px;
+          color: #d81b60;
+          font-weight: bold;
+          text-decoration: none;
+        }
+
+        /* ✅ 메인 및 테이블 스타일 기존 그대로 유지 */
         .main { flex: 1; padding: 20px; }
         .tabs { border-bottom: 1px solid #ddd; margin-bottom: 20px; }
         .tab { display: inline-block; margin-right: 15px; padding-bottom: 5px; font-weight: bold; color: #666; border-bottom: 2px solid transparent; text-decoration: none; }
@@ -22,11 +67,6 @@
     </style>
 
 <script>
-    /**
-     * checkAll(mainCheck)
-     * - 메인 체크박스를 클릭하면, 멤버 체크박스 전체를 mainCheck 상태와 일치시킴
-     * - mainCheck: 메인 체크박스 (true = 전체 체크, false = 전체 해제)
-     */
     function checkAll(mainCheck) {
         var checkboxes = document.querySelectorAll('.memberCheck');
         for (var i = 0; i < checkboxes.length; i++) {
@@ -34,30 +74,21 @@
         }
     }
 
-    /**
-     * memberAction(action)
-     * - 멤버 승인, 거절, 탈퇴 요청을 보낼 때 사용
-     * - 선택된 멤버마다 form을 만들어 POST 전송
-     * - action: 'approve', 'reject', 'remove' 중 하나
-     */
     function memberAction(action) {
         var checkboxes = document.querySelectorAll('.memberCheck');
         var selected = [];
 
-        // 선택된 멤버만 selected 배열에 추가
         for (var i = 0; i < checkboxes.length; i++) {
             if (checkboxes[i].checked) {
                 selected.push(checkboxes[i]);
             }
         }
 
-        // 아무것도 선택 안 했으면 경고 후 종료
         if (selected.length === 0) {
             alert('선택된 멤버가 없습니다.');
             return;
         }
 
-        // action에 따라 사용자에게 확인 메시지 작성
         var msg = '';
         if (action === 'approve') {
             msg = '선택하신 회원의 가입을 승인하시겠습니까?\n(총 ' + selected.length + '명)';
@@ -67,47 +98,36 @@
             msg = '선택하신 회원을 탈퇴시키겠습니까?\n(총 ' + selected.length + '명)';
         }
 
-        // 사용자에게 확인창 (취소 누르면 종료)
-        if (!confirm(msg)) {
-            return;
-        }
+        if (!confirm(msg)) return;
 
-        // 현재 URL 경로에서 query string 제거 (ex: ?status=pending 같은거 제거)
-        var basePath = location.pathname.split('?')[0]; 
-        // ex: /community/1/member
+        var basePath = location.pathname.split('?')[0];
 
-        // 선택된 멤버마다 form 생성 후 POST 전송
         for (var j = 0; j < selected.length; j++) {
             var form = document.createElement('form');
             form.method = 'post';
             form.action = basePath + '/' + selected[j].value + '/' + action;
-            // ex: /community/1/member/3/approve
-
             document.body.appendChild(form);
-
-            // 디버그용: 전송 URL 출력
             console.log('👉 form action = ' + form.action);
-
             form.submit();
         }
     }
 </script>
 
-
-
 </head>
 <body>
 <div layout:fragment="content">
     <div class="container">
-        <!-- Sidebar -->
+        <!-- ✅ Sidebar (꾸며줌) -->
         <div class="sidebar">
             <h4 th:text="${communityInfo.name} ?: '커뮤니티'">커뮤니티</h4>
             <ul th:each="bdto : ${sidebarBoardList}">
                 <li>
-                    <a th:href="@{/community/{cId}/board/{boardId}(cId=${cId}, boardId=${bdto.id})}">[[${bdto.name}]]</a>
+                    <a th:href="@{/community/{cId}/board/{boardId}(cId=${cId}, boardId=${bdto.id})}">
+                        [[${bdto.name}]]
+                    </a>
                 </li>
             </ul>
-            <a th:href="@{/community/{cId}/board/create(cId=${cId})}">+ 게시판 추가</a>
+            <a class="add-board" th:href="@{/community/{cId}/board/create(cId=${cId})}">+ 게시판 추가</a>
         </div>
 
         <!-- Main -->
@@ -124,7 +144,7 @@
                 <label><input type="radio" name="status" th:checked="${status == 'pending'}" onclick="location.href='?status=pending'"> 가입 승인 대기</label>
             </div>
 
-            <div>
+            <div style="margin-top: 10px;">
                 <button th:if="${status == 'active'}" class="btn btn-remove" onclick="memberAction('remove')">탈퇴</button>
                 <div th:if="${status == 'pending'}">
                     <button class="btn btn-approve" onclick="memberAction('approve')">승인</button>
