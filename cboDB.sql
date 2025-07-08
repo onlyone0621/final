@@ -35,6 +35,7 @@ drop sequence sq_approval_line_id;
 drop sequence sq_community_id;
 drop sequence sq_community_post_id;
 drop sequence sq_community_comment_id;
+drop sequence sq_message_ref;
 
 
 create sequence sq_member_id nocache;
@@ -53,6 +54,7 @@ create sequence sq_approval_line_id nocache;
 create sequence sq_community_id nocache;
 create sequence sq_community_post_id nocache;
 create sequence sq_community_comment_id nocache;
+create SEQUENCE sq_message_ref nocache;
 
 
 
@@ -98,7 +100,7 @@ create table message(
     receiver_id number(10),
     sender_id number(10),
     write_date date DEFAULT SYSDATE NOT NULL,
-    is_read varchar2(60) default '안 읽음' not null,
+    is_read varchar2(60) default '안 읽음' CHECK (is_read IN ('읽음', '안 읽음')) not null,
     file_name varchar2(300),
     ref number(10) not null CHECK (ref >= 1),
     lev number(10) not null CHECK (lev >= 0),
@@ -123,8 +125,9 @@ create table chatroom(
     id number(10) primary key,
     name varchar2(100) not null,
     description varchar2(200) not null,
-    create_date date DEFAULT SYSDATE NOT NULL
-
+    create_date date DEFAULT SYSDATE NOT NULL,
+    type VARCHAR2(20) NOT NULL
+        CHECK (type IN ('group', 'private'))
 );
 
 create table chat_message(
@@ -134,6 +137,8 @@ create table chat_message(
     member_id number(10),
     write_date date DEFAULT SYSDATE NOT NULL,
     content varchar2(1000) not null,
+    type VARCHAR2(20) DEFAULT 'user' NOT NULL
+        CHECK (type IN ('user', 'system')),
     foreign key (chatroom_id) references chatroom(id) ON DELETE CASCADE ,
     foreign key (member_id) references member(id) ON DELETE SET NULL  
 );
@@ -221,7 +226,7 @@ CREATE TABLE approval_line (
     doc_id NUMBER(10) NOT NULL,
     member_id NUMBER(10),
     status VARCHAR2(100) DEFAULT '결재 예정' CHECK (status IN ('기안 상신', '결재 예정', '결재 완료', '참조', '반려')),
-    process_date DATE DEFAULT NULL,
+    process_date DATE,
     CONSTRAINT pk_approval_line PRIMARY KEY (doc_id, member_id),
     CONSTRAINT fk_approval_line_doc FOREIGN KEY (doc_id) REFERENCES doc(id) ON DELETE CASCADE,
     CONSTRAINT fk_approval_line_member FOREIGN KEY (member_id) REFERENCES member(id) ON DELETE SET NULL
@@ -286,13 +291,13 @@ create table community_comment(
 CREATE OR REPLACE VIEW doc_view AS
 SELECT doc.id, TO_CHAR(write_date, 'YYYY-MM-DD') AS write_date, 
     CASE
-        WHEN '결재 완료' = ALL(SELECT status FROM approval_line WHERE approval_line.doc_id = doc.id AND status != '참조') THEN TO_CHAR((SELECT MAX(process_date) FROM approval_line WHERE approval_line.doc_id = doc.id AND status = '결재 완료'), 'YYYY-MM-DD')
+        WHEN '결재 완료' = ALL(SELECT status FROM approval_line WHERE approval_line.doc_id = doc.id AND status NOT IN ('참조', '기안 상신')) THEN TO_CHAR((SELECT MAX(process_date) FROM approval_line WHERE approval_line.doc_id = doc.id AND status = '결재 완료'), 'YYYY-MM-DD')
         ELSE '-'
     END AS completion,
 format_id, format.name AS format_name, title, doc.member_id, member.name AS writer, 
     CASE
         WHEN EXISTS (SELECT 1 FROM approval_line WHERE approval_line.doc_id = doc.id AND status = '반려') THEN '반려'
-        WHEN '결재 완료' = ALL(SELECT status FROM approval_line WHERE approval_line.doc_id = doc.id AND status != '참조') THEN '완료'
+        WHEN '결재 완료' = ALL(SELECT status FROM approval_line WHERE approval_line.doc_id = doc.id AND status NOT IN ('기안 상신', '참조')) THEN '완료'
         ELSE '진행 중'
     END AS status
 FROM doc
@@ -447,7 +452,7 @@ VALUES (sq_format_id.NEXTVAL, '기안문', '<div style="font-family: Arial, sans
       </tr>
       <tr>
         <td style="border: 1px solid #000; padding: 5px; font-size: 14px;">기안일</td>
-        <td style="border: 1px solid #000; padding: 5px; font-size: 14px;" id="write-date"></td>
+        <td style="border: 1px solid #000; padding: 5px; font-size: 14px;" id="writeDate"></td>
       </tr>
       <tr>
         <td style="border: 1px solid #000; padding: 5px; font-size: 14px;">기안자</td>
@@ -469,20 +474,26 @@ VALUES (sq_format_id.NEXTVAL, '기안문', '<div style="font-family: Arial, sans
         </td>
       </tr>
     </table>
-    <div id="approval-line-container" style="display: flex; gap: 10px;">
+    <div id="approvalLineContainer" style="display: flex; gap: 10px;">
     </div>
   </div>
-  <table style="width: 100%; border-collapse: collapse; margin-bottom: 10px;">
-    <tr>
-      <th style="border: 1px solid #000; padding: 8px; background-color: #ccc; text-align: left;">제목</th>
-      <td style="border: 1px solid #000; padding: 8px;">
-        <input type="text" style="width: 100%; box-sizing: border-box;">
-      </td>
-    </tr>
-    <tr>
-      <th colspan="2" style="border: 1px solid #000; padding: 8px; background-color: #ccc; text-align: center;">상 세 내 용</th>
-    </tr>
-  </table>
+  <table style="width: 100%; border-collapse: collapse; margin-bottom: 10px; table-layout: fixed;">
+  <colgroup>
+    <col style="width: 12.5%;">   
+    <col style="width: 87.5%;">   
+  </colgroup>
+  <tr>
+    <th style="border: 1px solid #000; padding: 8px; background-color: #ccc; text-align: left;">제목</th>
+    <td style="border: 1px solid #000; padding: 8px;">
+      <input type="text" id="title" style="width: 100%; box-sizing: border-box;">
+    </td>
+  </tr>
+  <tr>
+    <th colspan="2" style="border: 1px solid #000; padding: 8px; background-color: #ccc; text-align: center;">
+      상 세 내 용
+    </th>
+  </tr>
+</table>
   <div contenteditable="true" style="width: 100%; height: 300px; border: 1px solid #000; font-size: 14px; box-sizing: border-box; padding: 10px;">
     본문
   </div>
@@ -500,31 +511,35 @@ VALUES (sq_format_id.NEXTVAL, '진료비 지원 신청서', '   <div style="font
       </tr>
       <tr>
         <td style="border: 1px solid #000; padding: 5px; font-size: 14px;">기안일</td>
-        <td style="border: 1px solid #000; padding: 5px; font-size: 14px;" id="write-date"></td>
+        <td style="border: 1px solid #000; padding: 5px; font-size: 14px;" id="writeDate"></td>
       </tr>
       <tr>
         <td style="border: 1px solid #000; padding: 5px; font-size: 14px;">기안자</td>
         <td style="border: 1px solid #000; padding: 5px; font-size: 14px;" id="writer"></td>
       </tr>
     </table>
-    <div id="approval-line-container" style="display: flex; gap: 10px;">
+    <div id="approvalLineContainer" style="display: flex; gap: 10px;">
     </div>
   </div>
-  <table style="width: 100%; border-collapse: collapse; margin-bottom: 10px;">
-    <tr>
-      <th style="border: 1px solid #000; padding: 5px; background-color: #ccc;">제목</th>
-      <td style="border: 1px solid #000; padding: 5px;">
-        <input type="text" style="width: 100%; box-sizing: border-box;">
-      </td>
-    </tr>
-    <tr>
-      <td colspan="2" style="border: 1px solid #000; padding: 5px;">
-        <div contenteditable="true" style="height: 200px; width: 100%; outline: none;">
-          본문
-        </div>
-      </td>
-    </tr>
-  </table>
+  <table style="width: 100%; border-collapse: collapse; margin-bottom: 10px; table-layout: fixed;">
+  <colgroup>
+    <col style="width: 12.5%;">   
+    <col style="width: 87.5%;">   
+  </colgroup>
+  <tr>
+    <th style="border: 1px solid #000; padding: 5px; background-color: #ccc;">제목</th>
+    <td style="border: 1px solid #000; padding: 5px;">
+      <input type="text" id="title" style="width: 100%; box-sizing: border-box;">
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2" style="border: 1px solid #000; padding: 5px;">
+      <div contenteditable="true" style="height: 200px; width: 100%; outline: none;">
+        본문
+      </div>
+    </td>
+  </tr>
+</table>
   <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
     <tr>
       <td style="border: 1px solid #000; padding: 5px; width: 120px;">진료기관명</td>
@@ -570,22 +585,27 @@ VALUES (sq_format_id.NEXTVAL, '휴가 신청서', '    <div style="font-family: 
       </tr>
       <tr>
         <td style="border: 1px solid #000; padding: 5px; font-size: 14px;">기안일</td>
-        <td style="border: 1px solid #000; padding: 5px; font-size: 14px;" id="write-date"></td>
+        <td style="border: 1px solid #000; padding: 5px; font-size: 14px;" id="writeDate"></td>
       </tr>
       <tr>
         <td style="border: 1px solid #000; padding: 5px; font-size: 14px;">기안자</td>
         <td style="border: 1px solid #000; padding: 5px; font-size: 14px;" id="writer"></td>
       </tr>
     </table>
-    <div id="approval-line-container" style="display: flex; gap: 10px;">
+    <div id="approvalLineContainer" style="display: flex; gap: 10px;">
     </div>
   </div>
-
-  <table style="border-collapse: collapse; width: 100%; margin-bottom: 10px;">
+  <table style="border-collapse: collapse; width: 100%; margin-bottom: 10px; table-layout: fixed;">
+  <colgroup>
+    <col style="width: 12.5%;">  
+    <col style="width: 87.5%;">  
+  </colgroup>
   <tr>
-    <th style="border: 1px solid #000; padding: 8px; width: 100px; background-color: #ccc; text-align: center;">제목</th>
+    <th style="border: 1px solid #000; padding: 8px; background-color: #ccc; text-align: center;">
+      제목
+    </th>
     <td style="border: 1px solid #000; padding: 8px;">
-      <input type="text" style="width: 100%; box-sizing: border-box;">
+      <input type="text" id="title" style="width: 100%; box-sizing: border-box;">
     </td>
   </tr>
 </table>
@@ -882,3 +902,265 @@ INSERT INTO approval_line VALUES (20, 11, '결재 예정', NULL);
 INSERT INTO approval_line VALUES (20, 18, '결재 예정', NULL);
 INSERT INTO approval_line VALUES (20, 1, '참조', TO_DATE('2025-06-10', 'YYYY-MM-DD'));
 
+
+-- Message sample insert queries
+-- 원글 1 (2025-06-20)
+INSERT INTO message (id, title, content, receiver_id, sender_id, write_date, is_read, file_name, ref, lev)
+VALUES (
+  sq_message_id.NEXTVAL,
+  '첫 번째 메시지',
+  '이것은 첫 번째 원글입니다.',
+  2, 1,
+  TO_DATE('2025-06-20', 'YYYY-MM-DD'),
+  '안 읽음',
+  NULL,
+  1,
+  0
+);
+
+-- 답글 1-1 (2025-06-21)
+INSERT INTO message VALUES (
+  sq_message_id.NEXTVAL,
+  'RE: 첫 번째 메시지',
+  '답변드립니다.',
+  1, 2,
+  TO_DATE('2025-06-21', 'YYYY-MM-DD'),
+  '읽음',
+  NULL,
+  1,
+  1
+);
+
+-- 답글 1-2 (2025-06-22)
+INSERT INTO message VALUES (
+  sq_message_id.NEXTVAL,
+  'RE: RE: 첫 번째 메시지',
+  '추가 답변입니다.',
+  2, 1,
+  TO_DATE('2025-06-22', 'YYYY-MM-DD'),
+  '읽음',
+  NULL,
+  1,
+  2
+);
+
+-- 원글 2 (2025-06-23)
+INSERT INTO message VALUES (
+  sq_message_id.NEXTVAL,
+  '두 번째 메시지',
+  '다른 원글입니다.',
+  3, 4,
+  TO_DATE('2025-06-23', 'YYYY-MM-DD'),
+  '안 읽음',
+  NULL,
+  2,
+  0
+);
+
+-- 답글 2-1 (2025-06-24)
+INSERT INTO message VALUES (
+  sq_message_id.NEXTVAL,
+  'RE: 두 번째 메시지',
+  '네 확인했습니다.',
+  4, 3,
+  TO_DATE('2025-06-24', 'YYYY-MM-DD'),
+  '읽음',
+  NULL,
+  2,
+  1
+);
+
+-- 원글 3 (2025-06-25)
+INSERT INTO message VALUES (
+  sq_message_id.NEXTVAL,
+  '세 번째 메시지',
+  '추가로 문의드립니다.',
+  5, 6,
+  TO_DATE('2025-06-25', 'YYYY-MM-DD'),
+  '안 읽음',
+  NULL,
+  3,
+  0
+);
+
+-- 원글 4 (2025-06-26)
+INSERT INTO message VALUES (
+  sq_message_id.NEXTVAL,
+  '네 번째 메시지',
+  '공지사항입니다.',
+  7, 8,
+  TO_DATE('2025-06-26', 'YYYY-MM-DD'),
+  '안 읽음',
+  NULL,
+  4,
+  0
+);
+
+-- 원글 5 (2025-06-27)
+INSERT INTO message VALUES (
+  sq_message_id.NEXTVAL,
+  '다섯 번째 메시지',
+  '업무 협조 부탁드립니다.',
+  9, 10,
+  TO_DATE('2025-06-27', 'YYYY-MM-DD'),
+  '읽음',
+  NULL,
+  5,
+  0
+);
+
+-- 답글 5-1 (2025-06-28)
+INSERT INTO message VALUES (
+  sq_message_id.NEXTVAL,
+  'RE: 다섯 번째 메시지',
+  '확인했습니다.',
+  10, 9,
+  TO_DATE('2025-06-28', 'YYYY-MM-DD'),
+  '읽음',
+  NULL,
+  5,
+  1
+);
+
+-- 답글 5-2 (2025-06-28)
+INSERT INTO message VALUES (
+  sq_message_id.NEXTVAL,
+  'RE: RE: 다섯 번째 메시지',
+  '감사합니다.',
+  9, 10,
+  TO_DATE('2025-06-28', 'YYYY-MM-DD'),
+  '읽음',
+  NULL,
+  5,
+  2
+);
+
+-- 원글 6 (2025-06-19)
+INSERT INTO message VALUES (
+  sq_message_id.NEXTVAL,
+  '여섯 번째 메시지',
+  '새로운 공지사항입니다.',
+  11, 12,
+  TO_DATE('2025-06-19', 'YYYY-MM-DD'),
+  '안 읽음',
+  NULL,
+  6,
+  0
+);
+
+-- 답글 6-1 (2025-06-18)
+INSERT INTO message VALUES (
+  sq_message_id.NEXTVAL,
+  'RE: 여섯 번째 메시지',
+  '확인했습니다.',
+  12, 11,
+  TO_DATE('2025-06-18', 'YYYY-MM-DD'),
+  '읽음',
+  NULL,
+  6,
+  1
+);
+
+-- 원글 7 (2025-06-17)
+INSERT INTO message VALUES (
+  sq_message_id.NEXTVAL,
+  '일곱 번째 메시지',
+  '자료 요청드립니다.',
+  13, 14,
+  TO_DATE('2025-06-17', 'YYYY-MM-DD'),
+  '안 읽음',
+  NULL,
+  7,
+  0
+);
+
+-- 답글 7-1 (2025-06-16)
+INSERT INTO message VALUES (
+  sq_message_id.NEXTVAL,
+  'RE: 일곱 번째 메시지',
+  '자료 전달드립니다.',
+  14, 13,
+  TO_DATE('2025-06-16', 'YYYY-MM-DD'),
+  '읽음',
+  NULL,
+  7,
+  1
+);
+
+-- 원글 8 (2025-06-15)
+INSERT INTO message VALUES (
+  sq_message_id.NEXTVAL,
+  '여덟 번째 메시지',
+  '긴급 상황 보고합니다.',
+  15, 16,
+  TO_DATE('2025-06-15', 'YYYY-MM-DD'),
+  '안 읽음',
+  NULL,
+  8,
+  0
+);
+
+-- 원글 9 (2025-06-14)
+INSERT INTO message VALUES (
+  sq_message_id.NEXTVAL,
+  '아홉 번째 메시지',
+  '프로젝트 상황 공유드립니다.',
+  17, 18,
+  TO_DATE('2025-06-14', 'YYYY-MM-DD'),
+  '안 읽음',
+  NULL,
+  9,
+  0
+);
+
+-- 답글 9-1 (2025-06-13)
+INSERT INTO message VALUES (
+  sq_message_id.NEXTVAL,
+  'RE: 아홉 번째 메시지',
+  '공유 감사합니다.',
+  18, 17,
+  TO_DATE('2025-06-13', 'YYYY-MM-DD'),
+  '읽음',
+  NULL,
+  9,
+  1
+);
+
+-- 원글 10 (2025-06-12)
+INSERT INTO message VALUES (
+  sq_message_id.NEXTVAL,
+  '열 번째 메시지',
+  '휴가 일정 문의드립니다.',
+  19, 20,
+  TO_DATE('2025-06-12', 'YYYY-MM-DD'),
+  '안 읽음',
+  NULL,
+  10,
+  0
+);
+
+-- 답글 10-1 (2025-06-11)
+INSERT INTO message VALUES (
+  sq_message_id.NEXTVAL,
+  'RE: 열 번째 메시지',
+  '승인해드리겠습니다.',
+  20, 19,
+  TO_DATE('2025-06-11', 'YYYY-MM-DD'),
+  '읽음',
+  NULL,
+  10,
+  1
+);
+
+-- 답글 10-2 (2025-06-10)
+INSERT INTO message VALUES (
+  sq_message_id.NEXTVAL,
+  'RE: RE: 열 번째 메시지',
+  '감사합니다!',
+  19, 20,
+  TO_DATE('2025-06-10', 'YYYY-MM-DD'),
+  '읽음',
+  NULL,
+  10,
+  2
+);

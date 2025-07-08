@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+				xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+				layout:decorate="layouts/messageLayout">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>메시지 보내기</title>
+<script th:src="@{/js/message/send-messages.js}" defer></script>
+</head>
+<body>
+<div layout:fragment="content">
+	<form action="sendMessages" method="post" enctype="multipart/form-data">
+		<div class="container d-flex flex-row gap-5">
+			<div class="d-flex flex-column gap-3 w-75">
+				<!-- Title and format's name -->
+				<div class="container-fluid">
+					<span class="navbar-text fs-1">메시지 작성</span>
+				</div>
+			
+				<!-- Button toolbar -->
+				<div>
+					<nav
+						class="nav nav-pills flex-row"
+					>
+						<button class="nav-link active"
+							>보내기</button
+						>
+						<button type="button" class="btn btn-outline-info ms-auto" data-bs-toggle="modal" data-bs-target="#memberListModal">조직도</button> 
+					</nav>
+				</div>
+
+				<div class="row mb-3">
+					<label for="title" class="col-sm-2 col-form-label">제목</label>
+					<div class="col-sm-10">
+						<input type="text" class="form-control" id="title" name="title" th:value="${originalMessage.title ?: ''}" required>
+					</div>
+  				</div>
+				<div class="row mb-3">
+					<label for="attatchment" class="col-sm-2 col-form-label">첨부 파일</label>
+					<div class="col-sm-10">
+						<input type="file" class="form-control" id="attatchment" name="attatchment">
+					</div>
+  				</div>
+
+				<div class="mb-3">
+					<label for="content" class="form-label">내용</label>
+					<textarea class="form-control h-100 overflow-y-scroll" name="content" id="content" th:text="${originalMessage.content ?: ''}" rows="14" required></textarea>
+				</div>
+				<input type="hidden" name="ref" th:value="${originalMessage.ref ?: 0}">
+				<input type="hidden" name="lev" th:value="${originalMessage.lev != 0 ? originalMessage.lev : 0}">
+				
+			</div>
+				
+				<!-- Right sidebar -->
+				<div class="w-25">
+					<!-- Nav tabs -->
+					<ul class="nav nav-tabs" id="myTab" role="tablist">
+						<li class="nav-item" role="presentation">
+							<button
+								class="nav-link active"
+								id="receivers-tab"
+								data-bs-toggle="tab"
+								data-bs-target="#receivers"
+								type="button"
+								role="tab"
+								aria-controls="receivers"
+								aria-selected="true"
+							>
+								받는 사람
+							</button>
+						</li>
+					</ul>
+					
+					<!-- Tab panes -->
+					<div class="tab-content">
+						<div
+							class="tab-pane active"
+							id="receivers"
+							role="tabpanel"
+							aria-labelledby="receivers-tab"
+						>
+							<ul class="list-group list-group-flush" id="receiversList">
+								<li class="list-group-item" th:text="${originalMessage.receiver}"></li>
+							</ul>
+							<div id="hiddenInputs">
+								<input type="hidden" name="receiverIds" th:value="${originalMessage.receiver_id}">
+							</div>
+						</div>
+					</div>
+				</div>
+
+		</div>
+	</form>
+
+<div
+    class="modal fade"
+    id="memberListModal"
+    tabindex="-1"
+    role="dialog"
+    aria-labelledby="modalTitleId"
+    aria-hidden="true"
+>
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalTitleId">
+                    조직도
+                </h5>
+                <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="modal"
+                    aria-label="Close"
+                ></button>
+            </div>
+            <div class="modal-body">
+                <div class="accordion">
+                    <div class="accordion-item" th:each="deptGroup : ${membersByDept}">
+                        <h2 class="accordion-header" th:id="${#ids.seq('dept')}">
+                            <button
+                                class="accordion-button collapsed"
+                                type="button"
+                                data-bs-toggle="collapse"
+                                th:data-bs-target="'#' + ${#ids.next('members')}"
+                                aria-expanded="false"
+                                th:aria-controls="${#ids.next('members')}"
+                                th:text="${deptGroup.key}"
+                            >
+                                
+                            </button>
+                        </h2>
+                        <div
+                            th:id="${#ids.seq('members')}"
+                            class="accordion-collapse collapse"
+                            th:aria-labelledby="${#ids.prev('dept')}"
+                        >
+                            <div class="accordion-body" th:each="member : ${deptGroup.value}" th:object="${member}" th:data-dept="${deptGroup.key}">
+                                <input type="checkbox" class="form-check-input" name="receiverIds" th:id="${#ids.seq(#ids.prev('dept') + '-')}" th:value="*{member_id}">
+								<img th:src="@{/profileImage/{img}(img=*{profile_image})}" alt="profile_image" width="25" height="25" class="rounded-circle mx-1">
+								<label class="form-label" th:for="${#ids.prev(#ids.prev('dept') + '-')}" th:text="|*{member_name} *{grade_name}|"></label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                </div>
+                
+            </div>
+            <div class="modal-footer">
+                <button
+                    type="button"
+                    class="btn btn-secondary"
+                    data-bs-dismiss="modal"
+                >
+                    닫기
+                </button>
+                <button type="button" class="btn btn-primary" id="confirmReceivers">확인</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+</div>
+</body>
+</html>

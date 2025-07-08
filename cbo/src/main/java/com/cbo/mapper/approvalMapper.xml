@@ -132,7 +132,13 @@
 	</select>
 	
 	<select id="selectApprovers">
-		SELECT member.name AS member_name, dept.name AS dept_name, grade.name AS grade_name, approval_line.status, approval_line.process_date
+		SELECT 
+			member.name AS member_name,
+			NVL(member.profile_image, 'defaultProfileImage.jpg') AS profile_image,
+		 	dept.name AS dept_name,
+		  	grade.name AS grade_name,
+		   	approval_line.status,
+		    approval_line.process_date
 		FROM approval_line 
 		    JOIN member ON approval_line.member_id = member.id 
 		    JOIN dept ON member.dept_id = dept.id 
@@ -148,7 +154,13 @@
 	</select>
 	
 	<select id="selectReviewers">
-		SELECT member.name AS member_name, dept.name AS dept_name, grade.name AS grade_name, approval_line.status, approval_line.process_date
+		SELECT 
+			member.name AS member_name,
+			NVL(member.profile_image, 'defaultProfileImage.jpg') AS profile_image,
+		 	dept.name AS dept_name,
+		  	grade.name AS grade_name,
+		   	approval_line.status,
+		    approval_line.process_date
 		FROM approval_line 
 		    JOIN member ON approval_line.member_id = member.id 
 		    JOIN dept ON member.dept_id = dept.id 
@@ -164,8 +176,12 @@
 		WHERE id = #{id}
 	</select>
 	
-	<select id="selectMembers" resultType="map">
-  		SELECT member.id AS member_id, member.name AS member_name, dept.name AS dept_name, grade.name AS grade_name
+	<select id="selectMembers" resultType="com.cbo.member.model.OrganDTO">
+  		SELECT member.id AS member_id,
+  		 	member.name AS member_name,
+  		  	dept.name AS dept_name,
+  		   	grade.name AS grade_name,
+  		    NVL(member.profile_image, 'defaultProfileImage.jpg') AS profile_image
 		FROM member
 		    JOIN dept ON member.dept_id = dept.id
 		    JOIN grade ON member.grade_id = grade.id 
@@ -179,28 +195,35 @@
 	
 	<insert id="insertDoc" parameterType="com.cbo.approval.model.DocDTO">
 		INSERT INTO doc (id, title, member_id, format_id, content, file_name)
-		VALUES (#{id}, #{title}, #{memberId}, {formatId}, #{content}, #{fileName})
+		VALUES (#{id}, #{title}, #{member_id}, #{format_id}, #{content}
+		<choose>
+			<when test="file_name == null">
+				, NULL
+			</when>
+			<otherwise>
+				, #{file_name}
+			</otherwise>
+		</choose>
+		 )
 	</insert>
 	
-	<insert id="insertDrafterOrReviewers" parameterType="com.cbo.approval.model.ApprovalLineDTO">
-		INSERT INTO approval_line 
-		VALUES (#{docId}, #{memberId}, #{status}, SYSDATE)
-	</insert>
-	
-	<insert id="insertApprovers" parameterType="com.cbo.approval.model.ApprovalLineDTO">
-		INSERT INTO approval_line (doc_id, member_id, status)
-		VALUES (#{docId}, #{memberId}, #{status})
+	<insert id="insertApprovalLines" parameterType="com.cbo.approval.model.ApprovalLineDTO">
+		INSERT INTO approval_line (doc_id, member_id, status, process_date)
+		<choose>
+			<when test="status == '결재 예정'">
+				VALUES (#{doc_id}, #{member_id}, #{status}, NULL)
+			</when>
+			<otherwise>
+				VALUES (#{doc_id}, #{member_id}, #{status}, SYSDATE)
+			</otherwise>
+		</choose>
 	</insert>
 	
 	<!-- Approve or Reject -->
-	<update id="updateStatusToApproved">
-	
+	<update id="updateStatus" parameterType="map">
+		UPDATE approval_line 
+		SET status = #{status} 
+		WHERE doc_id = #{doc_id} AND member_id = #{member_id}
 	</update>
 	
-	<update id="updateStatusToRejected"></update>
-	
-	<insert id="insertTemplate" parameterType="com.cbo.approval.model.FormatDTO">
-		INSERT INTO format (id, name, template)
-  		VALUES (#{id}, #{name}, #{template, jdbcType=CLOB})
-	</insert>
   </mapper>

@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cbo.mapper.MessengerMapper">
+	<insert id="insertMessage" parameterType="com.cbo.messenger.model.ChatMessageDTO">
+	    insert into chat_message values(sq_chat_message_id.nextval, #{chatroom_id}, #{member_id}, sysdate, #{content}, #{type})
+	</insert>
+	<select id="selectMessage" parameterType="Map" resultType="com.cbo.messenger.model.MessageListDTO">
+		SELECT cm.content, m.name, cm.write_date, cm.type
+		FROM chat_message cm
+		JOIN member m ON cm.member_id = m.id
+		JOIN chatroom_user cu ON cu.chatroom_id = cm.chatroom_id
+		WHERE cm.chatroom_id = #{room_id}
+		  AND cu.member_id = #{id}
+		  AND cm.write_date >= cu.join_date
+		ORDER BY cm.write_date ASC
+	</select>
+	<select id="selectChatRoomList" resultType="com.cbo.messenger.model.ChatRoomListDTO" parameterType="int">
+		SELECT c.id, c.name
+		FROM chatroom_user cu
+		JOIN chatroom c ON cu.chatroom_id = c.id
+		WHERE cu.member_id = ${member_id} and c.type = 'group'
+	</select>
+	<insert id="insertChatRoom" parameterType="com.cbo.messenger.model.ChatRoomDTO">
+		<selectKey keyProperty="id" resultType="int" order="BEFORE">
+	        SELECT sq_chatroom_id.nextval FROM dual
+	    </selectKey>
+		INSERT INTO chatroom
+		VALUES(#{id}, #{name}, #{description}, sysdate, #{type})
+	</insert>
+	<insert id="insertChatMember" parameterType="com.cbo.messenger.model.ChatRoom_MemberDTO">
+		INSERT INTO chatroom_user
+		VALUES(#{chatroom_id}, #{member_id}, sysdate)
+	</insert>
+	<select id="selectInvitee" resultType="com.cbo.member.model.InviteeDTO" parameterType="int">
+		SELECT 
+		    m.id AS member_id, 
+		    m.name AS member_name, 
+		    d.name AS dept_name, 
+		    g.name AS grade_name
+		FROM member m
+		JOIN dept d ON m.dept_id = d.id
+		JOIN grade g ON m.grade_id = g.id
+		WHERE m.id NOT IN (
+		    SELECT cu.member_id
+		    FROM chatroom_user cu
+		    WHERE cu.chatroom_id = #{room_id}
+		)
+		ORDER BY d.id, g.seq
+	</select>
+	<select id="selectChatMember" parameterType="int" resultType="com.cbo.member.model.ChatMemberDTO">
+		SELECT m.name, g.name AS grade_name, m.profile_image
+		FROM chatroom_user c
+		JOIN member m ON m.id = c.member_id
+		JOIN grade g ON m.grade_id = g.id
+		WHERE c.chatroom_id = #{room_id}
+		ORDER BY m.name ASC
+	</select>
+	<delete id="deleteChatMember" parameterType="com.cbo.messenger.model.ChatRoom_MemberDTO">
+		DELETE 
+		FROM chatroom_user
+		WHERE chatroom_id = ${chatroom_id} and member_id = #{member_id}
+	</delete>
+	<select id="selectMembers" resultType="com.cbo.member.model.OrganDTO" parameterType="int">
+		SELECT 
+		    member.id AS member_id, 
+		    member.name AS member_name, 
+		    dept.name AS dept_name, 
+		    grade.name AS grade_name, 
+		    member.profile_image
+		FROM member
+		JOIN dept ON member.dept_id = dept.id
+		JOIN grade ON member.grade_id = grade.id 
+		WHERE member.id != #{id}
+		ORDER BY dept.id, grade.seq
+  	</select>
+  	<select id="selectPrivateRoom" resultType="Integer">
+		SELECT cr.id
+		FROM chatroom cr
+		JOIN chatroom_user cu ON cr.id = cu.chatroom_id
+		WHERE cr.type = 'private'
+		  AND cu.member_id IN (#{member1_id}, #{member2_id})
+		GROUP BY cr.id
+		HAVING COUNT(DISTINCT cu.member_id) = 2
+	</select>
+</mapper>

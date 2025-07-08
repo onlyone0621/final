@@ -1,9 +1,38 @@
 <!DOCTYPE html>
-<html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="layouts/mainLayout">
 <head>
   <meta charset="UTF-8">
-  <title>커뮤니티 개설</title>
+  <title>게시글 작성</title>
+  <script>
+function showFiles(input) {
+  var fileNamesDiv = document.getElementById('fileNames');
+  fileNamesDiv.innerHTML = '';
+
+  var files = input.files;
+
+  if (files.length > 0) {
+    for (var i = 0; i < files.length; i++) {
+      var p = document.createElement('p');
+      p.textContent = files[i].name;
+      fileNamesDiv.appendChild(p);
+    }
+  } else {
+    fileNamesDiv.textContent = '선택된 파일이 없습니다.';
+  }
+}
+
+function clearFiles() {
+  var fileNamesDiv = document.getElementById('fileNames');
+  fileNamesDiv.innerHTML = '';
+}
+</script>
   <style>
+    .container {
+      display: flex;
+    }
     .sidebar {
       width: 200px;
       background-color: #fbf9fd;
@@ -11,73 +40,93 @@
       box-sizing: border-box;
       border-right: 1px solid #ddd;
     }
-
     .sidebar h4 {
-      margin-bottom: 15px;
       font-size: 18px;
-    }
-
-    .sidebar button {
-      width: 100%;
-      padding: 8px;
       margin-bottom: 15px;
     }
-
     .sidebar ul {
       list-style: none;
       padding-left: 0;
       font-size: 14px;
     }
-
     .sidebar ul li {
-      margin-bottom: 8px;
+      margin-bottom: 10px;
     }
-
-    .container {
-      display: flex;
-    }
-
     .main {
-      padding: 10px;
       flex-grow: 1;
+      padding: 20px;
+    }
+    .main h2 {
+      margin-bottom: 20px;
+    }
+    .main input[type="text"],
+    .main textarea {
+      width: 100%;
+      padding: 8px;
+      box-sizing: border-box;
+    }
+    .main input[type="file"] {
+      margin-top: 5px;
+    }
+    .main .btns {
+      margin-top: 20px;
+    }
+    .main .btns input {
+      padding: 8px 16px;
+      margin-right: 10px;
+      cursor: pointer;
+    }
+    #fileNames {
+      margin-top: 10px;
     }
   </style>
 </head>
 <body>
+<div layout:fragment="content">
 
-<div class="container">
-  <div class="sidebar">
-
-   <input type="button" value="글쓰기">
-    <ul>
-      <li>가입 멤버 1</li>
-      <li>가입 멤버 2</li>
-      <li>가입 멤버 3</li>
-      <li>가입 멤버 4</li>
-      <li>가입 멤버 5</li>
-    </ul>
-  </div>
-
- <form name="postWrite" action="postWrite" method="post"  enctype="multipart/form-data" >
-  <ul>
-    <li>게시판 선택
-      <select>
-          <option>1</option>
-          <option>1</option>
-      </select>
-    </li>
- 
-     <li><label>제목 </label><input type="text" name="title" placeholder=" 제목 "> </li>
-     <li><label>파일 첨부 </label><input type="file"> <input type="text" placeholder="이곳에 파일을 드래그 하세요"></li>
-    <textarea rows="20" cols="30"></textarea>
-    </textarea>
-    </ul>
-    <div>
-      <input type="reset" value="취소">
-       <input type="submit" value="등록">
+  <div class="container">
+    <div class="sidebar">
+      <h4>게시판</h4>
+      <ul>
+        <li th:each="b : ${boardList}">
+          <a th:href="@{'/community/' + ${cId} + '/board/' + ${b.id}}" th:text="${b.name}"></a>
+        </li>
+      </ul>
     </div>
- </form>
+
+    <div class="main">
+      <h2>게시글 작성</h2>
+
+      <form name="postWrite"
+            th:action="@{'/community/' + ${cId} + '/board/' + ${boardId} + '/write'}"
+            method="post"
+            enctype="multipart/form-data">
+        <div>
+          <label>제목</label>
+          <input type="text" name="title" placeholder="제목을 입력하세요" required>
+        </div>
+
+        <div>
+          <label>내용</label>
+          <textarea name="content" rows="10" placeholder="내용을 입력하세요" required></textarea>
+        </div>
+<small style="color: #888;">여러 파일을 선택하려면 Shift 또는 Ctrl(Windows) / Command(Mac)를 누르고 선택하세요.</small>
+        <div>
+          <label>파일 첨부</label>
+          <input type="file" name="images" multiple onchange="showFiles(this)">
+          <div id="fileNames"></div>
+        </div>
+
+        <div class="btns">
+          <input type="submit" value="등록">
+          <input type="reset" value="취소" onclick="clearFiles()">
+        </div>
+      </form>
+    </div>
+  </div>
 </div>
-</div>
+
+
+
 </body>
 </html>

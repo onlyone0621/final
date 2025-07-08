@@ -1,28 +1,26 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
-
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+              xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+              layout:decorate="layouts/mainLayout">
 <head>
   <meta charset="UTF-8">
   <title>커뮤니티 폐쇄</title>
   <style>
+    .container {
+      display: flex;
+      min-height: 100vh;
+    }
+
     .sidebar {
-      width: 200px;
+      width: 220px;
       background-color: #fbf9fd;
       padding: 20px;
-      box-sizing: border-box;
       border-right: 1px solid #ddd;
     }
 
     .sidebar h4 {
-      margin-bottom: 15px;
       font-size: 18px;
-    }
-
-    .sidebar button {
-      width: 100%;
-      padding: 8px;
-      margin-bottom: 15px;
+      margin-bottom: 10px;
     }
 
     .sidebar ul {
@@ -33,79 +31,136 @@
 
     .sidebar ul li {
       margin-bottom: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
 
-    .container {
-      display: flex;
+    .sidebar ul li a {
+      text-decoration: none;
+      color: #6a1b9a;
+      font-weight: bold;
+    }
+
+    .settings-btn {
+      font-size: 16px;
+      color: #999;
+      margin-left: 5px;
+      text-decoration: none;
+    }
+
+    .add-board {
+      display: block;
+      margin-top: 10px;
+      font-size: 14px;
+      color: #d81b60;
+      text-decoration: none;
+      font-weight: bold;
     }
 
     .main {
-      padding: 10px;
       flex-grow: 1;
+      padding: 20px;
     }
-        .tab-wrapper {
-      display: flex;
-      gap: 1.5rem;
+
+    .tabs {
+      border-bottom: 1px solid #ddd;
       margin-bottom: 20px;
-      border-bottom: 1px solid #ccc;
     }
 
     .tab {
-      padding: 10px;
+      display: inline-block;
+      margin-right: 15px;
+      padding-bottom: 5px;
       font-weight: bold;
       color: #666;
-      cursor: pointer;
+      text-decoration: none;
+      border-bottom: 2px solid transparent;
     }
 
     .tab.active {
-      color: #000;
-      border-bottom: 3px solid #f381a3;
+      color: #d81b60;
+      border-bottom: 2px solid #d81b60;
     }
 
-    .step-container {
-      display: flex;
-      gap: 2rem;
+    form {
+      margin-top: 20px;
     }
-    
 
+    form p {
+      margin-bottom: 8px;
+      font-size: 14px;
+    }
+
+    input[type="submit"],
+    input[type="button"] {
+      padding: 8px 16px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-right: 8px;
+    }
+
+    input[type="submit"] {
+      background-color: #f8bbd0;
+      color: #333;
+    }
+
+    input[type="submit"]:hover {
+      background-color: #f48fb1;
+    }
+
+    input[type="button"] {
+      background-color: #fce4ec;
+      color: #333;
+    }
+
+    input[type="button"]:hover {
+      background-color: #f8bbd0;
+    }
   </style>
 </head>
 <body>
-
-<div class="container">
-  <div class="sidebar">
-
-   <input type="button" value="글쓰기">
-    <ul>
-      <li>가입 멤버 1</li>
-      <li>가입 멤버 2</li>
-      <li>가입 멤버 3</li>
-      <li>가입 멤버 4</li>
-      <li>가입 멤버 5</li>
-    </ul>
-  </div>
-
-<div style="flex-grow: 1; padding: 20px;">
-
-
-	<div class="tab"> <a th:href="@{'/community/' + ${id} + '/update'}">정보</a></div>
-	<div class="tab"> <a th:href="@{'/community/' + ${id} + '/members'}">멤버</a></div>
-	<div class="tab active"> <a th:href="@{'/community/' + ${id} + '/close'}">폐쇄</a></div>
-
-
-<form th:action="@{'/community/' + ${id} + '/close'}" method="post">
-    <div>
-        *커뮤니티를 폐쇄하시면, 현재 커뮤니티 내에 있는 자료들이 삭제됩니다.<br>
-        <label style="color: crimson;">자료가 삭제된 이후에는 복구가 불가능 합니다.</label> <br>
-        <br>
-        <input type="hidden" name="id" th:value="${id}">
-        <!-- name = 값을 어떤 이름으로 넘길지 key,
-        value="10"이 넘길 실제 값 (value)  -->
-        <input type="submit" value="폐쇄하기" >
+<div layout:fragment="content">
+  <div class="container">
+    <div class="sidebar">
+      <h4 th:text="${communityInfo.name} ?: '커뮤니티'">커뮤니티</h4>
+      <ul th:if="${#lists.isEmpty(sidebarBoardList)}">
+        <li>생성된 게시판이 없습니다.</li>
+      </ul>
+      <ul th:each="bdto : ${sidebarBoardList}">
+        <li>
+          <a th:href="@{/community/{cId}/board/{boardId}(cId=${cId}, boardId=${bdto.id})}">
+            [[${bdto.name}]]
+          </a>
+          <a th:href="@{/community/{cId}/board/{boardId}/update(cId=${cId}, boardId=${bdto.id})}" class="settings-btn">⚙</a>
+        </li>
+      </ul>
+      <a class="add-board" th:href="@{/community/{cId}/board/create(cId=${cId})}">+ 게시판 추가</a>
     </div>
-   </form>
-</div>
-</div>
 
+    <div class="main">
+      <div class="tabs">
+        <a class="tab" th:href="@{/community/{cId}/update(cId=${cId})}">정보</a>
+        <a class="tab" th:href="@{/community/{cId}/boardDelete(cId=${cId})}">게시판</a>
+        <a class="tab" th:href="@{/community/{cId}/member(cId=${cId})}">멤버</a>
+        <a class="tab active" th:href="@{/community/{cId}/close(cId=${cId})}">폐쇄</a>
+      </div>
+
+      <form th:action="@{/community/{cId}/close(cId=${cId})}" method="post" onsubmit="return confirmDelete();">
+        <p>* 커뮤니티를 폐쇄하시면, 현재 커뮤니티 내 자료들이 <strong style="color: crimson;">영구적으로 삭제</strong>됩니다.</p>
+        <p style="color: crimson;">자료가 삭제된 이후에는 복구가 불가능합니다.</p>
+        <input type="submit" value="폐쇄하기">
+        <input type="button" value="취소" onclick="history.back();">
+      </form>
+
+      <script>
+        function confirmDelete() {
+          return confirm("정말 커뮤니티를 폐쇄하시겠습니까?\n게시판이 남아 있으면 삭제가 불가능합니다.");
+        }
+      </script>
+    </div>
+  </div>
+</div>
 </body>
 </html>

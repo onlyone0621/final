@@ -5,7 +5,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>내 정보 수정하기</title>
+<title>메신저</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 <style>
     body {
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -15,114 +16,33 @@
     }
 
     form {
-        max-width: 600px;
-        margin: 50px auto;
+        margin: 0px auto;
         padding: 30px;
         background-color: white;
     }
 
-    form div {
-        margin-bottom: 15px;
-    }
-
-    input[type="password"]{
-        width: 45%;
-        padding: 10px;
-        border: 1px solid #ccc;
-        border-radius: 6px;
-        font-size: 14px;
-    }
-    
-    input[type="button"],
-    input[type="submit"],
-    input[type="reset"] {
-    	width: 25%;
-        padding: 10px 15px;
-        background-color: #FFC6C6;
-        color: white;
-        border: none;
-        border-radius: 6px;
-        cursor: pointer;
-        font-size: 14px;
-        margin-top: 5px;
-        margin-left: 5px;
-    }
-
-    input[type="button"]:hover,
-    input[type="submit"]:hover,
-    input[type="reset"]:hover {
-        background-color: #FFA2A2;
-    }
-	#hlabel {
-		color: #909090;
-		display: inline-block;
-		width: 120px;
-		margin-bottom: 5px;
-        font-weight: bold;
-        font-size: 16px;
-        text-align: left;
-	}
-
-
-    input::placeholder {
+    input::placeholder,
+    textarea::placeholder {
+    	font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         color: #999;
-    }
-
-   
-	.sidebar {
-	    display: flex;
-	    flex-direction: column;
-	    align-items: center;
-	    height: 740px;
-	    gap: 64px;
-	    margin: 24px;
-	    padding-top: 50px;
-	    padding-bottom: 50px;
-	    border: 1px black solid;
-	    border-radius: 30px;
-	   	width: 230px;
-	}
-	
-	
-	.sidebar-menu {
-	    display: flex;
-	    flex-direction: column;
-	    align-items: center;
-	    gap: 24px;
-	}
-	
-	.sidebar-menu ul {
-	    display: flex;
-	    flex-direction: column;
-	    align-items: center;
-	    gap: 24px;
-	    list-style-type: none;
-	    margin: 0;
-	    padding: 0;
-	    height: 180px;
-	}
-	
-	.sidebar-menu a {
-	    text-decoration: none;
-	    color: black;
-	}
-	
-	.content {
-	    flex: 5;
-	}
+    }	
+    
 	.menu-title{
 		text-align: center;
 		font-size: 22px;
 		font-weight: bold;
 	}
-	.sidebar-menu hr{
-		border: solid 1.5px;
-		width: 160px;
-	}
 	
 	.main-div{
 		display: flex;
 	}
+	
+	.chat-div{
+		margin-left: 20px;
+		text-align: center;
+		display: flex;
+	}
+	
 	.title{
 		margin-top: 50px;
 		font-size: 30px;
@@ -131,60 +51,1219 @@
 	}
 	.title hr{
 		border: solid 1.5px;
-		width: 1550px;
+		width: 1850px;
+		box-sizing: border-box;
+	}
+	.member-list-container,
+    .chat-container {
+    	max-width: 1820px;
+        flex: 1;
+        display: flex;
+        gap: 70px;
+        height: 100%;
+    }
+	.member-list,
+    .chat-room-list {
+        width: 380px;
+        height: 650px;
+	    background-color: #f9f9f9;
+	    border: 1px solid #ddd;
+	    border-radius: 8px;
+	    display: flex;
+	    flex-direction: column;
+	    padding: 15px;
+	    box-sizing: border-box;
+	    overflow-y: auto;
+    }
+	.member-list h3,
+    .chat-room-list h3 {
+        margin-top: 0;
+	    margin-bottom: 15px;
+	    font-size: 20px;
+	    color: #333;
+	    border-bottom: 1px solid #ccc;
+	    padding-bottom: 10px;
+    }
+
+    .chat-room-item {
+    	padding: 12px 15px;
+	    margin-bottom: 10px;
+	    background-color: #fff;
+	    border: 1px solid #ddd;
+	    cursor: pointer;
+	    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+	    transition: background-color 0.2s, box-shadow 0.2s;
+	    font-size: 16px;
+	    color: #222;
+		position: relative;
+		padding-right: 30px; /* 오른쪽 공간 확보 */
+    }
+    
+	.chat-room-item .new-msg-indicator {
+		position: absolute;
+		right: 20px;
+		top: 50%;
+		transform: translateY(-60%);
+	}
+    
+    .chat-room-item.active {
+	    background-color: #e8f0ff;
+	    color: #222;
+	    font-weight: bold;
+	}
+	
+	.create-chat-room-wrapper {
+	    margin-top: auto;
+	    padding-top: 15px;
+	    border-top: 1px solid #ddd;
+	}
+	
+    .chat-room-item:hover {
+        background-color: #e8f0ff;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    }
+
+    .chat-window {
+    	width: 1000px;
+        display: flex;
+        flex-direction: column;
+        background-color: #f9f9f9;
+        border-radius: 12px;
+        border: 1px solid #ddd;
+        box-shadow: inset 0 0 5px rgba(0,0,0,0.05);
+        padding: 15px;
+        box-sizing: border-box;
+        position: relative;
+        overflow: visible;
+    }
+
+    .chat-messages {
+        flex: 1;
+        height: 500px;
+        border: 1px solid #eee;
+        padding: 10px;
+        margin-bottom: 10px;
+        border-radius: 8px;
+        background-color: #ffffff;
+        text-align: left;
+    }
+
+    .chat-input {
+        display: flex;
+        gap: 10px;
+    }
+
+    #chat-input {
+        flex: 1;
+        padding: 10px 14px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        font-size: 14px;
+    }
+
+    #sendBtn {
+        padding: 10px 20px;
+        border: none;
+        background-color: #FFC6C6;
+        color: white;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 14px;
+    }
+
+    #sendBtn:hover {
+        background-color: #FFA2A2;;
+    }
+	
+	#createBtn{
+        background-color: #FFC6C6;
+        width: 100%;
+	    padding: 10px;
+	    border: none;
+	    color: white;
+	    font-weight: bold;
+	    border-radius: 6px;
+	    cursor: pointer;
+	    transition: background-color 0.2s;
+
+	}
+	
+	#createBtn:hover {
+        background-color: #FFA2A2;;
+    }
+	.modal {
+		display: none; /* 기본은 숨김 */
+		position: fixed;
+		top: 0; left: 0; right: 0; bottom: 0;
+		background-color: rgba(0,0,0,0.5);
+		z-index: 999;
+	}
+	
+	.modal-content {
+		background: white;
+		padding: 20px;
+		width: 400px;
+		margin: 10% auto;
+		border-radius: 8px;
+		box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+	}
+	
+	.modal-content input,
+	.modal-content textarea {
+		font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+		width: 100%;
+		margin-bottom: 12px;
+		flex: 1;
+	    padding: 10px 14px;
+	    border: 1px solid #ccc;
+	    border-radius: 8px;
+	    font-size: 14px;
+	}
+	
+	.modal-actions {
+		text-align: right;
+	}
+	
+	.modal-footer button,
+	.modal-actions button {
+		padding: 6px 12px;
+		margin-left: 5px;
+		border: none;
+		border-radius: 4px;
+		cursor: pointer;
+		background-color: #FFC6C6;
+		color: white;
+	}   
+	.modal-footer button:hover,
+	.modal-actions button:hover {
+        background-color: #FFA2A2;;
+    }
+	.chat-header {
+    	display: flex;
+    	height: 40px;
+    	justify-content: center; 
+    	align-items: center;
+    	position: relative;      
+    	margin-bottom: 10px;
+  	}
+  	#chatRoomTitle {
+    	margin: 0 auto; 
+  	}
+  	.menu-container {
+		position: absolute;
+    	right: 0;               
+    	top: 50%;
+    	transform: translateY(-50%);
+    	overflow: visible !important;
+	}
+	
+  	.menu-icon {
+    	font-size: 18px;
+    	cursor: pointer;
+    	padding: 4px 8px;
+    	user-select: none;
+  	}
+
+  	.dropdown-menu {
+    	position: absolute;
+    	top: 24px;
+    	right: -100px;;
+    	background-color: white;
+    	border: 1px solid #ccc;
+    	min-width: 120px;
+    	box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    	z-index: 1000;
+    	display: none;
+  	}
+
+  	.dropdown-menu a {
+    	display: block;
+    	padding: 8px 12px;
+    	text-decoration: none;
+    	color: #333;
+    	font-size: 14px;
+  	}
+
+  	.dropdown-menu a:hover {
+    	background-color: #f0f0f0;
+  	}
+  	
+	.chatList {
+		white-space: pre-wrap; 
+		height: 500px; 
+		overflow-y: auto; 
+		border: 1px solid #ccc; 
+		padding: 10px;
+	}
+
+	.date-divider {
+		text-align: center;
+		margin: 10px 0;
+		font-weight: bold;
+		color: #5D5D5D;
+		font-size: 16px;
+		clear: both;
+	}
+
+	.msg-bubble {
+	  	max-width: 70%;
+	  	margin: 15px 0;
+	  	padding: 10px 15px;
+	  	border-radius: 15px;
+	  	position: relative;
+	  	font-size: 14px;
+	  	line-height: 1.3;
+	  	word-wrap: break-word;
+	  	clear: both;
+	}
+	
+	.msg-bubble.left {
+	  	background-color: #f1f0f0;
+	  	color: #000;
+	  	float: left;
+	}
+	
+	.msg-bubble.left::before {
+	  	content: "";
+	  	position: absolute;
+	  	top: 10px;
+	  	left: -7px;
+	  	width: 0;
+	  	height: 0;
+	  	border-top: 8px solid transparent;
+	  	border-right: 8px solid #f1f0f0;
+	  	border-bottom: 8px solid transparent;
+	}
+	
+	.msg-bubble.right {
+	  	background-color: #FAF4C0;
+	  	color: #000;
+	  	float: right;
+	}
+	
+	.msg-bubble.right::before {
+	  	content: "";
+	  	position: absolute;
+	  	top: 10px;
+	  	right: -7px;
+	  	width: 0;
+	  	height: 0;
+	  	border-top: 8px solid transparent;
+	  	border-left: 8px solid #FAF4C0;
+	  	border-bottom: 8px solid transparent;
+	}
+	.msg-header {
+		display: flex;
+  		justify-content: space-between;
+  		align-items: baseline;
+  		margin-bottom: 5px;
+	}
+
+	.msg-name {
+		font-weight: bold;
+		font-size: 16px; /* 크게 */
+  		color: #5A5A5A;
+	}
+
+	.msg-time {
+  		font-size: 12px; /* 작게 */
+  		color: #888;
+  		margin-left: 10px;
+	}
+
+	.msg-content {
+  		font-size: 14px; /* 평범하게 */
+  		margin: 0;
+  		white-space: pre-wrap; /* 줄바꿈 보존 */
+  		color: #5A5A5A;
+	}
+
+	#inviteModal .modal-content select,
+	#inviteModal .modal-content label {
+  		font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+	}
+	
+
+	.member-item input[type="checkbox"] {
+		margin: auto;
+  		width: 16px !important;
+  		min-width: 16px !important;
+  		box-sizing: border-box !important;
+  		background-color: yellow;
+	}
+  	.chat-member {
+    	display: flex;
+    	align-items: center;
+    	padding: 6px 0;
+    	border-bottom: 1px solid #eee;
+  	}
+
+  	.chat-member img.profile-img {
+    	width: 36px;
+    	height: 36px;
+    	border-radius: 50%;
+    	margin-right: 10px;
+    	object-fit: cover;
+  	}
+
+  	.chat-member .member-name {
+    	font-weight: 500;
+    	margin-right: 8px;
+  	}
+
+  	.chat-member .member-grade {
+    	color: #666;
+    	font-size: 0.9em;
+  	}
+  	
+  	.modal {
+		pointer-events: auto;   
+	  	z-index: 1055;          
+	}
+	
+	.modal-backdrop {
+  		z-index: 1040;
+	}
+
+	.system-message {
+		text-align: center;
+		color: gray;
+		font-style: italic;
+		margin: 10px 0;
+		clear: both;
+	}
+
+	.clickable {
+		cursor: pointer;
 	}
 </style>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
+window.onload = function () {
+	scrollToBottom();
+	loadMemberDepartmentList()
+};
+
+function scrollToBottom() {
+	const chatBox = document.getElementById("chatList");
+	chatBox.scrollTop = chatBox.scrollHeight;
+}
+
+document.addEventListener("keydown", function(event) {
+	if (event.key === "Enter") {
+		const active = document.activeElement;
+		if (active && active.id === "chat-input") {
+			event.preventDefault();
+			document.getElementById("sendBtn").click();
+		}
+	}
+});
+
 var ws;
-function conn(){
-	ws = new WebSocket("ws://192.168.0.141:9090/ws/chat");
+var con=false;
+var sw=false;
+function conn(roomId){
+	if (ws && ws.readyState === WebSocket.OPEN) {
+		ws.close();
+	}
+
+	ws = new WebSocket("ws://192.168.0.141:9090/ws/chat?room_id=" + roomId);
 	ws.onmessage = onMsg;
 }
 
-function onMsg(evt){
-	var data = evt.data;
-	document.messenger.chatList.value+=data+'\n';
+function onMsg(evt) {
+	let msg;
+	try {
+		msg = JSON.parse(evt.data);
+	} catch (e) {
+		console.error("메시지 파싱 실패:", evt.data);
+		return;
+	}
+
+	const myName = document.getElementById("user").value;
+	const chatContent = document.getElementById("chatList");
+
+	if (msg.type === 'system') {
+		const systemMsg = document.createElement("div");
+		systemMsg.textContent = msg.content;
+		systemMsg.classList.add("system-message");  // 가운데 정렬용 클래스
+		chatContent.appendChild(systemMsg);
+		scrollToBottom();
+		return;
+	}
+
+	if (msg.user && msg.user.trim() === myName.trim()) {
+		addMyMessageToChatList(msg.user, msg.content);
+	} else {
+		addOtherMessageToChatList(msg.user, msg.content);
+	}
+
+	scrollToBottom();
+
+	if (sw) {
+		cl();
+	}
+}
+
+function exit(){
+	if(con == false){
+		alert('채팅방을 이용중이지 않습니다.');
+	}else{
+		var user = document.getElementById("user").value;
+		ws.send(user+'님이 퇴장하셨습니다.');
+		sw=true;		
+	}
 }
 function cl(){
 	ws.close();
+	con=false;
 }
-function show(){
-	var msg = document.messenger.msg.value;
-	document.messenger.msg.value="";
+function sendMessage() {
+	const user = document.getElementById("user").value;
+	const msg = document.messenger.msg.value.trim();
+	const roomId = document.getElementById("room_id").value;
+
+	if (!msg) {
+		alert('메세지를 입력해주세요.');
+		return;
+	}
+	if (!user) {
+		alert('로그인 정보를 확인해주세요.');
+		location.href = "/";
+		return;
+	}
+	if (!roomId) {
+		alert('채팅방 정보를 확인할 수 없습니다.');
+		return;
+	}
+
+	const messageObj = {
+		type: "user",
+		room_id: roomId,
+		user: user,
+		content: msg
+	};
+
+	if (ws && ws.readyState === WebSocket.OPEN) {
+		ws.send(JSON.stringify(messageObj));
+	} else {
+		alert("서버와의 연결이 끊어졌습니다.");
+	}
+
+	document.messenger.msg.value = "";
 	document.messenger.msg.focus();
-	ws.send(msg);
+}
+
+function addMyMessageToChatList(user, msgContent) {
+	const chatContent = document.getElementById("chatList");
+	const msgDiv = document.createElement("div");
+	const now = new Date();
+
+	const timeStr = now.toLocaleTimeString('ko-KR', {
+		hour: '2-digit',
+		minute: '2-digit'
+	});
+	
+	const nameSpan = document.createElement("span");
+	nameSpan.textContent = user;
+	nameSpan.classList.add("msg-name");
+
+	const timeSpan = document.createElement("span");
+	timeSpan.textContent = timeStr;
+	timeSpan.classList.add("msg-time");
+
+	const contentP = document.createElement("p");
+	contentP.textContent = msgContent;
+	contentP.classList.add("msg-content");
+
+	const headerDiv = document.createElement("div");
+	headerDiv.classList.add("msg-header");
+	headerDiv.appendChild(nameSpan);
+	headerDiv.appendChild(timeSpan);
+
+	msgDiv.classList.add("msg-bubble", "right");
+	msgDiv.appendChild(headerDiv);
+	msgDiv.appendChild(contentP);
+
+	chatContent.appendChild(msgDiv);
+	scrollToBottom();
+}
+
+function addOtherMessageToChatList(user, msgContent) {
+    const chatContent = document.getElementById("chatList");
+    const msgDiv = document.createElement("div");
+    const now = new Date();
+
+    const timeStr = now.toLocaleTimeString('ko-KR', {
+        hour: '2-digit',
+        minute: '2-digit'
+    });
+    
+    const nameSpan = document.createElement("span");
+    nameSpan.textContent = user;
+    nameSpan.classList.add("msg-name");
+
+    const timeSpan = document.createElement("span");
+    timeSpan.textContent = timeStr;
+    timeSpan.classList.add("msg-time");
+
+    const contentP = document.createElement("p");
+    contentP.textContent = msgContent;
+    contentP.classList.add("msg-content");
+
+    const headerDiv = document.createElement("div");
+    headerDiv.classList.add("msg-header");
+    headerDiv.appendChild(nameSpan);
+    headerDiv.appendChild(timeSpan);
+
+    msgDiv.classList.add("msg-bubble", "left");
+    msgDiv.appendChild(headerDiv);
+    msgDiv.appendChild(contentP);
+
+    chatContent.appendChild(msgDiv);
+}
+
+var XHR=null;
+function getXHR(){
+	if(window.ActioveXObject){
+		return new ActiveXObject("Msxml2.XMLHTTP");
+	}else if(window.XMLHttpRequest){
+		return new XMLHttpRequest();
+	}else{
+		return null;
+	}
+}
+
+function sendRequest(url,params,callback,method){
+	XHR = getXHR();
+	var newMethod = method ? method : 'GET';//1차 유효성 검사
+	//2차 유효성 검사
+	if(newMethod!='GET' && newMethod!='POST'){
+		newMethod = 'GET';
+	}
+	//3차 유효성 검사
+	var newParams = (params==null||params=='') ? null : params;
+	if(newMethod=='GET' && newParams!=null){
+		url = url + '?' + newParams;
+	}
+	XHR.onreadystatechange=callback;
+	XHR.open(newMethod, url, true);
+	XHR.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
+	XHR.send(newParams);
+}
+
+let chatData = [];
+let chatPage = 0;
+const chatPageSize = 20;
+let isLoading = false;
+let lastRenderedDate = null;
+
+
+function chatRoom(element) {
+    document.querySelectorAll(".chat-room-item").forEach(item => {
+        item.classList.remove("active");
+    });
+    element.classList.add("active");
+
+    lastRenderedDate = null;
+    const id = element.getAttribute("data-room-id");
+    const name = element.getAttribute("data-room-name");
+    document.getElementById("chatRoomTitle").textContent = name;
+    document.getElementById("room_id").value = id;
+    document.getElementById("chatList").innerHTML = "";
+    chatData = []; 
+    chatPage = 0; 
+    isLoading = false;
+    loadInitialMessages(id);
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+	const chatContent = document.getElementById("chatList");
+	chatContent.addEventListener('scroll', function () {
+		if (chatContent.scrollTop === 0 && !isLoading) {
+			loadMoreMessages();
+		}
+	});
+});
+
+function loadInitialMessages(roomId) {
+	const userId = document.getElementById("user_id").value
+	const params = 'id=' + userId+'&room_id=' + roomId;
+	console.log('실행됨'+userId+params);
+	sendRequest('chatContent', params, function () {
+		if (XHR.readyState === 4 && XHR.status === 200) {
+			chatData = JSON.parse(XHR.responseText);
+			chatPage = 0;
+			document.getElementById("chatList").innerHTML = '';
+			renderMessages();
+			scrollToBottom();
+			conn(roomId);
+		}
+	}, 'GET');
+}
+
+function renderMessages() {
+	const chatContent = document.getElementById("chatList");
+
+	const total = chatData.length;
+	const start = Math.max(total - (chatPage + 1) * chatPageSize, 0);
+	const end = total - chatPage * chatPageSize;
+	const messagesToRender = chatData.slice(start, end);
+
+	if (start >= end || messagesToRender.length === 0) return;
+
+	const myName = document.getElementById("user").value;
+	const fragment = document.createDocumentFragment();
+
+	let previousDateStr = null;
+
+	messagesToRender.forEach((msg, idx) => {
+		const raw = msg.write_date;
+		const isoStr = raw.includes('T') ? raw : raw.replace(' ', 'T');
+		const dateObj = new Date(isoStr);
+
+		if (isNaN(dateObj.getTime())) return;
+
+		const dateStr = dateObj.toLocaleDateString('ko-KR', {
+			year: 'numeric', month: 'long', day: 'numeric', weekday: 'short'
+		});
+		const timeStr = dateObj.toLocaleTimeString('ko-KR', {
+			hour: '2-digit', minute: '2-digit'
+		});
+
+		// ✅ 전체 chatData 기준 인덱스를 사용해 이전 메시지의 날짜와 비교
+		const globalIndex = start + idx;
+		const prevMsg = chatData[globalIndex - 1];
+		let prevDateStr = null;
+
+		if (prevMsg) {
+			const prevRaw = prevMsg.write_date;
+			const prevIso = prevRaw.includes('T') ? prevRaw : prevRaw.replace(' ', 'T');
+			const prevDateObj = new Date(prevIso);
+			prevDateStr = prevDateObj.toLocaleDateString('ko-KR', {
+				year: 'numeric', month: 'long', day: 'numeric', weekday: 'short'
+			});
+		}
+
+		if (dateStr !== prevDateStr) {
+			const dateDivider = document.createElement("div");
+			dateDivider.textContent = `${dateStr}요일`;
+			dateDivider.classList.add("date-divider");
+			fragment.appendChild(dateDivider);
+		}
+
+		if (msg.type === 'system') {
+			const systemMsg = document.createElement("div");
+			systemMsg.textContent = msg.content;
+			systemMsg.classList.add("system-message");
+			fragment.appendChild(systemMsg);
+			return;
+		}
+
+		const msgDiv = document.createElement("div");
+		msgDiv.classList.add("msg-bubble", msg.name === myName ? "right" : "left");
+
+		const nameSpan = document.createElement("span");
+		nameSpan.textContent = msg.name;
+		nameSpan.classList.add("msg-name");
+
+		const timeSpan = document.createElement("span");
+		timeSpan.textContent = timeStr;
+		timeSpan.classList.add("msg-time");
+
+		const contentP = document.createElement("p");
+		contentP.textContent = msg.content;
+		contentP.classList.add("msg-content");
+
+		const headerDiv = document.createElement("div");
+		headerDiv.classList.add("msg-header");
+		headerDiv.appendChild(nameSpan);
+		headerDiv.appendChild(timeSpan);
+
+		msgDiv.appendChild(headerDiv);
+		msgDiv.appendChild(contentP);
+		fragment.appendChild(msgDiv);
+	});
+
+	const previousHeight = chatContent.scrollHeight;
+	chatContent.insertBefore(fragment, chatContent.firstChild);
+	chatContent.scrollTop = chatContent.scrollHeight - previousHeight;
+
+	chatPage++;
+}
+
+function loadMoreMessages() {
+	isLoading = true;
+	setTimeout(function () {
+		renderMessages();
+		isLoading = false;
+	}, 300);
+}
+
+
+
+function openCreateChatRoom() {
+	document.getElementById("roomName").value = "";
+	document.getElementById("roomDesc").value = "";
+	document.getElementById("chatRoomModal").style.display = "block";
+}
+
+function closeModal() {
+	document.getElementById("chatRoomModal").style.display = "none";
+}
+
+function createChatRoom() {
+	const name = document.getElementById("roomName").value.trim();
+	const desc = document.getElementById("roomDesc").value.trim();
+
+	if (!name) {
+		alert("채팅방 이름을 입력해주세요.");
+		return;
+	}else{
+		params = 'name='+name+'&description='+desc+'&type=group';
+		sendRequest('createChatRoom',params,resultCreateChatRoom,'GET');
+	}
+	closeModal();
+}
+
+function resultCreateChatRoom(){
+	if(XHR.readyState==4){
+		if(XHR.status==200){
+			alert('채팅방이 생성되었습니다.');
+			location.href="messengerMain";
+		}else{
+			alert('채팅방 생성에 실패했습니다.');
+			return;
+		}
+	}
+}
+function toggleMenu() {
+	const menu = document.getElementById("menuDropdown");
+	menu.style.display = (menu.style.display === "block") ? "none" : "block";
+}
+
+document.addEventListener("click", function(event) {
+	const menu = document.getElementById("menuDropdown");
+	const icon = document.querySelector(".menu-icon");
+	if (!icon.contains(event.target) && !menu.contains(event.target)) {
+		menu.style.display = "none";
+	}
+});
+
+
+function closeInviteModal() {
+	document.getElementById('inviteModal').style.display = 'none';
+}
+
+
+function invite() {
+	document.getElementById('inviteModal').style.display = 'block';
+	var roomId = document.getElementById("room_id").value;
+	loadDepartmentAccordion(roomId);
+}
+
+function closeInviteModal() {
+	document.getElementById("inviteModal").style.display = "none";
+}
+
+function loadDepartmentAccordion(roomId) {
+	const params = `room_id=${roomId}`;
+	sendRequest('/memberInvite', params, resultLoadDepartmentAccordion, 'GET');
+}
+
+function resultLoadDepartmentAccordion() {
+	if (XHR.readyState === 4 && XHR.status === 200) {
+		var data = JSON.parse(XHR.responseText);
+		var departments = {};
+		var i;
+
+		for (i = 0; i < data.length; i++) {
+			var member = data[i];
+			var dept = member.dept_name || "기타";
+			if (!departments[dept]) {
+				departments[dept] = [];
+			}
+			departments[dept].push(member);
+		}
+
+		var container = document.getElementById("departmentAccordion");
+		container.innerHTML = "";
+		var index = 0;
+
+		for (var dept in departments) {
+			var members = departments[dept];
+			var itemId = "dept-" + index;
+			var collapseId = "collapse-" + index;
+
+			var accordionItem = document.createElement("div");
+			accordionItem.classList.add("accordion-item");
+
+			var memberHtml = "";
+			for (var j = 0; j < members.length; j++) {
+				var m = members[j];
+				memberHtml += ''
+					+ '<div class="member-item">'
+					+     '<input type="checkbox" name="id" value="' + m.member_id + '" '
+					+         'id="member-' + m.member_id + '" '
+					+         'data-name="' + m.member_name + '">'
+					+     '<label for="member-' + m.member_id + '">'
+					+         m.member_name + ' (' + m.grade_name + ')'
+					+     '</label>'
+					+ '</div>';
+			}
+
+			accordionItem.innerHTML = ''
+				+ '<h2 class="accordion-header" id="' + itemId + '">'
+				+     '<button class="accordion-button collapsed" type="button" '
+				+             'data-bs-toggle="collapse" data-bs-target="#' + collapseId + '" '
+				+             'aria-expanded="false" aria-controls="' + collapseId + '">'
+				+         dept
+				+     '</button>'
+				+ '</h2>'
+				+ '<div id="' + collapseId + '" class="accordion-collapse collapse" '
+				+      'aria-labelledby="' + itemId + '" data-bs-parent="#departmentAccordion">'
+				+     '<div class="accordion-body">'
+				+         memberHtml
+				+     '</div>'
+				+ '</div>';
+
+			container.appendChild(accordionItem);
+			index++;
+		}
+	}
+}
+
+function inviteSelectedMembers() {
+	var roomId = document.getElementById("room_id").value;
+	var checkedBoxes = document.querySelectorAll('input[name="id"]:checked');
+
+	var selectedIds = [];
+	var selectedNames = [];
+
+	for (var i = 0; i < checkedBoxes.length; i++) {
+		selectedIds.push(parseInt(checkedBoxes[i].value, 10));
+		selectedNames.push(checkedBoxes[i].dataset.name);  // 이름도 저장
+	}
+
+	if (selectedIds.length === 0) {
+		alert("초대할 인원을 선택해주세요.");
+		return;
+	}
+
+	var data = {
+		room_id: roomId,
+		member_ids: selectedIds
+	};
+
+	XHR = getXHR();
+
+	window._invitedMemberNames = selectedNames;
+
+	XHR.onreadystatechange = resultInviteMembers;
+	XHR.open('POST', '/memberInvite', true);
+	XHR.setRequestHeader('Content-Type', 'application/json');
+	XHR.send(JSON.stringify(data));
+}
+
+function resultInviteMembers() {
+	if (XHR.readyState === 4) {
+		if (XHR.status === 200) {
+			alert("초대가 완료되었습니다.");
+			closeInviteModal();
+
+			if (window._invitedMemberNames && window._invitedMemberNames.length > 0) {
+				window._invitedMemberNames.forEach(function (name) {
+					const systemMessage = name + "님이 입장하였습니다.";
+					
+					if (ws && ws.readyState === WebSocket.OPEN) {
+						ws.send(JSON.stringify({
+							type: 'system',
+							room_id: document.getElementById("room_id").value,
+							content: systemMessage
+						}));
+					}
+				});
+			}
+		} else {
+			alert("초대 중 오류가 발생했습니다.");
+		}
+	}
+}
+
+function showMember() {
+	const roomId = document.getElementById("room_id").value;
+	const params = `room_id=${roomId}`;
+	sendRequest('/showChatMember', params, resultShowMember, 'GET');
+}
+
+function resultShowMember() {
+	if (XHR.readyState === 4 && XHR.status === 200) {
+		var data = JSON.parse(XHR.responseText);
+
+		if (!data || data.length === 0) {
+			alert("참여자가 없습니다.");
+			return;
+		}
+
+		var container = document.getElementById("chatMemberList");
+		container.innerHTML = "";
+
+		for (var i = 0; i < data.length; i++) {
+			var member = data[i];
+			var div = document.createElement("div");
+			div.classList.add("chat-member");
+	
+			var profileImg = (member.profile_image && member.profile_image.trim() !== '') 
+				? member.profile_image 
+				: '/profileImage/defaultProfileImage.jpg';
+
+			div.innerHTML = ''
+				+ '<img src="' + profileImg + '" alt="profile" class="profile-img" />'
+				+ '<span class="member-name data-id="' + member.id + '" data-name="' + member.name + '">' 
+				+ member.name + '</span>'
+				+ '<span class="member-grade">' + member.grade_name + '</span>';
+				
+			container.appendChild(div);
+		}
+		
+		var memberModal = new bootstrap.Modal(document.getElementById("memberModal"));
+		memberModal.show();
+
+	} else if (XHR.readyState === 4) {
+		alert("참여자 정보를 불러오는 데 실패했습니다.");
+	}
+}
+
+function leaveRoom() {
+	const roomId = document.getElementById("room_id").value;
+	const memberId = document.getElementById("user_id").value;
+
+	if (!confirm("채팅방을 나가시겠습니까?")) return;
+
+	const params = `chatroom_id=${roomId}&member_id=${memberId}`;
+	sendRequest('/outChatRoom', params, resultLeaveRoom, 'GET');
+}
+
+function resultLeaveRoom() {
+	if (XHR.readyState === 4) {
+		if (XHR.status === 200 && XHR.responseText === "성공") {
+			var user = document.getElementById("user").value;
+			var roomId = document.getElementById("room_id").value;
+
+			alert("채팅방을 나갔습니다.");
+			if (ws && ws.readyState === WebSocket.OPEN) {
+				ws.send(JSON.stringify({
+					type: 'system',
+					room_id: roomId,
+					content: user + "님이 퇴장하였습니다."
+				}));
+			}
+			window.location.href = "messengerMain";
+		} else {
+			alert("채팅방 나가기 실패");
+		}
+	}
+}
+
+function loadMemberDepartmentList() {
+	const userId = document.getElementById("user_id").value;
+	const params = 'id='+userId;
+	sendRequest('/memberDepartmentList', params, resultLoadMemberDepartmentList, 'GET');
+}
+
+function resultLoadMemberDepartmentList() {
+	if (XHR.readyState === 4 && XHR.status === 200) {
+		var data = JSON.parse(XHR.responseText);
+		var departments = {};
+
+		data.forEach(function(member) {
+			var dept = member.dept_name || '기타';
+			if (!departments[dept]) departments[dept] = [];
+			departments[dept].push(member);
+		});
+
+		var container = document.getElementById("memberDepartmentAccordion");
+		container.innerHTML = '';
+		var index = 0;
+
+		for (var dept in departments) {
+		    if (departments.hasOwnProperty(dept)) {
+		        var members = departments[dept];
+		        var itemId = "member-dept-" + index;
+		        var collapseId = "member-collapse-" + index;
+		        
+		        var memberHTMLArray = members.map(function(m) {
+		            return `
+		                <div class="chat-member">
+		                    <img src="${m.profile_image || '/profileImage/defaultProfileImage.jpg'}" class="profile-img" alt="profile">
+		                    <span class="member-name clickable" data-id="${m.member_id}" data-name="${m.member_name}">${m.member_name}</span>
+		                    <span class="member-grade">${m.grade_name}</span>
+		                </div>
+		            `;
+		        });
+		        var memberHTML = memberHTMLArray.join('');
+
+		        var accordionItem = document.createElement("div");
+		        accordionItem.classList.add("accordion-item");
+		        accordionItem.innerHTML = `
+		            <h2 class="accordion-header" id="${itemId}">
+		                <button class="accordion-button collapsed" type="button"
+		                    data-bs-toggle="collapse" data-bs-target="#${collapseId}"
+		                    aria-expanded="false" aria-controls="${collapseId}">
+		                    ${dept}
+		                </button>
+		            </h2>
+		            <div id="${collapseId}" class="accordion-collapse collapse"
+		                aria-labelledby="${itemId}" data-bs-parent="#memberDepartmentAccordion">
+		                <div class="accordion-body">
+		                    ${memberHTML}
+		                </div>
+		            </div>`;
+
+		        container.appendChild(accordionItem);
+		        index++;
+		    }
+		}
+
+		container.querySelectorAll(".member-name.clickable").forEach(function(nameSpan) {
+		    nameSpan.addEventListener("click", function() {
+		        const memberId = this.getAttribute("data-id");        
+		        const memberName = this.getAttribute("data-name");
+		        createOneToOneChatRoom(memberId, memberName);
+		    });
+		});
+	}
+}
+
+function createOneToOneChatRoom(targetMemberId, targetMemberName) {
+	const userName = document.getElementById("user").value;
+	const roomName = targetMemberName;
+
+	const params = 'target_id=' + encodeURIComponent(targetMemberId) + '&type=private&target_name='+targetMemberName;
+
+	sendRequest('createPrivateChatRoom', params, function () {
+		if (XHR.readyState === 4) {
+			if (XHR.status === 200 && XHR.responseText !== 'ERROR') {
+				const roomId = XHR.responseText.trim();
+				
+				const tempElement = document.createElement("div");
+				tempElement.setAttribute("data-room-id", roomId);
+				tempElement.setAttribute("data-room-name", roomName);
+
+				chatRoom(tempElement);
+			} else {
+				alert("채팅방 불러오기 실패");
+			}
+		}
+	}, 'GET');
 }
 </script>
 </head>
 <body>
 <div layout:fragment="content">
 	<div class="main-div">
-        <div class="sidebar">          
-            <div class="sidebar-menu">
-                <div class="menu-title">나의 정보
-                	<hr>
-                </div>
-                
-                <ul>
-                    <li><a href="memberInfoUpdate">개인정보 수정</a></li>
-                    <li><a href="memberPwdUpdate" style="font-weight: bold;">비밀번호 변경</a></li>
-                </ul>
-            </div>
-        </div>
-        <div>
-        	<div class="title">
-        		<lable>비밀번호 변경</lable>
-        		<hr>
-        	</div>
-			<form name="messenger" action="messenger" method="post">
-				<div>
-					<textarea rows='10' cols='55' name="chatList" readonly></textarea><br>
-					<input type="text" name="msg">
-					<input type="button" value="전송" onclick="show()"><br>
-					<input type="button" value="입장하기" onclick="conn()">
-					<input type="button" value="퇴장하기" onclick="cl()"> 
-				</div>
-			</form>
+		<div style="width: 1200px;">
+			<div class="title">
+				<lable>메신저</lable>
+				<hr>
+			</div>
+			<div class="chat-div">
+				<form name="messenger" action="messenger" method="post" onsubmit="return false;">
+					<input type="hidden" id="user" th:if="${session.udto != null}" th:value="${session.udto.name}" />
+					<input type="hidden" id="user" th:unless="${session.udto != null}" th:value="" />
+					<input type="hidden" id="user_id" th:if="${session.udto != null}" th:value="${session.udto.id}" />
+					<input type="hidden" id="user_id" th:unless="${session.udto != null}" th:value='0' />
+					<div class="chat-container">
+						<div class="chat-room-list">
+							<h3>그룹 채팅</h3>						
+							<div th:each="room : ${chatList}" 
+								class="chat-room-item" 
+								th:attr="data-room-id=${room.id}, data-room-name=${room.name}" 
+								onclick="chatRoom(this)">
+							     <span th:text="${room.name}" class="room-name"></span>
+							     <span class="new-msg-indicator" style="display: none;">
+									<img src="/profileImage/123.webp" alt="new" style="width: 10px; height: 10px;" />
+							     </span>
+							</div>
+							<input type="hidden" id="room_id" name="room_id" value="">
+							<div class="create-chat-room-wrapper">
+								<input type="button" id="createBtn" value="채팅방 생성" onclick="openCreateChatRoom()">
+							</div>
+						</div>
+						<div id="chatRoomModal" class="modal">
+							<div class="modal-content">
+								<h3>채팅방 생성</h3>
+								<input type="text" id="roomName" placeholder="채팅방 이름">
+								<textarea id="roomDesc" placeholder="방에 대한 간략 설명"></textarea>
+													
+								<div class="modal-actions">
+									<button onclick="createChatRoom()">생성</button>
+									<button onclick="closeModal()">취소</button>
+								</div>
+							</div>
+						</div>
+						<div class="modal" id="inviteModal">
+							<div class="modal-content" style="width: 500px;">
+								<h4>사용자 초대</h4>
+						
+								<div class="accordion" id="departmentAccordion">
+								</div>
+						
+								<div class="modal-actions" style="margin-top: 20px;">
+									<button onclick="inviteSelectedMembers()">초대</button>
+									<button onclick="closeInviteModal()">닫기</button>
+								</div>
+							</div>
+						</div>
+						<div class="modal fade" id="memberModal" tabindex="-1" aria-labelledby="memberModalLabel" aria-hidden="true">
+							<div class="modal-dialog modal-dialog-scrollable">
+								<div class="modal-content">
+							    	
+									<div class="modal-header">
+										<h5 class="modal-title" id="memberModalLabel">채팅방 참여자</h5>
+										<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="닫기"></button>
+									</div>
+							
+									<div class="modal-body" id="chatMemberList">
+									</div>
+							
+									<div class="modal-footer">
+										<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="chat-window">
+							<div class="chat-header">
+								<h3 id="chatRoomTitle"></h3>
+								<div class="menu-container">
+									<div class="menu-icon" onclick="toggleMenu()">︙</div>
+									<div id="menuDropdown" class="dropdown-menu">
+										<a href="#" onclick="showMember()">참여자 보기</a>
+										<a href="#" onclick="invite()">초대하기</a>
+										<a href="#" onclick="leaveRoom()">방 나가기</a>
+									</div>
+								</div>
+							</div>
+							
+							<div id="chat-messages" class="chat-messages">
+								<div id="chatList" class="chatList" th:text="${msgList}"></div>
+							</div>
+							
+							<div class="chat-input">
+								<input type="text" id="chat-input" name="msg" placeholder="메시지를 입력하세요." onkeypress="if(event.key==='Enter') sendMessage()">
+								<button type="button" id="sendBtn" onclick="sendMessage()">전송</button>
+							</div>
+						</div>
+						<div class="member-list-container">
+							<div class="member-list">
+								<h3>Direct Message</h3>
+								<div class="accordion" id="memberDepartmentAccordion"></div>
+							</div>
+						</div>
+					</div>
+				</form>
+			</div>
 		</div>
 	</div>
 </div>

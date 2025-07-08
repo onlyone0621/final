@@ -1,99 +1,161 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org"
-				xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="layouts/mainLayout">
 <head>
-<meta charset="UTF-8">
-  <title> 커뮤니티 이름 </title>
+  <meta charset="UTF-8">
+  <title>게시판 생성</title>
   <style>
+    .container {
+      display: flex;
+      min-height: 100vh;
+    }
+
     .sidebar {
-      width: 200px;
+      width: 220px;
       background-color: #fbf9fd;
       padding: 20px;
-      box-sizing: border-box;
       border-right: 1px solid #ddd;
     }
 
-    .sidebar h4 {
-      margin-bottom: 15px;
-      font-size: 18px;
-    }
-
-    .sidebar button {
-      width: 100%;
-      padding: 8px;
+    .sidebar h2 {
+      font-size: 20px;
       margin-bottom: 15px;
     }
 
     .sidebar ul {
       list-style: none;
-      padding-left: 0;
+      padding: 0;
       font-size: 14px;
     }
 
     .sidebar ul li {
-      margin-bottom: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6px;
     }
 
-    .container {
-      display: flex;
+    .sidebar ul li a {
+      text-decoration: none;
+      color: #333;
+    }
+
+    .sidebar ul li a:hover {
+      color: #f381a3;
     }
 
     .main {
-      padding: 20px;
       flex-grow: 1;
+      padding: 20px;
+    }
+
+    .main h2 {
+      margin-bottom: 20px;
+      border-bottom: 2px solid #f8bbd0;
+      padding-bottom: 5px;
+      color: #f381a3;
+    }
+
+    form ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    form ul li {
+      margin-bottom: 12px;
+    }
+
+    label {
+      font-weight: bold;
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    input[type="text"], textarea, select {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    input[type="submit"], input[type="reset"] {
+      padding: 8px 16px;
+      border: none;
+      border-radius: 4px;
+      margin-right: 5px;
+    }
+
+    input[type="submit"] {
+      background-color: #f8bbd0;
+      color: #333;
+    }
+
+    input[type="submit"]:hover {
+      background-color: #f48fb1;
+    }
+
+    input[type="reset"] {
+      background-color: #e0e0e0;
+    }
+
+    input[type="reset"]:hover {
+      background-color: #ccc;
     }
   </style>
 </head>
 <body>
+<div layout:fragment="content">
+  <div class="container">
+    <div class="sidebar">
+      <h2 th:text="${communityName}">커뮤니티 이름</h2>
 
-<div class="container">
-  <div class="sidebar">
-    <h6>커뮤니티 이름</h6>
-	<input type="button" value="글쓰기"><br>
-	<label>게시판 1</label><br>
-  <label>게시판 2</label><br>
-  <label>게시판 3</label><br>
-  <br>
+      <ul th:if="${#lists.isEmpty(sidebarBoardList)}">
+        <li>게시판이 없습니다.</li>
+      </ul>
+      <ul th:each="bdto : ${sidebarBoardList}">
+        <li>
+          <a th:href="@{/community/{cId}/board/{boardId}(cId=${cId}, boardId=${bdto.id})}"
+             style="text-decoration: none; color: inherit;">
+            [[${bdto.name}]]
+          </a>
+          <a th:href="@{/community/{cId}/board/{boardId}/update(cId=${cId}, boardId=${bdto.id})}"
+             style="font-size: 14px;">⚙️</a>
+        </li>
+      </ul>
+    </div>
 
-	<input type="button" value="게시판 추가"><br>
-	<br>
-	      </h3>가입 멤버</h3>
-    <br><Br>
-	    박주연<br>
-  박주연<br>
-	박주연<br>
-  박주연<br>
-+초대하기 (탈퇴하기)
-
+    <div class="main">
+      <h2>게시판 생성</h2>
+      <form th:action="@{/community/board/create}" method="post">
+        <ul>
+          <li>
+            <label>커뮤니티 그룹</label>
+            <select name="community_id" required>
+              <option value="">선택하세요</option>
+              <option th:each="c : ${communities}"
+                      th:value="${c.id}"
+                      th:text="${c.name}"
+                      th:selected="${c.id == cId}">
+              </option>
+            </select>
+          </li>
+          <li>
+            <label>이름</label>
+            <input type="text" name="name" required>
+          </li>
+          <li>
+            <label>설명</label>
+            <textarea name="description" rows="3" required></textarea>
+          </li>
+        </ul>
+        <div>
+          <input type="submit" value="만들기">
+          <input type="reset" value="취소">
+        </div>
+      </form>
+    </div>
+  </div>
 </div>
-
-
-<form name="boardCreate" action="boardCreate" method="post">
-  <ul>
-    <li>커뮤니티 그룹
-    <!-- value 서버로 넘어가는 값 (c.id) -->
-	<!-- text  화면에 표시되는 값 (c.name) -->
-	<li>
-    	<select name="community_id">
-        	<option th:each="c : ${communities}" 
-                th:value="${c.id}" 
-                th:text="${c.name}">
-        	</option>
-        </select>
-    </li>
-    <li>
-    	<label>이름 </label> <input type="text" name="name">
-    </li>
-    <li>
-    	<label>설명 </label> <textarea name="description"  cols="30"></textarea>
-    </li>
-	</ul>
-	<div>
-		<input type="submit" value="만들기">
-    	<input type="reset" value="취소">
-	</div>
-	</form>
-</div>
-
 </body>
 </html>

@@ -1,82 +1,180 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
-
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="layouts/mainLayout">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width= , initial-scale=1.0">
-  <title>커뮤니티 보기</title>
-  <style>
-    .tab-wrapper {
-      display: flex;
-      gap: 1.5rem;
-      margin-bottom: 20px;
-      border-bottom: 1px solid #ccc;
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>가입 커뮤니티 목록</title>
+<script>
+	function listSetting() {
 
-    .tab {
-      padding: 10px;
-      font-weight: bold;
-      color: #666;
-      cursor: pointer;
-    }
+		//var id = document.getElementById('id').value;
+		//location.href="communityUpdate?id="+id+"&board=";
+	}
+</script>
+<style>
+body {
+	margin: 0;
+	font-family: 'Arial', sans-serif;
+	color: #333;
+}
 
-    .tab.active {
-      color: #000;
-      border-bottom: 3px solid #f381a3;
-    }
+.layout {
+	display: flex;
+	min-height: 100vh;
+}
 
-    .step-container {
-      display: flex;
-      gap: 2rem;
-    }
-  </style>
+.sidebar {
+	width: 200px;
+	background-color: #fbf9fd;
+	padding: 20px;
+	box-sizing: border-box;
+	border-right: 1px solid #ddd; /* 오른쪽 경계선 */
+}
+
+.post-list li input[type="button"] {
+	margin-left: 10px;
+}
+
+.sidebar ul li {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.sidebar h4 {
+	margin-bottom: 15px;
+	font-size: 18px;
+}
+
+.sidebar button {
+	width: 100%;
+	padding: 8px;
+	margin-bottom: 15px;
+	background-color: #eee;
+	border: 1px solid #ccc;
+	cursor: pointer;
+}
+
+.sidebar ul {
+	list-style: none;
+	padding-left: 0;
+	font-size: 14px;
+}
+
+.sidebar ul li {
+	margin-bottom: 8px;
+}
+
+.main-content { /** 중간정렬해줌*/
+	flex: 1;
+	padding: 20px;
+}
+
+.main-tabs {
+	display: flex; /**가운데 정랼*/
+	gap: 1rem;
+	margin-bottom: 20px;
+	border-bottom: 1px solid #ddd;
+}
+
+.tab {
+	padding: 8px 12px;
+	font-weight: bold;
+	color: #666;
+	cursor: pointer;
+}
+
+.tab.active {
+	color: #000;
+	border-bottom: 2px solid #f381a3;
+}
+/** 목록 꾸밈 0*/
+.post-list {
+	list-style: none;
+	padding-left: 0;
+}
+
+.post-list li {
+	padding: 8px 0;
+	border-bottom: 1px solid #eee;
+}
+</style>
 </head>
 <body>
+	<div layout:fragment="content">
+		<div class="layout">
 
-<div style="display: flex;">
-  
-  <!-- 사이드바 -->
-  <div style="width: 200px; background-color: #f4eefc; padding: 20px;">
-    <h4>커뮤니티</h4>
-    <button>커뮤니티 생성</button>
-    <ul>
-      <li>가입 커뮤니티 1</li>
-      <li>가입 커뮤니티 2</li>
-      <li>가입 커뮤니티 3</li>
-    </ul>
-  </div>
+			<div class="sidebar">
+				<h4>커뮤니티</h4>
+				<a th:href="@{/communityCreate}">
+					<button>커뮤니티 생성</button>
+				</a>
 
-  <div style="flex-grow: 1; padding: 20px;">
+				<ul th:if="${#lists.isEmpty(lists)}">
+					<li>생성된 커뮤니티가 없습니다.</li>
+				</ul>
+				<ul th:each="dto : ${lists}">
+					<li><a th:href="@{/community/{id}(id=${dto['ID']})}">[[${dto['NAME']}]]</a>
+						<input type="button"
+						th:onclick="|location.href='/community/${dto['ID']}/update'|"
+						value="설정"></li>
+				</ul>
+			</div>
 
-
-    <div class="tab-wrapper">
-      <div class="tab"><a href="communityMainNewest">최근글</a></div>
-      <div class="tab"><a href="communityMainJoin">가입 커뮤니티</a></div>
-      <div class="tab active"><a href="communityMainAll">전체 커뮤니티</a></div>
-    </div>
+			<!-- 사이드바 -->
 
 
-    <table border="1" cellspacing="0" width="100%">
-      <thead>
-        <tr>
-          <th>커뮤니티</th>
-          <th>회원수</th>
-          <th>전체글</th>
-          <th>마스터</th>
-        </tr>
-      </thead>
-      		<tbody>
-			<tr th:if="${#lists.isEmpty(lists)}">
-				<td colspan='4' align="center">
-				등록된 게시글이 없습니다.
-				</td>
-			</tr>
+			<div class="main-content">
+				<div class="main-tabs">
+					<div class="tab">
+						<a th:href="@{/communityMainNewest}">최근글</a>
+					</div>
+					<div class="tab">
+						<a th:href="@{/communityMainJoin}">가입 커뮤니티</a>
+					</div>
+					<div class="tab active">
+						<a th:href="@{/communityMainAll}">전체 커뮤니티</a>
+					</div>
+				</div>
 
-		</tbody>
-    </table>
-  </div>
-</div>
+				<table>
+					<thead>
+						<tr>
+							<th>커뮤니티</th>
+							<th>회원수</th>
+							<th>마스터</th>
+							<th>가입상태</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr th:each="c : ${lists}">
+							<td th:text="${c['NAME']}">커뮤니티명</td>
+							<td th:text="${c['MEMBER_COUNT']}">0</td>
+							<td th:text="${c['MASTER_NAME']}">N/A</td>
+							<td><span th:if="${c['STATUS'] == '미가입'}">
+									<form th:action="@{/community/{id}/join(id=${c['ID']})}"
+										method="post" onsubmit="return confirm('가입을 신청하시겠습니까?');">
+										<button type="submit">가입</button>
+									</form>
+							</span> <span th:if="${c['STATUS'] == 'pending'}">가입 신청중</span> <span
+								th:if="${c['STATUS'] == 'user' || c['STATUS'] == 'submaster' || c['STATUS'] == 'master'}">
+									<form th:action="@{/community/{id}/leave(id=${c['ID']})}"
+										method="post"
+										onsubmit="return confirm('정말 탈퇴하시겠습니까? 탈퇴하여도 이전에 작성하였던 게시물들은 유지됩니다.');">
+										<button type="submit">탈퇴</button>
+									</form>
+							</span></td>
+						</tr>
+						<tr th:if="${#lists.isEmpty(lists)}">
+							<td colspan="4">등록된 커뮤니티가 없습니다.</td>
+						</tr>
+					</tbody>
+				</table>
 
+			</div>
+		</div>
+	</div>
 </body>
 </html>

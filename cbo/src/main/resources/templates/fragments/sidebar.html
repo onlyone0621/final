@@ -34,5 +34,25 @@
             </div>
         </div>
 	</aside>
+
+    <aside th:fragment="message">
+        <div class="sidebar">
+            <button
+                type="button"
+                class="btn btn-primary btn-lg w-auto"
+                onclick="javascript:location.href = 'sendMessages'"
+            >
+                메시지 보내기
+            </button>            
+            <div class="sidebar-menu">
+                <div>메시지함</div>
+                <ul>
+                    <li><a href="unreadMessages">안 읽은 메시지함</a></li>
+                    <li><a href="receivedMessages">받은 메시지함</a></li>
+                    <li><a href="sentMessages">보낸 메시지함</a></li>
+                </ul>
+            </div>
+        </div>
+	</aside>
 </body>
 </html>
