@@ -17,10 +17,12 @@ public class MessageDTO {
 	private String receiver;
 	private String receiver_dept;
 	private String receiver_grade;
+	private String receiver_profile_image;
 	private int sender_id;
 	private String sender;
 	private String sender_dept;
 	private String sender_grade;
+	private String sender_profile_image;
 	private String write_date;
 	private String is_read;
 	private String file_name;
