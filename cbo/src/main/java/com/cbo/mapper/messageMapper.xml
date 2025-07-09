@@ -79,7 +79,7 @@
   		 	member.name AS member_name,
   		  	dept.name AS dept_name,
   		   	grade.name AS grade_name,
-  		    NVL(member.profile_image, 'defaultProfileImage.jpg') AS profile_image
+  		    NVL(member.profile_image, '/profileImage/defaultProfileImage.jpg') AS profile_image
 		FROM member
 		    JOIN dept ON member.dept_id = dept.id
 		    JOIN grade ON member.grade_id = grade.id 
