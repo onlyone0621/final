@@ -128,7 +128,7 @@ public class CommunityController {
 	// 값이 없으면 → 미가입
 
 	// 커뮤니티 전체 목록 조회 (로그인 상태에 따라 가입 상태 포함)
-	// 커뮤니티 전체 목록 조회 (로그인 상태에 따라 가입 상태 포함)
+	
 	@GetMapping("/communityMainAll")
 	public ModelAndView communityMainAll(HttpSession session) {
 	    ModelAndView mav = new ModelAndView("community/communityMainAll");
@@ -214,20 +214,34 @@ public class CommunityController {
 
 	// 커뮤니티 생성 get방식 이동
 	@GetMapping("/communityCreate")
-	public ModelAndView showCreateForm() {
-		List<CommunityDTO> lists = null;
-		try {
-			lists = service.communityList();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		ModelAndView mav = new ModelAndView();
-		mav.addObject("lists", lists);
-		mav.setViewName("community/manage/communityCreate");
-		return mav;
-	}
+	public ModelAndView getInsertCommunity(HttpSession session) {
+	    List<Map<String, Object>> sideJoin = null;
 
-	// 커뮤니티 생성 post방식
+	    MemberDTO user = (MemberDTO) session.getAttribute(com.cbo.constant.MemberConst.USER_KEY);
+	    
+
+	    if (user == null) {
+	        ModelAndView mav = new ModelAndView("community/communityMsg");
+	        mav.addObject("msg", "로그인이 필요합니다.");
+	        mav.addObject("goUrl", "/memberLogin");
+	        return mav;
+	    }
+
+	    try {
+	        sideJoin = service.communityMainJoinWithRole(user.getId());
+	        System.out.println("✅ sideJoin: " + sideJoin);
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
+
+	    ModelAndView mav = new ModelAndView("community/manage/communityCreate");
+	    mav.addObject("sideJoin", sideJoin);
+	    return mav;
+	}
+	
+	
+	
+	// 커뮤니티 생성 post방식 기능
 	@PostMapping("/communityCreate")
 	public ModelAndView insertCommunity(CommunityDTO dto, HttpServletRequest request) {
 		HttpSession session = request.getSession();
