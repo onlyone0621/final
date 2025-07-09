@@ -81,7 +81,10 @@
 							aria-labelledby="receivers-tab"
 						>
 							<ul class="list-group list-group-flush" id="receiversList">
-								<li class="list-group-item" th:text="${originalMessage.receiver}"></li>
+								<li class="list-group-item" th:unless="${#strings.isEmpty(originalMessage.receiver)}">
+									<img th:src="${originalMessage.receiver_profile_image}" alt="profile_image" width="25" height="25" class="rounded-circle mx-1">
+									<span th:text="${originalMessage.receiver}"></span>
+								</li>
 							</ul>
 							<div id="hiddenInputs">
 								<input type="hidden" name="receiverIds" th:if="${originalMessage.receiver_id != 0}" th:value="${originalMessage.receiver_id}">
