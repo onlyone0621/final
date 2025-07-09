@@ -642,10 +642,12 @@ SELECT
      JOIN member m ON cm.member_id = m.id 
      WHERE cm.community_id = c.id AND cm.role = 'master') AS MASTER_NAME
 FROM community c
-JOIN community_member my_cm ON c.id = my_cm.community_id
+JOIN community_member my_cm 
+  ON c.id = my_cm.community_id
 WHERE my_cm.member_id = #{memberId}
+  AND my_cm.role IN ('user', 'submaster', 'master') 
 </select>
-
+ <!-- ✅ 이 조건 추가! -->
 
 <!-- 사이드바 가입된 커뮤니티 목록 이름 가져오기 -->
 <select id="joinList" resultType="map">
@@ -663,7 +665,7 @@ WHERE my_cm.member_id = #{memberId}
 SELECT 
     c.id AS ID,
     c.name AS NAME,
-    cm.role AS ROLE,  <!-- ✅ 역할 가져옴 -->
+    cm.role AS ROLE,
     (SELECT COUNT(*) 
      FROM community_member cm2 
      WHERE cm2.community_id = c.id) AS MEMBER_COUNT,
@@ -678,6 +680,7 @@ SELECT
 FROM community c
 JOIN community_member cm ON c.id = cm.community_id
 WHERE cm.member_id = #{memberId}
+  AND cm.role IN ('master', 'submaster', 'user') <!-- ✅ 이거 추가 -->
 </select>
 
 
