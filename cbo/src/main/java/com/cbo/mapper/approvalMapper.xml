@@ -88,7 +88,8 @@
 				    WHERE approval_line.doc_id = doc_view.id 
 				    AND approval_line.status = '결재 예정'
 				    AND grade.seq > target_seq.seq 
-				))
+				)
+				AND doc_view.status = '진행 중')
 		WHERE rn BETWEEN #{start} AND #{end}
   	</select>
   	
