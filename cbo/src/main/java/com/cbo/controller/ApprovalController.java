@@ -4,7 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
-
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.util.FileCopyUtils;
@@ -172,7 +172,8 @@ public class ApprovalController {
 	}
 	
 	@GetMapping("submitDraft")
-	public ModelAndView submitDraftForm(@RequestParam int id) {
+	public ModelAndView submitDraftForm(@RequestParam int id,
+			@SessionAttribute(MemberConst.USER_KEY) MemberDTO userInfo) {
 		Map<String, Object> format = null;
 		Map<String, List<OrganDTO>> membersByDept = null;
 		try {
@@ -181,6 +182,12 @@ public class ApprovalController {
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}
+		
+		if (membersByDept != null) {
+			membersByDept.forEach((dept, list) ->
+				list.removeIf(dto -> dto.getMember_id() == userInfo.getId())
+			);
 		}
 		
 		ModelAndView mav = new ModelAndView("approval/submitDraft");
