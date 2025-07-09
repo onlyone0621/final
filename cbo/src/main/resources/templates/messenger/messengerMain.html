@@ -466,7 +466,7 @@ function conn(roomId){
 		ws.close();
 	}
 
-	ws = new WebSocket("ws://192.168.0.141:9090/ws/chat?room_id=" + roomId);
+	ws = new WebSocket("ws://192.168.0.93:9090/ws/chat?room_id=" + roomId);
 	ws.onmessage = onMsg;
 }
 

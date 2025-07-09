@@ -14,7 +14,7 @@
     #{member_id},
     #{dept_id},
     #{title},
-    #{content},
+    #{content},	
     #{start_time},
     #{end_time},
     sysdate,
@@ -64,14 +64,21 @@
   delete from calendar where id = #{id}
   </delete>
   
-<update id="updateWork" parameterType="com.cbo.calendar.model.CalendarDTO">
-  update calendar set start_time = #{start_time}, end_time = #{end_time}+1, title = #{title}, content = #{content} where id = #{id}
-  </update>
+<update id="updateWork">
+    update calendar
+    set
+        start_time = #{start_date},
+        end_time   = #{end_date},
+        title      = #{title},
+        content    = #{content}
+    where id = #{id}
+</update>
   
   <update id="saveWork" parameterType="com.cbo.calendar.model.CalendarDTO">
     update calendar
-    set start_time = #{start_time},
-        end_time = #{end_time}
+    set
+ 		start_time = #{start_time, jdbcType=DATE},
+        end_time   = #{end_time, jdbcType=DATE},
     where id = #{id}
   </update>
   

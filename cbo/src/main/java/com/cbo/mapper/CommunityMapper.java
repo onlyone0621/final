@@ -223,7 +223,11 @@ public interface CommunityMapper {
 	// 커뮤니티 가입한 목록들 이름
 	public List<Map<String, Object>> joinList(int userId) throws Exception;
 	
+	// 로그인한 사용자의 커뮤니티 + 역할 정보 조회
+    public List<Map<String, Object>> communityMainJoinWithRole(int memberId) throws Exception;
 	
-	
+    
+    // 가입 승인된 멤버인지 확인
+    public int isApprovedMember(@Param("cId") int cId, @Param("memberId") int memberId) throws Exception;
 	
 }

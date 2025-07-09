@@ -384,9 +384,7 @@ function addDeptGroupFetch() {
                         <div class="sidebar-group-name" th:text="${dept}"></div>
                             <div class="sidebar-group-list">
                             <a href="deptAddr" class="sidebar-link" style="display:inline-block;">전체 주소록</a>
-                                	<div th:each="dept : ${deptLists}">
-                                            <span th:text="${dept.name}">안녕</span>
-                                </div>
+                                	
                                 </div>
 							    <!-- 부서 주소록 추가 입력창 (처음엔 숨김) -->
 							    <div id="addDeptGroupForm" style="display:none;">

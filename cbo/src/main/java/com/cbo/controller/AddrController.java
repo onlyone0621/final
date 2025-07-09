@@ -5,9 +5,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import com.cbo.addr.service.AddrServiceImple;
+import com.cbo.member.model.MemberDTO;
+
+import jakarta.servlet.http.HttpSession;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -34,8 +37,9 @@ public class AddrController {
     }
 
 	@PostMapping("modifyAddr")
-	public ModelAndView updateAddr(@ModelAttribute AddrDTO addr,@CookieValue(value = "saveid", required = false) String saveid ) {
-		
+	public ModelAndView updateAddr(@ModelAttribute AddrDTO addr,HttpSession session ) {
+		MemberDTO udto = (MemberDTO) session.getAttribute(com.cbo.constant.MemberConst.USER_KEY);
+	    String saveid = udto.getUser_id();
 			
 			try {
 				int id = service.findUserId(saveid);
@@ -58,7 +62,7 @@ public class AddrController {
 	
 	@GetMapping("/addrModifyPage") //변경
 	public ModelAndView updateAddrPage(@RequestParam("id")int userid,
-			AddrDTO dto, @CookieValue(value = "saveid", required = false) String saveid) {
+			AddrDTO dto,HttpSession session) {
 
 		  List<AddrListDTO> addrLists = null;
 		    List<AddrDTO> personalLists = null;
@@ -66,6 +70,8 @@ public class AddrController {
 		    String dept = null;
 		    int id = 0;
 		    AddrDTO addr = null;
+		    MemberDTO udto = (MemberDTO) session.getAttribute(com.cbo.constant.MemberConst.USER_KEY);
+		    String saveid = udto.getUser_id();
 		    // 그룹별 인원수 맵
 		    Map<String, Integer> groupUserCountMap = new HashMap<>();
 
@@ -104,12 +110,14 @@ public class AddrController {
 	}
 	
 	@GetMapping("/addrMain") //메인(전체)
-	public ModelAndView addrList(@CookieValue(value = "saveid", required = false) String saveid) {
+	public ModelAndView addrList(HttpSession session) {
 	    List<AddrListDTO> addrLists = null;
 	    List<AddrDTO> personalLists = null;
 	    List<AddrDTO> deptLists = null;
 	    String dept = null;
 	    int id = 0;
+	    MemberDTO udto = (MemberDTO) session.getAttribute(com.cbo.constant.MemberConst.USER_KEY);
+	    String saveid = udto.getUser_id();
 	    Map<String, Integer> groupUserCountMap = new HashMap<>();
 	    int countAllUser = 0;
 	    try {
@@ -126,10 +134,6 @@ public class AddrController {
 	                int cnt = service.countUser(gid);
 	                groupUserCountMap.put(group.getName(), cnt);
 	            }
-	        }
-	        
-	        for (AddrDTO group : personalLists) {
-	            System.out.println("group.id=" + group.getId() + ", group.name=" + group.getName());
 	        }
 	        
 	    } catch (Exception e) {
@@ -149,7 +153,7 @@ public class AddrController {
 	}
 
 	@GetMapping("/deptAddr") //메인(전체)
-	public ModelAndView deptAddrList(@CookieValue(value = "saveid", required = false) String saveid) {
+	public ModelAndView deptAddrList(HttpSession session) {
 	    List<AddrListDTO> addrLists = null;
 	    List<AddrDTO> personalLists = null;
 	    List<AddrDTO> deptLists = null;
@@ -157,6 +161,8 @@ public class AddrController {
 	    int id =0;
 	    List<AddrListDTO> deptAddrLists = null;
 	    Map<String, Integer> groupUserCountMap = new HashMap<>();
+	    MemberDTO udto = (MemberDTO) session.getAttribute(com.cbo.constant.MemberConst.USER_KEY);
+	    String saveid = udto.getUser_id();
 	    try {
 	        id = service.findUserId(saveid); // 접속해있는 유저 고유 아이디 찾기
 	        addrLists = service.addrList(id); // 전체 주소록 눌렀을때 연락처 보여주기
@@ -190,7 +196,7 @@ public class AddrController {
 	}
 
 	@GetMapping("/goInsertPage") //전체에서 연락처 추가페이지
-	public ModelAndView goInsertPage(@CookieValue(value = "saveid", required = false) String saveid) {
+	public ModelAndView goInsertPage(HttpSession session) {
 		List<AddrListDTO> addrLists = null;
 		List<AddrDTO> personalLists = null;
 		List<AddrDTO> deptLists = null;
@@ -198,6 +204,8 @@ public class AddrController {
 		int id = 0;
 		Map<String, Integer> groupUserCountMap = new HashMap<>();
 		int countUser = 0;
+		MemberDTO udto = (MemberDTO) session.getAttribute(com.cbo.constant.MemberConst.USER_KEY);
+	    String saveid = udto.getUser_id();
 		try {
 			id = service.findUserId(saveid); // 접속해있는 유저 고유 아이디 찾기
 			addrLists = service.addrList(id); // 전체 주소록 눌렀을때 연락처 보여주기
@@ -231,7 +239,7 @@ public class AddrController {
 	
 	@GetMapping("/groupAddrList/{groupName}") //그룹내에 연락처 나타내기
 	public ModelAndView groupAddrList(@PathVariable("groupName") String name,
-			@CookieValue(value = "saveid", required = false) String saveid) {
+			HttpSession session) {
 
 		List<AddrListDTO> lists = null;
 		List<AddrDTO> addrLists = null;
@@ -241,7 +249,8 @@ public class AddrController {
 		int group_id = 0;
 		int countUser = 0;
 		Map<String, Integer> groupUserCountMap = new HashMap<>();
-		
+		MemberDTO udto = (MemberDTO) session.getAttribute(com.cbo.constant.MemberConst.USER_KEY);
+	    String saveid = udto.getUser_id();
 		try {
 			group_id = service.findGroupId(name);
 			int id = service.findUserId(saveid);
@@ -286,7 +295,7 @@ public class AddrController {
 	@PostMapping("/insertAddr") //연락처 추가
 	public ModelAndView insertPersonalAllAddr(
 	        AddrDTO dto, 
-	        @CookieValue(value = "saveid", required = false) String saveid) {
+	        HttpSession session) {
 
 	    List<AddrListDTO> addrLists = null;
 	    List<AddrDTO> personalLists = null;
@@ -296,7 +305,8 @@ public class AddrController {
 
 	    // 그룹별 인원수 맵
 	    Map<String, Integer> groupUserCountMap = new HashMap<>();
-
+	    MemberDTO udto = (MemberDTO) session.getAttribute(com.cbo.constant.MemberConst.USER_KEY);
+	    String saveid = udto.getUser_id();
 	    try {
 	        id = service.findUserId(saveid); // 접속해있는 유저 고유 아이디 찾기
 	        int result = service.insertPersonalAlladdr(dto, id);
@@ -353,8 +363,9 @@ public class AddrController {
 	@PostMapping("/addr/addGroup") //그룹 등록
 	@ResponseBody
 	public int addPersonalAddr(@RequestBody Map<String, String> param,
-			@CookieValue(value = "saveid", required = false) String saveid) {
-
+			HttpSession session) {
+		MemberDTO udto = (MemberDTO) session.getAttribute(com.cbo.constant.MemberConst.USER_KEY);
+	    String saveid = udto.getUser_id();
 		int result = 0;
 		int id = 0;
 		String name = param.get("groupName");
@@ -373,8 +384,9 @@ public class AddrController {
 	@PostMapping("/addr/addDeptGroup") //그룹 등록
 	@ResponseBody
 	public int addDeptAddr(@RequestBody Map<String, String> param,
-			@CookieValue(value = "saveid", required = false) String saveid) {
-
+			HttpSession session) {
+		MemberDTO udto = (MemberDTO) session.getAttribute(com.cbo.constant.MemberConst.USER_KEY);
+	    String saveid = udto.getUser_id();
 		int result = 0;
 		int id = 0;
 		String name = param.get("groupName");
@@ -391,9 +403,11 @@ public class AddrController {
 	}
 		@PostMapping("/quickGroupAddrAdd") // 그룹내에서 빠른등록
 		@ResponseBody
-		public int quickGroupAddrAdd(AddrDTO dto, @RequestParam("groupId")int groupsId,@CookieValue(value = "saveid", required = false) String saveid) {
+		public int quickGroupAddrAdd(AddrDTO dto, @RequestParam("groupId")int groupsId,HttpSession session) {
 			int result = 0;
 			int member_id = 0;
+			MemberDTO udto = (MemberDTO) session.getAttribute(com.cbo.constant.MemberConst.USER_KEY);
+		    String saveid = udto.getUser_id();
 			try {
 				member_id = service.findUserId(saveid);
 				dto.setMember_id(member_id);
@@ -413,9 +427,11 @@ public class AddrController {
 	
 	@PostMapping("quickAddrAdd") //전체에서 빠른등록
 	@ResponseBody
-	public int quickAddrAdd(AddrDTO dto,@CookieValue(value = "saveid", required = false) String saveid) {
+	public int quickAddrAdd(AddrDTO dto,HttpSession session) {
 		int result = 0;
 		int member_id = 0;
+		MemberDTO udto = (MemberDTO) session.getAttribute(com.cbo.constant.MemberConst.USER_KEY);
+	    String saveid = udto.getUser_id();
 		try {
 			member_id = service.findUserId(saveid);
 			dto.setMember_id(member_id);
