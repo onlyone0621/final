@@ -184,6 +184,7 @@ public class ApprovalController {
 			e.printStackTrace();
 		}
 		
+		// Filter logined user
 		if (membersByDept != null) {
 			membersByDept.forEach((dept, list) ->
 				list.removeIf(dto -> dto.getMember_id() == userInfo.getId())
