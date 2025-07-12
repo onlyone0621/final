@@ -11,7 +11,7 @@
   	</resultMap>
   	
   	<select id="selectFormatNames" resultMap="formatResult">
-  		SELECT id, name 
+  		SELECT *
   		FROM format
   	</select>
   	
@@ -88,7 +88,8 @@
 				    WHERE approval_line.doc_id = doc_view.id 
 				    AND approval_line.status = '결재 예정'
 				    AND grade.seq > target_seq.seq 
-				))
+				)
+				AND doc_view.status = '진행 중')
 		WHERE rn BETWEEN #{start} AND #{end}
   	</select>
   	
@@ -137,7 +138,8 @@
 				    WHERE approval_line.doc_id = doc_view.id 
 				    AND approval_line.status = '결재 예정'
 				    AND grade.seq > target_seq.seq 
-				))
+				)
+				AND doc_view.status = '진행 중')
 		WHERE rn BETWEEN #{start} AND #{end}
   	</select>
 	
@@ -175,7 +177,7 @@
 	<select id="selectApprovers">
 		SELECT 
 			member.name AS member_name,
-			NVL(member.profile_image, 'defaultProfileImage.jpg') AS profile_image,
+			NVL(member.profile_image, '/profileImage/defaultProfileImage.jpg') AS profile_image,
 		 	dept.name AS dept_name,
 		  	grade.name AS grade_name,
 		   	approval_line.status,
@@ -197,7 +199,7 @@
 	<select id="selectReviewers">
 		SELECT 
 			member.name AS member_name,
-			NVL(member.profile_image, 'defaultProfileImage.jpg') AS profile_image,
+			NVL(member.profile_image, '/profileImage/defaultProfileImage.jpg') AS profile_image,
 		 	dept.name AS dept_name,
 		  	grade.name AS grade_name,
 		   	approval_line.status,
@@ -222,7 +224,7 @@
   		 	member.name AS member_name,
   		  	dept.name AS dept_name,
   		   	grade.name AS grade_name,
-  		    NVL(member.profile_image, 'defaultProfileImage.jpg') AS profile_image
+  		    NVL(member.profile_image, '/profileImage/defaultProfileImage.jpg') AS profile_image
 		FROM member
 		    JOIN dept ON member.dept_id = dept.id
 		    JOIN grade ON member.grade_id = grade.id 
@@ -263,7 +265,7 @@
 	<!-- Approve or Reject -->
 	<update id="updateStatus" parameterType="map">
 		UPDATE approval_line 
-		SET status = #{status} 
+		SET status = #{status}, process_date = SYSDATE 
 		WHERE doc_id = #{doc_id} AND member_id = #{member_id}
 	</update>
 	

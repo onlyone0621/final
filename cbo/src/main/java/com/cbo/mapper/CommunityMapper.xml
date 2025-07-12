@@ -642,10 +642,12 @@ SELECT
      JOIN member m ON cm.member_id = m.id 
      WHERE cm.community_id = c.id AND cm.role = 'master') AS MASTER_NAME
 FROM community c
-JOIN community_member my_cm ON c.id = my_cm.community_id
+JOIN community_member my_cm 
+  ON c.id = my_cm.community_id
 WHERE my_cm.member_id = #{memberId}
+  AND my_cm.role IN ('user', 'submaster', 'master') 
 </select>
-
+ <!-- ✅ 이 조건 추가! -->
 
 <!-- 사이드바 가입된 커뮤니티 목록 이름 가져오기 -->
 <select id="joinList" resultType="map">
@@ -656,6 +658,42 @@ WHERE my_cm.member_id = #{memberId}
     WHERE cm.member_id = #{userId}
       AND cm.role IN ('user', 'submaster', 'master')
 </select>
+
+
+<!-- 사용자: 로그인한 사용자의 커뮤니티 목록 + 역할까지 가져오기 -->
+<select id="communityMainJoinWithRole" parameterType="int" resultType="map">
+SELECT 
+    c.id AS ID,
+    c.name AS NAME,
+    cm.role AS ROLE,
+    (SELECT COUNT(*) 
+     FROM community_member cm2 
+     WHERE cm2.community_id = c.id) AS MEMBER_COUNT,
+    (SELECT COUNT(*)
+     FROM board_post bp 
+     JOIN community_board cb ON bp.board_id = cb.id 
+     WHERE cb.community_id = c.id) AS POST_COUNT,
+    (SELECT m.name 
+     FROM community_member cm3 
+     JOIN member m ON cm3.member_id = m.id 
+     WHERE cm3.community_id = c.id AND cm3.role = 'master') AS MASTER_NAME
+FROM community c
+JOIN community_member cm ON c.id = cm.community_id
+WHERE cm.member_id = #{memberId}
+  AND cm.role IN ('master', 'submaster', 'user') <!-- ✅ 이거 추가 -->
+</select>
+
+
+<!-- 커뮤니티 가입된 사람만 접근 가능하도록 -->
+<select id="isApprovedMember" resultType="int">
+ SELECT COUNT(*)
+FROM community_member
+WHERE community_id = #{cId}
+  AND member_id = #{memberId}
+  AND role IN ('master', 'submaster', 'user')
+</select>
+
+
 
  </mapper>
  

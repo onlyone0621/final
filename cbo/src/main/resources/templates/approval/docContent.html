@@ -107,7 +107,7 @@
                                 <div class="">
 
                                 </div>
-								<img th:src="@{/profileImage/{img}(img=*{profile_image})}" alt="profile_image" width="30" height="30" class="rounded-circle mx-1 float-start">
+								<img th:src="*{profile_image}" alt="profile_image" width="30" height="30" class="rounded-circle mx-1 float-start">
 								<span th:text="|*{dept_name} *{member_name} *{grade_name}|" class="fs-5"></span><br>
 								<span th:text="*{status} + (*{process_date} ? ' | ' + *{process_date} : '')" style="font-size: 13px;"></span>
 							</li>
@@ -122,7 +122,7 @@
                         <ul class="list-group list-group-flush">
                             <li class="list-group-item text-center" th:if="${#lists.isEmpty(reviewers)}">참조자 없음</li>
 							<li class="list-group-item" th:each="reviewer : ${reviewers}" th:object="${reviewer}">
-								<img th:src="@{/profileImage/{img}(img=*{profile_image})}" alt="profile_image" width="30" height="30" class="rounded-circle mx-1 float-start">
+								<img th:src="*{profile_image}" alt="profile_image" width="30" height="30" class="rounded-circle mx-1 float-start">
 								<span th:text="|*{dept_name} *{member_name} *{grade_name}|" class="fs-5"></span><br>
 								<span th:text="*{status} + (*{process_date} ? ' | ' + *{process_date} : '')" style="font-size: 13px;"></span>
 							</li>

@@ -60,16 +60,58 @@
 	padding: 0;
 }
 
+.sidebar a {
+	text-decoration: none;
+	color: #333;
+	font-size: 14px;
+	font-weight: bold;
+}
+
 .post-list li {
 	border-bottom: 1px solid #eee;
 	padding: 10px 0;
 }
+
+.styled-select {
+	width: 170px;
+	padding: 8px 12px;
+	font-size: 10px;
+	color: #333;
+	background-color: #fff0f5; /* 연한 분홍 배경 */
+	border: 1px solid #dca7d8; /* 연보라 테두리 */
+	border-radius: 8px;
+	outline: none;
+	font-weight: bold;
+}
 </style>
+
+<script>
+	function moveCommunity() {
+		const url = document.getElementById("communitySelect").value;
+		if (url) {
+			window.location.href = url;
+		}
+	}
+</script>
+
+
 </head>
 <body>
 	<div layout:fragment="content">
 		<div class="container">
 			<div class="sidebar">
+
+
+				<!-- 커뮤니티 목록 셀렉트박스 -->
+				<select id="communitySelect" onchange="moveCommunity()"
+					class="styled-select">
+					<option value="">-- 커뮤니티 선택 --</option>
+					<option th:each="c : ${joinList}"
+						th:value="@{/community/{id}(id=${c.ID})}" th:text="${c.NAME}">
+					</option>
+				</select>
+
+
 				<h4 th:text="${communityInfo != null ? communityInfo.name : '커뮤니티'}">커뮤니티</h4>
 
 				<!-- 게시판 목록 -->
@@ -95,10 +137,10 @@
 					<li>등록된 멤버 없음</li>
 				</ul>
 				<ul th:each="m : ${sidebarMemberLists}">
-					<li>
-						<span th:text="|${m['GRADE_NAME'] != null ? m['GRADE_NAME'] : '직급없음'} ${m['NAME']}|"></span>
-						<span th:if="${m['ROLE'] == 'master'}">👑 마스터</span> 
-						<span th:if="${m['ROLE'] == 'submaster'}">🛡️ 부마스터</span></li>
+					<li><span
+						th:text="|${m['GRADE_NAME'] != null ? m['GRADE_NAME'] : '직급없음'} ${m['NAME']}|"></span>
+						<span th:if="${m['ROLE'] == 'master'}">👑 마스터</span> <span
+						th:if="${m['ROLE'] == 'submaster'}">🛡️ 부마스터</span></li>
 				</ul>
 
 
@@ -106,7 +148,8 @@
 
 				<!-- 멤버 초대 (마스터, 부마스터만) -->
 				<th:block th:if="${userRole == 'master' or userRole == 'submaster'}">
-					<a th:href="@{/community/{cId}/invite(cId=${cId})}" class="link-action">+ 초대하기</a>
+					<a th:href="@{/community/{cId}/invite(cId=${cId})}"
+						class="link-action">+ 초대하기</a>
 				</th:block>
 			</div>
 

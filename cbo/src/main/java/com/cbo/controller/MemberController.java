@@ -136,7 +136,7 @@ public class MemberController {
 			e.printStackTrace();
 		}
 		ModelAndView mav = new ModelAndView();
-		String msg = result > 0 ? "회원가입 요청이 완료되었습니다." : "회원가입 요청에 실패하였습니다.";
+		String msg = result > 0 ? "회원가입이 완료되었습니다." : "회원가입에 실패하였습니다.";
 		mav.addObject("msg", msg);
 		if(result == 0) {
 			mav.addObject("gourl", "memberJoin");

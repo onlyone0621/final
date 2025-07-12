@@ -81,7 +81,10 @@
 							aria-labelledby="receivers-tab"
 						>
 							<ul class="list-group list-group-flush" id="receiversList">
-								<li class="list-group-item" th:text="${originalMessage.receiver}"></li>
+								<li class="list-group-item" th:unless="${#strings.isEmpty(originalMessage.receiver)}">
+									<img th:src="${originalMessage.receiver_profile_image}" alt="profile_image" width="25" height="25" class="rounded-circle mx-1">
+									<span th:text="${originalMessage.receiver}"></span>
+								</li>
 							</ul>
 							<div id="hiddenInputs">
 								<input type="hidden" name="receiverIds" th:if="${originalMessage.receiver_id != 0}" th:value="${originalMessage.receiver_id}">
@@ -137,7 +140,7 @@
                         >
                             <div class="accordion-body" th:each="member : ${deptGroup.value}" th:object="${member}" th:data-dept="${deptGroup.key}">
                                 <input type="checkbox" class="form-check-input" name="receiverIds" th:id="${#ids.seq(#ids.prev('dept') + '-')}" th:value="*{member_id}">
-								<img th:src="@{/profileImage/{img}(img=*{profile_image})}" alt="profile_image" width="25" height="25" class="rounded-circle mx-1">
+								<img th:src="*{profile_image}" alt="profile_image" width="25" height="25" class="rounded-circle mx-1">
 								<label class="form-label" th:for="${#ids.prev(#ids.prev('dept') + '-')}" th:text="|*{member_name} *{grade_name}|"></label>
                             </div>
                         </div>

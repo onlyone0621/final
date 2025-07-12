@@ -18,7 +18,7 @@
 <body>
 <header th:fragment="defaultHeader">
     <nav class="header">
-        <div class="logo"><a href="/">CBO</a></div>
+        <div class="logo"><a href="myCalendar">CBO</a></div>
         <ul class="header-links"> 
             <li><a href="/myCalendar">일정관리</a></li>
             <li><a href="/receivedMessages">메시지</a></li>
@@ -38,7 +38,7 @@
 			    <span th:unless="${session.udto != null}">사용자</span> 님
 
 			</a> | <a href="/memberLogout">로그아웃</a> 
-
+                                                                   
         </div>
     </nav>
 </header>

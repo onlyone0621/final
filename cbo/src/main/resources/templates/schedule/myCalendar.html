@@ -296,7 +296,6 @@ function refreshCalendar() {
 				        start_time: ev.startStr,
 				        end_time: ev.endStr
 				      }));
-				      console.log(events);
 				      fetch("/api/calendar/saveWork", {
 				        method: 'POST',
 				        headers: {
