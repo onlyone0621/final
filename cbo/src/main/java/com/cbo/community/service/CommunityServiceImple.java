@@ -453,7 +453,7 @@ public class CommunityServiceImple implements CommunityService {
 	        return mapper.getJoinStatus(cId, memberId);
 	    }
 	
-	// 모든 커뮤니티 조회(가입상태도 확인)
+	// 모든 커뮤니티 조회(가입상태도 확인) main
 	@Override
 	public List<Map<String, Object>> selectCommunityMainAll(int memberId) throws Exception {
 	    return mapper.selectCommunityMainAll(memberId);
