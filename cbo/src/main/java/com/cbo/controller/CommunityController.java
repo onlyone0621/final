@@ -145,11 +145,11 @@ public class CommunityController {
 	    try {
 	        int memberId = user.getId();
 
-	        // ✅ 전체 커뮤니티 + 가입 여부 정보 (본문 테이블용)
+	        // 전체 커뮤니티 + 가입 여부 정보 (본문 테이블용)
 	        List<Map<String, Object>> lists = service.selectCommunityMainAll(memberId);
 	        mav.addObject("lists", lists);
 
-	        // ✅ 가입한 커뮤니티 + 역할 정보 (사이드바용)
+	        // 가입한 커뮤니티 + 역할 정보 (사이드바용)
 	        List<Map<String, Object>> sideJoin = service.communityMainJoinWithRole(memberId);
 	        mav.addObject("sideJoin", sideJoin);
 
@@ -163,7 +163,7 @@ public class CommunityController {
 	    return mav;
 	}
 
-	// ✅ 커뮤니티 가입 신청 처리
+	// 커뮤니티 가입 신청 처리
 	@PostMapping("/community/{cId}/join")
 	public String joinCommunity(@PathVariable int cId, HttpSession session) {
 		MemberDTO user = (MemberDTO) session.getAttribute(MemberConst.USER_KEY);
@@ -184,7 +184,7 @@ public class CommunityController {
 		return "redirect:/communityMainAll";
 	}
 
-	// ✅ 커뮤니티 탈퇴 처리
+	//커뮤니티 탈퇴 처리
 	@PostMapping("/community/{cId}/leave")
 	public String leaveCommunity(@PathVariable int cId, HttpSession session) {
 		try {
@@ -209,12 +209,11 @@ public class CommunityController {
 		return "user".equals(status) || "submaster".equals(status) || "master".equals(status);
 	}
 
-	////////////////////////////////////////
-	// 커뮤니티 manage 폴더 관리
+
 
 	// 커뮤니티 생성 get방식 이동
 	@GetMapping("/communityCreate")
-	public ModelAndView getInsertCommunity(HttpSession session) {
+	public ModelAndView getCommunityCreate(HttpSession session) {
 	    List<Map<String, Object>> sideJoin = null;
 
 	    MemberDTO user = (MemberDTO) session.getAttribute(com.cbo.constant.MemberConst.USER_KEY);
@@ -243,7 +242,7 @@ public class CommunityController {
 	
 	// 커뮤니티 생성 post방식 기능
 	@PostMapping("/communityCreate")
-	public ModelAndView insertCommunity(CommunityDTO dto, HttpServletRequest request) {
+	public ModelAndView CommunityCreate(CommunityDTO dto, HttpServletRequest request) {
 		HttpSession session = request.getSession();
 		MemberDTO udto = (MemberDTO) session.getAttribute(com.cbo.constant.MemberConst.USER_KEY);
 
@@ -427,6 +426,8 @@ public class CommunityController {
 		return result;
 	}
 
+	
+	//마스터 목록조회
 	@GetMapping("/community/{cId}/masterSelect")
 	public ModelAndView masterSelect(@PathVariable int cId) throws Exception {
 		ModelAndView mav = new ModelAndView("community/manage/masterSelect");
@@ -434,7 +435,7 @@ public class CommunityController {
 		mav.addObject("cId", cId);
 		return mav;
 	}
-
+//부마스터 목록조회
 	@GetMapping("/community/{cId}/subMasterSelect")
 	public ModelAndView subMasterSelect(@PathVariable int cId) throws Exception {
 		ModelAndView mav = new ModelAndView("community/manage/subMasterSelect");
@@ -546,7 +547,7 @@ public class CommunityController {
 	public ModelAndView removeMember(@PathVariable int cId, @PathVariable int memberId, HttpSession session) {
 		return handleMemberAction(session, () -> {
 			service.removeMember(cId, memberId);
-			return "멤버 탈퇴 완료"; // ㅛ서비시Imple에서 마스터는 탈퇴할 수 없도록 막음 마스ㅊ터면 IllegalStateException을 던짐
+			return "멤버 탈퇴 완료"; // 서비스Imple에서 마스터는 탈퇴할 수 없도록 막음 마스ㅊ터면 IllegalStateException을 던짐
 		}, "/community/" + cId + "/member?status=active");
 	}
 
@@ -706,7 +707,7 @@ public class CommunityController {
 
 // 커뮤니티 삭제 페이지 GET
 	@GetMapping("/community/{cId}/close")
-	public ModelAndView closePage(@PathVariable("cId") String cId) {
+	public ModelAndView getCommunityClose(@PathVariable("cId") String cId) {
 		ModelAndView mav = new ModelAndView();
 
 		try {
@@ -968,7 +969,7 @@ public class CommunityController {
 			mav.addObject("communityName", names.get("community_name"));
 			mav.addObject("boardName", names.get("board_name"));
 
-			// ✅ 커뮤니티 정보 (게시판 이름, 커뮤니티 이름 말고 전체 커뮤니티 객체도 넘기기)
+			//  커뮤니티 정보 (게시판 이름, 커뮤니티 이름 말고 전체 커뮤니티 객체도 넘기기)
 			CommunityDTO communityInfo = service.communityInfoById(cId);
 			mav.addObject("communityInfo", communityInfo);
 
@@ -1096,7 +1097,7 @@ public class CommunityController {
 
 		ModelAndView mav = new ModelAndView();
 
-		// ✅ 로그인 여부 확인
+		//  로그인 여부 확인
 		MemberDTO udto = (MemberDTO) session.getAttribute(MemberConst.USER_KEY);
 		if (udto == null) {
 			// ❌ 로그인하지 않은 경우 로그인 페이지로 리다이렉트
@@ -1105,40 +1106,40 @@ public class CommunityController {
 		}
 
 		try {
-			// ✅ 로그인한 사용자의 커뮤니티 가입 목록 (셀렉트 박스용)
+			// 로그인한 사용자의 커뮤니티 가입 목록 (셀렉트 박스용)
 			List<Map<String, Object>> joinList = service.joinList(udto.getId());
 			mav.addObject("joinList", joinList);
 
-			// ✅ 현재 로그인 사용자 객체도 전달 (필요 시 사용)
+			//  현재 로그인 사용자 객체도 전달 (필요 시 사용)
 			mav.addObject("udto", udto);
 
-			// ✅ 해당 커뮤니티의 멤버 목록 (사이드바에 사용)
+			//  해당 커뮤니티의 멤버 목록 (사이드바에 사용)
 			List<Map<String, Object>> sidebarMemberLists = service.sidebarMemberList(cId);
 			mav.addObject("sidebarMemberLists", sidebarMemberLists);
 
-			// ✅ 게시판 목록 (사이드바용)
+			// 게시판 목록 (사이드바용)
 			Map<String, Object> map = new HashMap<>();
 			map.put("cId", cId);
 			List<BoardDTO> boardList = service.boardListByCommunityId(map);
 			mav.addObject("boardList", boardList);
 
-			// ✅ 게시글 상세 정보
+			// 게시글 상세 정보
 			PostDTO post = service.selectPostById(postId);
 			mav.addObject("post", post);
 
-			// ✅ 해당 게시글에 포함된 이미지 목록
+			// 해당 게시글에 포함된 이미지 목록
 			List<ImageDTO> imageList = service.selectImagesByPostId(postId);
 			mav.addObject("imageList", imageList);
 
-			// ✅ 게시판 이름, 커뮤니티 이름
+			// 게시판 이름, 커뮤니티 이름
 			Map<String, String> names = service.selectBoardAndCommunity(boardId);
 			mav.addObject("boardName", names.get("board_name"));
 			mav.addObject("communityName", names.get("community_name"));
 
-			// ✅ 게시글 조회수 증가
+			// 게시글 조회수 증가
 			service.ViewNumPlus(postId);
 
-			// ✅ 커뮤니티 정보 (게시판 이름, 커뮤니티 이름 말고 전체 커뮤니티 객체도 넘기기)
+			//  커뮤니티 정보 (게시판 이름, 커뮤니티 이름 말고 전체 커뮤니티 객체도 넘기기)
 			CommunityDTO communityInfo = service.communityInfoById(cId);
 			mav.addObject("communityInfo", communityInfo);
 
@@ -1154,7 +1155,7 @@ public class CommunityController {
 			e.printStackTrace();
 		}
 
-		// ✅ 기타 정보 전달 및 뷰 설정
+		//  기타 
 		mav.addObject("cId", cId);
 		mav.addObject("boardId", boardId);
 		mav.setViewName("community/board/postContent");
@@ -1162,6 +1163,8 @@ public class CommunityController {
 		return mav;
 	}
 
+	
+	
 	// 좋아요
 	@PostMapping("/community/{cId}/board/{boardId}/post/{postId}/like")
 	@ResponseBody
@@ -1180,6 +1183,8 @@ public class CommunityController {
 		return result;
 	}
 
+	
+	
 	// 게시글 수정 url 이동
 	@GetMapping("/community/{cId}/board/{boardId}/post/{postId}/edit")
 	public ModelAndView postEditUrl(@PathVariable int cId, @PathVariable int boardId, @PathVariable int postId) {
@@ -1276,6 +1281,8 @@ public class CommunityController {
 		return mav;
 	}
 
+	
+	
 	// 게시글 삭제
 	@PostMapping("/community/{cId}/board/{boardId}/post/{postId}/delete")
 	public ModelAndView deletePost(@PathVariable int cId, @PathVariable int boardId, @PathVariable int postId) {
@@ -1306,6 +1313,8 @@ public class CommunityController {
 		return mav;
 	}
 
+	//댓글 /////////////////////////////////////////////////
+	
 	// 댓글 등록
 	@PostMapping("/community/{cId}/board/{boardId}/post/{postId}/reply")
 	@ResponseBody
@@ -1333,6 +1342,8 @@ public class CommunityController {
 		return result;
 	}
 
+	
+	
 	// 답글 등록
 	@PostMapping("/community/{cId}/board/{boardId}/post/{postId}/reply/{parentId}/child")
 	@ResponseBody
@@ -1360,6 +1371,8 @@ public class CommunityController {
 		return result;
 	}
 
+	
+	
 	// 댓글/답글 수정
 	@PostMapping("/community/{cId}/board/{boardId}/post/{postId}/reply/{replyId}/edit")
 	@ResponseBody
@@ -1387,6 +1400,8 @@ public class CommunityController {
 		return result;
 	}
 
+	
+	
 	// 댓글/답글 삭제
 	@PostMapping("/community/{cId}/board/{boardId}/post/{postId}/reply/{replyId}/delete")
 	@ResponseBody
@@ -1412,6 +1427,8 @@ public class CommunityController {
 		return result;
 	}
 
+	
+	
 	// 댓글/답글 목록 조회
 	@GetMapping("/community/{cId}/board/{boardId}/post/{postId}/replyList")
 	@ResponseBody
@@ -1425,6 +1442,7 @@ public class CommunityController {
 		}
 	}
 
-	///////////////////////////////////////////////////////////////////////////////
+	
+
 
 }
